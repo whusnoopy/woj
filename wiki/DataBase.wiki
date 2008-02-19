@@ -1,11 +1,11 @@
-#summary One-sentence summary of this page.
 #labels Phase-Design
+# DataBase Design Doc
 
 = DataBase Description =
 
 Database name:  flood
 
-|| Table Name || Description || Pri Index ||
+|| Table Name || Description || Prime Index ||
 || User || 用户信息 || user_id ||
 || Admin || 管理员信息 || NULL ||
 || Login_Log || 登录信息 || user_id ||
@@ -21,7 +21,11 @@ Database name:  flood
 
 = Table Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== User ==
+|| Field || Type || Null || Key || Default || Extra ||
+|| user_id || varchar(16) || NO || PRI || || ||
+|| password || text || NO || || || ||
+|| email || varchar(64) || YES || || || ||
+|| school || varchar(64) || NO || || || ||
+|| nickname || varchar(64) || NO || || || ||
+|| reg_time || datatime || NO || || || ||
