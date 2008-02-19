@@ -28,10 +28,16 @@ Database name:  flood
 = Table Details =
 
 == User ==
-|| *Field* || *Type* || *Null* || *Key* || *Default* || *Extra* ||
-|| user_id || varchar(16) || NO || PRI || || ||
-|| password || text || NO || || || ||
-|| email || varchar(64) || YES || || || ||
-|| school || varchar(64) || NO || || || ||
-|| nickname || varchar(64) || NO || || || ||
-|| reg_time || datatime || NO || || || ||
+|| *Field* || *Type* || *Null* || *Key* || *Default* || *Extra* || note ||
+|| user_id || varchar(16) || NO || PRI || || || user's id ||
+|| password || text || NO || || || || user's password, encryption by MD5 ||
+|| email || varchar(64) || YES || || || || user's email address ||
+|| school || varchar(64) || NO || || || || user's school info ||
+|| nickname || varchar(64) || NO || || || || user's nickname ||
+|| reg_time || datatime || NO || || || || register time of this user ||
+|| available || bool || NO || || true || || is this user_id available ||
+|| default_language || tinyint unsigned || NO || || 1 || || the default programming language of this user ||
+|| last_volume || tinyint unsigned || NO || || 1 || || the last problem volume this user stayed ||
+|| submit || int unsigned || NO || || 0 || || submit times ||
+|| passed || int unsigned || NO || || 0 || || submits passed times ||
+|| solved || int unsigned || NO || || 0 || || solved problems count ||
