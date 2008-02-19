@@ -28,7 +28,7 @@ Database name:  flood
 = Table Details =
 
 == User ==
-|| *Field* || *Type* || *Null* || *Key* || *Default* || *Extra* || *_note_* ||
+|| *Field* || *Type* || *Null* || *Key* || *Default* || *Extra* || *_Note_* ||
 || user_id || varchar(16) || NO || PRI || || || user's id ||
 || password || text || NO || || || || user's password, encryption by MD5 ||
 || email || varchar(64) || YES || || || || user's email address ||
