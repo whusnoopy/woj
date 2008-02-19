@@ -1,0 +1,27 @@
+#summary One-sentence summary of this page.
+#labels Phase-Design
+
+= DataBase Description =
+
+Database name:  flood
+
+|| Table Name || Description || Pri Index ||
+|| User || 用户信息 || user_id ||
+|| Admin || 管理员信息 || NULL ||
+|| Login_Log || 登录信息 || user_id ||
+|| Mail || 邮件信息 || mail_id ||
+|| Message || 讨论信息 || message_id ||
+|| Source_Code || 源代码信息 || submit_id ||
+|| Submit || 提交信息 || submit_id ||
+|| Problem || 题目信息 || problem_id ||
+|| Contest || 比赛信息 || contest_id ||
+|| Contest_Problem || 比赛与题目关联信息 || contest_id ||
+|| Contest_User || 内部比赛的参赛人员列表 || contest_id ||
+
+
+= Table Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
