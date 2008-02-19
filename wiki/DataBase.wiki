@@ -1,5 +1,8 @@
 #labels Phase-Design
-#DataBase Design Doc
+# DataBase Design Doc
+
+== Version ==
+Draft
 
 = Introduction =
 This !WikiPage is DataBase Design Doc, described the details about the DataBase used in this project. 
