@@ -1,0 +1,2348 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>C++ Programming Style Guidelines for Flood</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="STYLESHEET" href="style.css" type="text/css">
+</head>
+<body>
+<h1>
+<a name="introduction"></a>1 规则示例
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+#. 规则简单描述
+</td>
+</tr>
+<tr>
+<td class="example">Example if applicable
+</td>
+</tr>
+<tr>
+<td class="rationale">
+注释说明
+</td>
+</tr>
+</tbody></table>
+</p>
+<h1>
+<a name="General Recomendations"></a>2 一般规则
+</h1>
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+1. 所有规则以易读性为标准
+</td>
+</tr>
+<tr>
+<td class="example"></td>
+</tr>
+<tr>
+<td class="rationale">
+方便 Code Review, 方便自己和他人阅读, 以及后续的修改
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+2. 必要时可以用自己习惯来替代规则
+</td>
+</tr>
+<tr>
+<td class="example"></td>
+</tr>
+<tr>
+<td class="rationale">
+没有必要拘泥于规则之中, 但是还是要在保证易读性的前提下, 在可以变通的时候使用自己的风格
+</td>
+</tr>
+</tbody></table>
+</p>
+<h1>
+<a name="General Recomendations"></a>3 命名规则
+</h1>
+<h3>
+<a name="General"></a>3.1 一般命名规则</h3>
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+3. 类型名使用驼峰表达式, 以大写字母开头
+</td>
+</tr>
+<tr>
+<td class="example">Line, SavingAccount
+</td>
+</tr>
+<tr>
+<td class="rationale">
+C++ 通用风格
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+4. 变量名使用全小写表达式, 以下划线隔开
+</td>
+</tr>
+<tr>
+<td class="example">line, saving_account
+</td>
+</tr>
+<tr>
+<td class="rationale">
+C++ 通用风格. 命名方式尽可能可以清楚的描述该变量的用处
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+5. 常量(包括枚举量) 统一使用全大写字符, 单词之间用下划线隔开
+</td>
+</tr>
+<tr>
+<td class="example">MAX_ITERATIONS, COLOR_RED, PI
+</td>
+</tr>
+<tr>
+<td class="rationale">
+C++ 通用风格. 或者推荐使用将常量用方法来实现, 如:
+<pre>  int getMaxIterations() { // NOT: MAX_ITERATIONS = 25
+    return 25;
+  }
+
+</pre>
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+6. 方法或函数名必须用动词, 小写开头的驼峰表达式
+</td>
+</tr>
+<tr>
+<td class="example">getName(), computeTotalWidth()
+</td>
+</tr>
+<tr>
+<td class="rationale">
+C++ 通用风格.
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+7. 命名空间(namespace) 必须使用全小写字母
+</td>
+</tr>
+<tr>
+<td class="example">model::analyzer, io::iomanager, common::math::geometry
+</td>
+</tr>
+<tr>
+<td class="rationale">
+C++ 通用风格
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+8. 模板类型名称必须使用单个大写字母
+</td>
+</tr>
+
+<tr>
+<td class="example">template&lt;class T&gt; ...
+template&lt;class C, class D&gt; ...
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+C++ 通用风格, 可以使得模板名独立于其他名称
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+9. 简写/缩写命名时必须不能全大写
+</td>
+</tr>
+<tr>
+<td class="example">exportHtmlSource(); <i class="not">// NOT: exportHTMLSource();</i>
+openDvdPlayer();    <i class="not">// NOT: openDVDPlayer();</i>
+</td>
+</tr>
+<tr>
+<td class="rationale">
+全大写会跟上述规则冲突. 变量这样定义会变成 dVD, hTML 等这样不方便阅读的模式.
+另一个问题是全大写会导致后一个单词没法看出来是一个独立单词.
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+10. 全局变量必须用 :: 操作符来引用
+</td>
+</tr>
+<tr>
+<td class="example">::mainWindow.open(), ::applicationContext.getName()
+</td>
+</tr>
+<tr>
+<td class="rationale">
+一般来说要避免使用全局变量. 可以用 singleton objects(子类?) 来替代.
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+11. 类私有变量必须有下划线后缀
+</td>
+</tr>
+
+<tr>
+<td class="example">class SomeClass {
+  private:
+    int length_;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+
+Apart from its name and its type, the <em>scope</em> of a variable is its
+most important feature. Indicating class scope by using underscore makes it
+easy to distinguish class variables from local scratch variables.
+This is important because class variables are considered to have higher
+significance than method variables, and should be treated with special care
+by the programmer.
+
+<p>
+A side effect of the underscore naming convention is that it nicely resolves
+the problem of finding reasonable variable names for setter methods and
+constructors:
+
+</p><pre>  void setDepth (int depth) {
+    depth_ = depth;
+  }
+</pre>
+
+<p>
+An issue is whether the underscore should be added as a prefix or as a suffix.
+Both practices are commonly used, but the latter is recommended because it
+seem to best preserve the readability of the name.
+
+</p><p>
+It should be noted that scope identification in variables has been
+a controversial issue for quite some time. It seems, though, that this
+practice now is gaining acceptance and that it is becoming more and
+more common as a convention in the professional development community.
+
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+12. 一般变量名需同类型名
+</td>
+</tr>
+
+<tr>
+<td class="example">void setTopic(Topic* topic) <i class="not">// NOT: void setTopic(Topic* value)</i>
+                            <i class="not">// NOT: void setTopic(Topic* aTopic)</i>
+                            <i class="not">// NOT: void setTopic(Topic* t)</i>
+
+void connect(Database* database) <i class="not">// NOT: void connect(Database* db)</i>
+                                 <i class="not">// NOT: void connect (Database* oracleDB)</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+降低名称数目的复杂度, 并且可以有效标明变量类型.
+<p>
+如果无法按这样命名一般来说都说明类型名取的不好
+</p><p>
+非一般变量总有一个<em>角色</em>. 这些变量的名字一般由角色和类型组合而成:
+</p><p>
+</p><pre>  Point startingPoint, centerPoint;
+  Name loginName;
+</pre>
+</td>
+</tr>
+</tbody></table>
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+13. 所有名称都必须使用英语
+</td>
+</tr>
+
+<tr>
+<td class="example">fileName;   <i class="not">// NOT: filNavn</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+英语更通用和便于阅读和维护.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+14. 作用范围广的变量需要有一个比较长的名字, 临时变量可以用短名
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+临时变量越短越好. 程序员看到这样的变量就会知道该变量的作用域就在这几行. 一般
+来说整数使用 <em>i</em>, <em>j</em>, <em>k</em>, <em>m</em>, <em>n</em>, 字符
+使用 <em>c</em> 和 <em>d</em>.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+15. 类名在其方法中应该是默认隐含的, 且应避免出现
+</td>
+</tr>
+
+<tr>
+<td class="example">line.getLength();   <i class="not">// NOT: line.getLineLength();</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+样例中后面那个看起来要更自然, 但是使用时会更麻烦
+</td>
+</tr>
+</tbody></table>
+</p>
+<h3>
+<a name="Specific"></a>3.2 特殊命名规则</h3>
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+17. 当类变量被直接访问时必须加上 <i>get/set</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">employee.getName();
+employee.setName(name);
+
+matrix.getElement(2, 4);
+matrix.setElement(2, 4, value);
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+C++ 通用风格. Java 中已经几乎成标准了.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+18. 如果方法是进行计算则必须在方法名中加上 <i>compute</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">valueSet-&gt;computeAverage();
+matrix-&gt;computeInverse()
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Give the reader the immediate clue that this is a potential time consuming
+operation, and if used repeatedly, he might consider caching the result.
+Consistent use of the term enhances readability.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+19. 如果方法是进行查找则必须在方法名中加上 <i>find</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">vertex.findNearestVertex();
+
+matrix.findMinElement();
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Give the reader the immediate clue that this is a simple look up method
+with a minimum of computations involved.
+Consistent use of the term enhances readability.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+20. 在构建对象时可以使用 <i>initialize</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">printer.initializeFontSet();
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+美式英语中 <i>initialize </i>可以替换成英式英语的
+<i>initialise</i>. 简写 <i>init </i>应该避免.</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+21. 表示 GUI 组件的变量名必须带上该组件类型名为后缀
+</td>
+</tr>
+
+<tr>
+<td class="example">mainWindow, propertiesDialog, widthScale, loginText,
+leftScrollbar, mainForm, fileMenu, minLabel, exitButton, yesToggle etc.
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Enhances readability since the name gives the user an immediate clue of the
+type of the variable and thereby the objects resources.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+22. 如果要表示一系列对象则命名时用复数形式
+</td>
+</tr>
+
+<tr>
+<td class="example">vector&lt;Point&gt; points;
+int values[];
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Enhances readability since the name gives the user an immediate clue of the
+type of the variable and the operations that can be performed on its elements.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+23. 表达对象数目的变量应该加前缀 <i>n</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">nPoints, nLines
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+The notation is taken from mathematics where it is an established
+convention for indicating a number of objects.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+24. 表示下标名的变量应该加后缀 <i>No</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">tableNo, employeeNo
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+The notation is taken from mathematics where it is an established
+convention for indicating an entity number.
+<p>
+An elegant alternative is to prefix such variables
+with an <em>i</em>: <tt>iTable, iEmployee</tt>.
+This effectively makes them <em>named</em> iterators.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+25. 遍历用变量用 <em>i</em>, <em>j</em>, <em>k</em> 等
+</td>
+</tr>
+
+<tr>
+<td class="example">for (int i = 0; i &lt; nTables); i++) {
+  :
+}
+
+for (vector&lt;MyClass&gt;::iterator i = list.begin(); i != list.end(); i++) {
+  Element element = *i;
+  ...
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+The notation is taken from mathematics where it is an established
+convention for indicating iterators.
+<p>
+<em>j</em>, <em>k</em> 等变量应该只在内层循环用
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+26. 布尔变量或方法名应加前缀 <i>is</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">isSet, isVisible, isFinished, isFound, isOpen
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Common practice in the C++ development community and partially enforced
+in Java.
+<p>
+Using the <i>is</i> prefix solves a common problem of
+choosing bad boolean names like <tt>status</tt> or <tt>flag</tt>.
+<tt>isStatus</tt> or <tt>isFlag</tt> simply doesn't fit, and the programmer
+is forced to choose more meaningful names.
+</p><p>
+There are a few alternatives to the <em>is</em> prefix that fits better in some
+situations. These are the <em>has</em>,  <em>can</em> and
+<em>should</em> prefixes:
+</p><p>
+</p><pre>  bool hasLicense();
+  bool canEvaluate();
+  bool shouldSort();
+</pre>
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+27. 配对的操作必须用配对的命名
+</td>
+</tr>
+
+<tr>
+<td class="example">get/set, add/remove, create/destroy, start/stop, insert/delete,
+increment/decrement, old/new, begin/end, first/last, up/down, min/max,
+next/previous, old/new, open/close, show/hide, suspend/resume, etc.
+</td>
+</tr>
+
+<tr>
+<td class="rationale">Reduce complexity by symmetry.</td>
+</tr>
+</tbody></table>
+
+
+<!--
+****************************************************************************
+   Rule
+****************************************************************************
+-->
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+28. 尽量不要用缩写</td>
+</tr>
+
+<tr>
+<td class="example">computeAverage();   <i class="not">// NOT: compAvg();</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+There are two types of words to consider.
+First are the common words listed in a language dictionary.
+These must never be abbreviated. Never write:
+<p>
+<tt>cmd&nbsp;&nbsp; </tt> instead of <tt> &nbsp; command</tt><br>
+<tt>cp &nbsp;&nbsp; </tt> instead of <tt> &nbsp; copy</tt><br>
+<tt>pt &nbsp;&nbsp; </tt> instead of <tt> &nbsp; point</tt><br>
+<tt>comp&nbsp;      </tt> instead of <tt> &nbsp; compute</tt><br>
+<tt>init&nbsp;      </tt> instead of <tt> &nbsp; initialize</tt><br>
+etc.<br>
+</p><p>
+Then there are domain specific phrases that are more naturally
+known through their abbreviations/acronym. These phrases should be kept
+abbreviated. Never write:
+</p><p>
+<tt>  HypertextMarkupLanguage&nbsp;</tt>  instead of <tt> &nbsp; html</tt><br>
+<tt>  CentralProcessingUnit &nbsp;&nbsp;</tt>   instead of <tt> &nbsp; cpu</tt><br>
+<tt>  PriceEarningRatio &nbsp;&nbsp; &nbsp; &nbsp;</tt>  instead of <tt> &nbsp; pe</tt><br>
+etc.
+
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+29. 不需要特意标明指针
+</td>
+</tr>
+
+<tr>
+<td class="example">Line* line; <i class="not">// NOT: Line* pLine;
+            <i class="not">// NOT: LIne* linePtr;
+</i></i></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Many variables in a C/C++ environment are pointers, so a convention like
+this is almost impossible to follow. Also objects in C++ are often oblique
+types where the specific implementation should be ignored by the programmer.
+Only when the actual type of an object is of special significance, the name
+should empahsize the type.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+30. 绝对不能用反义的布尔变量
+</td>
+</tr>
+
+<tr>
+<td class="example">bool isError; <i class="not">// NOT: isNoError</i>
+bool isFound; <i class="not">// NOT: isNotFound</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+The problem arises when such a name is used in conjunction with the logical
+negation operator as this results in a double negative.
+It is not immediately apparent what <tt>!isNotFound</tt>
+means.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+31. 枚举类型可以加一个通用类型前缀
+</td>
+</tr>
+
+<tr>
+<td class="example">enum Color {
+  COLOR_RED,
+  COLOR_GREEN,
+  COLOR_BLUE
+};
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This gives additional information of where the declaration can be found,
+which constants belongs together, and what concept the constants represent.
+<p>
+An alternative approach is to always refer to the constants through their
+common type: <tt>Color::RED</tt>, <tt>Airline::AIR_FRANCE</tt> etc.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+32. 异常类应该加后缀 <em>Exception</em>
+</td>
+</tr>
+
+<tr>
+<td class="example">class AccessException {
+  :
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Exception classes are really not part of the main design of the program, and
+naming them like this makes them stand out relative to the other classes.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+33. 函数 (有返回值的方法) 应该在他们返回值定义后定义, 过程 (<i>void</i> methods) 
+在他们完成的任务后定义
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Increase readability. Makes it clear what the unit should do and especially
+all the things it is not supposed to do. This again makes it easier to keep
+the code clean of side effects.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+</p><h1>
+<a name="Files"></a>4 文件
+</h1>
+
+<h3>
+<a name="Source Files"></a>4.1 源代码文件
+</h3>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+34. C++ 头文件必须使用扩展名 <i>.h</i>. 源代码文件必须使用扩展名 <i>.cc</i>
+</td>
+</tr>
+
+<tr>
+<td class="example">myClass.cc, myClass.h
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+These are all accepted C++ standards for file extension.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+35. 一个类必须在一个头文件中申明并在与类名同名的源文件中实现, 文件名使用小写开头驼峰表达式
+</td>
+</tr>
+
+<tr>
+<td class="example">myClass.h, myClass.cc
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Makes it easy to find the associated files of a given class.
+An obvious exception is template classes that must be both declared
+and defined inside a .h file.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+36. 所有实现均应该在源文件中进行
+</td>
+</tr>
+
+<tr>
+<td class="example">class MyClass {
+public:
+  int getValue () {return value_;}  <i class="not">// NO!</i>
+  ...
+
+private:
+  int value_;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+The header files should declare an interface, the source file should
+implement it. When looking for an implementation, the programmer should
+always know that it is found in the source file.
+The obvious exception to this rule is of course inline functions that
+must be defined in the header file.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+37. 文件正文必须不能超过 80 列
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+80 columns is a common dimension for editors, terminal emulators,
+printers and
+debuggers, and files that are shared between several people should keep within
+these constraints. It improves readability when unintentional line breaks are
+avoided when passing a file between programmers.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+38. 不能使用 TAB 或者换页符, 全部用空格
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+These characters are bound to cause problem for editors, printers, terminal
+emulators or debuggers when used in a multi-programmer, multi-platform
+environment.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+39. 跨行表达式的含义必须是明显的, 连接操作符停留在上一行
+</td>
+</tr>
+
+<tr>
+<td class="example">totalSum = a + b + c +
+           d + e;
+
+function (param1, param2,
+          param3);
+
+setText ("Long line split"
+         "into two parts.");
+
+for (int tableNo = 0; tableNo &lt; nTables;
+     tableNo += tableStep) {
+  ...
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+当一个表达式超过 80 列时拆行. 但是规则很难定, 上面的例子可以作为参考.
+
+<p>
+一般来说:
+</p><ul>
+<li> 在逗号后拆行</li>
+<li> 在一个操作符后拆行</li>
+<li> 新行要与上一行表达式对齐</li>
+</ul>
+
+</td>
+</tr>
+</tbody></table>
+</p>
+<h3>
+<a name="Include Files"></a>4.2 包含文件和包含文件表达式</h3>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+40. 头文件必须要有包含标记
+</td>
+</tr>
+
+<tr>
+<td class="example">#ifndef _COM_COMPANY_MODULE_CLASSNAME_H__
+#define _COM_COMPANY_MODULE_CLASSNAME_H__
+  :
+#endif
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+标记可以避免编译错误. 标记的命名规则是全大写, 用下划线隔开路径名, 文件名单词和
+扩展名标识符, 且有一个下划线做前缀, 两个下划线做后缀. 路径名应该是本项目中的文
+件树组织结构描述
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+41. 包含文件应该排序并且分组. 越底层的系统文件处于排序越靠前的位置, 同组的文件
+按字母序排序, 组和组之间用空行隔开
+</td>
+</tr>
+
+<tr>
+<td class="example">#include &lt;fstream&gt;
+#include &lt;iomanip&gt;
+
+#include &lt;qt/qbutton.h&gt;
+#include &lt;qt/qtextfield.h&gt;
+
+#include "com/company/ui/PropertiesDialog.h"
+#include "com/company/ui/MainWindow.h"
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+In addition to show the reader the individual include files, it also give an
+immediate clue about the modules that are involved.
+<p>
+包含的文件都不允许使用绝对路径, 使用相对路径让编译器来定位根目录位置
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+42. 文件包含表达式必须只出现于文件头部
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Common practice. Avoid unwanted compilation side effects by "hidden"
+include statements deep into a source file.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+</p>
+<h1>
+<a name="Statements"></a>5 表达式
+</h1>
+
+<h3>
+<a name="Types"></a>5.1 类型</h3>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+43. 只在一个文件内使用的类型应该只在该文件内定义
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Enforces information hiding.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+44. 类必须按 <i>public</i>, <i>protected</i> 和 <i>private</i> 的顺序排序.
+所有部分必须明确定义. 无用的实现部分应该丢弃.
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+The ordering is <i>"most public first"</i> so people who only wish to use
+the class can stop reading when they reach the protected/private
+sections.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+45. 类型转换必须显式进行. 绝对不允许隐式类型转换
+</td>
+</tr>
+
+<tr>
+<td class="example">floatValue = static_cast&lt;float&gt;(intValue); <i class="not">// NOT: floatValue = intValue;</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+By this, the programmer indicates that he is aware of the different types
+involved and that the mix is intentional.
+</td>
+</tr>
+</tbody></table>
+
+</p><h3>
+<a name="Variables"></a>5.2 变量</h3>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+46. 变量定义时就应该被初始化
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+这样可以保证变量在任何时间都是有效的. 但是有时候变量不可能被初始化为一个有效值, 比如:
+<p>
+</p><pre>  int x, y, z;
+  getCenter(&amp;x, &amp;y, &amp;z);
+</pre>
+
+<p>
+这种情况下将其保留为未初始化的好于将其初始化为一个可能出错的值.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+47. 变量绝对不能有多重含义
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Enhance readability by ensuring all concepts are represented
+uniquely. Reduce chance of error by side effects.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+48. 尽量少的使用全局变量
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+In C++ there is no reason global variables need to be used at all.
+The same is true for global functions or file scope (static) variables.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+49. 类变量应该永远不申明为 public 类型
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+The concept of C++ information hiding and encapsulation is violated by public
+variables. Use private variables and access functions instead.
+One exception to this rule is when the class is essentially a data structure,
+with no behavior (equivalent to a C <em>struct</em>). In this case
+it is appropriate to make the class' instance variables public [2].
+<p>
+Note that <i>struct</i>s are kept in C++ for compatibility with C only, and
+avoiding them increases the readability of the code by reducing the number
+of constructs used. Use a class instead.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+51. C++ 中的指针和引用应该使之引用符号紧接类型而不是名称
+</td>
+</tr>
+
+<tr>
+<td class="example">float* x; <i class="not">// NOT: float *x; </i>
+int&amp; y;   <i class="not">// NOT: int &amp;y;<i>
+</i></i></td>
+</tr>
+
+<tr>
+<td class="rationale">
+The <em>pointer-ness</em> or <em>reference-ness</em> of a variable is a
+property of the type rather than the name. C-programmers often use the
+alternative approach, while in C++ it has become more common to follow
+this recommendation.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+53. 布尔变量及指针需要跟 <i>0</i> 比较时必须显式进行
+</td>
+</tr>
+
+<tr>
+<td class="example">if (nLines != 0)  <i class="not">// NOT: if (nLines)</i>
+if (value != 0.0) <i class="not">// NOT: if (value)
+</i></td>
+</tr>
+
+<tr>
+<td class="rationale">
+It is not necessarily defined by the C++ standard that ints and floats 0 are
+implemented as binary 0. Also, by using explicit test the statement give
+immediate clue of the type being tested.
+<p>
+It is common also to suggest that
+pointers shouldn't test implicit for 0 either, i.e. <tt>if (line == 0)</tt>
+instead of <tt>if (line)</tt>. The latter is regarded so common
+in C/C++ however that it can be used.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+54. 变量申明应在尽可能小的作用域
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Keeping the operations on a variable within a small scope, it is easier to
+control the effects and side effects of the variable.
+</td>
+</tr>
+</tbody></table>
+
+</p><h3> <a name="Loops"></a>5.3 循环</h3>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+55. 只有控制循环的表达式能在 <tt>for()</tt> 的初始化部分出现
+</td>
+</tr>
+
+<tr>
+<td class="example">sum = 0;                       <i class="not">// NOT: for (i = 0, sum = 0; i &lt; 100; i++)</i>
+for (i = 0; i &lt; 100; i++)   <i class="not">             sum += value[i];</i>
+  sum += value[i];
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Increase maintainability and readability. Make a clear distinction of
+what <em>controls</em> and what is <em>contained</em> in the loop.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+56. 循环变量应在紧接循环开始前初始化
+</td>
+</tr>
+
+<tr>
+<td class="example">
+isDone = false;           <i class="not">// NOT: bool isDone = false;</i>
+while (!isDone) {         <i class="not">//      :</i>
+  :                       <i class="not">//      while (!isDone) {</i>
+}                         <i class="not">//        :</i>
+                          <i class="not">//      }</i>
+
+</td>
+</tr>
+
+<tr>
+<td class="ralionale"></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+57. 应避免使用 <tt>do-while</tt> 循环
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+<em>do-while</em> loops are less readable than ordinary <em>while</em> loops
+and <em>for</em> loops
+since the conditional is at the bottom of the loop. The reader must
+scan the entire loop in order to understand the scope of the loop.
+<p>
+In addition, <em>do-while</em> loops are not needed. Any <em>do-while</em>
+loop can easily be rewritten into a <em>while</em> loop or a <em>for</em>
+loop. Reducing the number of constructs used enhance readbility.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+58. 应避免在循环内使用 <tt>break</tt> 和 <tt>continue</tt>
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+只有在能保证更好的可阅读情况下才使用这样破坏程序结构的表达式
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+60. 死循环使用 <tt>while(true)</tt> 格式
+</td>
+</tr>
+
+<tr>
+<td class="example">while (true) {
+  :
+}
+<i class="not">
+for (;;) {  // NO!
+  :
+}
+
+while (1) { // NO!
+  :
+}
+</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+跟 1 比较没必要并且也不便于理解. <tt>for (;;)</tt> 格式不便于阅读, 也不便于理解这是个死循环
+actually is an infinite loop.
+</td>
+</tr>
+</tbody></table>
+
+</p><h3>
+<a name="Conditionals"></a>5.4 条件式</h3>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+61. 复杂的条件式必须被避免, 引入临时布尔变量来代替
+</td>
+</tr>
+
+<tr>
+<td class="example">
+bool isFinished = (elementNo &lt; 0) || (elementNo &gt; maxElement);
+bool isRepeatedEntry = (elementNo == lastElement);
+if (isFinished || isRepeatedEntry) {
+  :
+}
+
+<i class="not">// NOT:
+if ((elementNo &lt; 0) || (elementNo &gt; maxElement)||
+     elementNo == lastElement) {
+  :
+}
+</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+By assigning boolean variables to expressions, the program gets automatic
+documentation. The construction will be easier to read, debug and
+maintain.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+62. 正常的情况处理应该放在 <i>if</i> 部分, 异常情况在 <i>else</i> 部分中处理
+</td>
+</tr>
+
+<tr>
+<td class="example">bool isOk = readFile (fileName);
+if (isOk) {
+  :
+}
+else {
+  :
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Makes sure that the exceptions don't obscure the normal path of execution.
+This is important for both the readability and performance.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+63. 条件判断式单独放一行
+</td>
+</tr>
+
+<tr>
+<td class="example">
+if (isDone)       <i class="not">// NOT: if (isDone) doCleanup();</i>
+  doCleanup();
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This is for debugging purposes. When writing on a single line, it is not
+apparent whether the test is really true or not.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+64. 可执行表达式不应该出现为条件判断式
+</td>
+</tr>
+
+<tr>
+<td class="example">
+File* fileHandle = open(fileName, "w");
+if (!fileHandle) {
+  :
+}
+
+<i class="not">// NOT:
+if (!(fileHandle = open(fileName, "w"))) {
+  :
+}
+</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Conditionals with executable statements are just very difficult to read.
+This is especially true for programmers new to C/C++.
+</td>
+</tr>
+</tbody></table>
+
+
+
+</p><h3> <a name="Misc"></a>5.5 杂项</h3>
+
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+65. 代码中不应直接出现数字. 除 <i>0 </i>和 <i>1 </i>外的任何数字均应以常量的形式出现
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+If the number does not have an obvious meaning by itself, the readability is
+enhanced by introducing a named constant instead.
+A different approach is to introduce a method from which the constant can
+be accessed.
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+66. 浮点数常量必须使用十进制并保留一位小数
+</td>
+</tr>
+
+<tr><td class="example">
+double total = 0.0;    <i class="not">// NOT:  double total = 0;</i>
+double speed = 3.0e8;  <i class="not">// NOT:  double speed = 3e8;</i>
+
+double sum;
+:
+sum = (a + b) * 10.0;
+
+</td></tr>
+
+<tr>
+<td class="rationale">
+This emphasize the different nature of integer and floating
+point numbers. Mathematically the two model completely different
+and non-compatible concepts.
+<p>
+Also, as in the last example above, it emphasize the type of the assigned
+variable (<tt>sum</tt>) at a point in the code where this might not be
+evident.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+67. 浮点数常量的小数点前必须要有至少一位数字
+</td>
+</tr>
+
+<tr><td class="example">
+double total = 0.5;  <i class="not">// NOT:  double total = .5;</i>
+</td></tr>
+
+<tr>
+<td class="rationale">
+The number and expression system in C++ is borrowed from mathematics
+and one should adhere to mathematical conventions for syntax wherever
+possible.
+Also, 0.5 is a lot more readable than .5;
+There is no way it can be mixed with the integer 5.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+68. 函数必须显式给出返回值类型
+</td>
+</tr>
+
+<tr>
+<td class="example">
+int getValue()   <i class="not">// NOT: getValue()</i> {
+  :
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+If not exlicitly listed, C++ implies <tt>int</tt> return value for
+functions. A programmer must never rely on this feature, since this
+might be confusing for programmers not aware of this artifact.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+69. 不应该使用 <tt>goto</tt> 语句
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Goto statements violates the idea of structured code. Only in some very few
+cases (for instance breaking out of deeply nested structures) should goto be
+considered, and only if the alternative structured counterpart is proven to
+be less readable.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+70. 用 <i>0</i> 代替 <tt>NULL<tt>
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+<tt>NULL</tt> is part of the standard C library, but is made obsolete in C++.
+</td>
+</tr>
+</tbody></table>
+
+
+</p><p>
+</p><h1>
+<a name="Layout and Comments"></a>6 代码风格和注释
+</h1>
+
+<h3>
+<a name="Layout"></a>6.1 代码风格</h3>
+
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+71. 默认缩进 2 个空格
+</td>
+</tr>
+
+<tr>
+<td class="example">for (i = 0; i &lt; nElements; i++)
+  a[i] = 0;
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Indentation of 1 is to small to emphasize the logical layout of the code.
+Indentation larger than 4 makes deeply nested code difficult to read and
+increase the chance that the lines must be split. Choosing between
+indentation of 2, 3 and 4,&nbsp; 2 and 4 are the more common, and 2 chosen
+to reduce the chance of splitting code lines.
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom" colspan="3">
+72. 语句块可以使用下面示例 1(推荐) 或示例 2 中的格式, 但是坚决不能用示例 3 的
+格式. 类语句块必须用示例 2 的格式
+</td>
+</tr>
+
+<tr>
+<td class="example" width="33%">while (!done) {
+  doSomething();
+  done = moreToDo();
+}<br>
+</td>
+
+<td class="example" width="33%">while (!done)
+{
+  doSomething();
+  done = moreToDo();
+}
+</td>
+
+<td class="example"><i class="not">while (!done)
+  {
+    doSomething();
+    done = moreToDo();
+  }
+</i>
+</td>
+</tr>
+
+<tr>
+<td colspan="3" class="rationale">
+Example 3 introduce an extra indentation level which doesn't emphasize the
+logical structure of the code as clearly as example 1 and 2.&nbsp;
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+73. 类申明应该按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">class SomeClass : public BaseClass
+{
+  public:
+    ...
+
+  protected:
+    ...
+
+  private:
+    ...
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This follows partly from the general block rule above.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+74. 方法定义应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">void someMethod() {
+  ...
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This follows from the general block rule above.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+75. <tt>if-else</tt> 类表达式应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">if (condition) {
+  statements;
+}
+
+if (condition) {
+  statements;
+} else {
+   statements;
+}
+
+if (condition) {
+  statements;
+} else if (condition) {
+  statements;
+} else {
+  statements;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+76. <tt>for</tt> 表达式应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">for (initialization; condition; update) {
+  statements;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This follows from the general block rule above.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+77. 空的 <tt>for</tt> 表达式应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">for (initialization; condition; update) <i class="not">// NOT: for (initialization; condition; update);</i>
+  ;
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+必须把表示循环结束的分号另起一行, 保证可阅读性, 虽然空循环应该被避免
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+78. <tt>while</tt> 表达式应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">while (condition) {
+  statements;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This follows from the general block rule above.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+79. <tt>do-while</tt> 表达式应按照如下格式(!不推荐使用 <tt>do-while</tt> 表达式)
+</td>
+</tr>
+
+<tr>
+<td class="example">do {
+  statements;
+} while (condition);
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This follows from the general block rule above.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+80. <tt>switch</tt> 语句应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">switch (condition) {
+  case ABC :
+    statements;
+    // Fallthrough
+
+  case DEF :
+    statements;
+    break;
+
+  case XYZ :
+    statements;
+    break;
+
+  default :
+    statements;
+    break;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+注意每个 <tt>case</tt> 关键字都相对整个 <tt>switch</tt> 语句缩进. 这样可以清晰
+标注出整个 <tt>switch</tt> 语句块. 并请注意分号前的空格. 当一个 <tt>case</tt>
+语句没有 <tt>break</tt> 语句时, 必须显式给出 <i>Fallthrough</i> 的注释. 没有
+<tt>break</tt> 是一个常见问题, 当没有时必须显式说明.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+81. <tt>try-catch</tt> 语句应按照如下格式
+</td>
+</tr>
+
+<tr>
+<td class="example">try {
+  statements;
+} catch (Exception&amp; exception) {
+  statements;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This follows partly from the general block rule above.
+The discussion about closing brackets for <tt>if-else</tt> statements
+apply to the <tt>try-catch</tt> statments.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+82. 独立的 <tt>if-else</tt>, <tt>for</tt> 或 <tt>while</tt>
+语句可以不用括号
+</td>
+</tr>
+
+<tr>
+<td class="example">if (condition)
+  statement;
+
+while (condition)
+  statement;
+
+for (initialization; condition; update)
+  statement;
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+It is a common recommendation that brackets
+should always be used in all these cases. However, brackets are in general
+a language construct that groups several statements. Brackets are per
+definition superfluous on a single statement.
+
+A common argument against this syntax is that the code will break
+<em>if</em> an additional statement is added without also adding
+the brackets. In general however, code should never be written to
+accommodate for changes that <em>might</em> arise.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+83. 函数返回类型可以在函数名前另起一行
+</td>
+</tr>
+
+<tr>
+<td class="example">void
+MyClass::myMethod(void) {
+  :
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This makes it easier to spot function names within a file since
+they all start in the first column.
+</td>
+</tr>
+</tbody></table>
+
+
+</p><h3> <a name="White Space"></a>6.2 空格</h3>
+
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+84.<br>
+- 操作符左右应都有一个空格<br>
+- C++ 保留字应跟一个空格<br>
+- 逗号后应跟一个空格<br>
+- 冒号左右应都有一个空格<br>
+- <tt>for</tt> 语句的三个部分应用空格隔开
+</td>
+</tr>
+
+<tr>
+<td class="example">a = (b + c) * d; <i class="not">// NOT: a=(b+c)*d</i>
+
+while (true) {  <i class="not">// NOT: while(true) { </i>
+  ...
+
+doSomething(a, b, c, d);  <i class="not">// NOT: doSomething(a,b,c,d);</i>
+
+case 100 :  <i class="not">// NOT: case 100:</i>
+
+for (i = 0; i &lt; 10; i++) {  <i class="not">// NOT: for(i=0;i&lt;10;i++){<i>
+  ...
+</i></i></td>
+</tr>
+
+
+<tr>
+<td class="rationale">
+Makes the individual components of the statements stand out. Enhances
+readability. It is difficult to give a complete list of the suggested use of
+whitespace in C++ code. The examples above however should give a general idea
+of the intentions.
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+85. 方法名后可以跟一个空格, 如果后面还有名字
+</td>
+</tr>
+
+<tr>
+<td class="example">doSomething (currentFile);
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Makes the individual names stand out. Enhances readability. When no name
+follows, the space can be omitted (<tt>doSomething()</tt>) since there is no
+doubt about the name in this case.
+<p>
+An alternative to this approach is to
+require a space <i>after</i> the opening parenthesis. Those that adhere
+to this standard usually also leave a space before the closing parentheses:
+<tt>doSomething( currentFile );</tt>. This do make the individual names stand
+out as is the intention, but the space before the closing parenthesis is
+rather artificial, and without this space the statement looks rather
+asymmetrical (<tt>doSomething( currentFile);</tt>).
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+86. 语句块中逻辑单元应该用空行隔开
+</td>
+</tr>
+
+<tr>
+<td class="example">
+Matrix4x4 matrix = new Matrix4x4();
+
+double cosAngle = Math.cos(angle);
+double sinAngle = Math.sin(angle);
+
+matrix.setElement(1, 1,  cosAngle);
+matrix.setElement(1, 2,  sinAngle);
+matrix.setElement(2, 1, -sinAngle);
+matrix.setElement(2, 2,  cosAngle);
+
+multiply(matrix);
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Enhance readability by introducing white space between logical units of
+a block.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+87. 方法之间用空行隔开
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+By making the space larger than space within a method, the methods will
+stand out within the class.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+88. 变量定义时跟类型之间空一格
+</td>
+</tr>
+
+<tr>
+<td class="example">AsciiFile* file;
+int nPoints;
+float x, y;
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+Enhance readability. The variables are easier to spot from the types by
+alignment.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+89. 如果阅读性需要可以对齐
+</td>
+</tr>
+
+<tr>
+<td class="example">
+if (a == lowValue)
+  compueSomething();
+else if (a == mediumValue)
+  computeSomethingElse();
+else if (a == highValue)
+  computeSomethingElseYet();
+
+value = (potential * oilDensity) / constant1 +
+        (depth * waterDensity) / constant2 +
+        (zCoordinateValue * gasDensity) / constant3;
+
+minPosition = computeDistance(min, x, y, z);
+averagePosition = computeDistance(average, x, y, z);
+
+switch (value) {
+  case PHASE_OIL   : strcpy(phase, "Oil");   break;
+  case PHASE_WATER : strcpy(phase, "Water"); break;
+  case PHASE_GAS   : strcpy(phase, "Gas");   break;
+}
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+There are a number of places in the code where white space can
+be included to enhance readability even if this violates common guidelines.
+Many of these cases have to do with code alignment. General guidelines on
+code alignment are difficult to give, but the examples above should give
+a general clue.
+</td>
+</tr>
+</tbody></table>
+
+</p><h3> <a name="Comments"></a>6.3 注释</h3>
+
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+90. 太过技巧性的代码应该重写而不是写注释
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+In general, the use of comments should be minimized by making
+the code self-documenting by appropriate name choices and an explicit
+logical structure.
+</td>
+</tr>
+</tbody></table>
+
+<p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+91. 所有注释都必须以英文出现
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+英语可以更好的国际化, 如果非用中文不可, 使用 UTF-8 编码
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+92. 所有注释均使用 <i>//</i>, 多行注释也一样
+</td>
+</tr>
+
+<tr>
+<td class="example">// Comment spanning
+// more than one line.
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+只有 debug 的时候才允许使用 <tt>/* */</tt> 注释, 且最后代码里必须没有 <tt>/* */</tt>.
+<p>
+注释正文与 <tt>//</tt> 间空一格, 且注释正文符合英文语法, 即以大写字母开始, 句号结束
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+93. 注释应该与其注释的内容关联并对齐
+</td>
+</tr>
+
+<tr>
+<td class="example">while (true) {       <i class="not">// NOT:  while (true) { </i>
+  // Do something    <i class="not">         // Do something</i>
+  something();       <i class="not">           something();</i>
+}                    <i class="not">         }</i>
+</td>
+</tr>
+
+<tr>
+<td class="rationale">
+This is to avoid that the comments break the logical structure of the
+program.
+</td>
+</tr>
+</tbody></table>
+
+</p><p>
+<table class="rule" width="100%">
+<tbody><tr>
+<td class="recom">
+94. 类和方法名前的注释应该按照 JavaDoc 格式
+</td>
+</tr>
+
+<tr>
+<td class="example"></td>
+</tr>
+
+<tr>
+<td class="rationale">
+Regarding standardized class and method documentation the Java development
+community is more mature than the C/C++ one. This is due to the standard
+automatic Javadoc tool that is part of the development kit and that
+help producing high quality hypertext documentation from these comments.
+<p>
+There are Javadoc-like tools available also for C++. These follows
+the same tagging syntax as Javadoc. See for instance
+<a href="http://www.zib.de/Visual/software/doc++/">Doc++</a> or
+<a href="http://www.stack.nl/%7Edimitri/doxygen/index.html">Doxygen</a>.
+</p></td>
+</tr>
+</tbody></table>
+
+</p><p>
+</p>
+
+
+</body>
