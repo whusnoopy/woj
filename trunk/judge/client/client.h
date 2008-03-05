@@ -5,8 +5,8 @@
 #define _FLOOD_JUDGE_CLIENT_CLIENT_H__
 
 enum COMMUNICATION_STATUS {
-	FIRST,
-  ACCEPT = 0,             // 0. Correct answer
+  FIRST_STATUS,
+  ACCEPTED = 0,           // 0. Correct answer
   PRESENTATION_ERROR,     // 1. Presentation error
   TIME_LIMIT_EXCEED,      // 2. Time limit exceed
   MEMORY_LIMIT_EXCEED,    // 3. Memory limit exceed
@@ -28,7 +28,12 @@ enum COMMUNICATION_STATUS {
   PENDING,                // 15. Pending for Judge
   COMPILING,              // 16. Judge is compiling the source file
   RUNNING,                // 17. Judge is running the submit executable file
-  JUDGING                 // 18. Judge is compare the submit result and the
+  JUDGING,                // 18. Judge is compare the submit result and the
                           //     standard output
-}
+  LAST_JUDGE_STATUS,
+  FIRST_REPLY_STATUS = 100,
+  READY = 100,            // 100. Judge is ready to judge
+  LAST_STATUS,
+};
+
 #endif
