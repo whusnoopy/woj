@@ -16,7 +16,17 @@
 void process(int communicate_socket) {
 }
 
+int terminated = 0;
+
+void sigterm_handler(int siginal) {
+  terminated = 1;
+}
+
 int main(int argc, char* argv[]) {
+
+  sigset_t mask;
+  sigemptyset(&mask);
+  install_signal_handler(SIGTERM, sigterm_handler, 0, mask);
 
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
   struct socketaddr_in server_address;

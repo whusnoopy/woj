@@ -36,4 +36,6 @@ enum COMMUNICATION_STATUS {
   LAST_STATUS,
 };
 
+const int COMPILE_TIME_LIMIT = 30;
+
 #endif

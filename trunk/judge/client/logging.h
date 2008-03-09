@@ -15,10 +15,6 @@ enum LOG_LEVEL {
   SYS_ERROR = 0, ERROR, WARNING, FATAL, INFO, DEBUG
 };
 
-const string LOG_LEVEL_NAME[] = {
-  "SYS_ERROR", "ERROR", "WARNING", "FATAL", "INFO", "DEBUG"
-};
-
 class Log {
   public :
     Log(const char* filename, int line_number, int level);

@@ -8,6 +8,10 @@
 
 #include "logging.h"
 
+const string LOG_LEVEL_NAME[] = {
+  "SYS_ERROR", "ERROR", "WARNING", "FATAL", "INFO", "DEBUG"
+};
+
 class LogFile {
   public :
     ~LogFile() {
