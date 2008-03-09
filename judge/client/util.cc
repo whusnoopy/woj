@@ -8,10 +8,30 @@
 #include "logging.h"
 #include "util.h"
 
+ssize_t socket_read(int communicate_socket,
+                    void* buffer,
+                    size_t buffer_length) {
+  char* cs = static_cast<char*>(buffer);
+  while (buffer_length > 0) {
+    ssize_t receive_length = read(communicate_socket, cs, buffer_length);
+    if (receive_length == -1) {
+      if (errno == EINTR) {
+        // continue;
+      }
+      LOG(SYS_ERROR) << "Fail to read from socket: " << communicate_socket;
+    } else if (receive_length == 0) {
+      break;
+    }
+    cs += receive_length;
+    buffer_length -= receive_length;
+  }
+  return cs - static_cast<char*>(buffer);
+}
+
 int socket_write(int communicate_socket,
                  const void* buffer,
                  size_t buffer_length) {
-  const char* cs = (const char*) buffer;
+  const char* cs = static_cast<const char*>(buffer);
   while (buffer_length > 0) {
     int sent_length = write(communicate_socket, cs, buffer_length);
     if (sent_length == -1) {

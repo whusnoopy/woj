@@ -8,6 +8,10 @@
 
 using namespace std;
 
+ssize_t socket_read(int communicate_socket,
+                    void* buffer,
+                    size_t buffer_length);
+
 int socket_write(int communicate_socket,
                  const void* buffer,
                  size_t buffer_length);
