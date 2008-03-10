@@ -20,6 +20,8 @@ static inline int sendReply(int communicate_socket, char reply_message) {
   return socket_write(communicate_socket, &reply_message, 1);
 }
 
+string stringPrintf(const char* format, ...);
+
 string getLocalTimeAsString(const char* format);
 
 #endif

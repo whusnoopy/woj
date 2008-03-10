@@ -73,8 +73,8 @@ bool FlagsInfo::assign(const string& value) {
 
 static void printUsage() {
   cout << "Usage: judge [options]" << endl;
-  for (int i = 0; i < infoList->size(); ++i) {
-    (*infoList)[i]->print();
+  for (int i = 0; i < flags_list->size(); ++i) {
+    (*flags_list)[i]->print();
   }
 }
 
@@ -88,7 +88,7 @@ int parseFlags(int argc, char* argv[]) {
       char* cs = argv[i] + 2;
       while (*cs && *cs != '=')
         ++cs;
-      string name(argv[i] + 2, p - argv[i] - 2);
+      string name(argv[i] + 2, cs - argv[i] - 2);
       bool found = false;
       for (int j = 0; j < flags_list->size(); ++j) {
         if ((*flags_list)[j]->name() == name) {
@@ -99,12 +99,12 @@ int parseFlags(int argc, char* argv[]) {
               return -1;
             }
           } else {
-            if ((*flag_list)[j]->type() != "bool") {
+            if ((*flags_list)[j]->type() != "bool") {
               cerr << "Missing value for flag " << name << endl;
               printUsage();
               return -1;
             }
-            (*flag_list)[j]->assign("true");
+            (*flags_list)[j]->assign("true");
           }
           found = true;
           assigned[j] = true;
@@ -114,23 +114,17 @@ int parseFlags(int argc, char* argv[]) {
       if (!found) {
         cerr << "Invalid flag " << name << endl;
         printUsage();
-        return -1
-      }
-    }
-  }
-  for (int i = 0; i < flags_list->size(); ++i) {
-    if (!assigned[i]) {
-      if ((*flags_list)[i]->optional()) {
-        (*flags_list)[i]->assign((*flags_list)[i]->default_value());
-      } else {
-        cerr << "Missing flag " << (*flags_list)[i]->name() << endl;
-        printUsage();
         return -1;
       }
     }
   }
+  for (int i = 0; i < flags_list->size(); ++i) {
+    if (!assigned[i] && !(*flags_list)[i]->optional()) {
+      cerr << "Missing flag " << (*flags_list)[i]->name() << endl;
+      printUsage();
+      return -1;
+    }
+  }
   return 0;
 }
-
-#endif
 

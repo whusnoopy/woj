@@ -40,11 +40,11 @@ class FlagsInfo {
                           &FLAGS_##name)
 
 #define DEFINE_OPTIONAL_FLAGS(type, name, default_value, description) \
-  type FLAGS_##name; \
+  type FLAGS_##name = #default_value; \
   FlagsInfo _flags_##name(#type, #name, #default_value, description, true, \
                           &FLAGS_##name)
 
-#define DECLAR_FLAGS(type, name) \
+#define DECLARE_FLAGS(type, name) \
   extern type FLAGS_##name
 
 // Extracts paramenter values from the passed-in arguments.

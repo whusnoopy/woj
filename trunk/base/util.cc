@@ -4,6 +4,7 @@
 #include <string>
 
 #include <errno.h>
+#include <stdarg.h>
 
 #include "base/logging.h"
 #include "base/util.h"
@@ -44,6 +45,15 @@ int socket_write(int communicate_socket,
     buffer_length -= sent_length;
   }
   return 0;
+}
+
+string stringPrintf(const char* format, ...) {
+  va_list args;
+  char buffer[1024];
+  va_start(args, format);
+  vsnprintf(buffer, sizeof(buffer), format, args);
+  va_end(args);
+  return buffer;
 }
 
 string getLocalTimeAsString(const char* format) {
