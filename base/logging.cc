@@ -4,9 +4,10 @@
 #include <errno.h>
 #include <syslog.h>
 
-#include "util.h"
+#include "base/flags.h"
+#include "base/util.h"
 
-#include "logging.h"
+#include "base/logging.h"
 
 const string LOG_LEVEL_NAME[] = {
   "SYS_ERROR", "ERROR", "WARNING", "FATAL", "INFO", "DEBUG"
