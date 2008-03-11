@@ -7,11 +7,11 @@ CREATE TABLE users
   solveds int(11) DEFAULT 0,
   available char(1) DEFAULT 'N',
   last_login_ip varchar(20),
-  last_login_time datatime,
+  last_login_time datetime,
   volume int(11),
   language tinyint(4),
   password text NOT NULL,
-  reg_time datatime NOT NULL,
+  reg_time datetime NOT NULL,
   nickname varchar(100),
   school varchar(100),
   permission char(6) DEFAULT '------',
@@ -35,7 +35,7 @@ CREATE TABLE problems
   time_limit int(11) NOT NULL,
   case_time_limit int(11) NOT NULL,
   memory_limit int(11) NOT NULL,
-  available char(1) DEFAULT 'N'
+  available char(1) DEFAULT 'N',
   accepted int(11) DEFAULT 0,
   submit int(11) DEFAULT 0,
   solved_users int(11) DEFAULT 0,
@@ -50,9 +50,9 @@ CREATE TABLE contests
   contest_id int(11) NOT NULL AUTO_INCREMENT,
   public_id int(11) DEFAULT 0,
   title varchar(200) NOT NULL,
-  starttime datetime NOT NULL,
-  starttime datetime NOT NULL,
-  type char(1) DEFAULT 'N',
+  start_time datetime NOT NULL,
+  end_time datetime NOT NULL,
+  contest_type char(1) DEFAULT 'N',
   description text,
   PRIMARY KEY(contest_id)
 )
@@ -63,14 +63,14 @@ CREATE TABLE mails
   topic_id int(11) NOT NULL,
   title varchar(200) NOT NULL,
   content text,
-  read bool DEFAULT 'N'
+  unread char(1) DEFAULT 'Y',
   time datetime NOT NULL,
-  touser varchar(20) NOT NULL,
-  fromuser varchar(20) NOT NULL,
+  to_user varchar(20) NOT NULL,
+  from_user varchar(20) NOT NULL,
   PRIMARY KEY(mail_id),
-  FOREIGN KEY(touser) REFERENCES users,
-  FOREIGN KEY(fromuser) REFERENCES users,
-  FOREIGN KEY(topic_id) REFERENCES users
+  FOREIGN KEY(to_user) REFERENCES users,
+  FOREIGN KEY(from_user) REFERENCES users,
+  FOREIGN KEY(topic_id) REFERENCES mails
 )
 
 CREATE TABLE discusses
@@ -109,8 +109,8 @@ CREATE TABLE errors
 CREATE TABLE codes
 (
   code_id int(11) NOT NULL AUTO_INCREMENT,
-  share char(1) DEFAULT 'Y'
-  codecontent text,
+  share char(1) DEFAULT 'Y',
+  code_content text,
   PRIMARY KEY(code_id)
 )
 
