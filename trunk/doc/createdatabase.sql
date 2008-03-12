@@ -83,6 +83,7 @@ CREATE TABLE discusses
   contest_id int(11) DEFAULT 0,
   title varchar(200),
   content text,
+  time datetime,
   PRIMARY KEY(message_id),
   FOREIGN KEY(user_id) REFERENCES users,
   FOREIGN KEY(problem_id) REFERENCES problems,
