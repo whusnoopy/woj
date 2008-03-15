@@ -14,15 +14,14 @@
 #include "judge.h"
 
 static int compareFiles(const string& standard_output_file_name,
-                        const string& users_output_file_name) {
-  FILE* standard_output_file = fopen(standard_output_file_name.c_str(), "r");
-  FILE* users_output_file = fopen(users_output_file_name.c_str(), "r");
+                          const string& users_output_file_name) {
+  FILE* standard_output_file = fopen(stanard_output_file_name.c_str(), 'r');
+  FILE* users_output_file = fopen(users_output_file_name.c_str(), 'r');
   if (standard_output_file == 0) {
-    LOG(ERROR) << "Fail to open file " << standard_output_file_name;
+    LOG(SYSCALL_ERROR) << "Fail to open file " << standard_output_file_name;
     return SYSTEM_ERROR;
-  }
   if (users_output_file == 0) {
-    LOG(ERROR) << "Fail to open file " << users_output_file_name;
+    LOG(SYSCALL_ERROR) << "Fail to open file " << users_output_file_name;
     return SYSTEM_ERROR;
   }
 
@@ -69,22 +68,6 @@ static int compareFiles(const string& standard_output_file_name,
 static int runSpecialJudge(const string& special_judge_executable_file_name,
                            const string& standard_input_file_name,
                            const string& users_output_file_name) {
-  int result = ACCEPTED;
-  const char* commands[] = {
-    special_judge_executable_file_name.c_str(),
-    standard_input_file_name.c_str(),
-    users_output_file_name.c_str(),
-    0
-  };
-  RunInfo run_info;
-  run_info.uid = FLAGS_uid;
-  run_info.time_limit = 10;
-  run_info.memory_limit = 256 * 1024;
-  run_info.output_limit = 16;
-  run_info.file_limit = 6;
-  run_info.trace = true;
-  run_info.working_dir = 
-  return result;
 }
 
 int doJudge(int communicate_socket,
@@ -94,18 +77,15 @@ int doJudge(int communicate_socket,
             const string& special_judge_executable_file_name) {
   sendReply(communicate_socket, JUDGING);
   int result;
-  if (!special_judge_executable_file_name.empty()) {
-    LOG(INFO) << "Run special judge for " << users_output_file_name;
+  if (special_judge_excutable_file_name == "") {
     result = runSpecialJudge(special_judge_executable_file_name,
                              standard_input_file_name,
                              users_output_file_name);
   } else {
-    LOG(INFO) << "Judge between " << standard_output_file_name << " and "
-              << users_output_file_name;
     result = compareFiles(standard_output_file_name,
                           users_output_file_name);
   }
-  sendReply(communicate_socket, result);
+  sendReply(commuicate_socket, result);
   switch(result) {
     case ACCEPTED : 
       LOG(INFO) << "Accepted";
@@ -117,5 +97,5 @@ int doJudge(int communicate_socket,
       LOG(INFO) << "Wrong Answer";
       break;
   }
-  return result;
+  return 0;
 }
