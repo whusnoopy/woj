@@ -3,35 +3,92 @@
 
 #include <string>
 
-#include "args.h"
-#include "client.h"
-#include "logging.h"
-#include "util.h"
+#include <errno.h>
+#include <sys/wait.h>
 
-#include "compile.h"
+#include "base/flags.h"
+#include "base/logging.h"
+#include "base/util.h"
+
+#include "judge/client/client.h"
+#include "judge/client/trace.h"
+#include "judge/client/util.h"
+
+#include "judge/client/compile.h"
+
+DECLARE_FLAGS(string, root_dir);
 
 int doCompile(int communicate_socket,
               const string& source_filename) {
   LOG(INFO) << "Compiling " << source_filename;
   sendReply(communicate_socket, COMPILING);
-  string command = ARG_root + "/script/compile.sh " + source_filename;
+  string command = FLAGS_root_dir + "/script/compile.sh " + source_filename;
   LOG(INFO) << "Compile command: " << command;
 
-  int communicate_pipe[2];
-  if (pipe(communicate_pipe) < 0) {
-    LOG(SYS_ERROR) << "Fail to create communicate pipe "
+  int file_pipe[2];
+  if (pipe(file_pipe) < 0) {
+    LOG(ERROR) << "Fail to create communicate pipe "
                       "between judge and compile script";
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
   RunInfo run_info;
-  run_info.fd_stderr = communicate_pipe[1];
+  run_info.file_stderr = file_pipe[1];
   run_info.time_limit = COMPILE_TIME_LIMIT;
+
+  class Callback : public TraceCallback {
+    public :
+      virtual void onSigchld(pid_t) {}
+  } callback;
+
   pid_t pid = create_shell_process(command.c_str(), run_info);
-  close(fdPipe[1]);
+  close(file_pipe[1]);
   if (pid < 0) {
-    LOG(SYS_ERROR) << "Fail to create shell process to compile";
+    LOG(ERROR) << "Fail to create shell process to compile";
+    close(file_pipe[0]);
     sendReply(communicate_socket, SYSTEM_ERROR);
+    return -1;
+  }
+
+  static char error_message[16384];
+  int message_length = socket_read(file_pipe[0],
+                                   error_message,
+                                   sizeof(error_message));
+  close(file_pipe[0]);
+  if (message_length < 0) {
+    LOG(ERROR) << "Fail to read compile error message";
+    sendReply(communicate_socket, SYSTEM_ERROR);
+    return -1;
+  }
+
+  int status;
+  while (waitpid(pid, &status, 0) < 0) {
+    if (errno != EINTR) {
+      LOG(SYS_ERROR) << "System error in compiling process";
+      sendReply(communicate_socket, SYSTEM_ERROR);
+      return -1;
+    }
+  }
+  if (WIFSIGNALED(status)) {
+    LOG(ERROR) << "Compilation terminated by signal " << WTERMSIG(status);
+    sendReply(communicate_socket, SYSTEM_ERROR);
+    return -1;
+  }
+  status = WEXITSTATUS(status);
+  if (status >= 126) {
+    LOG(INFO) << "Compilation failed";
+    sendReply(communicate_socket, SYSTEM_ERROR);
+    return -1;
+  } else if (status) {
+    LOG(INFO) << "Compilation error";
+    sendReply(communicate_socket, COMPILE_ERROR);
+
+    // Send CE message back to server
+    socket_write(communicate_socket,
+                 stringPrintf("%d", message_length).c_str(),
+                 4);
+    socket_write(communicate_socket, error_message, message_length);
+    return -1;
   }
   return 0;
 }

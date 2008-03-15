@@ -8,10 +8,19 @@
 #include <string>
 #include <sstream>
 
-#include "args.h"
-#include "client.h"
-#include "logging.h"
-#include "util.h"
+#include "base/flags.h"
+#include "base/logging.h"
+#include "base/util.h"
+
+#include "judge/client/client.h"
+#include "judge/client/compile.h"
+#include "judge/client/judge.h"
+#include "judge/client/run.h"
+#include "judge/client/util.h"
+
+using namespace std;
+
+DEFINE_FLAGS(string, root_dir, "The root working dir");
 
 void process(int communicate_socket) {
 }
@@ -23,6 +32,14 @@ void sigterm_handler(int siginal) {
 }
 
 int main(int argc, char* argv[]) {
+  if (parseFlags(argc, argv) < 0) {
+    return 1;
+  }
+  if (chdir(FLAGS_root_dir.c_str()) < 0) {
+    LOG(SYS_ERROR) << strerror(errno) << endl
+                   << "Fail to change working dir to " << FLAGS_root_dir;
+    return 1;
+  }
 
   sigset_t mask;
   sigemptyset(&mask);
