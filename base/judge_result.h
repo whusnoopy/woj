@@ -8,10 +8,10 @@ enum COMMUNICATION_STATUS {
   FIRST_STATUS = 1,
   ACCEPTED = 1,           // 1. Correct answer
   PRESENTATION_ERROR,     // 2. Presentation error
-  TIME_LIMIT_EXCEED,      // 3. Time limit exceed
-  MEMORY_LIMIT_EXCEED,    // 4. Memory limit exceed
+  TIME_LIMIT_EXCEEDED,    // 3. Time limit exceed
+  MEMORY_LIMIT_EXCEEDED,  // 4. Memory limit exceed
   WRONG_ANSWER,           // 5. Wrong answer
-  OUTPUT_LIMIT_EXCEED,    // 6. Output limit exceed
+  OUTPUT_LIMIT_EXCEEDED,  // 6. Output limit exceed
   COMPILE_ERROR,          // 7. Compile error
   RUNTIME_ERROR_SIGSEGV,  // 8. Runtime-error when buffer overflow, stack
                           //    overflow or illegal file access

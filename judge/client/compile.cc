@@ -3,14 +3,15 @@
 
 #include <string>
 
+#include <arpa/inet.h>
 #include <errno.h>
 #include <sys/wait.h>
 
 #include "base/flags.h"
 #include "base/logging.h"
 #include "base/util.h"
+#include "base/judge_result.h"
 
-#include "judge/client/client.h"
 #include "judge/client/trace.h"
 #include "judge/client/util.h"
 
@@ -41,7 +42,7 @@ int doCompile(int communicate_socket,
       virtual void onSigchld(pid_t) {}
   } callback;
 
-  pid_t pid = create_shell_process(command.c_str(), run_info);
+  pid_t pid = createShellProcess(command.c_str(), run_info);
   close(file_pipe[1]);
   if (pid < 0) {
     LOG(ERROR) << "Fail to create shell process to compile";

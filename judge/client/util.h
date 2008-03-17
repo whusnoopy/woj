@@ -43,9 +43,9 @@ struct RunInfo {
   const char* working_dir;
 };
 
-int create_process(const char* commands[], const RunInfo& process_info);
+int createProcess(const char* commands[], const RunInfo& run_info);
 
-int create_shell_process(const char* command, const RunInfo& process_info);
+int createShellProcess(const char* command, const RunInfo& run_info);
 
 sighandler_t installSignalHandler(int signal, sighandler_t handler);
 

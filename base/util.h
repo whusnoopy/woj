@@ -5,6 +5,7 @@
 #define _BASE_UTIL_H__
 
 #include <string>
+#include <sstream>
 
 using namespace std;
 
