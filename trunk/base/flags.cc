@@ -128,3 +128,5 @@ int parseFlags(int argc, char* argv[]) {
   return 0;
 }
 
+DEFINE_FLAGS(string, root_dir, "The root work directory");
+

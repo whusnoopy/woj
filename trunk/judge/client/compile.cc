@@ -84,10 +84,9 @@ int doCompile(int communicate_socket,
     sendReply(communicate_socket, COMPILE_ERROR);
 
     // Send CE message back to server
-    socket_write(communicate_socket,
-                 stringPrintf("%d", message_length).c_str(),
-                 4);
-    socket_write(communicate_socket, error_message, message_length);
+    uint16_t length = htons(message_length);
+    socket_write(communicate_socket, &length, sizeof(length));
+    socket_write(communicate_socket, error_message, length);
     return -1;
   }
   return 0;
