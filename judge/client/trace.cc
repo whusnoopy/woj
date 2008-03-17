@@ -73,6 +73,7 @@ void TraceCallback::onSigchld(pid_t pid) {
         result_ = SYSTEM_ERROR;
     }
   }
+  exited_ = true;
 }
 
 void TraceCallback::onError() {
@@ -101,9 +102,16 @@ void ExecutiveCallback::onExit(pid_t pid) {
   memory_ = readMemory(pid);
 }
 
+static struct sigaction sigchld_act;
+
 static void sigchldHandler(int sig, siginfo_t* siginfo, void* context) {
   if (TraceCallback::getInstance()) {
     TraceCallback::getInstance()->onSigchld(siginfo->si_pid);
+  }
+  if (sigchld_act.sa_sigaction) {
+    sigchld_act.sa_sigaction(sig, siginfo, context);
+  } else if (sigchld_act.sa_handler) {
+    sigchld_act.sa_handler(sig);
   }
 }
 
@@ -131,11 +139,14 @@ static int readStringFromTracedProcess(pid_t pid,
 
 static void sigkmmonHandler(int sig, siginfo_t* siginfo, void* context) {
   TraceCallback* callback = TraceCallback::getInstance();
-  if (!callback)
-    return;
-  
   pid_t pid = siginfo->si_pid;
-  int syscall = siginfo->si_value.sival_int;
+  if (!callback) {
+    LOG(INFO) << "No callback instance found";
+    kmmon_continue(pid);
+    return;
+  }
+  
+  int syscall = siginfo->si_int;
   switch (syscall) {
     case SYS_exit :
     case SYS_exit_group :
@@ -171,6 +182,7 @@ static void sigkmmonHandler(int sig, siginfo_t* siginfo, void* context) {
                                              sizeof(buffer)) < 0) {
         LOG(ERROR) << "Fail to read memory from traced process";
         callback->onError();
+        kmmon_kill(pid);
       } else if (callback->onOpen(buffer, flags)) {
         kmmon_continue(pid);
       } else {
@@ -192,5 +204,8 @@ void installHandlers() {
   sigaction(KMMON_SIG, &new_action, &old_action);
   new_action.sa_sigaction = sigchldHandler;
   sigaction(SIGCHLD, &new_action, &old_action);
+  if (old_action.sa_sigaction() != sigchldHandler) {
+    sigchld_act = old_action;
+  }
 }
 

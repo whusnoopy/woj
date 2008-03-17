@@ -60,8 +60,10 @@ class LogFile {
           fprintf(file_, "%s", log_message.c_str());
           fflush(file_);
         }
-        if (FLAGS_logtostderr)
+        if (FLAGS_logtostderr) {
           fprintf(stderr, "%s", log_message.c_str());
+          fflush(stderr);
+        }
       }
     }
 
