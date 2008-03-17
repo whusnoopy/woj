@@ -101,3 +101,96 @@ void ExecutiveCallback::onExit(pid_t pid) {
   memory_ = readMemory(pid);
 }
 
+static void sigchldHandler(int sig, siginfo_t* siginfo, void* context) {
+  if (TraceCallback::getInstance()) {
+    TraceCallback::getInstance()->onSigchld(siginfo->si_pid);
+  }
+}
+
+static int readStringFromTracedProcess(pid_t pid,
+                                       int address,
+                                        char* buffer,
+                                        int maxLength) {
+  for (int i = 0; i < maxLength; i += 4) {
+    int data;
+    if (kmmon_readmem(pid, address + i, &data) < 0)
+      return -1;
+    char* cs = static_cast<char*> &data;
+    for (int j = 0; j < 4; j++, cs++) {
+      if (*cs && i + j < maxLength) {
+        buffer[i + j] = *cs;
+      } else {
+        buffer[i + j] = 0;
+        return 0;
+      }
+    }
+  }
+  buffer[maxLength - 1] = 0;
+  return 0;
+}
+
+static void sigkmmonHandler(int sig, siginfo_t* siginfo, void* context) {
+  TraceCallback* callback = TraceCallback::getInstance();
+  if (!callback)
+    return;
+  
+  pid_t pid = siginfo->si_pid;
+  int syscall = siginfo->si_value.sival_int;
+  switch (syscall) {
+    case SYS_exit :
+    case SYS_exit_group :
+      callback->onExit(pid);
+      kmmon_continue(pid);
+      break;
+    case SYS_brk :
+      callback->onMemoryLimitExceeded();
+      kmmon_kill(pid);
+      break;
+    case SYS_clone :
+    case SYS_fork :
+    case SYS_vfork :
+      callback->onClone();
+      break;
+    case SYS_execve :
+      if (callback->onExecve())
+        kmmon_continue(pid);
+      else
+        kmmon_kill(pid);
+      break;
+    case SYS_open :
+      char buffer[PATH_MAX + 1];
+      int address, flags;
+      if (kmmon_getreg(pid, EBX, &address) < 0 ||
+          kmmon_getreg(pid, ECX, &flags) < 0) {
+        LOG(ERROR) << "Fail to read register values and flags from "
+                   << "traced process";
+        callback->onError();
+      } else if (readStringFromTracedProcess(pid,
+                                             address,
+                                             buffer,
+                                             sizeof(buffer)) < 0) {
+        LOG(ERROR) << "Fail to read memory from traced process";
+        callback->onError();
+      } else if (callback->onOpen(buffer, flags)) {
+        kmmon_continue(pid);
+      } else {
+        kmmon_kill(pid);
+      }
+      break;
+    default :
+      LOG(ERROR) << "Unexpected syscall : " << syscall;
+      TraceCallback::getInstance()->onError();
+      kmmon_kill(pid);
+  }
+}
+
+void installHandlers() {
+  struct sigaction new_action, old_action;
+  new_action.sa_sigaction = sigkmmonHandler;
+  sigemptyset(&new_action.sa_mask);
+  new_action.sa_flags = SA_SIGINFO;
+  sigaction(KMMON_SIG, &new_action, &old_action);
+  new_action.sa_sigaction = sigchldHandler;
+  sigaction(SIGCHLD, &new_action, &old_action);
+}
+
