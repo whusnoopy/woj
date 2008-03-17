@@ -22,6 +22,13 @@ static inline int sendReply(int communicate_socket, char reply_message) {
 
 string stringPrintf(const char* format, ...);
 
+template <class T>
+inline string toString(T obj) {
+  ostringstream os;
+  os << obj;
+  return os.str();
+}
+
 string getLocalTimeAsString(const char* format);
 
 #endif

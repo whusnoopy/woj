@@ -4,6 +4,12 @@
 #ifndef _JUDGE_CLIENT_UTIL_H__
 #define _JUDGE_CLIENT_UTIL_H__
 
+int setLimit(int resource, unsigned int limit);
+
+int readTime(int pid);
+
+int readMemory(int pid);
+
 struct RunInfo {
   RunInfo()
     : file_stdin(0), file_stdout(0), file_stderr(0),
@@ -40,6 +46,15 @@ struct RunInfo {
 int create_process(const char* commands[], const RunInfo& process_info);
 
 int create_shell_process(const char* command, const RunInfo& process_info);
+
+sighandler_t installSignalHandler(int signal, sighandler_t handler);
+
+sighandler_t installSignalHandler(int signum, sighandler_t handler, int flags);
+
+sighandler_t installSignalHandler(int signum,
+                                  sighandler_t handler,
+                                  int flags,
+                                  sigset_t mask);
 
 #endif
 
