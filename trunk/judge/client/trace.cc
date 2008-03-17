@@ -3,14 +3,16 @@
 
 #include <string>
 
+#include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/syscall.h>
 
 #include "base/logging.h"
 #include "base/util.h"
+#include "base/judge_result.h"
 
-#include "judge/client/client.h"
 #include "judge/client/util.h"
+#include "judge/kernel_module/kmmon-lib.h"
 
 #include "judge/client/trace.h"
 
@@ -83,8 +85,8 @@ void TraceCallback::onError() {
 bool TraceCallback::onOpen(const string& path, int flags) {
   if ((flags & O_WRONLY) == O_WRONLY ||
       (flags & O_RDWR) == O_RDWR ||
-      () == O_CREAT ||
-      () == O_APPEND)
+      (flags & O_CREAT) == O_CREAT ||
+      (flags & O_APPEND) == O_APPEND)
     return false;
   if (path.empty())
     return false;
@@ -95,11 +97,6 @@ bool TraceCallback::onOpen(const string& path, int flags) {
       return false;
   }
   return true;
-}
-
-void ExecutiveCallback::onExit(pid_t pid) {
-  time_ = readTime(pid);
-  memory_ = readMemory(pid);
 }
 
 static struct sigaction sigchld_act;
@@ -123,7 +120,7 @@ static int readStringFromTracedProcess(pid_t pid,
     int data;
     if (kmmon_readmem(pid, address + i, &data) < 0)
       return -1;
-    char* cs = static_cast<char*> &data;
+    char* cs = reinterpret_cast<char*>(&data);
     for (int j = 0; j < 4; j++, cs++) {
       if (*cs && i + j < maxLength) {
         buffer[i + j] = *cs;
@@ -204,7 +201,7 @@ void installHandlers() {
   sigaction(KMMON_SIG, &new_action, &old_action);
   new_action.sa_sigaction = sigchldHandler;
   sigaction(SIGCHLD, &new_action, &old_action);
-  if (old_action.sa_sigaction() != sigchldHandler) {
+  if (old_action.sa_sigaction != sigchldHandler) {
     sigchld_act = old_action;
   }
 }
