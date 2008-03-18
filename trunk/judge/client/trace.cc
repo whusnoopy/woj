@@ -43,7 +43,7 @@ void TraceCallback::onSigchld(pid_t pid) {
   }
   if (result_ < 0) {
     result_ = SYSTEM_ERROR;
-  } else if (result_ = RUNNING) {
+  } else if (result_ == RUNNING) {
     switch (WTERMSIG(status)) {
       case SIGXCPU :
         LOG(INFO) << "Time Limit Exceeded";

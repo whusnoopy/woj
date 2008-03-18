@@ -69,6 +69,26 @@ int readMemory(int pid) {
 }
 
 int createProcess(const char* commands[], const RunInfo& run_info) {
+  
+  string command_line = commands[0];
+  for (int i = 1; commands[i]; ++i)
+    command_line = command_line + " " + commands[i];
+  LOG(INFO) << "Create process by command:\n    " << command_line;
+  switch(system(command_line.c_str())) {
+    case 0 :
+      LOG(INFO) << "AC";
+      break;
+    case 2 :
+      LOG(INFO) << "PE";
+      break;
+    case 1 :
+      LOG(INFO) << "WA";
+      break;
+    default :
+      LOG(ERROR) << "Unknown error appeared when run system ()";
+  }
+  LOG(INFO) << "system(" << command_line << ") finished";
+
   const char* filename[] = {run_info.stdin_filename,
                             run_info.stdout_filename,
                             run_info.stderr_filename};

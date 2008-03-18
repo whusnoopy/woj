@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ $1 = */* ]; then
+if [[ $1 = */* ]]; then
     cd ${1%/*}
 fi
 src=${1##*/}

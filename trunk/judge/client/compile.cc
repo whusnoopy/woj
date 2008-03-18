@@ -23,13 +23,13 @@ int doCompile(int communicate_socket,
               const string& source_filename) {
   LOG(INFO) << "Compiling " << source_filename;
   sendReply(communicate_socket, COMPILING);
-  string command = FLAGS_root_dir + "/script/compile.sh " + source_filename;
+  string command = FLAGS_root_dir + "/bin/compile.sh " + source_filename;
   LOG(INFO) << "Compile command: " << command;
 
   int file_pipe[2];
   if (pipe(file_pipe) < 0) {
     LOG(ERROR) << "Fail to create communicate pipe "
-                      "between judge and compile script";
+                  "between judge and compile script";
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
@@ -81,13 +81,16 @@ int doCompile(int communicate_socket,
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   } else if (status) {
-    LOG(INFO) << "Compilation error";
+    LOG(INFO) << "Compilation error : " << endl
+              << error_message;
     sendReply(communicate_socket, COMPILE_ERROR);
 
     // Send CE message back to server
     uint16_t length = htons(message_length);
     socket_write(communicate_socket, &length, sizeof(length));
-    socket_write(communicate_socket, error_message, length);
+    LOG(INFO) << "Send CE message length finished. length = " << message_length;
+    socket_write(communicate_socket, error_message, message_length);
+    LOG(INFO) << "Send CE message finished.";
     return -1;
   }
   return 0;
