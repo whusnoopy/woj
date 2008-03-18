@@ -4,14 +4,21 @@
 #include <string>
 #include <stdlib.h>
 
+#include <errno.h>
 #include <sys/wait.h>
 
-#include "args.h"
-#include "client.h"
-#include "logging.h"
-#include "util.h"
+#include "base/flags.h"
+#include "base/judge_result.h"
+#include "base/logging.h"
+#include "base/util.h"
 
-#include "judge.h"
+#include "judge/client/trace.h"
+#include "judge/client/util.h"
+
+#include "judge/client/judge.h"
+
+DECLARE_FLAGS(int, uid);
+DECLARE_FLAGS(int, gid);
 
 static int compareFiles(const string& standard_output_file_name,
                         const string& users_output_file_name) {
@@ -66,25 +73,52 @@ static int compareFiles(const string& standard_output_file_name,
 }
 
 // TODO: Finish this function
-static int runSpecialJudge(const string& special_judge_executable_file_name,
-                           const string& standard_input_file_name,
-                           const string& users_output_file_name) {
-  int result = ACCEPTED;
+static int runSpecialJudge(const string& special_judge_executable_filename,
+                           const string& standard_input_filename,
+                           const string& users_output_filename) {
+  string working_directory =
+    users_output_filename.substr(0, users_output_filename.rfind('/') + 1);
   const char* commands[] = {
-    special_judge_executable_file_name.c_str(),
-    standard_input_file_name.c_str(),
-    users_output_file_name.c_str(),
-    0
+    special_judge_executable_filename.c_str(),
+    standard_input_filename.c_str(),
+    users_output_filename.c_str(),
+    NULL
   };
   RunInfo run_info;
   run_info.uid = FLAGS_uid;
+  run_info.gid = FLAGS_gid;
   run_info.time_limit = 10;
   run_info.memory_limit = 256 * 1024;
   run_info.output_limit = 16;
   run_info.file_limit = 6;
   run_info.trace = true;
-  run_info.working_dir = 
-  return result;
+  run_info.working_dir = working_directory.c_str();
+  ExecutiveCallback callback;
+
+  pid_t pid = createProcess(commands, run_info);
+  if (pid == -1) {
+    LOG(ERROR) << "Fail to execute special judge";
+    return SYSTEM_ERROR;
+  }
+  int status;
+  while (waitpid(pid, &status, 0) < 0) {
+    if (errno != EINTR) {
+      LOG(SYS_ERROR) << "System error when waiting for special judge status";
+      return SYSTEM_ERROR;
+    }
+  }
+  if (WIFSIGNALED(status)) {
+    LOG(ERROR) << "Special judge terminated by signal " << WTERMSIG(status);
+    return SYSTEM_ERROR;
+  }
+  switch (WEXITSTATUS(status)) {
+    case 0 :
+      return ACCEPTED;
+    case 2 :
+      return PRESENTATION_ERROR;
+    default :
+      return WRONG_ANSWER;
+  }
 }
 
 int doJudge(int communicate_socket,
@@ -119,3 +153,4 @@ int doJudge(int communicate_socket,
   }
   return result;
 }
+

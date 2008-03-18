@@ -23,6 +23,10 @@ DEFINE_FLAGS(string, server_address, "server address");
 DEFINE_FLAGS(int, server_port, "server port");
 
 int main(int argc, char* argv[]) {
+  if (parseFlags(argc, argv)) {
+    LOG(SYS_ERROR) << "Cannot parse flags!";
+    return -1;
+  }
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in server_address;
   memset(&server_address, 0, sizeof(server_address));
@@ -42,6 +46,24 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  const string ac_file = "testdata/ac.cc";
+  if (doCompile(communicate_socket, ac_file)) {
+    LOG(ERROR) << "FAILED Compile '" << ac_file << "' Test";
+    return -1;
+  }
+  sendReply(communicate_socket, 0);
+  LOG(INFO) << "PASS Compile '" << ac_file << "' Test";
+
+  const string ce_file = "testdata/ce.cc";
+  if (doCompile(communicate_socket, ce_file) == 0) {
+    LOG(ERROR) << "FAILED Compile '" << ce_file << "' Test";
+    return -1;
+  }
+  LOG(INFO) << "PASS Compile '" << ce_file << "' Test";
+
+  close(communicate_socket);
+
+  LOG(INFO) << "PASSED ALL TESTS";
   return 0;
 }
 

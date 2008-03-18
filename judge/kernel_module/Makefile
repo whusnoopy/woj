@@ -1,5 +1,5 @@
 obj-m += kmmon.o
-INCLUDE=/home/flood/flood/
+INCLUDE=../../
 
 default : all
 

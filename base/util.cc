@@ -17,7 +17,7 @@ ssize_t socket_read(int communicate_socket,
     ssize_t receive_length = read(communicate_socket, cs, buffer_length);
     if (receive_length == -1) {
       if (errno == EINTR) {
-        // continue;
+        continue;
       }
       LOG(SYS_ERROR) << "Fail to read from socket: " << communicate_socket;
     } else if (receive_length == 0) {
@@ -37,7 +37,7 @@ int socket_write(int communicate_socket,
     int sent_length = write(communicate_socket, cs, buffer_length);
     if (sent_length == -1) {
       if (errno == EINTR) {
-        // continue;
+        continue;
       }
       LOG(SYS_ERROR) << "Fail to write to socket: " << communicate_socket;
     }

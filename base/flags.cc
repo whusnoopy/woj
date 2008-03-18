@@ -83,6 +83,16 @@ int parseFlags(int argc, char* argv[]) {
   if (flags_list == NULL)
     flags_list = new vector<FlagsInfo*>;
   vector<bool> assigned(flags_list->size(), false);
+  
+  for (int i = 0; i < flags_list->size(); ++i) {
+    if ((*flags_list)[i]->name() == "process_name") {
+      char* cs = argv[0];
+      while (strstr(cs, "/"))
+        cs = strstr(cs, "/") + 1;
+      (*flags_list)[i]->assign(cs);
+    }
+  }
+
   for (int i = 1; i < argc; ++i) {
     if (argv[i][0] == '-' && argv[i][1] == '-') {
       char* cs = argv[i] + 2;
@@ -129,4 +139,6 @@ int parseFlags(int argc, char* argv[]) {
 }
 
 DEFINE_FLAGS(string, root_dir, "The root work directory");
+
+DEFINE_OPTIONAL_FLAGS(string, process_name, "Proc", "The process name");
 

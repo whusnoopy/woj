@@ -14,6 +14,8 @@
 
 DECLARE_FLAGS(string, root_dir);
 
+DECLARE_FLAGS(string, process_name);
+
 // Also log to stderr or not
 DEFINE_OPTIONAL_FLAGS(bool, logtostderr, true,
                       "If true, all logs will also written to stderr");
@@ -37,10 +39,12 @@ class LogFile {
         return;
       }
       string filename = 
-               stringPrintf("%s/%d.%s.log",
+               stringPrintf("%s/%s.%s.%d.%s.log",
                             dir.c_str(),
+                            getlogin(),
+                            FLAGS_process_name.c_str(),
                             getpid(),
-                            getLocalTimeAsString("%Y%m%d%H%M%S").c_str());
+                            getLocalTimeAsString("%Y%m%d.%H%M%S").c_str());
       file_ = fopen(filename.c_str(), "w");
       if (file_ == NULL) {
         openlog("Flood Judge Client", 0, LOG_USER);
