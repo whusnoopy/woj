@@ -1,15 +1,20 @@
 CC=$(CXX)
 CXXFLAGS=-I../../ \
+				 -I../kernel_module -L../kernel_module \
 	       -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
-EXEFLAGS=-I../kernel_module -L../kernel_module -lkmmon
-DEPS=../../base/*.o
+VPATH=../kernel_module ../../base
 
 ALL_SOURCES:=$(wildcard *.cc)
 TEST_SOURCES:=$(wildcard test_*.cc)
 SOURCES=$(filter-out $(TEST_SOURCES),$(ALL_SOURCES))
+DEPS_SOURCES:=$(wildcard ../../base/*.cc)
+
+# All objects will auto build by "$(CXX) $(CXXFLAGS) -c" if there is no rule
+# to make it
 ALL_OBJS:=$(patsubst %.cc,%.o,$(ALL_SOURCES))
 OBJS:=$(patsubst %.cc,%.o,$(SOURCES))
 TESTS:=$(patsubst %.cc,%,$(TEST_SOURCES))
+DEPS:=$(patsubst %.cc,%.o,$(DEPS_SOURCES))
 
 .PHONY: all clean rebuild test
 
@@ -20,26 +25,17 @@ clean:
 
 rebuild: clean all
 
-test: $(TESTS)
+test : $(TESTS)
 
-judge_client: main.cc $(OBJS)
+judge_client : main.cc $(OBJS) $(DEPS) -lkmmon
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) -o $@ $^ $(DEPS)
 
-test_compile: test_compile.cc compile.o trace.o util.o 
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEPS) $(EXEFLAGS) 
+test_compile : test_compile.cc compile.o trace.o utils.o $(DEPS) -lkmmon
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-test_judge: test_judge.cc judge.o trace.o util.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEPS) $(EXEFLAGS) 
+test_run : test_run.cc run.o trace.o utils.o $(DEPS) -lkmmon
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-compile.o : compile.cc compile.h
-	$(CXX) $(CXXFLAGS) -c $<
-
-judge.o : judge.cc judge.h
-	$(CXX) $(CXXFLAGS) -c $<
-
-trace.o : trace.cc trace.h
-	$(CXX) $(CXXFLAGS) -c $<
-
-util.o : util.cc util.h
-	$(CXX) $(CXXFLAGS) -c $<
+test_judge: test_judge.cc judge.o trace.o utils.o $(DEPS) -lkmmon
+	$(CXX) $(CXXFLAGS) -o $@ $^
 

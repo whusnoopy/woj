@@ -11,7 +11,7 @@
 #include "base/util.h"
 #include "base/judge_result.h"
 
-#include "judge/client/util.h"
+#include "judge/client/utils.h"
 #include "judge/kernel_module/kmmon-lib.h"
 
 #include "judge/client/trace.h"

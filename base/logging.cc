@@ -80,7 +80,7 @@ Log::Log(const char* filename, int line_number, int level) {
   log_stream_ << getLocalTimeAsString("%Y-%m-%d %H:%M:%S")
               << " [" << LOG_LEVEL_NAME[level] << "] "
               << filename << ":" << line_number << ": ";
-  if (level = SYS_ERROR) {
+  if (level == SYS_ERROR) {
     log_stream_ << strerror(errno) << ". ";
   }
 }

@@ -8,7 +8,7 @@
 #include "base/logging.h"
 #include "base/util.h"
 
-#include "judge/client/util.h"
+#include "judge/client/utils.h"
 
 int setLimit(int resource, unsigned int limit) {
   struct rlimit t;
@@ -69,25 +69,10 @@ int readMemory(int pid) {
 }
 
 int createProcess(const char* commands[], const RunInfo& run_info) {
-  
-  string command_line = commands[0];
-  for (int i = 1; commands[i]; ++i)
+  string command_line = commands[1];
+  for (int i = 2; commands[i]; ++i)
     command_line = command_line + " " + commands[i];
-  LOG(INFO) << "Create process by command:\n    " << command_line;
-  switch(system(command_line.c_str())) {
-    case 0 :
-      LOG(INFO) << "AC";
-      break;
-    case 2 :
-      LOG(INFO) << "PE";
-      break;
-    case 1 :
-      LOG(INFO) << "WA";
-      break;
-    default :
-      LOG(ERROR) << "Unknown error appeared when run system ()";
-  }
-  LOG(INFO) << "system(" << command_line << ") finished";
+  LOG(INFO) << "Create process by command : \"" << command_line << "\"";
 
   const char* filename[] = {run_info.stdin_filename,
                             run_info.stdout_filename,
@@ -109,6 +94,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
       }
     }
   }
+  LOG(INFO) << "Success Opened stdin/stdout/stderr";
   int pid = fork();
   if (pid < 0) {
     LOG(SYS_ERROR) << "Unable to fork";
