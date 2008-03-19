@@ -6,5 +6,5 @@ all :
 	$(CXX) $(INCLUDE) -c *.cc
 
 clean :
-	@rm -f *.o
+	@rm -f *.o *.d
 

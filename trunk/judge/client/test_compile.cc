@@ -22,6 +22,9 @@ using namespace std;
 DEFINE_FLAGS(string, server_address, "server address");
 DEFINE_FLAGS(int, server_port, "server port");
 
+DEFINE_FLAGS(int, uid, "");
+DEFINE_FLAGS(int, gid, "");
+
 int main(int argc, char* argv[]) {
   if (parseFlags(argc, argv)) {
     LOG(SYS_ERROR) << "Cannot parse flags!";

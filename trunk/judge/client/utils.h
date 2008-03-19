@@ -1,8 +1,8 @@
 // Copyright 2008 Flood Team of Wuhan Univ.
 // Author: yewen@mail.whu.edu.cn (Wen, YE)
 
-#ifndef _JUDGE_CLIENT_UTIL_H__
-#define _JUDGE_CLIENT_UTIL_H__
+#ifndef _JUDGE_CLIENT_UTILS_H__
+#define _JUDGE_CLIENT_UTILS_H__
 
 int setLimit(int resource, unsigned int limit);
 

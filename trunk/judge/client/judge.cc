@@ -13,7 +13,7 @@
 #include "base/util.h"
 
 #include "judge/client/trace.h"
-#include "judge/client/util.h"
+#include "judge/client/utils.h"
 
 #include "judge/client/judge.h"
 
@@ -79,6 +79,7 @@ static int runSpecialJudge(const string& special_judge_executable_filename,
   string working_directory =
     users_output_filename.substr(0, users_output_filename.rfind('/') + 1);
   const char* commands[] = {
+    special_judge_executable_filename.c_str(),
     special_judge_executable_filename.c_str(),
     standard_input_filename.c_str(),
     users_output_filename.c_str(),

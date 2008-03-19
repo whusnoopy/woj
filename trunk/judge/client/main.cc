@@ -8,19 +8,26 @@
 #include <string>
 #include <sstream>
 
+#include <arpa/inet.h>
+#include <errno.h>
+#include <sys/wait.h>
+
 #include "base/flags.h"
 #include "base/logging.h"
+#include "base/judge_result.h"
 #include "base/util.h"
 
-#include "judge/client/client.h"
 #include "judge/client/compile.h"
 #include "judge/client/judge.h"
 #include "judge/client/run.h"
-#include "judge/client/util.h"
+#include "judge/client/trace.h"
+#include "judge/client/utils.h"
 
 using namespace std;
 
 DEFINE_FLAGS(string, root_dir, "The root working dir");
+DEFINE_FLAGS(string, server_address, "The server address");
+DEFINE_FLAGS(int, server_port, "The server port");
 
 void process(int communicate_socket) {
 }
@@ -43,24 +50,24 @@ int main(int argc, char* argv[]) {
 
   sigset_t mask;
   sigemptyset(&mask);
-  install_signal_handler(SIGTERM, sigterm_handler, 0, mask);
+  installSignalHandler(SIGTERM, sigterm_handler, 0, mask);
 
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
-  struct socketaddr_in server_address;
+  struct sockaddr_in server_address;
   memset(&server_address, 0, sizeof(server_address));
   server_address.sin_family = AF_INET;
-  server_address.sin_port = htons(ARG_server_port);
+  server_address.sin_port = htons(FLAGS_server_port);
   if (inet_pton(AF_INET,
-                ARG_server_address.c_str(),
+                FLAGS_server_address.c_str(),
                 &server_address.sin_addr) <= 0) {
-    LOG(SYS_ERROR) << "Invalid Server Address: " << ARG_server_address;
+    LOG(SYS_ERROR) << "Invalid Server Address: " << FLAGS_server_address;
     return 1;
   }
   if (connect(communicate_socket,
               (const sockaddr*)&server_address,
               sizeof(server_address)) < 0) {
     LOG(SYS_ERROR) << "Fail to connect to "
-                   << ARG_server_address << ":" << ARG_server_port;
+                   << FLAGS_server_address << ":" << FLAGS_server_port;
     return 1;
   }
 
