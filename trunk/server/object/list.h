@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "file.h"
 #include "status.h"
@@ -116,5 +117,6 @@ typedef vector<ContestStatisticsItem> ContestStatistics;
 typedef vector<File> FileList;   
 typedef vector<Status> StatusList;
 typedef vector<LinkListItem> LinkList;
+typedef set<int> ProblemSet;
 
 #endif /*LIST_H_*/
