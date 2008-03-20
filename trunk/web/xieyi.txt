@@ -1,0 +1,68 @@
+协议：
+header: header长度为10字节，包括两个部分，前两个字节标示协议类型，后8个字节标示待接收数据长度
+
+
+(1)，st (status 提交状态)
+p->s: header
+p->s: page, problem_id(0), user_id(?), Result(?), language(?) 
+s->p: header
+s->p: solution_id,user_id,problem_id,result,memory,time,language,code_length,in_date
+
+(2), ss (solution status 题目的提交状态， ac总数，wa总数等)
+p->s: header
+p->s: problem_id
+s->p: header
+s->p: Accepted, TotalSubmits, UserSubmited, UserSolved, Pe, Tle, Mle, Ole, Wa, Re, Ce
+
+(3), ps(题目状态)
+p->s: header
+p->s: problem_id,pagenum
+s->p: header
+s->p: solution_id, user_id, memory, time, language, code_length, in_date
+
+(4), sc(源代码)
+p->s: header
+p->s: solution_id
+s->p: header
+s->p: source
+
+(5), ml(邮件列表)
+p->s: header
+p->s: user_id, pagenum
+s->p: header
+s->p: mail_id, from_user, title, in_date, read
+
+(6), mc(邮件内容)
+p->s: header
+p->s: mail_id
+s->p: header
+s->p: from_user, title, in_date, concont
+
+(7), dm(删除邮件)
+p->s: header
+p->s: mail_id
+s->p: header
+
+(8), hp(HomePage)
+p->s: header
+s->p: header
+s->p: news, links, MostDiligentProgrammer
+
+(9), rg(注册)
+p->s: header
+p->s: user_id, password, nick, share_code, school, email, share_email, language
+s->p: 's'
+
+(10), ei(ID是否存在)
+p->s: header
+p->s: user_id
+s->p: 'Y'/'N'
+
+(11), pl(题目列表)
+
+(12), li(登录)
+p->s: header
+p->s: user_id, password, ip
+s->p: 'Y'/'N'
+
+
