@@ -299,7 +299,7 @@ int DatabaseInterface::addError(const Error& error){
   return ret;
 }
 
-int addDiscuss(const Discuss& discuss){
+int DatabaseInterface::addDiscuss(const Discuss& discuss){
   Connection* connection = createConnection("localhost",
                                             "root",
                                             "noahoak",
@@ -952,7 +952,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
              + stringPrintf("%d", problem_info.related_contest) + "') ";
   }
   
-  query += " limit " + stringPrintf("%d, 25", problem_info.page_id*25);
+  query += " limit " + stringPrintf("%d, 100", problem_info.page_id*100);
   cout << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
@@ -961,6 +961,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   	item.problem_id = result_set.getInt("problem_id");
   	item.submit = result_set.getInt("submit");
   	item.title = result_set.getString("title");
+    iter.ac = 0;
   	problem_list.push_back(item);
   }
   result_set.close();
