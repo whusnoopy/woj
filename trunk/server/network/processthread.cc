@@ -6,11 +6,17 @@
 #include <pthread.h>
 
 #include "processimp.h"
+#include "problemprocessimp.h"
+#include "mailcontentprocessimp.h"
+#include "maillistprocessimp.h"
+#include "addmailprocessimp.h"
 #include "registerprocessimp.h"
 #include "homepageprocessimp.h"
 #include "loginprocessimp.h"
 #include "problemlistprocessimp.h"
 #include "existuserprocessimp.h"
+#include "codeprocessimp.h"
+#include "disablemailprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -61,6 +67,24 @@ void ProcessThread::running(){
         break;
       case 197:
         m_process_imp = new HomePageProcessImp();
+        break;
+      case 470:
+        m_process_imp = new CodeProcessImp();
+        break;
+      case 90:
+        m_process_imp = new DisableMailProcessImp();
+        break;
+      case 12:
+        m_process_imp = new AddMailProcessImp();
+        break;
+      case 323:
+        m_process_imp = new MailListProcessImp();
+        break;
+      case 314:
+        m_process_imp = new MailContentProcessImp();
+        break;
+      case 391:
+        m_process_imp = new ProblemProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

@@ -7,7 +7,9 @@ Mail::Mail(int mail_id,
            const string& title,
            const string& content,
            bool read,
-           const string& time)
+           const string& time,
+           bool reader_del,
+           bool writer_del)
 : mail_id_(mail_id),
   topic_id_(topic_id),
   to_user_(to_user),
@@ -15,7 +17,9 @@ Mail::Mail(int mail_id,
   title_(title),
   content_(content),
   read_(read),
-  time_(time){
+  time_(time),
+  reader_del_(reader_del),
+  writer_del_(writer_del){
   
 }
            
@@ -93,3 +97,21 @@ MailListItem Mail::getMailListItem() const{
   item.to_user = to_user_;
   return item;
 }
+
+bool Mail::getReaderDel() const {
+  return reader_del_;
+}
+
+bool Mail::getWriterDel() const {
+  return writer_del_;
+}
+
+void Mail::setReaderDel(bool reader_del) {
+  reader_del_ = reader_del;
+}
+
+void Mail::setWriterDel(bool writer_del) {
+  writer_del_ = writer_del;
+}
+
+

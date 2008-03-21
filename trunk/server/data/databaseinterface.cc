@@ -810,6 +810,8 @@ Mail DatabaseInterface::getMail(int mail_id){
   	mail.setTitle(result_set.getString("title"));
   	mail.setTopicId(result_set.getInt("topic_id"));
   	mail.setToUser(result_set.getString("to_user"));
+    mail.setReaderDel(result_set.getString("reader_del") == "Y");
+    mail.setWriterDel(result_set.getString("writer_del") == "Y");
   	result_set.close();
     connection->close();
     return mail;
@@ -1187,12 +1189,13 @@ MailList getMailList(const MailInfo& mail_info){
     } else {
     	query += "and ";
     }
-    if (mail_info.is_recv)
-      query += "to_user = '" + changeSymbol(mail_info.user_id) + "' ";
-    else
-      query += "from_user = '" + changeSymbol(mail_info.user_id) + "' ";
+    query += " (to_user = '" + changeSymbol(mail_info.user_id) + "' ";
+    query += " and reader_del = 'N') ";
+    query += " or (from_user = '" + changeSymbol(mail_info.user_id) + "' ";
+    query += " and writer_del = 'N') ";
   }
-  query += " limit " + stringPrintf("%d, 25", mail_info.page_id*25);
+  query += " order by time desc limit " + 
+           stringPrintf("%d, 25", mail_info.page_id*25);
   cout << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);

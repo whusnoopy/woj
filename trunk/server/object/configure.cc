@@ -124,7 +124,7 @@ Configure* Configure::createConfigure(){
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	Configure* configure = new Configure;
-	xmlChar* szKey;
+	//xmlChar* szKey;
   doc = xmlParseFile(configure_file.c_str());
   if (doc == NULL){
     cout << "open configure.xml error" << endl;

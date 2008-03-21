@@ -8,7 +8,7 @@ using namespace std;
 
 class Mail{
 public:
-  Mail(int mail_id) : mail_id_(mail_id){
+  Mail(int mail_id = 0) : mail_id_(mail_id){
   
   }
   Mail(int mail_id,
@@ -18,7 +18,9 @@ public:
 	     const string& title,
 	     const string& content,
        bool read,
-	     const string& time);
+	     const string& time,
+       bool reader_del,
+       bool writer_del);
 	     
   int getMailId() const;
   int getTopicId() const;
@@ -27,7 +29,11 @@ public:
   string getTitle() const;
   string getContent() const;
   bool getRead() const;
-  string getTime() const;  
+  string getTime() const; 
+  bool getReaderDel() const;
+  bool getWriterDel() const;
+  void setReaderDel(bool reader_del);
+  void setWriterDel(bool writer_del);
   void setMailId(int mail_id);
   void setTopicId(int topic_id);
   void setToUser(const string& to_user);
@@ -47,6 +53,8 @@ private:
 	string content_;
   bool read_;
 	string time_;
+  bool reader_del_;
+  bool writer_del_;
 };
 
 #endif /*MAIL_H_*/

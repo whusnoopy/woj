@@ -57,9 +57,9 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot reply the login for:" << ip;
     return;
   } 
-  int len = indentify_code.length();
-  if (socket_write(socket_fd, reinterpret_cast<char *>(&len), 4)) {
-    LOG(ERROR) << "Cannot return datalength to:" << ip;
+  string len = stringPrintf("%010d",indentify_code.length());
+  if (socket_write(socket_fd, len.c_str(), 10)){
+    LOG(ERROR) << "Send data failed to:" << ip;
     return;
   }
   if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length())) {
