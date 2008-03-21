@@ -1,7 +1,7 @@
 #include <asm/errno.h>
 #include <asm/types.h>
 #include <asm/uaccess.h>
-
+#include <asm/unistd.h>
 #include <linux/fcntl.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
@@ -89,6 +89,10 @@ void asm_stuff(void) {
     "movl %c1(%%ebx), %%ebx;"
     "andl %2, %c3(%%ebx);"
     "jz normal;"
+    "movl %4, %%ebx;"
+    "movl 0(%%ebx, %%eax), %%ebx;"
+    "andl $3, %%ebx;"
+    "jz normal;"
     "jnp disable;"
     "pushl %%ecx;"
     "pushl %%edx;"
@@ -123,6 +127,8 @@ asmlinkage unsigned long kmmon(int request,
                                unsigned long pid,
                                unsigned long address,
                                unsigned long data) {
+//  printk("<0>yyyy-mm-dd HH:MM:SS [INFO] : kmmon(%d, %lu, %lu, %lu)\n",
+//         request, pid, address, data);
   struct task_struct* p;
   switch (request) {
     case KMMON_TRACEME :
@@ -143,10 +149,14 @@ asmlinkage unsigned long kmmon(int request,
         struct vm_area_struct* vma;
         int offset, len, tmp;
         if (p->mm == NULL) {
-          printk(KERN_ERR "Fail to get user pages: %ld, %lx\n", pid, address);
+          printk(KERN_ERR "Fail to get mm: %ld\n", pid);
           return -1;
         }
         if (get_user_pages(p, p->mm, address, 1, 0, 1, &page, &vma) <= 0) {
+          printk(KERN_ERR "Fail to get user pages: %ld, %lx\n", pid, address);
+          return -1;
+        }
+        if (PageHighMem(page)) {
           printk(KERN_ERR "High mem page: %ld, %lx\n", pid, address);
           return -1;
         }

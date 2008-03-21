@@ -5,8 +5,11 @@
 #include <string>
 
 #include <arpa/inet.h>
+#include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "base/flags.h"
@@ -15,6 +18,8 @@
 #include "base/util.h"
 
 #include "judge/client/judge.h"
+#include "judge/client/trace.h"
+#include "judge/client/utils.h"
 
 using namespace std;
 
@@ -26,11 +31,18 @@ DEFINE_FLAGS(int, server_port, "server port");
 
 DECLARE_FLAGS(string, root_dir);
 
+
 int main(int argc, char* argv[]) {
   if (parseFlags(argc, argv)) {
     LOG(SYS_ERROR) << "Unable to parse flags";
     return -1;
   }
+
+  installSignalHandler(SIGPIPE, SIG_IGN);
+
+  installHandlers();
+
+  LOG(INFO) << "Install handlers finished";
 
   string test_file_dir = FLAGS_root_dir + "/testdata/";
   string standard_filename = test_file_dir + "judge_standard.txt";

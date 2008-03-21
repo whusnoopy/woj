@@ -49,9 +49,9 @@ int createShellProcess(const char* command, const RunInfo& run_info);
 
 sighandler_t installSignalHandler(int signal, sighandler_t handler);
 
-sighandler_t installSignalHandler(int signum, sighandler_t handler, int flags);
+sighandler_t installSignalHandler(int signal, sighandler_t handler, int flags);
 
-sighandler_t installSignalHandler(int signum,
+sighandler_t installSignalHandler(int signal,
                                   sighandler_t handler,
                                   int flags,
                                   sigset_t mask);

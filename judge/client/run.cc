@@ -27,6 +27,7 @@ int monitor(int communicate_socket,
             int time_limit,
             int memory_limit,
             const TraceCallback& callback) {
+  LOG(INFO) << "Start to monitor process " << pid;
   int result = -1;
   int time_ = 0;
   int memory_ = 0;
@@ -58,6 +59,8 @@ int monitor(int communicate_socket,
       time_ = ts;
     if (ms > memory_)
       memory_ = ms;
+    LOG(INFO) << "Monitor process " << pid << " with time/memory("
+              << time_ << "/" << memory_ << ")";
 
     static char message[9];
     message[0] = RUNNING;
@@ -97,7 +100,8 @@ int runExe(int communicate_socket,
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
   run_info.time_limit = time_limit;
-  run_info.memory_limit = output_limit;
+  run_info.memory_limit = memory_limit;
+  run_info.output_limit = output_limit;
   run_info.proc_limit = 1;
   run_info.file_limit = 5;
   run_info.trace = 1;
@@ -126,6 +130,7 @@ int doRun(int communicate_socket,
           int output_limit) {
   int result = 0;
   if (isNativeExe(source_file_type)) {
+    LOG(INFO) << "Executive program, run \"" << program_name << "\"";
     result = runExe(communicate_socket,
                     program_name,
                     input_filename,
@@ -134,6 +139,7 @@ int doRun(int communicate_socket,
                     memory_limit,
                     output_limit);
   } else {
+    return -1;
   }
   if (result) {
     sendReply(communicate_socket, result);
@@ -141,3 +147,4 @@ int doRun(int communicate_socket,
   }
   return 0;
 }
+
