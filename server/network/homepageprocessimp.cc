@@ -33,8 +33,8 @@ void HomePageProcessImp::process(int socket_fd, const string& ip, int length){
     data += sep + iter_news->time;
     iter_news++ ;
   }
-  int len = data.length();
-  if (socket_write(socket_fd, reinterpret_cast<char*>(&len), sizeof(len))){
+  string len = stringPrintf("%010d",data.length());
+  if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
     return;
   }

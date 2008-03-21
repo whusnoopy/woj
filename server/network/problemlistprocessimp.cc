@@ -119,9 +119,9 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
     list_iter++;
   }
   
-  int len = databuf.length();
-  if (socket_write(socket_fd, reinterpret_cast<char*>(&len), 4)) {
-    LOG(ERROR) << "Cannot send problemlist data to:" << ip;
+  string len = stringPrintf("%010d", databuf.length());
+  if (socket_write(socket_fd, len.c_str(), 10)) {
+    LOG(ERROR) << "Cannot return datalength to:" << ip;
     return;
   }
   if (socket_write(socket_fd, databuf.c_str(), databuf.length())) {

@@ -1,10 +1,10 @@
 CC=$(CXX)
 CXXFLAGS=-I../../ \
+				 -I/usr/include/libxml2 \
+				 -L/usr/lib/libxml2  \
 	       -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
 VPATH=../util ../object ../../base
-EXEFLAGS=-I/usr/include/libxml2 \
-				 -L/usr/lib/libxml2 \
-				 -lxml2 \
+EXEFLAGS=-lxml2 \
 				 -lpthread
 
 SOURCES:=$(wildcard *.cc)
@@ -24,7 +24,7 @@ OBJECT:=$(patsubst %.cc,%.o,$(OBJECT_SOURCES))
 all: server
 
 clean:
-	@rm -f $(OBJS) *.d
+	@rm -f $(OBJS) *.d server
 
 rebuild: clean all
 
