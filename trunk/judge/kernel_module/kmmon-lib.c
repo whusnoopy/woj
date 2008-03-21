@@ -7,6 +7,8 @@ static inline int kmmon(int request,
                         unsigned long pid,
                         unsigned long address,
                         unsigned long data) {
+//  printf("yyyy-mm-dd HH:MM:SS [INFO] : kmmon(%d, %u, %u, %u)\n",
+//         request, pid, address, data);
   return syscall(__NR_kmmon, request, pid, address, data);
 }
 

@@ -11,7 +11,7 @@ using namespace std;
 int doRun(int communicate_socket,
           const string& program_name,
           const string& source_file_type,
-          const string& input_file_name,
+          const string& input_filename,
           const string& program_output_filename,
           int time_limit,
           int memory_limit,

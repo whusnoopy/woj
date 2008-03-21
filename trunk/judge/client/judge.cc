@@ -88,6 +88,7 @@ static int runSpecialJudge(const string& special_judge_executable_filename,
   RunInfo run_info;
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
+  run_info.stdout_filename = "/tmp/testdata/spj.out";
   run_info.time_limit = 10;
   run_info.memory_limit = 256 * 1024;
   run_info.output_limit = 16;
@@ -100,11 +101,14 @@ static int runSpecialJudge(const string& special_judge_executable_filename,
   if (pid == -1) {
     LOG(ERROR) << "Fail to execute special judge";
     return SYSTEM_ERROR;
+  } else {
+    LOG(INFO) << "Create process " << pid << " to run special judge";
   }
   int status;
   while (waitpid(pid, &status, 0) < 0) {
     if (errno != EINTR) {
-      LOG(SYS_ERROR) << "System error when waiting for special judge status";
+      LOG(SYS_ERROR) << "System error when waiting for special judge status."
+                     << " errno = " << (int)(errno);
       return SYSTEM_ERROR;
     }
   }

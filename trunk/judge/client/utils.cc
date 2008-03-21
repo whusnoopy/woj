@@ -8,6 +8,8 @@
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/kernel_module/kmmon-lib.h"
+
 #include "judge/client/utils.h"
 
 int setLimit(int resource, unsigned int limit) {
@@ -72,6 +74,10 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
   string command_line = commands[1];
   for (int i = 2; commands[i]; ++i)
     command_line = command_line + " " + commands[i];
+//  int status = 0;
+//  LOG(INFO) << "system (" << command_line << ")return : " << status;
+//  status = system(command_line.c_str());
+//  LOG(INFO) << "system (" << command_line << ")return : " << status;
   LOG(INFO) << "Create process by command : \"" << command_line << "\"";
 
   const char* filename[] = {run_info.stdin_filename,
@@ -92,9 +98,12 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
         }
         return -1;
       }
+      LOG(INFO) << "Open " << filename[i] << " to " << file[i];
     }
   }
-  LOG(INFO) << "Success Opened stdin/stdout/stderr";
+//  LOG(INFO) << "Success Opened stdin/stdout/stderr to "
+//            << file[0] << "/" << file[1] << "/" << file[2];
+
   int pid = fork();
   if (pid < 0) {
     LOG(SYS_ERROR) << "Unable to fork";
@@ -108,6 +117,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
         LOG(SYS_ERROR) << "Fail to dup " << file[i] << " to " << i;
         raise(SIGKILL);
       }
+      LOG(INFO) << "Dup " << file[i] << " to " << i;
       close(file[i]);
     }
   }
@@ -153,7 +163,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
       raise(SIGKILL);
     }
   }
-  if (run_info.gid) {
+  if (run_info.uid) {
     if (setuid(run_info.uid) == -1) {
       LOG(SYS_ERROR) << "Fail to set uid to " << run_info.uid;
       raise(SIGKILL);
@@ -166,7 +176,12 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
     }
   }
   if (run_info.trace) {
+    if (kmmon_traceme() == -1) {
+      LOG(SYS_ERROR) << "Fail to trace";
+      raise(SIGKILL);
+    }
   }
+  LOG(INFO) << "Set run_info successful";
   if (execv(commands[0], (char**)(commands + 1)) == -1) {
     LOG(SYS_ERROR) << "Fail to execute command '" << commands[0] << "'";
     raise(SIGKILL);
@@ -177,5 +192,37 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
 int createShellProcess(const char* command, const RunInfo& run_info) {
   const char* commands[] = {"/bin/sh", "sh", "-c", command, NULL};
   return createProcess(commands, run_info);
+}
+
+sighandler_t installSignalHandler(int signal, sighandler_t handler) {
+  return installSignalHandler(signal, handler, 0);
+}
+
+sighandler_t installSignalHandler(int signal, sighandler_t handler, int flags) {
+  sigset_t mask;
+  sigemptyset(&mask);
+  return installSignalHandler(signal, handler, flags, mask);
+}
+
+sighandler_t installSignalHandler(int signal,
+                                  sighandler_t handler,
+                                  int flags,
+                                  sigset_t mask) {
+  struct sigaction act, old_act;
+  act.sa_handler = handler;
+  act.sa_mask = mask;
+  act.sa_flags = flags;
+  if (signal == SIGALRM) {
+#ifdef SA_INTERRUPT
+    act.sa_flags |= SA_INTERRUPT;
+#endif
+  } else {
+#ifdef SA_RESTART
+    act.sa_flags |= SA_RESTART;
+#endif
+  }
+  if (sigaction(signal, &act, &old_act) < 0)
+    return SIG_ERR;
+  return old_act.sa_handler;
 }
 

@@ -1,59 +1,37 @@
 // Copyright 2008 Flood Team of Wuhan Univ.
 // Author: yewen@mail.whu.edu.cn (Wen, YE)
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <iostream>
 #include <string>
-#include <sstream>
 
 #include <arpa/inet.h>
-#include <errno.h>
-#include <sys/wait.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #include "base/flags.h"
 #include "base/logging.h"
-#include "base/judge_result.h"
 #include "base/util.h"
+#include "base/judge_result.h"
 
-#include "judge/client/compile.h"
-#include "judge/client/judge.h"
 #include "judge/client/run.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
 
 using namespace std;
 
-DECLARE_FLAGS(string, root_dir);
-DEFINE_FLAGS(string, server_address, "The server address");
-DEFINE_FLAGS(int, server_port, "The server port");
+DEFINE_FLAGS(string, server_address, "server address");
+DEFINE_FLAGS(int, server_port, "server port");
 
-DEFINE_FLAGS(int, uid, "The uid for judge run program and special judge");
-DEFINE_FLAGS(int, gid, "The gid for judge run program and special judge");
-
-void process(int communicate_socket) {
-}
-
-int terminated = 0;
-
-void sigterm_handler(int siginal) {
-  terminated = 1;
-}
+DEFINE_FLAGS(int, uid, "");
+DEFINE_FLAGS(int, gid, "");
 
 int main(int argc, char* argv[]) {
-  if (parseFlags(argc, argv) < 0) {
-    return 1;
+  if (parseFlags(argc, argv)) {
+    LOG(SYS_ERROR) << "Cannot parse flags!";
+    return -1;
   }
-  if (chdir(FLAGS_root_dir.c_str()) < 0) {
-    LOG(SYS_ERROR) << strerror(errno) << endl
-                   << "Fail to change working dir to " << FLAGS_root_dir;
-    return 1;
-  }
-
-  sigset_t mask;
-  sigemptyset(&mask);
-  installSignalHandler(SIGTERM, sigterm_handler, 0, mask);
 
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in server_address;
@@ -74,11 +52,33 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  while (!terminated) {
-    process(communicate_socket);
+  installSignalHandler(SIGPIPE, SIG_IGN);
+
+  installHandlers();
+
+  const string test_dir = "/tmp/testdata/";
+
+  const string ac_file = test_dir + "ac";
+  const string input_filename = test_dir + "spj_in.txt";
+  const string program_output_filename = test_dir + "pro_out.txt";
+
+  if (doRun(communicate_socket,
+            ac_file,
+            "cc",
+            input_filename,
+            program_output_filename,
+            1,
+            65535,
+            65535)) {
+    LOG(ERROR) << "FAILED Run '" << ac_file << "' Test";
+    return -1;
   }
+  sendReply(communicate_socket, 0);
+  LOG(INFO) << "PASS Run '" << ac_file << "' Test";
 
   close(communicate_socket);
+
+  LOG(INFO) << "PASSED ALL TESTS";
   return 0;
 }
 
