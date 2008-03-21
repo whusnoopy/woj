@@ -1,99 +1,99 @@
 <?php
-/*
-<jsp:useBean id="problemBean" class="com.whu.noah.beans.problem.ProblemBean" scope="page" />
-<jsp:useBean id="format" class="com.whu.noah.beans.admin.FormatOutputBean" scope="page" />
-<jsp:useBean id="dateBean" class="com.whu.noah.beans.admin.DateBean" scope="page" />
-
-<jsp:setProperty name="problemBean" property="dataSource" value="${appDataSource}" />
-<jsp:setProperty name="problemBean" property="problem_id" value="${param.problem_id}" />
-
-<c:set var="user_id" value="${validUser.uid}" scope="page" />
-<jsp:useBean id="checkNewMailBean" class="com.whu.noah.beans.mail.CheckNewMailBean" scope="page" />
-<jsp:setProperty name="checkNewMailBean" property="dataSource" value="${appDataSource}" />
-<jsp:setProperty name="checkNewMailBean" property="user_id" value="${user_id}" />
-<c:set var="hasNewMail" value="${checkNewMailBean.newMail}" />
-*/
 
 	if (isset($_GET['problem_id']))
 		$problem_id = intval( $_GET['problem_id'] );
 	else
 		$problem_id = 0;
-	$problem_title = "a + b";
-	$time_limit = 1000;
-	$memory_limit = 1024;
-	$submit = 60;
-	$accepted = 40;
-	$description = "a + b";
-	$input = "a, b";
-	$output = "a+b";
-	$sample_input = "1 2";
-	$sample_output = "3";
-	$hint = null;
+
+	$problem = get_problem_info($problem_id);
+	if (count($problem) < 12){
+		for($i = count($problem); $i <= 12; $i++)
+			$problem[] = ' ';
+	}
 ?>
 
 <?php
-	include('..\include\header.php');
+	include('../include/header.php');
+	include('../common/tcpclient.php');
 ?>
 
   <div id="tt">
-    <?php echo "Problem ".$problem_id.' - '.$problem_title;?>
+    <?php echo "Problem ".$problem_id.' - '.$problem[0];?>
   </div>
 
 <?php
-	include('..\include\notice.php');
+	include('../include/notice.php');
 ?>
 
   <div class="ifm">
-    <strong>Time Limit</strong>:${problemBean.time_limit}MS&nbsp;<strong>Memory Limit</strong>:${problemBean.memory_limit}KB<br>
-    <strong>Total Submit</strong>:${problemBean.submit}&nbsp;<strong>Accepted</strong>:${problemBean.accepted}<br>
+    <strong>Time Limit</strong>:<?php echo $problem[8]; ?>MS&nbsp;<strong>Memory Limit</strong>:<?php echo $problem[9]; ?>KB<br>
+    <strong>Total Submit</strong>:<?php echo $problem[10]; ?>&nbsp;<strong>Accepted</strong>:<?php echo $problem[11]; ?><br>
   </div>
 
   <div id="main">
     <div class="ptt">Description</div>
-    <jsp:setProperty name="format" property="input" value="${problemBean.description}" />
-    <div class="ptx">${format.output}</div>
+    <div class="ptx"><?php echo $problem[1]; ?></div>
 
     <div class="ptt">Input</div>
-    <jsp:setProperty name="format" property="input" value="${problemBean.input}" />
-    <div class="ptx">${format.output}</div>
+    <div class="ptx"><?php echo $problem[2]; ?></div>
 
     <div class="ptt">Output</div>
-    <jsp:setProperty name="format" property="input" value="${problemBean.output}" />
-    <div class="ptx">${format.output}</div>
+    <div class="ptx"><?php echo $problem[3]; ?></div>
 
     <div class="ptt">Sample Input</div>
-    <jsp:setProperty name="format" property="input" value="${problemBean.sample_input}" />
-    <div class="code">${format.output}</div>
+    <div class="code"><?php echo $problem[4]; ?></div>
 
     <div class="ptt">Sample Output</div>
-    <jsp:setProperty name="format" property="input" value="${problemBean.sample_output}" />
-    <div class="code">${format.output}</div>
+    <div class="code"><?php echo $problem[5]; ?></div>
 
     <div class="ptt">Hint</div>
-    <jsp:setProperty name="format" property="input" value="${problemBean.hint}" />
-    <div class="ptx">${format.output}</div>
+    <div class="ptx"><?php echo $problem[6]; ?></div>
 
     <div class="ptt">Source</div>
 
-    <jsp:setProperty name="dateBean" property="start_time" value="${problemBean.start_time}" />
-    <jsp:setProperty name="dateBean" property="end_time" value="${problemBean.end_time}" />
-    <jsp:setProperty name="format" property="input" value="${problemBean.source}" />
-
     <div class="ptx">
-    <c:if test="${fn:contains(dateBean.startTest, 'beforeCurrent')}">
-      <c:if test="${fn:contains(dateBean.endTest, 'beforeCurrent')}">
-		<div>${format.output}</div>
-	  </c:if>
-	</c:if>
+		<div><?php echo $problem[7]; ?></div>
     </div>
     <br />
     <div>
       <span class="bt"><a href="../submit/submit.php?problem_id=<?php echo $problem_id;?>">Submit</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="../submit/discuss.php?problem_id=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
       <span class="bt"><a href="../status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
     </div>
     <br />
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
+?>
+
+<?php
+
+function get_problem_info($problem_id)
+{
+	/////////////////////////////
+	$d="\001";
+	$recv = "a + b".$d."we begin".$d."a, b".$d."a+b".$d."1, 2".$d."3".$d."".$d."woj".$d."1000".$d."1024".$d."120".$d."100";
+	return explode("\001", $recv);
+	//////////////////////////////
+
+	if(empty($problem_id)) return null;
+
+	$header = sprintf("%s%08d", "pb", strlen($problem));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($problem_id)or die("send message failed");
+	$recv= $tc->recvstr(10);
+	$len = sscanf($recv, "%d");
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$tc->close();
+		return explode("\001", $recv);
+	}
+	$tc->close();
+	return null;
+}
 ?>

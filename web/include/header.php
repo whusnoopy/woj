@@ -11,9 +11,7 @@
 	else
 		$user_id = '';
 
-	include_once('..\common\check_new_mail.php');
-	$new_mail = new new_mail($user_id);
-	$hasNewMail = $new_mail->check_new_mail();
+	$hasNewMail = check_new_mail($user_id);
 ?>
 <body>
 <center>
@@ -37,3 +35,12 @@
     <a href="../faq.html" target="_blank">FAQ</a>
 	</div>
 
+
+<?php
+
+function check_new_mail($use_id)
+{
+	return true;
+}
+
+?>

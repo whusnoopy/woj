@@ -1,7 +1,13 @@
+
+#mainp{padding:10px 10px 0px 10px;width:1000px;font-family:Verdana}
+#leftp{clear:left;margin-right:750px;margin-left:10px}
+#rightp{clear:left;float:right;width:730px;margin-right:5px}
+
+
 body,form{margin:0}
 img{border:0}
 td,div{font-size:12px;line-height:18px}
-table {border:0;width:950px}
+table {border:0}
 th {height:30px;line-height:20px;font-size:14px;color:#fff;background:#3f9fcf;font-weight:bold}
 th a{color:#fff}
 th a:hover{color:#ff0;text-decoration:none}
@@ -53,6 +59,3 @@ color:#ff4757;font-family:Verdana;font-size:16px;font-weight:bold;background-col
 .bt a:hover{font-weight:bolder;text-decoration:none}
 
 
-#mainp{padding:10px 10px 0px 10px;width:979px;font-family:Verdana}
-#leftp{clear:left;margin-right:750px;margin-left:10px}
-#rightp{clear:left;float:right;width:730px;margin-right:5px}

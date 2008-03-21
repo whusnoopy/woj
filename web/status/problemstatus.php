@@ -1,4 +1,3 @@
-
 <?php
 
  include('..\include\header.php');
@@ -65,12 +64,12 @@
   <div id="tt">
   Problem Status - <a href="../problem/problem.php?problem_id=<?php echo $problem_id; ?>" ><?php echo $problem_id; ?></a>
   </div>
- <?php
+<?php
 	include('..\include\notice.php');
 ?>
 
   <div id="mainp">
-    <div id="rightp">
+	<div id="rightp">
      <table width=730><tbody>
       <tr>
        <th width="60">Rank</th>
@@ -115,12 +114,11 @@
 ?>
      </tbody></table>
     </div>
-
-    <div id="leftp">
-     <table width=220 align=left><tbody>
+	<div id="leftp">
+     <table width=220px align=left><tbody>
       <tr>
-        <th width=160>Status</th>
-        <th width=60>Count</th>
+        <th width=160px>Status</th>
+        <th width=60px>Count</th>
       </tr>
       <tr class=tro><td><strong>User Submitted</strong></td><td><?php $solution_status->userSubmited; ?></td></tr>
       <tr class=tre><td><strong>Users Solved</strong></td><td><?php $solution_status->userSolved; ?></td></tr>
