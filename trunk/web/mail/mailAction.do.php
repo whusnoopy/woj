@@ -1,20 +1,71 @@
 <?php
 session_start();
 
+include('../common/tcpclient.php')
+
 function user_exist($user_id)
 {
-	if($user_id=='magiii') return true;
+	//////////////////////////////////
+	return true;
+	////////////////////////////////
+
+	$header = sprintf("%s%08d", "dm", strlen($user_id));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($user_id)or die("send message failed");
+	if ($tc->recvstr(1) == 'Y'){
+		$tc->close();
+		return true;
+	}
+	$tc->close();
 	return false;
 }
 
-function add_mail($to_user, $user_id, $title, $connent, $reply )
+function add_mail($to_user, $user_id, $title, $content, $reply )
 {
+	/***********/////////////////////////
 	return true;
+	/**********//////////////////////////
+
+	$d="\001";
+	$message =$reply.$d.$title.$d.$content.$d.$to_user.$user_id;
+	$header = sprintf("%s%08d", "dm", strlen($message));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($message)or die("send message failed");
+	if ($tc->recvstr(1) == 'Y'){
+		$tc->close();
+		return true;
+	}
+	$tc->close();
+	return false;
 }
 
-function delete_mail($mail_id)
+function delete_mail($mail_id, $user_id)
 {
+	/***********/
 	return true;
+	/**********/
+	$message = $mail_id."\001".$user_id;
+	$header = sprintf("%s%08d", "dm", strlen($message));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($message)or die("send message failed");
+	if ($tc->recvstr(1) == 'Y'){
+		$tc->close();
+		return true;
+	}
+	$tc->close();
+	return false;
 }
 ?>
 
@@ -43,9 +94,15 @@ function delete_mail($mail_id)
   }
 
   if ($type=='delete'){
-	  delete_mail($mail_id);
-	  header("Location: mailList.php");
-	  exit;
+	  if(delete_mail($mail_id, $user_id)){
+		   header("Location: mailList.php");
+		   exit;
+	  }
+	  else{
+		  header("Location: mailerror.php?errorMsg=Delete this mail failed!");
+		exit;
+	  }
+
   }
 
   if($to_user==null || strlen($to_user) ==0){

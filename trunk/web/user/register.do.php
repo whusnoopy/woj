@@ -82,7 +82,7 @@
 
 		$d = "\001";
 		$message = $user_id.$d.$password.$d.$email.$d.$share_email.$d.$nick.$d.$school.$d.$share_code.$d.$language;
-		$header = sprintf("%s%010d", "rg", strlen($message));
+		$header = sprintf("%s%08d", "rg", strlen($message));
 
 		$tc = new TCPClient();
 		$tc->create() or die("unable to create socket!");

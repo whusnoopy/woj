@@ -49,8 +49,8 @@ class TCPClient{
 	}
 	function recvstr($len)
 	{
-		$ret = socket_read($this->m_socket, $len);
-		return $ret;
+		return socket_read($this->m_socket, $len);
+
 	}
 	function sendfile($filename)
 	{
@@ -94,5 +94,27 @@ class TCPClient{
   $receive = $client->readsock(1000);
   $client->close();
   echo $receive;
+*/
+/*
+function get_problem_info($problem_id)
+{
+	if(empty($problem_id)) return null;
+
+	$header = sprintf("%s%08d", "pb", strlen($problem));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($problem)or die("send message failed");
+	$recv= $tc->recvstr(10);
+	$len = sscanf($recv, "%d");
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$tc->close();
+		return $recv;
+	}
+	return null;
+}
 */
 ?>

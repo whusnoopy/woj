@@ -52,7 +52,7 @@ class format_code_t
 		"transient","true","try","void","while");
 
 
-	function format_code($code, $language)
+	function format_code_t($code, $language)
 	{
 		$this->m_orig_code = $code;
 		$this->m_language = $language;
@@ -222,7 +222,7 @@ int main()
 }";
 
 
-$fc = new format_code($origcode, "G++");
+$fc = new format_code_t($origcode, "G++");
 
 echo  $fc->getResultSource();
 */
