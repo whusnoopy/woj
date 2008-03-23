@@ -1,7 +1,7 @@
 
 <?php
-	include('..\include\header.php');
-	include('classes\user_status_t.php');
+	include('../include/header.php');
+	include('classes/user_status_t.php');
 	if(isset($_GET['user_id'])){
 		$user_id = $_GET['user_id'];
 	}
@@ -23,7 +23,7 @@
   </div>
 
  <?php
-	include('..\include\notice.php');
+	include('../include/notice.php');
  ?>
 
   <div id="main">
@@ -84,5 +84,5 @@
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>

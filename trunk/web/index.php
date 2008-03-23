@@ -3,7 +3,7 @@
 ?>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>HomePage of Wuhan Univ. Online Judge</title>
   <link href="./style/noah.css" rel="stylesheet" type="text/css" />
 </head>
@@ -30,7 +30,7 @@
           echo "Mail</a>&nbsp;|&nbsp;";
 	  ?>
      &nbsp;|&nbsp;
-    <a href="faq.html" target="_blank">FAQ</a>
+    <a href="faq.php" target="_blank">FAQ</a>
 	</div>
 
   <div id="tt">
@@ -82,11 +82,11 @@
 	<div id="left">
 		<div class="hpt">Guide for Beginners</div>
 		<div class="hpb">
-		&nbsp;&nbsp;&nbsp;Choose a problem from <a href="problem/problemSet.jsp">problem sets</a>,
+		&nbsp;&nbsp;&nbsp;Choose a problem from <a href="problem/problemSet.php">problem sets</a>,
 		then solve it, <a href="submit/submit.jsp">submit</a> your code if you are sure that your
 		code is right. Sometimes there is hints after a problem, it will be useful.<br />
 		<a href="faq.html"><img src="image/faq2.jpg" alt="Frequently Asked Questions" align="right"  /></a>
-    &nbsp;&nbsp;&nbsp;<a href="contest/contestList.jsp">Contests</a> will be hold with a fixed schedule, you can take part in anyone to show yourself.<br />
+    &nbsp;&nbsp;&nbsp;<a href="contest/contestList.php">Contests</a> will be hold with a fixed schedule, you can take part in anyone to show yourself.<br />
     &nbsp;&nbsp;&nbsp;Read <a href="faq.html">FAQ</a> carefully first when you have any problem on how to use this system,
     many questions are already solved.<br />
     </div>

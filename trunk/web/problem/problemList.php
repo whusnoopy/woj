@@ -31,16 +31,7 @@
 */?>
 
 <?php
-	include('..\include\header.php');
-?>
-
-  <div id="tt">Problems Volume ${param.volume}</div>
-
-<?php
-	include('..\include\notice.php');
-?>
-
-<?php
+	include('../include/header.php');
 	if (isset($_GET['volume']))
 		$volume = intval( $_GET['volume'] );
 	else
@@ -51,6 +42,14 @@
 
 	$noOfRows = 100;
 ?>
+
+  <div id="tt">Problems Volume <?php echo $volume; ?></div>
+
+<?php
+	include('../include/notice.php');
+?>
+
+
 
 
   <div id="main">
@@ -113,5 +112,5 @@
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>

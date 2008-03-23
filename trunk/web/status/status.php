@@ -1,8 +1,8 @@
 
 <?php
-	include('..\include\header.php');
+	include('../include/header.php');
     echo '<div id="tt">Status</div>';
-	include('..\include\notice.php');
+	include('../include/notice.php');
 ?>
 
   <div id="main">
@@ -52,7 +52,8 @@
     <th width="75">Length</th>
     <th width="160">Submit Time</th>
   </tr>
-
+<?php
+/*
   <c:set var="lineColor" value="0" />
   <c:forEach items="${status.rows}" var="row" begin="0" end="${noOfRows - 1}">
     <c:choose>
@@ -107,10 +108,12 @@
     <td>${fn:escapeXml(row.in_date)}</td>
    </tr>
   </c:forEach>
+*/
+?>
   </tbody></table>
 
   <br />
-  <form action="status.jsp" method="get">
+  <form action="status.php" method="get">
    <input type="hidden" name="contest_id" value="${param.contest_id}" />
    <strong>Select status by</strong>&nbsp;
    <strong>Problem ID:</strong> <input size=8 name="problem_id" />&nbsp;

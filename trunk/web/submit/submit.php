@@ -1,23 +1,21 @@
 
 <?php
-  if($problem_id == null){
-    $var=$problem_id ; $value="";
+  session_start();
+  include ('../include/header.php');
+
+  if(isset($_GET['problem_id'])){
+    $problem_id = $_GET['problem_id'];
  }
  else{
-    $var=$problem_id; $value=$problem_id;
+    $problem_id = '';
   }
-  $validUser->uid = "magiii";
-  $validUser->pass = "mcje2004";
-  $problem_id = 1001;
-?>
-
-<?php
-    include ('..\include\header.php');
+  $user_id = $_SESSION['user_id'];
+  $pass = $_SESSION['password'];
 ?>
 
   <div id="tt">Submit</div>
 <?php
-    include ('..\include\notice.php');
+    include ('../include/notice.php');
 ?>
 
   <div id="main">
@@ -31,19 +29,19 @@
       <tr class=tro>
         <td></td>
         <td align="right" width=100><strong>User ID:&nbsp;&nbsp;</strong></td>
-        <td align="left"><input id=user_id maxLength=20 size=25 name=user_id value="<?php echo $validUser->uid ?>" /></td>
+        <td align="left"><input id=user_id maxLength=20 size=25 name=user_id value="<?php echo $user_id; ?>" /></td>
         <td></td>
       </tr>
       <tr class=tre>
         <td></td>
         <td align="right"><strong>Password:&nbsp;&nbsp;</strong></td>
-        <td align="left"><input id=pass type=password maxLength=20 size=25 name=pass value="<?php echo $validUser->pass?>" /></td>
+        <td align="left"><input id=pass type=password maxLength=20 size=25 name=pass value="<?php echo $pass; ?>" /></td>
         <td></td>
       </tr>
       <tr class=tro>
         <td></td>
         <td align="right"><strong>Problem ID:&nbsp;&nbsp;</strong></td>
-        <td align="left"><input id=problem_id maxLength=5 size=10 name=problem_id value="<?php echo $problem_id?>" /></td>
+        <td align="left"><input id=problem_id maxLength=5 size=10 name=problem_id value="<?php echo $problem_id ?>" /></td>
         <td></td>
       </tr>
       <tr class=tre>
@@ -63,13 +61,13 @@
         <td></td>
       </tr>
       <tr class=tre>
-        <td colSpan=4><input type=submit value=Submit name=submit />&nbsp;<input type=reset value=Reset /></td>
+        <td colSpan=4 align=center><input type=submit value=Submit name=submit />&nbsp;<input type=reset value=Reset /></td>
       </tr>
     </tbody></table>
     </form>
   </div>
 
 <?php
-    include ('..\include\tailer.php');
+    include ('../include/tailer.php');
 ?>
 

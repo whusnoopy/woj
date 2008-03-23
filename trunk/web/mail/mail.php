@@ -1,7 +1,7 @@
 
 <?php
-	include('..\include\header.php');
-	include('classes\mail_t.php');
+	include('../include/header.php');
+	include('classes/mail_t.php');
 	if (isset($_GET['mail_id']))
 		$mail_id = $_GET['mail_id'];
 	else
@@ -39,7 +39,7 @@
 
   <div id="tt">Mail</div>
 <?php
-	include('.\include\notice.php');
+	include('../include/notice.php');
 ?>
   <div id="main">
 
@@ -78,5 +78,5 @@
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>

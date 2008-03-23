@@ -1,7 +1,7 @@
 <?php
 	session_start();
-	include ('..\include\header.php');
-	include('classes\mail_list_t.php');
+	include ('../include/header.php');
+	include('classes/mail_list_t.php');
 
 ?>
 
@@ -60,7 +60,7 @@
   <div id="tt"><?php echo $user_id; ?>'s mailbox</div>
 
 <?php
-	include('..\include\notice.php');
+	include('../include/notice.php');
 ?>
   <div id="main">
     <table><tbody>
@@ -112,5 +112,5 @@
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>

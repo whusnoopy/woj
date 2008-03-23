@@ -28,13 +28,13 @@
 ?>
 
 <?php
-	include('..\include\header.php');
+	include('../include/header.php');
 ?>
   <div id="tt">
     Problem Search Result - <?php echo $key.' - '.$field;?>
   </div>
 <?php
-	include ('..\include\notice.php');
+	include ('../include/notice.php');
 ?>
 
   <div id="main">
@@ -109,5 +109,5 @@
 
 
 <?php
-    include ('..\include\tailer.php');
+    include ('../include/tailer.php');
 ?>

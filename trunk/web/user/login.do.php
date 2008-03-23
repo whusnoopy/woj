@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (isset($_GET['origURL']))
+	if (!empty($_GET['origURL']))
 		$origURL = $_GET['origURL'];
 	else
 	    $origURL = '../index.php';

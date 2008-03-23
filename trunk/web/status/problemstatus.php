@@ -1,8 +1,8 @@
 <?php
 
- include('..\include\header.php');
- include('classes\solution_status_t.php');
- include('classes\problem_solution_t.php');
+ include('../include/header.php');
+ include('classes/solution_status_t.php');
+ include('classes/problem_solution_t.php');
 
  if(isset($_GET['start']))
 	 $rank_num = $_GET['start'];
@@ -65,7 +65,7 @@
   Problem Status - <a href="../problem/problem.php?problem_id=<?php echo $problem_id; ?>" ><?php echo $problem_id; ?></a>
   </div>
 <?php
-	include('..\include\notice.php');
+	include('../include/notice.php');
 ?>
 
   <div id="mainp">
@@ -115,7 +115,7 @@
      </tbody></table>
     </div>
 	<div id="leftp">
-     <table width=220px align=left><tbody>
+     <table align=left><tbody>
       <tr>
         <th width=160px>Status</th>
         <th width=60px>Count</th>
@@ -149,5 +149,5 @@
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>
