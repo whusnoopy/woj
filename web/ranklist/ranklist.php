@@ -1,23 +1,16 @@
-
 <?php
-
- if ($start == null){
-    $var="ranknum"; $value=0;
- }
- else{
-    $var="ranknum"; $value=$start;
- }
-
+    if(isset($_GET['start']))
+		$ranknum = $_GET['start'];
+	else
+		$ranknum = '0';
 ?>
 
-
-  <%-- head bar of Page --%>
 <?php
-  include('..\include\header.php');
+  include('../include/header.php');
 ?>
   <div id="tt">User Ranklist</div>
 <?php
-  include('..\include\notice.php');
+  include('../include/notice.php');
 ?>
 
   <div id="main">
@@ -59,9 +52,10 @@
     <td>${ratioChangeBean.output}%</td>
     </tr>
   </c:forEach>
-
+ --%>
 </tbody></table>
 
+<%--
   <br><div>
    <c:choose>
     <c:when test="${param.start > 0}">
@@ -91,7 +85,8 @@
   </div><br>
   </div>
  --%>
+
 <?php
-	include('include\tailer.php')
+	include('../include/tailer.php');
 ?>
 

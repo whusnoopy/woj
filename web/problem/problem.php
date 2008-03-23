@@ -7,7 +7,7 @@
 
 	$problem = get_problem_info($problem_id);
 	if (count($problem) < 12){
-		for($i = count($problem); $i <= 12; $i++)
+		for($i = count($problem)+1; $i <= 12; $i++)
 			$problem[] = ' ';
 	}
 ?>

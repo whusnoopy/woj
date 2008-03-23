@@ -14,19 +14,19 @@
   <div id="main">
 
 
-	<?php
-		if (isset($_GET['origURL'])){
-			echo "<span class=cl>Please Login First!</span>";
-			$origURL = $_GET['origURL'];
-		}
-		if (isset($_GET['errorMsg']))
-			echo "<span class=cl>$_GET[errorMsg] </span>";
-	?>
-	<br><br>
+<?php
+	if (isset($_GET['origURL'])){
+		echo "<span class=cl>Please Login First!</span>";
+		$origURL = $_GET['origURL'];
+	}
+	if (isset($_GET['errorMsg']))
+		echo "<span class=cl>$_GET[errorMsg] </span>";
+?>
+	<br>
 
     <form name=loginform action="login.do.php?origURL=<?php echo $origURL; ?>" method=post>
       <input type=hidden name=origURL value=<?php echo $_GET['origURL'];?>/>
-      <table><tbody>
+      <table width=950><tbody>
         <tr class=tro>
           <td width=400 align=right><strong>Username:&nbsp;&nbsp;</strong></td>
           <td align=left><input name=user_id tabIndex=1 value="<?php echo $_COOKIE['user_id'];?>" size=20 maxlength=150 /></td>

@@ -17,7 +17,7 @@
 ?>
 
 <?php
-	include('..\include\header.php');
+	include('../include/header.php');
 ?>
 
   <div id="tt">
@@ -25,7 +25,7 @@
   </div>
 
 <?php
-	include ('..\include\notice.php');
+	include ('../include/notice.php');
 ?>
 
   <div id="main">
@@ -105,5 +105,5 @@
   </div>
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>

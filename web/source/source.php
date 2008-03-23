@@ -4,7 +4,7 @@
 <center>
 
 <?php
-    include('..\include\header.php');
+    include('../include/header.php');
 	include('classes/format_code_t.php');
 
 	if(isset($_GET['solution_id']))
@@ -56,7 +56,7 @@
 
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>
 
 <?php
