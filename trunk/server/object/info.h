@@ -7,6 +7,7 @@ using namespace std;
 typedef struct _CONTEST_INFO_{
   string title;
   string description;
+  char type;
   int page_id;
 }ContestInfo;
 

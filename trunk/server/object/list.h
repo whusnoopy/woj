@@ -31,6 +31,7 @@ typedef struct _CONTEST_LIST_ITEM_{
   string start_time;
   string end_time;
   string type;
+  int public_id;
   int contest_id;
 }ContestListItem;
 
@@ -100,10 +101,36 @@ typedef struct _CONTEST_STATISTICS_ITEM_{
   int Pascal;
 }ContestStatisticsItem;
 
+typedef struct _PROBLEM_STATISTICS_ITEM_{
+	int problem_id;
+  int AC;
+  int PE;
+  int CE;
+  int WA;
+  int TLE;  
+  int RE;    
+  int MLE;    
+  int OLE;    
+  int Total;
+  int User_Total;
+  int User_AC;
+  int C_CPP;    
+  int Java;    
+  int Pascal;
+}ProblemStatistics;
+
 typedef struct _LINK_LIST_ITEM_{
   string url;
   string site_name;
 }LinkListItem;
+
+typedef struct _CONTEST_PROBLEM_ITEM_{
+  int problem_id;
+  int in_contest_id;
+  string title;
+  int accepted;
+  int total;
+}ContestProblemItem;
 
 typedef vector<UserListItem> UserList;
 typedef vector<ProblemListItem> ProblemList;
@@ -118,5 +145,6 @@ typedef vector<File> FileList;
 typedef vector<Status> StatusList;
 typedef vector<LinkListItem> LinkList;
 typedef set<int> ProblemSet;
+typedef vector<ContestProblemItem> ContestProblemList;
 
 #endif /*LIST_H_*/

@@ -104,18 +104,23 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
 
   string databuf;
   list_iter = list.begin();
-  databuf += stringPrintf("%d\001%s\001%d\001%d\001%d", list_iter->problem_id,
-                                                        list_iter->title.c_str(),
-                                                        list_iter->accepted,
-                                                        list_iter->submit,
-                                                        list_iter->ac);
+  bool first = true;
   while (list_iter != list.end()) {
-    databuf += "\001" + 
-               stringPrintf("%d\001%s\001%d\001%d\001%d", list_iter->problem_id,
-                                                          list_iter->title.c_str(),
-                                                          list_iter->accepted,
-                                                          list_iter->submit,
-                                                          list_iter->ac);
+    if (first) {
+      databuf += stringPrintf("%d\001%s\001%d\001%d\001%d", list_iter->problem_id,
+                                                            list_iter->title.c_str(),
+                                                            list_iter->accepted,
+                                                            list_iter->submit,
+                                                            list_iter->ac);
+      first = false;
+    } else {
+      databuf += "\001" + 
+                 stringPrintf("%d\001%s\001%d\001%d\001%d", list_iter->problem_id,
+                                                            list_iter->title.c_str(),
+                                                            list_iter->accepted,
+                                                            list_iter->submit,
+                                                            list_iter->ac);
+    }
     list_iter++;
   }
   

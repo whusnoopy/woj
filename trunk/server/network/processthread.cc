@@ -6,10 +6,15 @@
 #include <pthread.h>
 
 #include "processimp.h"
+#include "contestlistprocessimp.h"
+#include "contestcontentprocessimp.h"
+#include "problemstatisticsprocessimp.h"
+#include "statusprocessimp.h"
 #include "problemprocessimp.h"
 #include "mailcontentprocessimp.h"
 #include "maillistprocessimp.h"
 #include "addmailprocessimp.h"
+#include "contestproblemprocessimp.h"
 #include "registerprocessimp.h"
 #include "homepageprocessimp.h"
 #include "loginprocessimp.h"
@@ -22,8 +27,8 @@
 #include "base/flags.h"
 using namespace std;
 
-string getIp(int ip_){
-  int a, b, c, d;
+string getIp(unsigned int ip_){
+  unsigned int a, b, c, d;
   a = ip_ % 256;
   ip_ /= 256;
   b = ip_ % 256;
@@ -31,7 +36,7 @@ string getIp(int ip_){
   c = ip_ % 256;
   ip_ /= 256;
   d = ip_ % 256;
-  return stringPrintf("%d.%d.%d.%d", d, c, b, a);
+  return stringPrintf("%u.%u.%u.%u", d, c, b, a);
 }
 
 void ProcessThread::running(){
@@ -48,12 +53,13 @@ void ProcessThread::running(){
     char buf[20];
     if (socket_read(connect_fd, buf, 10) != 10) {
       LOG(ERROR) << "header reader error";
-      close(m_socket);
+      close(connect_fd);
       continue;
     }
     int type = (buf[0] - 'a') * 26 + buf[1] - 'a';
+    bool unknown = false;
     switch (type) {
-      case 488:
+      case 448:  //rg
         m_process_imp = new RegisterProcessImp();
         break;
       case 294:
@@ -86,17 +92,35 @@ void ProcessThread::running(){
       case 391:
         m_process_imp = new ProblemProcessImp();
         break;
+      case 487:
+        m_process_imp = new StatusProcessImp();
+        break;
+      case 486:
+        m_process_imp = new ProblemStatisticsProcessImp();
+        break;
+      case 63:  //cl
+        m_process_imp = new ContestListProcessImp();
+        break;
+      case 54:  //cc
+        m_process_imp = new ContestContentProcessImp();
+        break;
+      case 67:  //cp
+        m_process_imp = new ContestProblemProcessImp();
+        break;
       default:
         LOG(ERROR) << "Unknown type data.";
-        close(m_socket);
-        continue;
+        close(connect_fd);
+        unknown = true;
+        break;
     }
+    if (unknown) 
+      continue;
     //sendReply(connect_fd, 'a');
     int length = atoi(buf+2);
     m_process_imp->process(connect_fd, ip, length);
     delete m_process_imp;
     m_process_imp = NULL;
-	  close(m_socket);
+	  close(connect_fd);
   }
 }
 
