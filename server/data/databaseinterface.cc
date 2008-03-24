@@ -200,14 +200,16 @@ int DatabaseInterface::addMail(const Mail& mail){
                                            "onlinejudgetest");
   string query;
   query += "insert into mails(topic_id, title, content, unread, time, ";
-  query += "to_user, from_user) values('";
+  query += "to_user, from_user, reader_del, writer_del) values('";
   query += stringPrintf("%d", mail.getTopicId())+"','" +
            changeSymbol(mail.getTitle()) + "','" +
            changeSymbol(mail.getContent()) + "','" +
            changeSymbol(mail.getRead()?"N":"Y") + "','" +
            changeSymbol(mail.getTime()) + "','" +
            changeSymbol(mail.getToUser()) + "','" +
-           changeSymbol(mail.getFromUser()) + 
+           changeSymbol(mail.getFromUser()) + "','" +
+           changeSymbol(mail.getReaderDel()?"Y":"N") + "','" +
+           changeSymbol(mail.getWriterDel()?"Y":"N") +
            "')";
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
@@ -1138,6 +1140,18 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
     }
     query += "title like '%" + changeSymbol(contest_info.title) + "%' ";
   }
+   if (contest_info.type != '-'){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    if (contest_info.type == 'c')
+      query += "(contest_type = 'N' or contest_type = 'P') ";
+    else
+      query += "contest_tyoe = '" + changeSymbol(contest_info.type) + "' ";
+  }
   if (contest_info.description != string("NULL")){
     if (first){
       query += "where ";
@@ -1147,6 +1161,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
     }
     query += "description like '%" + changeSymbol(contest_info.description) + "%' ";
   }
+  query += " order by start_time desc ";
   query += " limit " + stringPrintf("%d, 25", contest_info.page_id*25);
   cout << query << endl;
   connection->connect();
@@ -1156,6 +1171,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   	item.type = result_set.getString("contest_type");
   	item.start_time = result_set.getString("start_time");
   	item.end_time = result_set.getString("end_time");
+    item.public_id = result_set.getString("public_id");
   	contest_list.push_back(item);
   }
   result_set.close();

@@ -44,19 +44,24 @@ void MailListProcessImp::process(int socket_fd, const string& ip, int length){
   //mail_list = DatabaseInterface::getInstance().getMailList(mail_info);
   string databuf;
   MailList::iterator mail_iter = mail_list.begin();
-  databuf = stringPrintf("%d\001%s\001%s\001%s\001%s", mail_iter->mail_id, 
-                                                       mail_iter->to_user.c_str(),
-                                                       mail_iter->from_user.c_str(), 
-                                                       mail_iter->title.c_str(),
-                                                       mail_iter->date.c_str(), 
-                                                       (mail_iter->read)?"Y":"N");
+  bool first = true;
   while (mail_iter != mail_list.end()) {
-    databuf = stringPrintf("\001%d\001%s\001%s\001%s\001%s", mail_iter->mail_id, 
-                                                             mail_iter->to_user.c_str(),
-                                                             mail_iter->from_user.c_str(), 
-                                                             mail_iter->title.c_str(),
-                                                             mail_iter->date.c_str(), 
-                                                             (mail_iter->read)?"Y":"N"); 
+    if (first) {
+      databuf += stringPrintf("%d\001%s\001%s\001%s\001%s", mail_iter->mail_id, 
+                                                           mail_iter->to_user.c_str(),
+                                                           mail_iter->from_user.c_str(), 
+                                                           mail_iter->title.c_str(),
+                                                           mail_iter->date.c_str(), 
+                                                           (mail_iter->read)?"Y":"N");
+      first = false;
+    } else {
+      databuf += stringPrintf("\001%d\001%s\001%s\001%s\001%s", mail_iter->mail_id, 
+                                                               mail_iter->to_user.c_str(),
+                                                               mail_iter->from_user.c_str(), 
+                                                               mail_iter->title.c_str(),
+                                                               mail_iter->date.c_str(), 
+                                                               (mail_iter->read)?"Y":"N"); 
+    }
     mail_iter++;
   }
   string len = stringPrintf("%010d",databuf.length());
