@@ -84,7 +84,7 @@ void Discuss::setContestId(int contest_id){
   contest_id_ = contest_id;
 }
 
-void Discuss::setTilte(const string& title){
+void Discuss::setTitle(const string& title){
   title_ = title;
 }
 

@@ -22,6 +22,7 @@ typedef struct _DISCUSS_INFO_{
   int problem_id;
   int contest_id;
   string user_id;
+  int topic_id;
   int page_id;
 }DiscussInfo;
 
@@ -58,6 +59,7 @@ typedef struct _PROBLEM_INFO_{
 
 typedef struct _RANK_LIST_INFO_{
   int page_id;
+  int seq;
 }RankListInfo;
 
 typedef struct _USER_INFO_{

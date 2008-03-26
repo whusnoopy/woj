@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "../object/status.h"
+#include "../object/code.h"
+#include "../object/user.h"
 #include "../object/list.h"
 #include "../object/info.h"
 #include "../util/calulate.h"
@@ -79,6 +81,21 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     return;
   }
   int type = atoi(iter->c_str());
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find user_id for:" << ip;
+    return;
+  }
+  string user_id = *iter;
+  bool hasuser = false;
+  if (user_id != "?")
+    hasuser = true;
+  User user;
+  ProblemSet acset;
+  //if (hasuser) {
+    //user = DataInterface::getInstance().getUserInfo(user_id);
+    //acset = DataInterface::getInstance().getUserACProblem(user_id, true);
+  //}
   StatusList list;
   if (type == 0){
     //list = DataInterface::getStatus(status_info);
@@ -87,6 +104,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     //list = DataInterface::getProblemStatus(status_info);
     LOG(INFO) << "process ps for:" << ip;
   }
+  
   StatusList::iterator status_iter = list.begin();
   string databuf;
   bool first = true;
@@ -103,6 +121,15 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
                              status_iter->getCodeLength(),
                              status_iter->getSubmitTime().c_str(),
                              status_iter->getCodeId());
+      if (hasuser) {
+        Code code;
+        //code = DataInterface::getInstance().getCode(status_iter->getCodeId());
+        if (user.getPermission() & 0x01 || (code.getShare() && acset.count(status_iter->getProblemId()))){
+          databuf += "\001Y";
+        }else 
+          databuf += "\001N";
+      }else
+        databuf += "\001N";
       first = false;
     } else {
       databuf += stringPrintf("\001%d\001%s\001%d\001%d\001%d\001%d\001%d\001%d\001%s\001%d", 
@@ -116,6 +143,15 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
                              status_iter->getCodeLength(),
                              status_iter->getSubmitTime().c_str(),
                              status_iter->getCodeId());
+      if (hasuser) {
+        Code code;
+        //code = DataInterface::getInstance().getCode(status_iter->getCodeId());
+        if (user.getPermission() & 0x01 || (code.getShare() && acset.count(status_iter->getProblemId()))){
+          databuf += "\001Y";
+        }else 
+          databuf += "\001N";
+      }else
+        databuf += "\001N";
     }
     status_iter++;
   }

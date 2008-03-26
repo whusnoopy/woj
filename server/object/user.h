@@ -65,6 +65,7 @@ public:
   void setIndentifyCode(const string& indentify_code);
   UserListItem getUserListItem() const;
   RankListItem getRankListItem() const;
+  void updateUser(const User& user);
 
 private:
   string user_id_;

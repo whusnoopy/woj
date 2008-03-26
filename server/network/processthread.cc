@@ -6,6 +6,7 @@
 #include <pthread.h>
 
 #include "processimp.h"
+#include "ranklistprocessimp.h"
 #include "contestlistprocessimp.h"
 #include "contestcontentprocessimp.h"
 #include "problemstatisticsprocessimp.h"
@@ -19,9 +20,19 @@
 #include "homepageprocessimp.h"
 #include "loginprocessimp.h"
 #include "problemlistprocessimp.h"
+#include "discusscontentprocessimp.h"
 #include "existuserprocessimp.h"
 #include "codeprocessimp.h"
 #include "disablemailprocessimp.h"
+#include "userinfoprocessimp.h"
+#include "contestranklistprocessimp.h"
+#include "conteststatisticsprocessimp.h"
+#include "discusslistprocessimp.h"
+#include "adddiscussprocessimp.h"
+#include "disablediscussprocessimp.h"
+#include "updateuserprocessimp.h"
+#include "disableuserprocessimp.h"
+#include "addnewsprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -106,6 +117,39 @@ void ProcessThread::running(){
         break;
       case 67:  //cp
         m_process_imp = new ContestProblemProcessImp();
+        break;
+      case 452: //rk
+        m_process_imp = new RankListProcessImp();
+        break;
+      case 528: //ui
+        m_process_imp = new UserInfoProcessImp();
+        break;
+      case 69:  //cr
+        m_process_imp = new ContestRankListProcessImp();
+        break;
+      case 70:  //cs
+        m_process_imp = new ContestStatisticsProcessImp();
+        break;
+      case 89:  //dl
+        m_process_imp = new DiscussListProcessImp();
+        break;
+      case 80:  //dc
+        m_process_imp = new DiscussContentProcessImp();
+        break;
+      case 3:   //ad
+        m_process_imp = new AddDiscussProcessImp();
+        break;
+      case 81:  //dd
+        m_process_imp = new DisableDiscussProcessImp();
+        break;
+      case 540: //uu
+        m_process_imp = new UpdateUserProcessImp();
+        break;
+      case 98:  //du
+        m_process_imp = new DisableUserProcessImp();
+        break;
+      case 13:  //an
+        m_process_imp = new AddNewsProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";
