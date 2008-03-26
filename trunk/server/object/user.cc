@@ -186,3 +186,13 @@ RankListItem User::getRankListItem() const{
   return item;
 }
 
+void User::updateUser(const User& user) {
+  setPassword(user.getPassword());
+  setEmail(user.getEmail());
+  setShowEmail(user.getShowEmail());
+  setNickname(user.getNickname());
+  setSchool(user.getSchool());
+  setShareCode(user.getShareCode());
+  setLanguage(user.getLanguage());
+}
+

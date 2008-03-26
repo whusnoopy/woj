@@ -45,7 +45,7 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
   User user;
   //user = DatabaseInterface::getInstance().getUserInfo(user_id);
   if (password != user.getPassword()) {
-    sendReply(socket_fd, 0);
+    sendReply(socket_fd, 'N');
     return ;
   }
   user.setLastLoginIp(connect_ip);
@@ -53,7 +53,7 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
   string indentify_code = calIndentifyCode(user_id);
   user.setIndentifyCode(indentify_code);
   //DatabaseInterface::getInstance().updateUserInfo(user);
-  if (sendReply(socket_fd, 1)){
+  if (sendReply(socket_fd, 'Y')){
     LOG(ERROR) << "Cannot reply the login for:" << ip;
     return;
   } 

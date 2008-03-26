@@ -39,7 +39,7 @@ public:
 	void setUserId(const string& user_id);
 	void setProblemId(int problem_id);
 	void setContestId(int contest_id);
-	void setTilte(const string& title);
+	void setTitle(const string& title);
 	void setContent(const string& content);
   void setDate(const string& date);
   void setAvailable(bool available);

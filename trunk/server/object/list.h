@@ -18,6 +18,11 @@ typedef struct _USER_LIST_ITEM_{
 	string reg_time;
 }UserListItem;
 
+typedef struct _PROBLEM_USER_AC_{
+  string user_id;
+  int problem_id;
+}ProblemUserAC;
+
 typedef struct _PROBLEM_LIST_ITEM_{
   int problem_id;
   string title;
@@ -146,5 +151,7 @@ typedef vector<Status> StatusList;
 typedef vector<LinkListItem> LinkList;
 typedef set<int> ProblemSet;
 typedef vector<ContestProblemItem> ContestProblemList;
+typedef set<ProblemUserAC> UserACSet;
+typedef set<int> TopicSet;
 
 #endif /*LIST_H_*/

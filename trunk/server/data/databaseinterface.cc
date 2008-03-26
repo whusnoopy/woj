@@ -982,7 +982,18 @@ RankList DataInterface::getRankList(const RankListInfo& ranklist_info){
                                             "root",
                                             "noahoak",
                                             "onlinejudgetest");
-  string query = "select * from users order by solveds, submits desc";
+  string query = "select * from users ";
+  switch (ranklist.seq) {
+    case 0:
+      query += "order by solveds desc, submits";
+      break;
+    case 1:
+      query += "order by submits desc, solveds desc";
+      break;
+    case 2:
+      query += "order by solveds/submits desc, solveds desc";
+      break;
+  }
   query += " limit " + stringPrintf("%d, 25", ranklist_info.page_id*25);
   cout << query << endl;
   connection->connect();
@@ -1049,7 +1060,8 @@ DiscussList DatabaseInterface::getDiscussList(const DiscussInfo& discuss_info){
     query += "user_id like '%" + changeSymbol(discuss_info.user_id) + 
              "%' ";
   }
-  query += " limit " + stringPrintf("%d, 25", discuss_info.page_id*25);
+  query += " order by time desc ";
+  query += " limit " + stringPrintf("%d, 20", discuss_info.page_id*20);
   cout << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
@@ -1441,6 +1453,158 @@ User DatabaseInterface::getMostDiligenPlayer(){
   delete connection;
   return getUserInfo(user_id);
 }
+
+ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo& contest_ranklist_info){
+  ContestRankList contest_ranklist;
+  ContestRankListItem item;
+  ContestProblemTime time_item;
+  map<string, ContestRankListItem> ranklist_buf;
+  map<int, int> problem_id_to_contest;
+  Contest contest = getContest(contest_ranklist_info.contest_id);
+  Connection* connection = createConnection("localhost", "root", "noahoak", "onlinejudgetest");
+  connection->connect();
+  string query = "select * from problemtocontests where contest_id = '";
+  query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()){
+  	 int problem_id = result_set.getInt("problem_id");
+     problem_id_to_contest[problem_id] = result_set.getInt("in_contest_id");
+  }
+  result_set.close();
+  query = "select * from statuses where contest_id = '";
+  query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
+  query += "order by submit_time ";
+  result_set = connection->excuteQuery(query);
+  while (result_set.next()){   
+    string user_id = result_set.getString("user_id");
+    int problem_id = result_set.getInt("problem_id");
+    string submit_time = result_set.getString("submit_time");
+    int time = caltime(submit_time, contest.getStartTime());
+    int result = result_set.getInt("result");
+    if (ranklist_buf.count(user_id) == 0){
+      item.accepted = 0;
+      item.penalty = 0;
+      item.user_id = user_id;
+      ranklist_buf[user_id] = item;
+    }
+    if (ranklist_buf[user_id].problem_penalty.count(problem_id) == 0){
+      time_item.ac = false;
+      time_item.penalty = 0 ;
+      time_item.problem_id = problem_id;
+      time_item.submit = 0;
+      ranklist_buf[user_id].problem_penalty[problem_id]=time_item;
+    }
+    if (!ranklist_buf[user_id].problem_penalty[problem_id].ac)
+      ranklist_buf[user_id].problem_penalty[problem_id].submit++;
+    if (result == 0 && !ranklist_buf[user_id].problem_penalty[problem_id].ac){
+      ranklist_buf[user_id].accepted++;
+      ranklist_buf[user_id].problem_penalty[problem_id].ac = true;
+      ranklist_buf[user_id].problem_penalty[problem_id].penalty = time + 
+        20*60*(ranklist_buf[user_id].problem_penalty[problem_id].submit - 1);
+      ranklist_buf[user_id].penalty += ranklist_buf[user_id].problem_penalty[problem_id].penalty;
+      ranklist_buf[user_id].problem_penalty[problem_id].in_contest_id = 
+        problem_id_to_contest[problem_id];
+    }
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  map<string, ContestRankListItem>::iterator iter = ranklist_buf.begin();
+  while (iter != ranklist_buf.end()){
+  	iter->second.nickname = getUserInfo(iter->second.user_id).getNickname();
+    contest_ranklist.push_back(iter->second);
+    iter++;
+  }
+  return contest_ranklist;
+}
+
+ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
+  ContestStatistics contest_statistics;
+  ContestStatisticsItem item;
+  map<int, ContestStatisticsItem> statistics_buf;
+  Connection* connection = createConnection("localhost", "root", "noahoak", "onlinejudgetest");
+  connection->connect();
+  string query = "select problem_id, in_contest_id from problemtocontests ";
+  query += "where contest_id = '" + stringPrintf("%d", contestId) + "'";
+  Result result_set= connection->excuteQuery(query);
+  while (result_set.next()){
+  	memset(&item, 0, sizeof(item));
+    item.problem_id = result_set.getInt("problem_id");
+    item.problem_id = result_set.getInt("in_contest_id");
+    statistics_buf[item.problem_id] = item;
+  }
+  result_set.close();
+  UserACSet set;
+  query = "select * from statuses where contest_id =' " + 
+          stringPrintf("%d", contestId) + "'";
+  result_set= connection->excuteQuery(query);
+  ProblemUserAC problem_user_ac;
+  while (result_set.next()){
+  	int problem_id = result_set.getInt("problem_id");
+  	int result = result_set.getInt("result");
+  	int language = result_set.getInt("language");
+    string user_id = result_set.getString("user_id");
+  	statistics_buf[problem_id].Total++;
+  	switch (language){
+  	  case 0:
+  	  case 1:
+  	    statistics_buf[problem_id].C_CPP++;
+  	    break;
+  	  case 2:
+  	    statistics_buf[problem_id].Java++;
+  	    break;
+  	  case 3:
+  	    statistics_buf[problem_id].Pascal++;
+  	}
+  	switch (result){
+  		case 0:
+        problem_user_ac.user_id = user_id;
+        problem_user_ac.problem_id = problem_id;
+        if (set.count(problem_user_ac) == 0) {
+  		    statistics_buf[problem_id].AC++;
+          set.insert(problem_user_ac);
+        }
+  	    break;
+  		case 1:
+  		  statistics_buf[problem_id].PE++;
+  	    break;
+  		case 2:
+  		  statistics_buf[problem_id].TLE++;
+  	    break;
+  		case 3:
+  		  statistics_buf[problem_id].MLE++;
+  	    break;
+  		case 4:
+  		  statistics_buf[problem_id].WA++;
+  	    break;
+  		case 5:
+  		  statistics_buf[problem_id].OLE++;
+  	    break;
+  		case 6:
+  		  statistics_buf[problem_id].CE++;
+  	    break;
+  		case 7:
+  		case 8:
+  		case 9:
+  		case 10:
+  		case 11:
+  		case 12:
+  		  statistics_buf[problem_id].RE++;
+  	    break;
+  	}
+  }
+  result_set.close();
+  map<int, ContestStatisticsItem>::iterator iter = statistics_buf.begin();
+  while (iter != statistics_buf.end()){
+    contest_statistics.push_back(iter->second);
+    iter++;
+  }
+  connection->close();
+  delete connection;
+  return contest_statistics;
+}
+
+
 
 Connection* DatabaseInterface::createConnection(const string& host,
                                                const string& user,
