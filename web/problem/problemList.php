@@ -1,11 +1,5 @@
 <?php
 /*
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 
 <c:set var="noOfRows" value="100" scope="page" />
 
@@ -40,7 +34,6 @@
 		$start = intval($_GET['start']);
 	else $start = 1;
 
-	$noOfRows = 100;
 ?>
 
   <div id="tt">Problems Volume <?php echo $volume; ?></div>
@@ -49,10 +42,8 @@
 	include('../include/notice.php');
 ?>
 
-
-
-
   <div id="main">
+
   <table><tbody align=center>
     <tr>
       <th width="80">&nbsp;</th>
@@ -107,8 +98,15 @@
 
   </tbody></table>
   <br>
-  <span class="bt"><a href="problemSet.php">Back to Volumes List</a></span>
-  <br><br>
+  <br />
+  <div>
+    <form method=post action="searchList.php" >
+	<strong>Search:</strong>&nbsp;<input name=key type=text value='' size=50 maxlength="255" />&nbsp;
+    <strong>By:</strong>&nbsp;<select name=field><option value="title">Title</option><option value="source">Source</option></select>&nbsp;
+    <input type=submit value=GO />
+    </form>
+  </div>
+  <br>
   </div>
 
 <?php

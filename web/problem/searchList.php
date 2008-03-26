@@ -102,7 +102,7 @@
   match.</span>
 */?>
   <br><br>
-  <span class="bt"><a href="problemSet.php">Back to Volumes List</a></span>
+  <span class="bt"><a href="problemList.php">Back to Problem List</a></span>
   <br><br>
 
   </div>

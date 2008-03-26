@@ -7,8 +7,8 @@
   <div id="main">
     <table><tbody>
   <tr class=tro>
-    <td width="400" align="right"><strong>User ID:&nbsp;</strong></td>
-    <td align="left"><?php echo $_GET['user_id']; ?></td>
+    <td width=500 align="right"><strong>User ID:&nbsp;</strong></td>
+    <td width=400 align="left"><?php echo $_GET['user_id']; ?></td>
   </tr>
   <tr class=tre>
     <td align="right"><strong>Nick Name:&nbsp;</strong></td>

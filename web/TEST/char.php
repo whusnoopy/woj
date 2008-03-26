@@ -15,6 +15,28 @@ for($i=0; $i<count($arr); $i++){
 	echo $arr[$i].":";
 	if($i % 4 == 3)
 		echo "<br>";
-}
 
+}
+$a='12';
+$num = 20;
+echo $a*$num."<br>";
+
+$solveds = 21;
+$submits = 122;
+$ratio = sprintf("%.2f%s",$solveds * 100 / $submits, '%');
+echo $ratio."<br>";
+
+$s='2';
+if($s>1)
+echo "'2'>1";
+else
+echo "'2'<=1";
+
+echo "<br>";
+
+$s='2';
+echo "s=".($s+1).'<br>';
+
+$A=41;
+echo "\x41";
 ?>

@@ -11,8 +11,8 @@ class TCPClient{
 
 	function TCPClient()
 	{
-		$this->m_host = "192.168.5.183";
-		$this->m_port = 3030;
+		$this->m_host = "192.168.5.184";
+		$this->m_port = 3621;
 	}
 	function set_host($host)
 	{
@@ -99,25 +99,35 @@ class TCPClient{
   echo $receive;
 */
 /*
-function get_problem_info($problem_id)
+function get_problem_info($problem_id, &$problem)
 {
-	if(empty($problem_id)) return null;
+	if(empty($problem_id)){
+		$problem = null;
+		return;
+	}
 
-	$header = sprintf("%s%08d", "pb", strlen($problem));
+	$header = sprintf("%s%08d", "pb", strlen($problem_id));
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
 	$tc->connect() or die("unable to connect to server!");
 	$tc->sendstr($header) or die("send header failed");
-	$tc->sendstr($problem)or die("send message failed");
+	$tc->sendstr($problem_id)or die("send message failed");
 	$recv= $tc->recvstr(10);
 	$len = sscanf($recv, "%d");
 	if($len > 0){
 		$recv = $tc->recvstr($len);
-		$tc->close();
-		return $recv;
+		$problem =  explode("\001", $recv);
 	}
-	return null;
+	else $problem = null;
+	$tc->close();
+	return;
 }
+*/
+/*
+$tc = new TCPClient();
+$tc->create();
+$tc->connect();
+$tc->sendstr("sfsafasd");
 */
 ?>

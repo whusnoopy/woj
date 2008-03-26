@@ -60,6 +60,7 @@
 			$tc->close();
 			return true;
 		}
+		$tc->close();
 		return false;
 	}
 ?>

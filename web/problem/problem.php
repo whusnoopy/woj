@@ -1,11 +1,17 @@
 <?php
+/////////////////////////////////////
+////////////done/////////////////////
+/////////////////////////////////////
+?>
+<?php
 
 	if (isset($_GET['problem_id']))
 		$problem_id = intval( $_GET['problem_id'] );
 	else
 		$problem_id = 0;
 
-	$problem = get_problem_info($problem_id);
+	$problem = array();
+	get_problem_info($problem_id, $problem);
 	if (count($problem) < 12){
 		for($i = count($problem)+1; $i <= 12; $i++)
 			$problem[] = ' ';
@@ -57,7 +63,7 @@
     <br />
     <div>
       <span class="bt"><a href="../submit/submit.php?problem_id=<?php echo $problem_id;?>">Submit</a></span>&nbsp;&nbsp;
-	  <span class="bt"><a href="../submit/discuss.php?problem_id=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="../discuss/discuss.php?problem_id=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
       <span class="bt"><a href="../status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
     </div>
     <br />
@@ -69,17 +75,21 @@
 
 <?php
 
-function get_problem_info($problem_id)
+function get_problem_info($problem_id, &$problem)
 {
 	/////////////////////////////
 	$d="\001";
 	$recv = "a + b".$d."we begin".$d."a, b".$d."a+b".$d."1, 2".$d."3".$d."".$d."woj".$d."1000".$d."1024".$d."120".$d."100";
-	return explode("\001", $recv);
+	$problem = explode("\001", $recv);
+	return;
 	//////////////////////////////
 
-	if(empty($problem_id)) return null;
+	if(empty($problem_id)){
+		$problem = null;
+		return;
+	}
 
-	$header = sprintf("%s%08d", "pb", strlen($problem));
+	$header = sprintf("%s%08d", "pb", strlen($problem_id));
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
@@ -90,10 +100,10 @@ function get_problem_info($problem_id)
 	$len = sscanf($recv, "%d");
 	if($len > 0){
 		$recv = $tc->recvstr($len);
-		$tc->close();
-		return explode("\001", $recv);
+		$problem =  explode("\001", $recv);
 	}
+	else $problem = null;
 	$tc->close();
-	return null;
+	return;
 }
 ?>
