@@ -15,7 +15,7 @@
 <center>
 	<div id="bar">
     <a href="index.php">Home</a>&nbsp;|&nbsp;
-    <a href="problem/problemSet.php">Problems</a>&nbsp;|&nbsp;
+    <a href="problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="contest/contestList.php">Contests</a>&nbsp;|&nbsp;
     <a href="submit/submit.php">Submit</a>&nbsp;|&nbsp;
     <a href="status/status.php">Status</a>&nbsp;|&nbsp;

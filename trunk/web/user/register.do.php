@@ -1,4 +1,5 @@
 <?php
+	include('../common/tcpclient.php');
 
     echo "we are dealing with you request now, please wait...";
 
@@ -39,6 +40,7 @@
 		else if(existID($user_id))
 			$errorMsg = "The ID(".$user_id.")existed";
 	}
+
 	if (!empty($errorMsg)){
 		header("Location: regerror.php?errorMsg=$errorMsg");
 		exit;
@@ -48,6 +50,7 @@
 		exit;
 	}
 	else{
+
 		header("Location: regerror.php?errorMsg=sorry, system busy");
 		exit;
 	}
@@ -56,12 +59,11 @@
 
 
 <?php
-	include('../common/tcpclient.php');
+
 
 	//判断用户是否存在
 	function existID($user_id)
 	{
-
 		$header = sprintf("%s%08d", "ei", strlen($user_id));
 
 		$tc = new TCPClient();
@@ -73,6 +75,7 @@
 			$tc->close();
 			return true;
 		}
+		$tc->close();
 		return false;
 	}
 
@@ -89,10 +92,11 @@
 		$tc->connect() or die("unable to connect to server!");
 		$tc->sendstr($header) or die("send header failed");
 		$tc->sendstr($message)or die("send message failed");
-		if ($tc->recvstr(1) == 's'){
+		if ($tc->recvstr(1) != 's'){
 			$tc->close();
 			return false;
 		}
+		$tc->close();
 		return true;
 	}
 

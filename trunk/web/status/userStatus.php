@@ -1,21 +1,23 @@
+<?php
+/////////////////////////////////////
+////////////done/////////////////////
+/////////////////////////////////////
+?>
+
 
 <?php
 	include('../include/header.php');
-	include('classes/user_status_t.php');
 	if(isset($_GET['user_id'])){
 		$user_id = $_GET['user_id'];
 	}
-	$user_status = new user_status_t('$user_id');
-	if(!$user_status->exist()){
+
+	$user = array();
+	get_user_info($user_id, $user);
+	if(empty($user)){
 		header("Location: error.php?errorMsg='The user doesn't exist!'");
 		exit;
 	}
-	$solved = $user_status->get_solved();
-	$submission = $user_status->get_submission();
-	$rank = $user_status->get_rank();
-	$solved_result = $user_status->get_solved_result();
-	$school = $user_status->get_school();
-	$email = $user_status->get_email();
+
 ?>
 
   <div id="tt">
@@ -36,31 +38,31 @@
      <tr class=tro>
       <td></td>
       <td width=125><strong>Rank:</strong></td>
-      <td width=625><?php echo $rank; ?></td>
+      <td width=625><?php echo $user[0]; ?></td>
       <td></td>
      </tr>
      <tr class=tre>
       <td></td>
       <td><strong>Solved:</strong></td>
-      <td><?php echo $solved; ?></td>
+      <td><?php echo $user[1]; ?></td>
       <td></td>
      </tr>
      <tr class=tro>
       <td></td>
       <td><strong>Submissions:</strong></td>
-      <td><?php echo $submissions; ?></td>
+      <td><?php echo $user[2]; ?></td>
       <td></td>
      </tr>
      <tr class=tre>
       <td></td>
       <td><strong>School:</strong></td>
-      <td><?php echo $school; ?></td>
+      <td><?php echo $user[3]; ?></td>
       <td></td>
      </tr>
      <tr class=tro>
       <td></td>
       <td><strong>Email:</strong></td>
-      <td><?php echo $email; ?></td>
+      <td><?php echo $user[4]; ?></td>
       <td></td>
      </tr>
      <tr class=tre>
@@ -68,8 +70,9 @@
       <td><strong>Solved Problem:</strong></td>
       <td>
 	  <?php
-	      forEach ($solved_result as $valus){
-			echo "<a href=../problem/problem.php?problem_id=$valus>$valus &nbsp;</a>";
+	      for($i=5; $i<count($user); $i++){
+			$pid = $user[$i];
+			echo "<a href=../problem/problem.php?problem_id=$pid>$pid &nbsp;</a>";
 		  }
       ?>
 	  </td>
@@ -85,4 +88,39 @@
 
 <?php
 	include('../include/tailer.php');
+?>
+
+<?php
+function get_user_info($user_id, &$user)
+{
+
+	///////////////////////////////
+	$d = "\001";
+	$recv = "1".$d."100".$d."120".$d."whu".$d."mcje2004@126.com".$d."1001".$d."1002".$d."1003".$d."1004";
+	$user = explode("\001", $recv);
+	return;
+	////////////////////////////////
+
+	if(empty($user_id)){
+		$user = null;
+		return;
+	}
+
+	$header = sprintf("%s%08d", "ui", strlen($user_id));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($user_id)or die("send message failed");
+	$recv= $tc->recvstr(10);
+	$len = sscanf($recv, "%d");
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$user = explode("\001", $recv);
+	}
+	else $user = null;
+	$tc->close();
+	return ;
+}
 ?>

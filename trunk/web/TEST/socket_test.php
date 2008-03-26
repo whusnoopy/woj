@@ -4,10 +4,10 @@ include ('..\common\tcpclient.php');
 
 
 //for($i=0; $i<1000; $i++){
-	$tc = new tcpclient("127.0.0.1", 1234);
+	$tc = new TCPClient();
 	$tc->create();
 	$tc->connect();
-	$data = '0001';
+	$data = '0001111111';
 	$tc->sendstr($data);
 
 	$tc->close();
