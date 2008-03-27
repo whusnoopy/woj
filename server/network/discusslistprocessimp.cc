@@ -26,13 +26,14 @@ void findTree(int discuss_id, string& buf, int level) {
   //discuss_list = DataInterface::getInstance().getReplyDiscussList(discuss_id);
   DiscussList::iterator iter = discuss_list.begin();
   while (iter != discuss_list.end()) {
-    buf += prefixPlus(level) + stringPrintf("\001%d\001%s\001%s\001%s\001%d\001%d",
-                                            iter->discuss_id,
-                                            iter->title.c_str(),
-                                            iter->date.c_str(),
-                                            iter->user_id.c_str(),
-                                            iter->problem_id,
-                                            iter->contest_id);
+    buf += stringPrintf("\001%d\001%d\001%s\001%s\001%s\001%d\001%d",
+                        level,
+                        iter->discuss_id,
+                        iter->title.c_str(),
+                        iter->date.c_str(),
+                        iter->user_id.c_str(),
+                        iter->problem_id,
+                        iter->contest_id);
     findTree(iter->discuss_id, buf, level+1);
     iter++; 
   }
@@ -104,7 +105,7 @@ void DiscussListProcessImp::process(int socket_fd, const string& ip, int length)
     DiscussList::iterator discuss_iter = discuss_list.begin();
     while (discuss_iter != discuss_list.end()) {
       if (first) {
-        databuf += stringPrintf("+\001%d\001%s\001%s\001%s\001%d\001%d",
+        databuf += stringPrintf("1\001%d\001%s\001%s\001%s\001%d\001%d",
                                 discuss_iter->discuss_id,
                                 discuss_iter->title.c_str(),
                                 discuss_iter->date.c_str(),
@@ -113,7 +114,7 @@ void DiscussListProcessImp::process(int socket_fd, const string& ip, int length)
                                 discuss_iter->contest_id);
         first = false;
       }else {
-        databuf += stringPrintf("\001+\001%d\001%s\001%s\001%s\001%d\001%d",
+        databuf += stringPrintf("\0011\001%d\001%s\001%s\001%s\001%d\001%d",
                                 discuss_iter->discuss_id,
                                 discuss_iter->title.c_str(),
                                 discuss_iter->date.c_str(),
@@ -131,7 +132,7 @@ void DiscussListProcessImp::process(int socket_fd, const string& ip, int length)
     while (set_iter != topic_set.end()) {
       //discuss = DataInterface::getInstance().getDiscuss(*set_iter);
       if (first) {
-        databuf += stringPrintf("+\001%d\001%s\001%s\001%s\001%d\001%d",
+        databuf += stringPrintf("1\001%d\001%s\001%s\001%s\001%d\001%d",
                                 discuss.getMessageId(),
                                 discuss.getTitle().c_str(),
                                 discuss.getDate().c_str(),
@@ -140,7 +141,7 @@ void DiscussListProcessImp::process(int socket_fd, const string& ip, int length)
                                 discuss.getContestId()); 
         first = false;
       }else {
-        databuf += stringPrintf("\001+\001%d\001%s\001%s\001%s\001%d\001%d",
+        databuf += stringPrintf("\0011\001%d\001%s\001%s\001%s\001%d\001%d",
                                 discuss.getMessageId(),
                                 discuss.getTitle().c_str(),
                                 discuss.getDate().c_str(),

@@ -77,6 +77,6 @@ void AddMailProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot reply to:" << ip;
     return;
   }
-  LOG(ERROR) << "Process addmail completed for:" << ip;
+  LOG(INFO) << "Process addmail completed for:" << ip;
 }
 

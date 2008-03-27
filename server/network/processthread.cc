@@ -33,6 +33,15 @@
 #include "updateuserprocessimp.h"
 #include "disableuserprocessimp.h"
 #include "addnewsprocessimp.h"
+#include "addproblemprocessimp.h"
+#include "addinputandoutputfileprocessimp.h"
+#include "addfiletoproblemprocessimp.h"
+#include "updateproblemprocessimp.h"
+#include "mostproblemprocessimp.h"
+#include "problemversionprocessimp.h"
+#include "ableproblemprocessimp.h"
+#include "getproblemfileprocessimp.h"
+#include "adminproblemlistprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -150,6 +159,33 @@ void ProcessThread::running(){
         break;
       case 13:  //an
         m_process_imp = new AddNewsProcessImp();
+        break;
+      case 15:  //ap
+        m_process_imp = new AddProblemProcessImp();
+        break;
+      case 222: //io
+        m_process_imp = new AddInputAndOutputProcessImp();
+        break;
+      case 145: //fp
+        m_process_imp = new AddFileToProblemProcessImp();
+        break;
+      case 535: //up
+        m_process_imp = new UpdateProblemProcessImp();
+        break;
+      case 327: //mp
+        m_process_imp = new MostProblemProcessImp();
+        break;
+      case 411: //pv
+        m_process_imp = new ProblemVersionProcessImp();
+        break;
+      case 41:  //41
+        m_process_imp = new AbleProblemProcessImp();
+        break;
+      case 171: //gp
+        m_process_imp = new GetProblemFileProcessImp();
+        break;
+      case 457: //rp
+        m_process_imp = new AdminProblemListProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

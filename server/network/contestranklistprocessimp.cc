@@ -21,7 +21,7 @@ bool isShorter(const ContestProblemTime& a, const ContestProblemTime& b) {
   return a.in_contest_id < b.in_contest_id;
 }
 
-vector<ContestProblemTime> changMapToVector(const map<int, ContestProblemTime>& time_map) {
+vector<ContestProblemTime> changMapToVector(const map<int, ContestProblemTime>& time_map, int num) {
   map<int, ContestProblemTime>::const_iterator problem_time_iter = time_map.begin();
   vector<ContestProblemTime> problem_time_list;
   ContestProblemTime problem_time;
@@ -31,6 +31,24 @@ vector<ContestProblemTime> changMapToVector(const map<int, ContestProblemTime>& 
     problem_time_iter++;
   }
   stable_sort(problem_time_list.begin(), problem_time_list.end(), isShorter);
+  vector<ContestProblemTime>::iterator iter = problem_time_list.begin();
+  int in_id = 0;
+  ContestProblemTime item;
+  item.penalty = 0;
+  item.submit = 0;
+  while (iter != problem_time_list.end()) {
+    in_id++;
+    if (iter->in_contest_id != in_id) {
+      item.in_contest_id = in_id;
+      problem_time_list.insert(iter,item);
+      continue;
+    }
+    iter++;
+  }
+  for (int i = in_id + 1; i < num; i++){
+    item.in_contest_id = i;
+    problem_time_list.push_back(item);
+  }
   return problem_time_list; 
 }
 
@@ -78,7 +96,7 @@ void ContestRankListProcessImp::process(int socket_fd, const string& ip, int len
                             ranklist_iter->accepted);
     databuf += "\001" + changeTime(ranklist_iter->penalty);
     //sort
-    vector<ContestProblemTime> problem_time_list = changMapToVector(ranklist_iter->problem_penalty);
+    vector<ContestProblemTime> problem_time_list = changMapToVector(ranklist_iter->problem_penalty, contest_problem_num);
     vector<ContestProblemTime>::iterator problem_time_iter = problem_time_list.begin();
     while (problem_time_iter != problem_time_list.end()) {
       databuf += "\001" + changeTime(problem_time_iter->penalty);

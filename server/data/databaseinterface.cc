@@ -38,9 +38,16 @@ int DatabaseInterface::addContest(const Contest& contest){
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
+  query = "select LAST_INSERT_ID()";
+  int contest_id = 0;
+  Result result_set = connection->exuteQuery(query);
+  if (result_set.next()) {
+    contest_id = result_set.getInt(1);
+  }
+  result_set.close();
   connection->close();
   delete connection;
-  return ret;
+  return contest_id;
 }
 
 int DatabaseInterface::addProblemListtoContest(const Contest& contest,
@@ -158,9 +165,16 @@ int DatabaseInterface::addProblem(const Problem& problem){
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
+  query = "select LAST_INSERT_ID()";
+  int problem_id = 0;
+  Result result_set = connection->exuteQuery(query);
+  if (result_set.next()) {
+    problem_id = result_set.getInt(1);
+  }
+  result_set.close();
   connection->close();
   delete connection; 
-  return ret;
+  return problem_id;
 }
 
 int DatabaseInterface::addStatus(const Status& stautus){
@@ -188,9 +202,16 @@ int DatabaseInterface::addStatus(const Status& stautus){
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
+  query = "select LAST_INSERT_ID()";
+  int status_id = 0;
+  Result result_set = connection->exuteQuery(query);
+  if (result_set.next()) {
+    status_id = result_set.getInt(1);
+  }
+  result_set.close();
   connection->close();
   delete connection; 
-  return ret;
+  return status_id;
 }
 
 int DatabaseInterface::addMail(const Mail& mail){
@@ -279,9 +300,16 @@ int DatabaseInterface::addCode(const Code& code){
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
+  query = "select LAST_INSERT_ID()";
+  int code_id = 0;
+  Result result_set = connection->exuteQuery(query);
+  if (result_set.next()) {
+    code_id = result_set.getInt(1);
+  }
+  result_set.close();
   connection->close();
   delete connection; 
-  return ret;
+  return code_id;
 }
 
 int DatabaseInterface::addError(const Error& error){
@@ -296,9 +324,16 @@ int DatabaseInterface::addError(const Error& error){
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
+  query = "select LAST_INSERT_ID()";
+  int error_id = 0;
+  Result result_set = connection->exuteQuery(query);
+  if (result_set.next()) {
+    error_id = result_set.getInt(1);
+  }
+  result_set.close();
   connection->close();
   delete connection; 
-  return ret;
+  return error_id;
 }
 
 int DatabaseInterface::addDiscuss(const Discuss& discuss){
@@ -594,7 +629,9 @@ int DatabaseInterface::disableProblem(const Problem& problem){
                                             "noahoak",
                                             "onlinejudgetest");
   string query;
-  query += "update problems set available = 'N' where problem_id = '";
+  query += "update problems set available = '" + 
+           changSymbol((problem.getAvailable()?"Y":"N")) + 
+           "' where problem_id = '";
   query += stringPrintf("%d", problem.getProblemId()) + "'";
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
@@ -633,13 +670,15 @@ int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& pro
            "')";
   cout << query << endl;
   int ret = connection->excuteUpdate(query);
+  int file_id;
   query = "select file_id from files where path = '" + 
           changeSymbol(file.getPath()) + "' and style = '" +
-          stringPrintf("%d", file.getType()) + 
+          stringPrintf("%d", file.getType()) + "' and disable = 'N" +  
           "'";
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
-    query = "insert into filestoproblems values('"; 
+    query = "insert into filestoproblems values('";
+    file_id = result_set.getInt("file_id");
     query += stringPrintf("%d", result_set.getInt("file_id")) + "','" + 
              stringPrintf("%d", problem.getProblemId()) + 
              "')";
@@ -649,7 +688,7 @@ int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& pro
   result_set.close();
   connection->close();
   delete connection;
-  return ret;
+  return file_id;
 }
 
 int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& contest){
@@ -665,13 +704,15 @@ int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& con
            "')";
   cout << query << endl;
   int ret = connection->excuteUpdate(query);
+  int file_id;
   query = "select file_id from files where path = '" + 
           changeSymbol(file.getPath()) + "' and style = '" +
-          stringPrintf("%d", file.getType()) + 
+          stringPrintf("%d", file.getType()) + "' and disable ='N" + 
           "'";
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
     query = "insert into filestocontests values('"; 
+    file_id = result_set.getInst("file_id");
     query += stringPrintf("%d", result_set.getInt("file_id")) + "','" + 
              stringPrintf("%d", contest.getContestId()) + 
              "')";
@@ -681,7 +722,7 @@ int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& con
   result_set.close();
   connection->close();
   delete connection;
-  return ret;
+  return file_id;
 }
 
 Code DatabaseInterface::getCode(int code_id){
@@ -966,6 +1007,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   	item.submit = result_set.getInt("submit");
   	item.title = result_set.getString("title");
     iter.ac = 0;
+    iter.available = (result_set.getString("available") == "Y");
   	problem_list.push_back(item);
   }
   result_set.close();
