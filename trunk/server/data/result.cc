@@ -56,6 +56,10 @@ int Result::getInt(const string& name){
 		return ret;
 	} 
 }
+int Result::getInt(int n) {
+  string str(m_row[n]);
+  return atoi(str.c_str());
+}
 
 void Result::close(){
   mysql_free_result(m_result);

@@ -27,20 +27,24 @@ void CodeProcessImp::process(int socket_fd, const string& ip, int length) {
   spriteString(data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
   if (iter != datalist.end()) {
-    LOG(ERROR) << "Cannot find code_list from data for:" << ip;
+    LOG(ERROR) << "Cannot find code_id from data for:" << ip;
     return;
   }
   //int code_id = atoi(iter->c_str());
   iter++;
+  /*do not need*/
+  /*
   if (iter != datalist.end()) {
     LOG(ERROR) << "Cannot find user_id from data for:" << ip;
     return;
   }
   string user_id;
-  user_id = *iter;
+  user_id = *iter;*/
+  /*do not need*/
   Code code;
   //code = DatabaseInterface::getInstance().getCode(code_id);
-  bool can_read = false;
+  /* do not need */
+  /*bool can_read = false;
   User user;
   //user = DatabaseInterface::getInstance().getUserInfo(user_id);
   //can_read = DatabaseInterface::getInstance().IsCodeOwner(user_id, code_id);
@@ -54,7 +58,8 @@ void CodeProcessImp::process(int socket_fd, const string& ip, int length) {
   if (sendReply(socket_fd, 'Y')) {
     LOG(ERROR) << "Cannot write data to:" << ip;
     return;
-  }
+  }*/
+  /* do not need*/
   string source = code.getCodeContent();
   string len = stringPrintf("%010d", source.length());
   if (socket_write(socket_fd, len.c_str(), 10)) {

@@ -21,6 +21,7 @@ public:
 	int getRowNum();
 	string getString(const string& name);
 	int getInt(const string& name);
+  int getInt(int n);
 	//double getDouble(const string& name);
 	void close();
 private:

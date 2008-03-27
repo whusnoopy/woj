@@ -29,6 +29,7 @@ typedef struct _PROBLEM_LIST_ITEM_{
   int accepted;
   int submit;
   int ac;
+  bool available;
 }ProblemListItem;
 
 typedef struct _CONTEST_LIST_ITEM_{
