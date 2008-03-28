@@ -35,12 +35,13 @@ void ContestContentProcessImp::process(int socket_fd, const string& ip, int leng
   Contest contest;
   //contest = DatabaseInterface::getInstance().getContestList();
   string databuf;
-  databuf += stringPrintf("%s\001%s\001%s\001%s\001%d",
+  databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d",
                           contest.getTitle().c_str(),
                           contest.getDescription().c_str(),
                           contest.getStartTime().c_str(),
                           contest.getEndTime().c_str(),
-                          contest.getPublicId());
+                          contest.getPublicId(),
+                          contest.getVersion());
    
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){

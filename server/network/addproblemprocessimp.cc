@@ -14,7 +14,7 @@
 using namespace std;
 
 void AddProblemProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process add Mail for:" << ip;
+  LOG(INFO) << "Process add problem for:" << ip;
   char* buf;
   buf = new char[length + 1];
   memset(buf, 0, length + 1);

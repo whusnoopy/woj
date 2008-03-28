@@ -1,4 +1,4 @@
-#include "addfiletoproblemprocessimp.h"
+#include "addfiletocontestprocessimp.h"
 
 #include <vector>
 #include <string>
@@ -8,14 +8,14 @@
 #include "base/flags.h"
 #include "../util/calulate.h"
 #include "../object/file.h"
-#include "../object/problem.h"
+#include "../object/contest.h"
 #include "../object/list.h"
 #include "../object/bufsize.h"
 #include "../object/info.h"
 #include "../object/user.h"
 using namespace std;
 
-void upCase(string& suffix) {
+void toUpCase(string& suffix) {
   for (int i =0 ;i < suffix.length(); i++) {
     if (suffix[i] >= 'a' && suffix[i] <='z') {
       suffix[i] = 'A' + suffix[i] - 'a';
@@ -23,8 +23,8 @@ void upCase(string& suffix) {
   }
 }
 
-int findSuffix(string& suffix) {
-  upCase(suffix);
+int getSuffix(string& suffix) {
+  toUpCase(suffix);
   if (suffix == "JPG" || suffix == "JPEG" || suffix == "GIF"|| 
       suffix == "BMP" || suffix == "PNG") {
     suffix = "imp";
@@ -36,8 +36,8 @@ int findSuffix(string& suffix) {
   return 0;
 }
 
-void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process add file to problem for:" << ip;
+void AddFileToContestProcessImp::process(int socket_fd, const string& ip, int length){
+  LOG(INFO) << "Process add file to contest for:" << ip;
   BufSize buf;
   buf.alloc(length + 1);
   if (socket_read(socket_fd, buf.getBuf(), length) != length) {
@@ -47,10 +47,10 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
   string filename(buf.getBuf(), buf.getBuf() + length);
   buf.alloc(11);
   if (socket_read(socket_fd, buf.getBuf(), 10) != 10) {
-    LOG(ERROR) << "Cannot read problem_id from:" << ip;
+    LOG(ERROR) << "Cannot read contest_id from:" << ip;
     return;
   }
-  Problem problem(atoi(buf.getBuf()));
+  Contest contest(atoi(buf.getBuf()));
   string::size_type pos = filename.find_last_of(".");
   string suffix("NULL");
   if (pos != string::npos) {
@@ -65,10 +65,10 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
   int len = atoi(buf.getBuf());
   buf.alloc(len);
   if (socket_read(socket_fd, buf.getBuf(), len) != len) {
-    LOG(ERROR) << "Canot read file data from:" << ip;
+    LOG(ERROR) << "Cannot read file data from:" << ip;
     return;
   }
-  int type = findSuffix(suffix);
+  int type = getSuffix(suffix);
   if (!type) {
     string url_length = "0000000000";
     socket_write(socket_fd, url_length.c_str(), 10);
@@ -76,15 +76,15 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
     return;
   }
   string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S"); 
-  string path = "/file/" + suffix + "/p" + 
-                stringPrintf("%d", problem.getProblemId()) +
-                "/" + time + "_" +
+  string path = "/file/" + suffix + "/c"+ 
+                stringPrintf("%d", contest.getContestId()) + "/" + 
+                time + "_" +
                 filename; 
   //DataInterface::getInstance().addFile(path, buf.getBuf(), len);
   File file;
   file.setPath(path);
   file.setType(type);
-  //DataInterface::getInstance().addFiletoProblem(file,problem);
+  //DataInterface::getInstance().addFiletoProblem(file,contest);
   string url = path;
   string url_len = stringPrintf("%010d", url.length());
   if (socket_write(socket_fd, url_len.c_str(), 10)) {
@@ -95,6 +95,6 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
     LOG(ERROR) << "Cannot write url to:" << ip;
     return;
   }
-  LOG(INFO) << "Process add file to problem completed for:" << ip;
+  LOG(INFO) << "Process add file to contest completed for:" << ip;
 }
 

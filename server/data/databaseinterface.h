@@ -48,6 +48,7 @@ public:
   Contest getUpcomingContest();
   User getUserInfo(const string& user_id);
   UserList getUserList(const UserInfo& user_info);
+  int updateProblem(const Problem& problem);
   int updateContest(const Contest& contest);
   int updateProblemListtoContest(const Contest& constest,const ProblemList& problem_list);
   int updateUserListtoContest(const Contest& contest,const UserList& user_list);

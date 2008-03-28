@@ -42,6 +42,15 @@
 #include "ableproblemprocessimp.h"
 #include "getproblemfileprocessimp.h"
 #include "adminproblemlistprocessimp.h"
+#include "addcontestprocessimp.h"
+#include "admincontestlistprocessimp.h"
+#include "ablecontestprocessimp.h"
+#include "contestversionprocessimp.h"
+#include "updatecontestprocessimp.h"
+#include "addfiletocontestprocessimp.h"
+#include "getcontestfileprocessimp.h"
+#include "addproblemtocontestprocessimp.h"
+#include "addusertocontestprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -178,7 +187,7 @@ void ProcessThread::running(){
       case 411: //pv
         m_process_imp = new ProblemVersionProcessImp();
         break;
-      case 41:  //41
+      case 41:  //bp
         m_process_imp = new AbleProblemProcessImp();
         break;
       case 171: //gp
@@ -186,6 +195,33 @@ void ProcessThread::running(){
         break;
       case 457: //rp
         m_process_imp = new AdminProblemListProcessImp();
+        break;
+      case 2:   //ac
+        m_process_imp = new AddContestProcessImp();
+        break;
+      case 444: //rc
+        m_process_imp = new AdminContestListProcessImp();
+        break;
+      case 28:  //bc
+        m_process_imp = new AbleContestProcessImp();
+        break;
+      case 73:  //cv
+        m_process_imp = new ContestVersionProcessImp();
+        break;
+      case 522: //uc
+        m_process_imp = new UpdateContestProcessImp();
+        break;
+      case 132: //fc
+        m_process_imp = new AddFileToContestProcessImp();
+        break;
+      case 158: //gc
+        m_process_imp = new GetContestFileProcessImp();
+        break;
+      case 392: //pc
+        m_process_imp = new AddProblemToContestProcessImp();
+        break;
+      case 72:  //cu
+        m_process_imp = new AddUserToContestProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";
