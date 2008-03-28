@@ -18,7 +18,9 @@ public:
           const string& description,
           const string& start_time,
           const string& end_time,
-          const string& type);
+          const string& type,
+          int version,
+          bool available);
   
   int getContestId() const;
   int getPublicId() const;
@@ -28,6 +30,8 @@ public:
   string getEndTime() const;
   string getType() const;
   ContestListItem getContestListItem() const;
+  int getVersion() const ;
+  bool getAvailable() const ;
   
   void setContestId(int contest_id);
   void setPublicId(int public_id);
@@ -36,6 +40,8 @@ public:
   void setStartTime(const string& start_time);
   void setEndTime(const string& end_time);
   void setType(const string& type);
+  void setVersion(int version);
+  void setAvailable(bool available);
   
 private:
   int contest_id_;
@@ -45,6 +51,8 @@ private:
   string start_time_;
   string end_time_;
   string type_;
+  int version_;
+  bool available_;
 };
 
 #endif /*CONTEST_H_*/

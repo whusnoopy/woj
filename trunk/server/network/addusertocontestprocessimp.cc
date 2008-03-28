@@ -1,4 +1,4 @@
-#include "ableproblemprocessimp.h"
+#include "addusertocontestprocessimp.h"
 
 #include <vector>
 #include <string>
@@ -7,14 +7,14 @@
 #include "base/logging.h"
 #include "base/flags.h"
 #include "../util/calulate.h"
-#include "../object/problem.h"
+#include "../object/contest.h"
 #include "../object/list.h"
 #include "../object/info.h"
 #include "../object/user.h"
 using namespace std;
 
-void AbleProblemProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process able problem for:" << ip;
+void AddUserToContestProcessImp::process(int socket_fd, const string& ip, int length){
+  LOG(INFO) << "Process add User to Contest for:" << ip;
   char* buf;
   buf = new char[length + 1];
   memset(buf, 0, length + 1);
@@ -28,30 +28,27 @@ void AbleProblemProcessImp::process(int socket_fd, const string& ip, int length)
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
-  Problem problem;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find problem_id from data for:" << ip;
+  if (iter ==  datalist.end()) {
+    LOG(ERROR) << "Cannot find contest_id from data" << ip;
     return;
   }
-  problem.setProblemId(atoi(iter->c_str()));
+  Contest contest(atoi(iter->c_str()));
   iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find available from data for:" << ip;
-    return;
+  UserSet set;
+  while (iter != datalist.end()) {
+    set.insert(*iter);
   }
-  problem.setAvailable(*iter == "Y");
+  //DataInterface::getInstance().disableContestUsers(contest);
   int ret = 0;
-  //ret = DataInterface::getInstance().disableProblem(problem);
+  //ret = DataInterface::getInstance().addUserListtoContest(contest, set);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;
   }
-
   if (sendReply(socket_fd, 'Y')) {
-    LOG(ERROR) << "Cannot return problem_id to:" << ip;
+    LOG(ERROR) << "Cannot reply to:" << ip;
     return;
   }
-
-  LOG(ERROR) << "Process able problem completed for:" << ip;
+  LOG(ERROR) << "Process add User to Contest completed for:" << ip;
 }
 

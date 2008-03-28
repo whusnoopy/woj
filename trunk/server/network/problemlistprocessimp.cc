@@ -106,6 +106,10 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   list_iter = list.begin();
   bool first = true;
   while (list_iter != list.end()) {
+    if (!list_iter->available) {
+      list_iter++;
+      continue;
+    }
     if (first) {
       databuf += stringPrintf("%d\001%s\001%d\001%d\001%d", 
                               list_iter->problem_id,

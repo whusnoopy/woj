@@ -1,4 +1,4 @@
-#include "getproblemfileprocessimp.h"
+#include "getcontestfileprocessimp.h"
 
 #include <vector>
 #include <string>
@@ -7,7 +7,7 @@
 #include "base/logging.h"
 #include "base/flags.h"
 #include "../util/calulate.h"
-#include "../object/problem.h"
+#include "../object/contest.h"
 #include "../object/file.h"
 #include "../object/filedata.h"
 #include "../object/list.h"
@@ -15,8 +15,8 @@
 #include "../object/user.h"
 using namespace std;
 
-void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process Get Problem File for:" << ip;
+void GetContestFileProcessImp::process(int socket_fd, const string& ip, int length){
+  LOG(INFO) << "Process Get Contest File for:" << ip;
   char* buf;
   buf = new char[length + 1];
   memset(buf, 0, length + 1);
@@ -31,21 +31,14 @@ void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int leng
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find problem_id from data for:" << ip;
+    LOG(ERROR) << "Cannot find contest_id from data for:" << ip;
     return;
   }
-  int problem_id = atoi(iter->c_str());
-  Problem problem(problem_id);
+  int contest_id = atoi(iter->c_str());
+  Contest contest(contest_id);
   FileList file_list;
-  //file_list = DataInterface::getInstance().getProblemFile(problem);
+  //file_list = DataInterface::getInstance().getContestFile(contest);
   FileList::iterator file_iter = file_list.begin();
-  while (file_iter != file_list.end()) {
-    FileList::iterator buf_iter = file_iter;
-    file_iter++;
-    if (buf_iter->getType() == 1 || buf_iter->getType() == 2 || buf_iter->getType() == 4444) {
-      file_list.erase(buf_iter);
-    }
-  }
   string len = stringPrintf("%010d", file_list.size());
   if (socket_write(socket_fd, len.c_str(), 10)) {
     LOG(ERROR) << "Cannot send file num to :" << ip;
@@ -83,6 +76,6 @@ void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int leng
       delete[] file_data.buf;
     }
   }
-  LOG(ERROR) << "Process Get Problem File completed for:" << ip;
+  LOG(ERROR) << "Process Get Contest File completed for:" << ip;
 }
 

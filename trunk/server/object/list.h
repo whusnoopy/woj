@@ -39,6 +39,7 @@ typedef struct _CONTEST_LIST_ITEM_{
   string type;
   int public_id;
   int contest_id;
+  bool available;
 }ContestListItem;
 
 typedef struct _CONTEST_PROBLEM_TIME_{
@@ -151,6 +152,7 @@ typedef vector<File> FileList;
 typedef vector<Status> StatusList;
 typedef vector<LinkListItem> LinkList;
 typedef set<int> ProblemSet;
+typedef set<string> UserSet;
 typedef vector<ContestProblemItem> ContestProblemList;
 typedef set<ProblemUserAC> UserACSet;
 typedef set<int> TopicSet;

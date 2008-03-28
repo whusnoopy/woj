@@ -6,14 +6,18 @@ Contest::Contest(int contest_id,
                  const string& description,
                  const string& start_time,
                  const string& end_time,
-                 const string& type)
+                 const string& type,
+                 int version,
+                 bool available)
 : contest_id_(contest_id),
   public_id_(public_id),
   title_(title),
   description_(description),
   start_time_(start_time),
   end_time_(end_time),
-  type_(type){
+  type_(type),
+  version_(version),
+  available_(available){
 }
   
 int Contest::getContestId() const{
@@ -43,6 +47,14 @@ string Contest::getEndTime() const{
 string Contest::getType() const{
    return type_;
 }
+
+int Contest::getVersion() const {
+  return version_;
+}
+
+bool Contest::getAvailable() const {
+  return available_;
+}
  
   
 void Contest::setContestId(int contest_id){
@@ -71,6 +83,14 @@ void Contest::setEndTime(const string& end_time){
  
 void Contest::setType(const string& type){
   type_ = type;
+}
+
+void Contest::setVersion(int version) {
+  version_ = version;
+}
+
+void Contest::setAvailable(bool available) {
+  available_ = available;
 }
 
 ContestListItem Contest::getContestListItem() const{

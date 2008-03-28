@@ -34,6 +34,7 @@ void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int lengt
     return;
   }
   problem.setProblemId(atoi(iter->c_str()));
+  //problem = DataInterface::getInstance().getProblem(problem.getProblemId());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot title find from data for:" << ip;
@@ -114,7 +115,6 @@ void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int lengt
   problem.setStandardTimeLimit(0);
   problem.setStandardMemoryLimit(0);
   problem.setAvailable(true);
-  problem.setVersion(1);
   int ret = 0;
   //ret = DataInterface::getInstance().updateProblem(problem);
   if (ret) {

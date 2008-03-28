@@ -27,13 +27,16 @@ int DatabaseInterface::addContest(const Contest& contest){
                                            "onlinejudgetest");
   string query;
   query += "insert into contests(public_id, title, description,"; 
-  query +=" start_time, end_time, contest_type) values('";
+  query += "start_time, end_time, contest_type, version, available)" + 
+  query += " values('";
   query += stringPrintf("%d",contest.getPublicId()) + "','" +
-           contest.getTitle() + "','" +
-           contest.getDescription() + "','" +
+           changeSymbol(contest.getTitle()) + "','" +
+           changeSymbol(contest.getDescription()) + "','" +
            contest.getStartTime() + "','" +
            contest.getEndTime() + "','" +
-           contest.getType() + 
+           contest.getType() + "','" +
+           contest.getVersion() + "','" +
+           changeSymbol(contest.getAvailable()?"Y":"N") + 
            "')";
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
@@ -51,27 +54,27 @@ int DatabaseInterface::addContest(const Contest& contest){
 }
 
 int DatabaseInterface::addProblemListtoContest(const Contest& contest,
-                            const ProblemList& problem_list){
+                            const ProblemSet& problem_set){
   Connection* connection = createConnection("localhost",
                                            "root",
                                            "noahoak",
                                            "onlinejudgetest");
   int in_contest_id = 1;
-  ProblemList::const_iterator problem_iter = problem_list.begin();
+  ProblemSet::const_iterator problem_iter = problem_set.begin();
   int ret;
   cout << "Connection:" << connection->connect() << endl;
-  while(problem_iter != problem_list.end()){
+  while(problem_iter != problem_set.end()){
     string query;
     query += "insert into problemtocontests(problem_id, contest_id, "; 
     query += "in_contest_id) values('";
-    query += stringPrintf("%d", problem_iter->problem_id) + "','" +
+    query += stringPrintf("%d", *problem_iter) + "','" +
              stringPrintf("%d", contest.getContestId()) + "','" +
              stringPrintf("%d", in_contest_id) + 
              "')";
     cout << query << endl;
     ret = connection->excuteUpdate(query);
     if (ret)
-      cout << "Add Problem " << problem_iter->problem_id << "to Contest "
+      cout << "Add Problem " << *problem_iter << "to Contest "
            << contest.getContestId() << endl;
     in_contest_id++;
     problem_iter++;
@@ -81,24 +84,24 @@ int DatabaseInterface::addProblemListtoContest(const Contest& contest,
   return ret;                             
 }
 
-int DatabaseInterface::addUserListtoContest(const Contest& contest,const UserList& user_list){
+int DatabaseInterface::addUserListtoContest(const Contest& contest,const UserSet& user_set){
   Connection* connection = createConnection("localhost",
                                            "root",
                                            "noahoak",
                                            "onlinejudgetest");
-  UserList::const_iterator user_iter = user_list.begin();
+  UserSet::const_iterator user_iter = user_set.begin();
   int ret;
   cout << "Connection:" << connection->connect() << endl;
-  while(user_iter != user_list.end()){
+  while(user_iter != user_set.end()){
     string query;
     query += "insert into contestpermission(user_id, contest_id) values('";
-    query += changeSymbol(user_iter->user_id) + "','" +
+    query += changeSymbol(*user_iter) + "','" +
              stringPrintf("%d", contest.getContestId()) +
              "')";
     cout << query << endl;
     ret = connection->excuteUpdate(query);
     if (ret)
-      cout << "Add User " << user_iter->user_id << "to Contest "
+      cout << "Add User " << *user_iter << "to Contest "
            << contest.getContestId() << endl;
     user_iter++;
   }
@@ -175,6 +178,43 @@ int DatabaseInterface::addProblem(const Problem& problem){
   connection->close();
   delete connection; 
   return problem_id;
+}
+
+int DatabaseInterface::updateProblem(const Problem& problem) {
+  Connection* connection = createConnection("localhost",
+                                           "root",
+                                           "noahoak",
+                                           "onlinejudgetest");
+  string query;
+  query += "update problems set ";
+  query += "title = '" + changeSymbol(problem.getTitle()) + "'," +
+           "description = '" + changeSymbol(problem.getDescription()) + "'," +
+           "input = '" + changeSymbol(problem.getInput()) + "'," +
+           "output = '" + changeSymbol(problem.getOutput()) + "'," +
+           "sample_input = '" + changeSymbol(problem.getSampleInput()) + "'," +
+           "sample_output = '" + changeSymbol(problem.getSampleOutput()) + "'," +
+           "hint = '" + changeSymbol(problem.getHint()) + "'," +
+           "source = '" + changeSymbol(problem.getSource()) + "'," +
+           "time_limit = '" + stringPrintf("%d",problem.getTimeLimit()) + "'," +
+           "case_time_limit = '" + stringPrintf("%d",problem.getCaseTimeLimit()) + "'," +
+           "memory_limit = '" + stringPrintf("%d",problem.getMemoryLimit()) + "'," +
+           "available = '" + changeSymbol(problem.getAvailable()?"Y":"N") + "'," +
+           "accepted = '" + stringPrintf("%d",problem.getAccepted()) + "'," +
+           "submit = '" + stringPrintf("%d",problem.getSubmit()) + "'," +
+           "solved_users = '" + stringPrintf("%d",problem.getSolvedUsers()) + "'," +
+           "submit_users = '" + stringPrintf("%d",problem.getSubmitUsers()) + "'," +
+           "standard_time_limit = '" + stringPrintf("%d",problem.getStandardTimeLimit()) + "'," +
+           "standard_memory_limit = '" + stringPrintf("%d",problem.getStandardMemoryLimit()) + "'," +
+           "version = version + 1, " + 
+           "spj = '" + changeSymbol(problem.getSpj()?"Y":"N") + 
+           "' where problem_id = '" + stringPrintf("%d",problem.getProblemId())+ "'";
+  update
+  cout << query << endl;
+  cout << "Connection:" << connection->connect() << endl;
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection; 
+  return ret;
 }
 
 int DatabaseInterface::addStatus(const Status& stautus){
@@ -376,8 +416,9 @@ int DatabaseInterface::updateContest(const Contest& contest){
            "description = '" + changeSymbol(contest.getDescription()) + "', " +
            "start_time = '" + changeSymbol(contest.getStartTime()) + "', " +
            "end_time = '" + changeSymbol(contest.getEndTime()) + "', " +
-           "contest_type = '" + changeSymbol(contest.getType()) + 
-           "' where contest_id = '" + stringPrintf("%d", contest.getContestId()) + 
+           "contest_type = '" + changeSymbol(contest.getType()) +
+           "', version = version + 1, ";
+  query += " where contest_id = '" + stringPrintf("%d", contest.getContestId()) + 
            "'";
   cout << query << endl;
   cout << "Connection:" << connection->connect() << endl;
@@ -767,6 +808,8 @@ Contest DatabaseInterface::getContest(int contest_id){
   	contest.setEndTime(result_set.getString("end_time"));
   	contest.setType(result_set.getString("contest_type"));
   	contest.setDescription(result_set.getString("description"));
+    contest.setVersion(result_set.getInt("version"));
+    contest.setAvailable(result_set.getString("available") == "Y");
   	result_set.close();
     connection.close();
     delete connection;
@@ -1201,7 +1244,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
     } else {
     	query += "and ";
     }
-    if (contest_info.type == 'c')
+    if (contest_info.type == 'C')
       query += "(contest_type = 'N' or contest_type = 'P') ";
     else
       query += "contest_tyoe = '" + changeSymbol(contest_info.type) + "' ";
@@ -1226,6 +1269,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   	item.start_time = result_set.getString("start_time");
   	item.end_time = result_set.getString("end_time");
     item.public_id = result_set.getString("public_id");
+    item.available = (result_set.getString("available")  == "Y");
   	contest_list.push_back(item);
   }
   result_set.close();
