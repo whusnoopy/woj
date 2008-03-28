@@ -74,12 +74,19 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
   string command_line = commands[1];
   for (int i = 2; commands[i]; ++i)
     command_line = command_line + " " + commands[i];
-//  int status = 0;
-//  LOG(INFO) << "system (" << command_line << ")return : " << status;
-//  status = system(command_line.c_str());
-//  LOG(INFO) << "system (" << command_line << ")return : " << status;
+/*
   LOG(INFO) << "Create process by command : \"" << command_line << "\"";
-
+  int status = 0;
+  if (run_info.working_dir)
+    chdir(run_info.working_dir);
+  if (run_info.stdin_filename)
+    command_line += " <" + stringPrintf("%s", run_info.stdin_filename);
+  if (run_info.stdout_filename)
+    command_line += " >" + stringPrintf("%s", run_info.stdout_filename);
+  LOG(INFO) << "system (" << command_line << ")return : " << status;
+  status = system(command_line.c_str());
+  LOG(INFO) << "system (" << command_line << ")return : " << status;
+*/
   const char* filename[] = {run_info.stdin_filename,
                             run_info.stdout_filename,
                             run_info.stderr_filename};
@@ -98,7 +105,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
         }
         return -1;
       }
-      LOG(INFO) << "Open " << filename[i] << " to " << file[i];
+      LOG(DEBUG) << "Open " << filename[i] << " to " << file[i];
     }
   }
 //  LOG(INFO) << "Success Opened stdin/stdout/stderr to "
@@ -117,7 +124,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
         LOG(SYS_ERROR) << "Fail to dup " << file[i] << " to " << i;
         raise(SIGKILL);
       }
-      LOG(INFO) << "Dup " << file[i] << " to " << i;
+      LOG(DEBUG) << "Dup " << file[i] << " to " << i;
       close(file[i]);
     }
   }
@@ -181,7 +188,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
       raise(SIGKILL);
     }
   }
-  LOG(INFO) << "Set run_info successful";
+  LOG(DEBUG) << "Set run_info successful";
   if (execv(commands[0], (char**)(commands + 1)) == -1) {
     LOG(SYS_ERROR) << "Fail to execute command '" << commands[0] << "'";
     raise(SIGKILL);

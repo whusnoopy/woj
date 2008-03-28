@@ -20,6 +20,7 @@
 #include "judge/client/judge.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
+#include "judge/client/run.h"
 
 using namespace std;
 
@@ -29,26 +30,11 @@ DEFINE_FLAGS(int, gid, "gid for run SPJ");
 DEFINE_FLAGS(string, server_address, "server address");
 DEFINE_FLAGS(int, server_port, "server port");
 
-DECLARE_FLAGS(string, root_dir);
-
-
 int main(int argc, char* argv[]) {
   if (parseFlags(argc, argv)) {
     LOG(SYS_ERROR) << "Unable to parse flags";
     return -1;
   }
-
-  installSignalHandler(SIGPIPE, SIG_IGN);
-
-  installHandlers();
-
-  LOG(INFO) << "Install handlers finished";
-
-  string test_file_dir = FLAGS_root_dir + "/testdata/";
-  string standard_filename = test_file_dir + "judge_standard.txt";
-  string accepted_filename = test_file_dir + "judge_ac.txt";
-  string presentation_error_filename = test_file_dir + "judge_pe.txt";
-  string wrong_answer_filename = test_file_dir + "judge_wa.txt";
 
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in server_address;
@@ -69,44 +55,30 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  if (doJudge(communicate_socket,
-              "",
-              standard_filename,
-              accepted_filename,
-              "") == ACCEPTED) {
-    LOG(INFO) << "Pass Accepted Test";
-  } else {
-    LOG(ERROR) << "Failed on Accepted Test";
-    return -1;
-  }
+  installSignalHandler(SIGPIPE, SIG_IGN);
+  installHandlers();
+  LOG(INFO) << "Install handlers finished";
 
-  if (doJudge(communicate_socket,
-              "",
-              standard_filename,
-              presentation_error_filename,
-              "") == PRESENTATION_ERROR) {
-    LOG(INFO) << "Pass Presentation Error Test";
-  } else {
-    LOG(ERROR) << "Failed on Presentation Error Test";
-    return -1;
-  }
-
-  if (doJudge(communicate_socket,
-              "",
-              standard_filename,
-              wrong_answer_filename,
-              "") == WRONG_ANSWER) {
-    LOG(INFO) << "Pass Wrong Answer Test";
-  } else {
-    LOG(ERROR) << "Failed on Wrong Answer Test";
-    return -1;
-  }
-
+  string test_file_dir = "/tmp/testdata/";
   string spj_filename = test_file_dir + "spj";
   string spj_input_filename = test_file_dir + "spj_in.txt";
-  accepted_filename = test_file_dir + "spj_ac.txt";
-  presentation_error_filename = test_file_dir + "spj_pe.txt";
-  wrong_answer_filename = test_file_dir + "spj_wa.txt";
+  string accepted_filename = test_file_dir + "spj_ac.txt";
+  string presentation_error_filename = test_file_dir + "spj_pe.txt";
+  string wrong_answer_filename = test_file_dir + "spj_wa.txt";
+  LOG(SYS_ERROR) << "Detect Position";
+
+  bool pass = true;
+
+  if (doRun(communicate_socket,
+            spj_filename,
+            "cc",
+            spj_input_filename,
+            "/tmp/testdata/spj.out",
+            1,
+            65535,
+            65535)) {
+    LOG(ERROR) << "Failed on Run " << spj_filename;
+  }
 
   if (doJudge(communicate_socket,
               spj_input_filename,
@@ -116,7 +88,7 @@ int main(int argc, char* argv[]) {
     LOG(INFO) << "Pass SPJ Accepted Test";
   } else {
     LOG(ERROR) << "Failed on SPJ Accepted Test";
-//    return -1;
+    pass = false;
   }
 
   if (doJudge(communicate_socket,
@@ -127,7 +99,7 @@ int main(int argc, char* argv[]) {
     LOG(INFO) << "Pass SPJ Presentation Error Test";
   } else {
     LOG(ERROR) << "Failed on SPJ Presentation Error Test";
-//    return -1;
+    pass = false;
   }
 
   if (doJudge(communicate_socket,
@@ -138,10 +110,13 @@ int main(int argc, char* argv[]) {
     LOG(INFO) << "Pass SPJ Wrong Answer Test";
   } else {
     LOG(ERROR) << "Failed on SPJ Wrong Answer Test";
-//    return -1;
+    pass = false;
   }
 
-  LOG(INFO) << "PASSED ALL TESTS";
+  if (pass)
+    LOG(INFO) << "PASSED ALL TESTS";
+  else
+    LOG(ERROR) << "FAILED ON SOME TEST(S)";
 
   return 0;
 }

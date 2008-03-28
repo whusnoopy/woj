@@ -22,65 +22,97 @@
 DECLARE_FLAGS(int, uid);
 DECLARE_FLAGS(int, gid);
 
+int sendRunningMessage(int communicate_socket, int time_, int memory_) {
+  static char message[9];
+  message[0] = RUNNING;
+  *(unsigned int*)(message + 1) = htonl((unsigned int)(time_));
+  *(unsigned int*)(message + 5) = htonl((unsigned int)(memory_));
+  if (socket_write(communicate_socket, message, sizeof(message)) == -1) {
+    LOG(ERROR) << "Fail to send running message back";
+    return -1;
+  }
+  return 0;
+}
+
 int monitor(int communicate_socket,
             pid_t pid,
             int time_limit,
             int memory_limit,
-            const TraceCallback& callback) {
+            TraceCallback* callback) {
   LOG(INFO) << "Start to monitor process " << pid;
   int result = -1;
   int time_ = 0;
   int memory_ = 0;
-  while (result == -1) {
+  while (result < 0 && !callback->hasExited()) {
     struct timespec request, remain;
     request.tv_sec = 1;
     request.tv_nsec = 0;
     while (result < 0 &&
-           !callback.hasExited() &&
+           !callback->hasExited() &&
            nanosleep(&request, &remain) < 0) {
       if (errno != EINTR) {
         LOG(SYS_ERROR) << "Fail to nanosleep";
         kill(pid, SIGKILL);
-        return SYSTEM_ERROR;
+        result = SYSTEM_ERROR;
       }
       request = remain;
     }
     int ts;
     int ms;
-    if (callback.hasExited()) {
-      ts = callback.getTime();
-      ms = callback.getMemory();
-      result = callback.getResult();
-    } else {
-      ts = readTime(pid);
-      ms = readMemory(pid);
-    }
-    if (ts > time_)
-      time_ = ts;
-    if (ms > memory_)
-      memory_ = ms;
-    LOG(INFO) << "Monitor process " << pid << " with time/memory("
-              << time_ << "/" << memory_ << ")";
+    if (result < 0 && !callback->hasExited()) {
+      ts = callback->getTime();
+      ms = callback->getMemory();
+      if (ts > time_)
+        time_ = ts;
+      if (ms > memory_)
+        memory_ = ms;
+      if (time_ > time_limit) {
+        result = TIME_LIMIT_EXCEEDED;
+        time_ = time_limit + 36;
+      }
+      if (memory_ > memory_limit) {
+        result = MEMORY_LIMIT_EXCEEDED;
+        memory_ = memory_limit + 36;
+      }
+      
+      LOG(INFO) << "Monitor process " << pid << " with time/memory("
+                << time_ << "/" << memory_ << ")";
 
-    static char message[9];
-    message[0] = RUNNING;
-    *(unsigned int*)(message + 1) = htonl((unsigned int)(time_));
-    *(unsigned int*)(message + 5) = htonl((unsigned int)(memory_));
-    if (socket_write(communicate_socket, message, sizeof(message)) == -1) {
-      LOG(ERROR) << "Fail to send running message back";
-      if (!callback.hasExited())
-        kill(pid, SIGKILL);
+      if (sendRunningMessage(communicate_socket, time_, memory_)) {
+        if (!callback->hasExited())
+          kill(pid, SIGKILL);
+        result = SYSTEM_ERROR;
+        break;
+      }
+    }
+  }
+
+  int status;
+  while (waitpid(pid, &status, 0) < 0) {
+    if (errno != EINTR) {
+      LOG(SYS_ERROR) << "Error when waitpid for " << pid << " with errno = "
+                     << errno;
       return SYSTEM_ERROR;
     }
+  }
+  if (!WIFEXITED(status)) {
+    LOG(SYS_ERROR) << "Child process not exited";
+    return SYSTEM_ERROR;
+  }
 
-    if (time_ > time_limit) {
-      result = TIME_LIMIT_EXCEEDED;
+  if (result < 0) {
+    if (callback->getResult() == 0) {
+      time_ = callback->getTime();
+      memory_ = callback->getMemory();
+    }
+    callback->processResult(status);
+    result = callback->getResult();
+    if (result == TIME_LIMIT_EXCEEDED)
       time_ = time_limit + 36;
-    }
-    if (memory_ > memory_limit) {
-      result = MEMORY_LIMIT_EXCEEDED;
+    if (result == MEMORY_LIMIT_EXCEEDED)
       memory_ = memory_limit + 36;
-    }
+    if (sendRunningMessage(communicate_socket, time_, memory_))
+      return SYSTEM_ERROR;
   }
   return result;
 }
@@ -111,7 +143,7 @@ int runExe(int communicate_socket,
     LOG(ERROR) << "Fail to execute program : " << exe_filename;
     return SYSTEM_ERROR;
   }
-  return monitor(communicate_socket, pid, time_limit, memory_limit, callback);
+  return monitor(communicate_socket, pid, time_limit, memory_limit, &callback);
 }
 
 inline int isNativeExe(const string& source_file_type) {
@@ -143,7 +175,10 @@ int doRun(int communicate_socket,
   }
   if (result) {
     sendReply(communicate_socket, result);
-    return -1;
+    if (result == SYSTEM_ERROR)
+      return -1;
+    else
+      return 1;
   }
   return 0;
 }

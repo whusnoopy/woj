@@ -8,6 +8,7 @@
 #include <linux/mm.h>
 #include <linux/module.h>
 #include <linux/preempt.h>
+#include <linux/ptrace.h>
 #include <linux/rbtree.h>
 #include <linux/sched.h>
 #include <linux/signal.h>
@@ -41,7 +42,8 @@ asmlinkage int (*old_fork)(struct pt_regs);
 asmlinkage int (*old_vfork)(struct pt_regs);
 asmlinkage unsigned long (*old_brk)(unsigned long);
 
-asmlinkage void suicide(void) {
+void suicide(int syscall) {
+  printk("Restricted syscall %d\n", syscall);
   send_sig(SIGKILL, current, 1);
 }
 
@@ -71,7 +73,6 @@ asmlinkage int notify_tracer(int syscall) {
   while (current->exit_code == KMMON_SIG) {
     current->state = TASK_STOPPED;
     schedule();
-    printk("wake up\n");
   }
   return current->exit_code;
 }
@@ -83,36 +84,37 @@ void asm_stuff(void) {
     ".globl new_int80\n"
     ".align 4, 0x90\n"
   "new_int80:\n"
-    "pushl %%ebx;"
+    "pushl %%ebx;" // save EBX
     "movl %%esp, %%ebx;"
     "andl %0, %%ebx;"
-    "movl %c1(%%ebx), %%ebx;"
-    "andl %2, %c3(%%ebx);"
-    "jz normal;"
-    "movl %4, %%ebx;"
-    "movl 0(%%ebx, %%eax), %%ebx;"
-    "andl $3, %%ebx;"
-    "jz normal;"
-    "jnp disable;"
+    "movl %c1(%%ebx), %%ebx;" // equals the "current" macro for i386
+    "testl %2, %c3(%%ebx);"   // test if KMMON_MASK is set in current->flags
+    "jz normal;"              // if not, jump to normal syscall
+    "movl %4, %%ebx;"         // load the address of syscall_filter_table
+    "testl $3, 0(%%ebx, %%eax);" // check syscall_filter_table[syscall]
+    "jz normal;"   // 0 means enabled
+    "jnp disable;" // Not 0, only can be 1 or 3. If the parity flag is not
+                   // set, it should have odd number of 1s in the result,
+                   // which is 1. Jump to disable.
     "pushl %%ecx;"
     "pushl %%edx;"
     "pushl %%esi;"
     "pushl %%edi;"
     "pushl %%eax;"
-    "call notify_tracer;"
-    "andl $-1, %%eax;"
+    "call notify_tracer;" // notify the tracer
+    "testl %%eax, %%eax;" // test if the return value is 0
     "popl %%eax;"
     "popl %%edi;"
     "popl %%esi;"
     "popl %%edx;"
     "popl %%ecx;"
-    "jz normal;"
+    "jz normal;" // 0 means not killed, jump to normal syscall.
   "disable:\n"
-    "call suicide;"
-    "movl $0xffff, %%eax;"
+    "call suicide;" // kill the process
+    "movl $0xffff, %%eax;" // set to an invalid syscall
   "normal:\n"
-    "popl %%ebx;"
-    "jmp *%5;"
+    "popl %%ebx;" // restore EBX
+    "jmp *%5;"    // jump to original int80
     :
     : "i"(-THREAD_SIZE),
       "i"(&((struct thread_info*)0)->task),
@@ -127,13 +129,13 @@ asmlinkage unsigned long kmmon(int request,
                                unsigned long pid,
                                unsigned long address,
                                unsigned long data) {
-//  printk("<0>yyyy-mm-dd HH:MM:SS [INFO] : kmmon(%d, %lu, %lu, %lu)\n",
-//         request, pid, address, data);
+  printk(KERN_INFO "// kmmon(%d, %lu)\n", request, pid);
   struct task_struct* p;
   switch (request) {
     case KMMON_TRACEME :
       current->flags |= KMMON_MASK;
       break;
+
     case KMMON_CONTINUE :
     case KMMON_KILL :
     case KMMON_READMEM :
@@ -168,7 +170,9 @@ asmlinkage unsigned long kmmon(int request,
         memcpy(&tmp, page_address(page) + offset, len);
         put_user(tmp, (unsigned long*)data);
       } else if (request == KMMON_GETREG) {
-        put_user(*((int*)p->thread.esp0 - 6 - address), (unsigned long*)data);
+        unsigned long reg_table[] = {EAX, EBX, ECX, EDX, ESI, EDI, EBP};
+        put_user(*((int*)p->thread.esp0 - 6 - reg_table[address]),
+                 (unsigned long*)data);
       } else {
         p->exit_code = request == KMMON_KILL;
         wake_up_process(p);
@@ -201,7 +205,9 @@ asmlinkage unsigned long kmmon_brk(unsigned long brk) {
   if ((current->flags & KMMON_MASK) && brk && ret < brk) {
     notify_tracer(45);
     send_sig(SIGKILL, current, 1);
+    printk(KERN_INFO "send_sig back\n");
   }
+  printk(KERN_INFO "// %x -- kmmon_brk(%lu), old_brk() = %lu\n", current->flags, brk, ret);
   return ret;
 }
 
@@ -235,6 +241,8 @@ int init(void) {
   new_syscall = (unsigned long)&new_int80;
   p_idt80->off_low = (unsigned short)(new_syscall & 0x0000ffff);
   p_idt80->off_high = (unsigned short)((new_syscall >> 16) & 0x0000ffff);
+
+  printk(KERN_INFO "Successful init kmmon\n");
   return 0;
 }
 
@@ -246,6 +254,8 @@ void cleanup(void) {
   origin_syscall_table[__NR_brk] = old_brk;
   p_idt80->off_low = (unsigned short)(origin_syscall & 0x0000ffff);
   p_idt80->off_high = (unsigned short)((origin_syscall >> 16) & 0x0000ffff);
+
+  printk(KERN_INFO "Successful exit from kmmon\n");
   return;
 }
 
