@@ -10,8 +10,6 @@
 
 #include "base/logging.h"
 
-#define MAX_LOG_FILE_SIZE 262144
-
 DECLARE_FLAGS(string, root_dir);
 
 DECLARE_FLAGS(string, process_name);
@@ -60,6 +58,9 @@ class LogFile {
         if (file_) {
           filesize_ += log_message.size();
           if (filesize_ > MAX_LOG_FILE_SIZE) {
+            fclose(file_);
+            this->create();
+            filesize_ += log_message.size();
           }
           fprintf(file_, "%s", log_message.c_str());
           fflush(file_);

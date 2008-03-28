@@ -73,14 +73,19 @@ static int compareFiles(const string& standard_output_file_name,
 }
 
 // TODO: Finish this function
-static int runSpecialJudge(const string& special_judge_executable_filename,
+static int runSpecialJudge(const string& special_judge_exe_filename,
                            const string& standard_input_filename,
                            const string& users_output_filename) {
-  string working_directory =
-    users_output_filename.substr(0, users_output_filename.rfind('/') + 1);
+  LOG(SYS_ERROR) << "Detect Position";
+  string working_directory = special_judge_exe_filename.substr(0,
+                                 special_judge_exe_filename.rfind('/') + 1);
+  string special_judge_filename = special_judge_exe_filename.substr(
+                                      working_directory.size());
+  char path[MAX_PATH_LENGTH + 1];
+  getcwd(path, sizeof(path));
   const char* commands[] = {
-    special_judge_executable_filename.c_str(),
-    special_judge_executable_filename.c_str(),
+    special_judge_exe_filename.c_str(),
+    special_judge_exe_filename.c_str(),
     standard_input_filename.c_str(),
     users_output_filename.c_str(),
     NULL
@@ -88,13 +93,12 @@ static int runSpecialJudge(const string& special_judge_executable_filename,
   RunInfo run_info;
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
-  run_info.stdout_filename = "/tmp/testdata/spj.out";
+//  run_info.stdout_filename = "/tmp/testdata/spj.out";
   run_info.time_limit = 10;
   run_info.memory_limit = 256 * 1024;
   run_info.output_limit = 16;
-  run_info.file_limit = 6;
-  run_info.trace = true;
-  run_info.working_dir = working_directory.c_str();
+//  run_info.file_limit = 6;
+//  run_info.trace = true;
   ExecutiveCallback callback;
 
   pid_t pid = createProcess(commands, run_info);
@@ -102,7 +106,7 @@ static int runSpecialJudge(const string& special_judge_executable_filename,
     LOG(ERROR) << "Fail to execute special judge";
     return SYSTEM_ERROR;
   } else {
-    LOG(INFO) << "Create process " << pid << " to run special judge";
+    LOG(DEBUG) << "Create process " << pid << " to run special judge";
   }
   int status;
   while (waitpid(pid, &status, 0) < 0) {
@@ -112,10 +116,16 @@ static int runSpecialJudge(const string& special_judge_executable_filename,
       return SYSTEM_ERROR;
     }
   }
-  if (WIFSIGNALED(status)) {
-    LOG(ERROR) << "Special judge terminated by signal " << WTERMSIG(status);
+  if (!WIFEXITED(status)) {
+    LOG(SYS_ERROR) << "Child process not exited";
     return SYSTEM_ERROR;
   }
+  callback.processResult(status);
+  if (!callback.getResult()) {
+    LOG(SYS_ERROR) << "Cannot get spj result";
+    return SYSTEM_ERROR;
+  }
+
   switch (WEXITSTATUS(status)) {
     case 0 :
       return ACCEPTED;

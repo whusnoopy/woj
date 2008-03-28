@@ -51,7 +51,7 @@ int doCompile(int communicate_socket,
     return -1;
   }
 
-  static char error_message[16384];
+  static signed char error_message[16384];
   int message_length = socket_read(file_pipe[0],
                                    error_message,
                                    sizeof(error_message));
@@ -89,10 +89,15 @@ int doCompile(int communicate_socket,
     uint16_t length = htons(message_length);
     socket_write(communicate_socket, &length, sizeof(length));
     LOG(INFO) << "Send CE message length finished. length = " << message_length;
+    for (int i = 0; i < message_length; ++i) {
+      if (error_message[i] <= 0)
+        error_message[i] = '?';
+    }
     socket_write(communicate_socket, error_message, message_length);
     LOG(INFO) << "Send CE message finished.";
     return -1;
   }
+  LOG(INFO) << "Compilation done";
   return 0;
 }
 

@@ -36,6 +36,6 @@ test_compile : test_compile.cc compile.o trace.o utils.o $(DEPS) -lkmmon
 test_run : test_run.cc run.o trace.o utils.o $(DEPS) -lkmmon
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-test_judge: test_judge.cc judge.o trace.o utils.o $(DEPS) -lkmmon
+test_judge: test_judge.cc judge.o trace.o utils.o run.o $(DEPS) -lkmmon
 	$(CXX) $(CXXFLAGS) -o $@ $^
 

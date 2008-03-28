@@ -38,6 +38,8 @@ class  TraceCallback {
 
     virtual void onError();
 
+    void processResult(int status);
+
     int getResult() const {
       return result_;
     }
@@ -77,5 +79,6 @@ class ExecutiveCallback : public TraceCallback {
 };
 
 void installHandlers();
+void uninstallHandlers();
 
 #endif

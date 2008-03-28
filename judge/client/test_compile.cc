@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
     LOG(SYS_ERROR) << "Cannot parse flags!";
     return -1;
   }
+
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in server_address;
   memset(&server_address, 0, sizeof(server_address));

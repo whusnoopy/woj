@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include <errno.h>
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/syscall.h>
@@ -38,43 +39,6 @@ void TraceCallback::onExit(pid_t pid) {
 }
 
 void TraceCallback::onSigchld(pid_t pid) {
-  int status;
-  while (waitpid(pid, &status, 0) < 0) {
-  }
-  if (result_ < 0) {
-    result_ = SYSTEM_ERROR;
-  } else if (result_ == RUNNING) {
-    switch (WTERMSIG(status)) {
-      case SIGXCPU :
-        LOG(INFO) << "Time Limit Exceeded";
-        result_ = TIME_LIMIT_EXCEEDED;
-        break;
-      case SIGXFSZ :
-        LOG(INFO) << "Output Limit Exceeded";
-        result_ = OUTPUT_LIMIT_EXCEEDED;
-        break;
-      case SIGSEGV :
-        LOG(INFO) << "Runtime Error - SIGSEGV";
-        result_ = RUNTIME_ERROR_SIGSEGV;
-        break;
-      case SIGFPE :
-        LOG(INFO) << "Runtime Error - SIGFPE";
-        result_ = RUNTIME_ERROR_SIGFPE;
-        break;
-      case SIGBUS :
-        LOG(INFO) << "Runtime Error - SIGBUS";
-        result_ = RUNTIME_ERROR_SIGBUS;
-        break;
-      case SIGKILL :
-      case SIGABRT :
-        LOG(INFO) << "Runtime Error - SIGABRT";
-        result_ = RUNTIME_ERROR_SIGABRT;
-        break;
-      default :
-        LOG(ERROR) << "Unexpected signal : " << WTERMSIG(status);
-        result_ = SYSTEM_ERROR;
-    }
-  }
   exited_ = true;
 }
 
@@ -99,16 +63,52 @@ bool TraceCallback::onOpen(const string& path, int flags) {
   return true;
 }
 
-static struct sigaction sigchld_act;
+void TraceCallback::processResult(int status) {
+  switch (result_) {
+    case -1 :
+      result_ = SYSTEM_ERROR;
+      break;
+    case RUNNING :
+      switch (WTERMSIG(status)) {
+        case SIGXCPU :
+          LOG(INFO) << "Time Limit Exceeded";
+          result_ = TIME_LIMIT_EXCEEDED;
+          break;
+        case SIGXFSZ :
+          LOG(INFO) << "Output Limit Exceeded";
+          result_ = OUTPUT_LIMIT_EXCEEDED;
+          break;
+        case SIGSEGV :
+          LOG(INFO) << "Runtime Error - SIGSEGV";
+          result_ = RUNTIME_ERROR_SIGSEGV;
+          break;
+        case SIGFPE :
+          LOG(INFO) << "Runtime Error - SIGFPE";
+          result_ = RUNTIME_ERROR_SIGFPE;
+          break;
+        case SIGBUS :
+          LOG(INFO) << "Runtime Error - SIGBUS";
+          result_ = RUNTIME_ERROR_SIGBUS;
+          break;
+        case SIGKILL :
+        case SIGABRT :
+          LOG(INFO) << "Runtime Error - SIGABRT";
+          result_ = RUNTIME_ERROR_SIGABRT;
+          break;
+        default :
+          LOG(ERROR) << "Unexpected signal : " << WTERMSIG(status);
+          result_ = SYSTEM_ERROR;
+      }
+      break;
+    case MEMORY_LIMIT_EXCEEDED :
+      LOG(INFO) << "Memory limit exceeded";
+      break;
+  }
+}
 
 static void sigchldHandler(int sig, siginfo_t* siginfo, void* context) {
   if (TraceCallback::getInstance()) {
     TraceCallback::getInstance()->onSigchld(siginfo->si_pid);
-  }
-  if (sigchld_act.sa_sigaction) {
-    sigchld_act.sa_sigaction(sig, siginfo, context);
-  } else if (sigchld_act.sa_handler) {
-    sigchld_act.sa_handler(sig);
   }
 }
 
@@ -135,6 +135,7 @@ static int readStringFromTracedProcess(pid_t pid,
 }
 
 static void sigkmmonHandler(int sig, siginfo_t* siginfo, void* context) {
+  LOG(DEBUG) << "sigkmmonHandler catched " << siginfo->si_pid;
   TraceCallback* callback = TraceCallback::getInstance();
   pid_t pid = siginfo->si_pid;
   if (!callback) {
@@ -150,26 +151,33 @@ static void sigkmmonHandler(int sig, siginfo_t* siginfo, void* context) {
       callback->onExit(pid);
       kmmon_continue(pid);
       break;
+
     case SYS_brk :
       callback->onMemoryLimitExceeded();
       kmmon_kill(pid);
       break;
+
     case SYS_clone :
     case SYS_fork :
     case SYS_vfork :
-      callback->onClone();
+      if (callback->onClone())
+        kmmon_continue(pid);
+      else
+        kmmon_kill(pid);
       break;
+
     case SYS_execve :
       if (callback->onExecve())
         kmmon_continue(pid);
       else
         kmmon_kill(pid);
       break;
+
     case SYS_open :
       char buffer[PATH_MAX + 1];
       int address, flags;
-      if (kmmon_getreg(pid, EBX, &address) < 0 ||
-          kmmon_getreg(pid, ECX, &flags) < 0) {
+      if (kmmon_getreg(pid, KMMON_REG_EBX, &address) < 0 ||
+          kmmon_getreg(pid, KMMON_REG_ECX, &flags) < 0) {
         LOG(ERROR) << "Fail to read register values and flags from "
                    << "traced process";
         callback->onError();
@@ -193,16 +201,37 @@ static void sigkmmonHandler(int sig, siginfo_t* siginfo, void* context) {
   }
 }
 
+static struct sigaction sigchld_act;
+
 void installHandlers() {
-  struct sigaction new_action, old_action;
+  struct sigaction new_action;
+  struct sigaction oact;
   new_action.sa_sigaction = sigkmmonHandler;
   sigemptyset(&new_action.sa_mask);
   new_action.sa_flags = SA_SIGINFO;
-  sigaction(KMMON_SIG, &new_action, &old_action);
-  new_action.sa_sigaction = sigchldHandler;
-  sigaction(SIGCHLD, &new_action, &old_action);
-  if (old_action.sa_sigaction != sigchldHandler) {
-    sigchld_act = old_action;
+  sigaction(KMMON_SIG, &new_action, NULL);
+
+  sigaction(KMMON_SIG, NULL, &oact);
+  if (oact.sa_sigaction != sigkmmonHandler) {
+    LOG(SYS_ERROR) << "Can't modify KMMON_SIG to sigkmmonHandler";
+    raise(SIGKILL);
+  } else {
+    LOG(DEBUG) << "Modity KMMON_SIG to sigkmmonHandler";
   }
+
+  new_action.sa_sigaction = sigchldHandler;
+  sigaction(SIGCHLD, &new_action, &sigchld_act);
+  
+  sigaction(SIGCHLD, NULL, &oact);
+  if (oact.sa_sigaction != sigchldHandler) {
+    LOG(SYS_ERROR) << "Can't modify SIGCHLD to sigchldHandler";
+    raise(SIGKILL);
+  } else {
+    LOG(DEBUG) << "Modify SIGCHLD to sigchldHandler";
+  }
+}
+
+void uninstallHandlers() {
+  sigaction(SIGCHLD, &sigchld_act, NULL);
 }
 
