@@ -76,7 +76,6 @@ static int compareFiles(const string& standard_output_file_name,
 static int runSpecialJudge(const string& special_judge_exe_filename,
                            const string& standard_input_filename,
                            const string& users_output_filename) {
-  LOG(SYS_ERROR) << "Detect Position";
   string working_directory = special_judge_exe_filename.substr(0,
                                  special_judge_exe_filename.rfind('/') + 1);
   string special_judge_filename = special_judge_exe_filename.substr(
@@ -93,12 +92,12 @@ static int runSpecialJudge(const string& special_judge_exe_filename,
   RunInfo run_info;
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
-//  run_info.stdout_filename = "/tmp/testdata/spj.out";
+  run_info.stdout_filename = "/tmp/testdata/spj.out";
   run_info.time_limit = 10;
   run_info.memory_limit = 256 * 1024;
   run_info.output_limit = 16;
-//  run_info.file_limit = 6;
-//  run_info.trace = true;
+  run_info.file_limit = 6;
+  run_info.trace = true;
   ExecutiveCallback callback;
 
   pid_t pid = createProcess(commands, run_info);
