@@ -60,30 +60,55 @@ int main(int argc, char* argv[]) {
   LOG(INFO) << "Install handlers finished";
 
   string test_file_dir = "/tmp/testdata/";
+  string standard_filename = test_file_dir + "judge_standard.txt";
+  string accepted_filename = test_file_dir + "judge_ac.txt";
+  string presentation_error_filename = test_file_dir + "judge_pe.txt";
+  string wrong_answer_filename = test_file_dir + "judge_wa.txt";
   string spj_filename = test_file_dir + "spj";
   string spj_input_filename = test_file_dir + "spj_in.txt";
-  string accepted_filename = test_file_dir + "spj_ac.txt";
-  string presentation_error_filename = test_file_dir + "spj_pe.txt";
-  string wrong_answer_filename = test_file_dir + "spj_wa.txt";
-  LOG(SYS_ERROR) << "Detect Position";
+  string spj_accepted_filename = test_file_dir + "spj_ac.txt";
+  string spj_presentation_error_filename = test_file_dir + "spj_pe.txt";
+  string spj_wrong_answer_filename = test_file_dir + "spj_wa.txt";
 
   bool pass = true;
 
-  if (doRun(communicate_socket,
-            spj_filename,
-            "cc",
-            spj_input_filename,
-            "/tmp/testdata/spj.out",
-            1,
-            65535,
-            65535)) {
-    LOG(ERROR) << "Failed on Run " << spj_filename;
+  if (doJudge(communicate_socket,
+              "",
+              standard_filename,
+              accepted_filename,
+              "") == ACCEPTED) {
+    LOG(INFO) << "Pass Accepted Test";
+  } else {
+    LOG(ERROR) << "Failed on Accepted Test";
+    return -1;
+  }
+
+  if (doJudge(communicate_socket,
+              "",
+              standard_filename,
+              presentation_error_filename,
+              "") == PRESENTATION_ERROR) {
+    LOG(INFO) << "Pass Presentation Error Test";
+  } else {
+    LOG(ERROR) << "Failed on Presentation Error Test";
+    return -1;
+  }
+
+  if (doJudge(communicate_socket,
+              "",
+              standard_filename,
+              wrong_answer_filename,
+              "") == WRONG_ANSWER) {
+    LOG(INFO) << "Pass Wrong Answer Test";
+  } else {
+    LOG(ERROR) << "Failed on Wrong Answer Test";
+    return -1;
   }
 
   if (doJudge(communicate_socket,
               spj_input_filename,
               "",
-              accepted_filename,
+              spj_accepted_filename,
               spj_filename) == ACCEPTED) {
     LOG(INFO) << "Pass SPJ Accepted Test";
   } else {
@@ -94,7 +119,7 @@ int main(int argc, char* argv[]) {
   if (doJudge(communicate_socket,
               spj_input_filename,
               "",
-              presentation_error_filename,
+              spj_presentation_error_filename,
               spj_filename) == PRESENTATION_ERROR) {
     LOG(INFO) << "Pass SPJ Presentation Error Test";
   } else {
@@ -105,7 +130,7 @@ int main(int argc, char* argv[]) {
   if (doJudge(communicate_socket,
               spj_input_filename,
               "",
-              wrong_answer_filename,
+              spj_wrong_answer_filename,
               spj_filename) == WRONG_ANSWER) {
     LOG(INFO) << "Pass SPJ Wrong Answer Test";
   } else {

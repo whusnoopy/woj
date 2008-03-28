@@ -129,7 +129,7 @@ asmlinkage unsigned long kmmon(int request,
                                unsigned long pid,
                                unsigned long address,
                                unsigned long data) {
-  printk(KERN_INFO "// kmmon(%d, %lu)\n", request, pid);
+//  printk(KERN_INFO "// kmmon(%d, %lu) current->flags = %lx\n", request, pid, current->flags);
   struct task_struct* p;
   switch (request) {
     case KMMON_TRACEME :
@@ -182,6 +182,7 @@ asmlinkage unsigned long kmmon(int request,
     default :
       return -1;
   }
+//  printk(KERN_INFO "// after kmmon(%d, %lu), current->flags = %lx\n", request, pid, current->flags);
   return 0;
 }
 
@@ -202,12 +203,12 @@ DEFINE_CLONE(vfork)
 
 asmlinkage unsigned long kmmon_brk(unsigned long brk) {
   unsigned long ret = old_brk(brk);
-  if ((current->flags & KMMON_MASK) && brk && ret < brk) {
+  if ((current->flags & KMMON_MASK) && brk && ret <= brk) {
     notify_tracer(45);
     send_sig(SIGKILL, current, 1);
     printk(KERN_INFO "send_sig back\n");
   }
-  printk(KERN_INFO "// %x -- kmmon_brk(%lu), old_brk() = %lu\n", current->flags, brk, ret);
+//  printk(KERN_INFO "// %x -- kmmon_brk(%lu), old_brk() = %lu\n", current->flags, brk, ret);
   return ret;
 }
 
