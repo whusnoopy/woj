@@ -1,16 +1,20 @@
 #ifndef COMPAREQUEUE_H_
 #define COMPAREQUEUE_H_
 
+#include <list>
+using namespace std;
+
 template <typename Key>
 class CompareQueue{
 public:
-  CompareQueue(Comp compare) {
+  CompareQueue(int (*compare)(const Key&, const Key&)) {
   	compare_ = compare;
   }
   
   void add(const Key& key) {
     if (find(queue.begin(), queue.end(), key) == queue.end()) {
-    	for(vector<Key>::iterator iter = queue.begin(); iter != queue.end(); iter++) {
+      typename list<Key>::iterator iter;
+    	for(iter = queue.begin(); iter != queue.end(); iter++) {
     	  if (compare_(key, *iter) < 0)
     	  	break;
     	}
@@ -19,16 +23,17 @@ public:
   }
   
   Key removeFirst() {
+    Key key;
   	if (!queue.empty()){
-  	  Key key = *queue.begin();
+  	  key = *queue.begin();
   	  queue.pop_front();
   	  return key;
     }
-    return Key;
+    return key;
   }
   
   void remove(const Key& key) {
-  	vector<Key>::iterator iter = find(queue.begin(), queue.end(), key);
+  	typename list<Key>::iterator iter = find(queue.begin(), queue.end(), key);
   	if (iter != queue.end()){
   		queue.erase(iter);
   	}
@@ -38,20 +43,20 @@ public:
   	return queue.size();
   }
   
-  vector<Key>::iterator begin() {
+  typename list<Key>::iterator begin() {
   	return queue.begin();
   }
-  vector<Key>::iterator end() {
+  typename list<Key>::iterator end() {
   	return queue.end();
   }
   
-  void remove(vector<Key>::iterator iter){
+  void remove(typename list<Key>::iterator iter){
   	queue.erase(iter);
   }
   
   typedef int (*Comp) (const Key&, const Key&);
 private:
-  vector<Key> queue;
+  list<Key> queue;
   Comp compare_;
 };
 

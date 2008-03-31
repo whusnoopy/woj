@@ -9,6 +9,7 @@ using namespace std;
 class Connection{
 public:
 	Connection() {}
+  virtual ~Connection() {}
 	
   virtual int connect();
 	virtual int close();

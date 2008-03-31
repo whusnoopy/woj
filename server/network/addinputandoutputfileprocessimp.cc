@@ -28,8 +28,9 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
     return;
   }
   int problem_id = atoi(problem_buf);
-  //DataInterface::getInstance().disableInputAndOutput(problem_id);
+  //the sentence in not need because i have solved the file version for problem//DataInterface::getInstance().disableInputAndOutput(problem_id);
   Problem problem(problem_id);
+  //problem = DataInterface::getInstance().getProblem(problem_id);
   string path;
   string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
   for (int i = 0; i < length; i++) {

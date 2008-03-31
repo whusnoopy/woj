@@ -51,6 +51,7 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
     return;
   }
   Problem problem(atoi(buf.getBuf()));
+  //problem = DataInterface::getInstance().getProblem(problem.getProblemId());
   string::size_type pos = filename.find_last_of(".");
   string suffix("NULL");
   if (pos != string::npos) {
