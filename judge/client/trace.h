@@ -26,17 +26,15 @@ class  TraceCallback {
       return false;
     }
 
+    virtual void processSyscall(pid_t pid, int syscall);
+
     virtual bool onExecve();
-
     virtual bool onOpen(const string& path, int flags);
-
     virtual void onMemoryLimitExceeded();
-
     virtual void onExit(pid_t pid);
-
-    virtual void onSigchld(pid_t pid);
-
+    virtual void onSigchld();
     virtual void onError();
+    virtual void onRestrictedFunction();
 
     void processResult(int status);
 
@@ -76,6 +74,7 @@ class  TraceCallback {
 
 class ExecutiveCallback : public TraceCallback {
   public :
+    void onSigchld() {}
 };
 
 void installHandlers();

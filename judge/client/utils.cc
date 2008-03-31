@@ -4,11 +4,10 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/ptrace.h>
 
 #include "base/logging.h"
 #include "base/util.h"
-
-#include "judge/kernel_module/kmmon-lib.h"
 
 #include "judge/client/utils.h"
 
@@ -183,7 +182,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
     }
   }
   if (run_info.trace) {
-    if (kmmon_traceme() == -1) {
+    if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1) {
       LOG(SYS_ERROR) << "Fail to trace";
       raise(SIGKILL);
     }

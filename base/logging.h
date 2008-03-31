@@ -26,6 +26,7 @@ class Log {
     ostream& stream() { return log_stream_; }
 
   private :
+    int level_;
     ostringstream log_stream_;
 };
 

@@ -137,7 +137,7 @@ int runExe(int communicate_socket,
   run_info.proc_limit = 1;
   run_info.file_limit = 5;
   run_info.trace = 1;
-  ExecutiveCallback callback;
+  TraceCallback callback;
   pid_t pid = createProcess(commands, run_info);
   if (pid == -1) {
     LOG(ERROR) << "Fail to execute program : " << exe_filename;

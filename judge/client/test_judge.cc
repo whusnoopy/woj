@@ -20,7 +20,6 @@
 #include "judge/client/judge.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
-#include "judge/client/run.h"
 
 using namespace std;
 
