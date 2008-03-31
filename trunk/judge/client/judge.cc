@@ -6,12 +6,15 @@
 
 #include <errno.h>
 #include <sys/wait.h>
+#include <sys/ptrace.h>
+#include <sys/reg.h>
 
 #include "base/flags.h"
 #include "base/judge_result.h"
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/client/syscall.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
 
@@ -72,7 +75,6 @@ static int compareFiles(const string& standard_output_file_name,
   return result;
 }
 
-// TODO: Finish this function
 static int runSpecialJudge(const string& special_judge_exe_filename,
                            const string& standard_input_filename,
                            const string& users_output_filename) {
@@ -89,11 +91,11 @@ static int runSpecialJudge(const string& special_judge_exe_filename,
     users_output_filename.c_str(),
     NULL
   };
+
   RunInfo run_info;
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
-  run_info.stdout_filename = "/tmp/testdata/spj.out";
-  run_info.time_limit = 10;
+  run_info.time_limit = 1;
   run_info.memory_limit = 256 * 1024;
   run_info.output_limit = 16;
   run_info.file_limit = 6;
@@ -107,21 +109,26 @@ static int runSpecialJudge(const string& special_judge_exe_filename,
   } else {
     LOG(DEBUG) << "Create process " << pid << " to run special judge";
   }
+
   int status;
-  while (waitpid(pid, &status, 0) < 0) {
-    if (errno != EINTR) {
-      LOG(SYS_ERROR) << "System error when waiting for special judge status."
-                     << " errno = " << (int)(errno);
-      return SYSTEM_ERROR;
+  int syscall;
+  while (!callback.hasExited()) {
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+      break;
+    
+    syscall = ptrace(PTRACE_PEEKUSER, pid, 4 * ORIG_EAX, NULL);
+    LOG(DEBUG) << "Syscall " << syscall << " from " << pid;
+    if (syscall_filter_table[syscall]) {
+      callback.processSyscall(pid, syscall);
+    } else {
+      ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
     }
   }
-  if (!WIFEXITED(status)) {
-    LOG(SYS_ERROR) << "Child process not exited";
-    return SYSTEM_ERROR;
-  }
+  
   callback.processResult(status);
-  if (!callback.getResult()) {
-    LOG(SYS_ERROR) << "Cannot get spj result";
+  if (callback.getResult()) {
+    LOG(SYS_ERROR) << "SPJ Errored with result = " << callback.getResult();
     return SYSTEM_ERROR;
   }
 

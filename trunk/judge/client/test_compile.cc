@@ -25,6 +25,8 @@ DEFINE_FLAGS(int, server_port, "server port");
 DEFINE_FLAGS(int, uid, "");
 DEFINE_FLAGS(int, gid, "");
 
+DECLARE_FLAGS(string, root_dir);
+
 int main(int argc, char* argv[]) {
   if (parseFlags(argc, argv)) {
     LOG(SYS_ERROR) << "Cannot parse flags!";
@@ -50,7 +52,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  const string ac_file = "testdata/ac.cc";
+  const string ac_file = FLAGS_root_dir + "/testdata/ac.cc";
   if (doCompile(communicate_socket, ac_file)) {
     LOG(ERROR) << "FAILED Compile '" << ac_file << "' Test";
     return -1;
@@ -58,7 +60,7 @@ int main(int argc, char* argv[]) {
   sendReply(communicate_socket, 0);
   LOG(INFO) << "PASS Compile '" << ac_file << "' Test";
 
-  const string ce_file = "testdata/ce.cc";
+  const string ce_file = FLAGS_root_dir + "/testdata/ce.cc";
   if (doCompile(communicate_socket, ce_file) == 0) {
     LOG(ERROR) << "FAILED Compile '" << ce_file << "' Test";
     return -1;

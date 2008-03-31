@@ -83,15 +83,6 @@ int parseFlags(int argc, char* argv[]) {
   if (flags_list == NULL)
     flags_list = new vector<FlagsInfo*>;
   vector<bool> assigned(flags_list->size(), false);
-  
-  for (int i = 0; i < flags_list->size(); ++i) {
-    if ((*flags_list)[i]->name() == "process_name") {
-      char* cs = argv[0];
-      while (strstr(cs, "/"))
-        cs = strstr(cs, "/") + 1;
-      (*flags_list)[i]->assign(cs);
-    }
-  }
 
   for (int i = 1; i < argc; ++i) {
     if (argv[i][0] == '-' && argv[i][1] == '-') {
@@ -128,11 +119,27 @@ int parseFlags(int argc, char* argv[]) {
       }
     }
   }
+
+  // Check optional flags
   for (int i = 0; i < flags_list->size(); ++i) {
-    if (!assigned[i] && !(*flags_list)[i]->optional()) {
-      cerr << "Missing flag " << (*flags_list)[i]->name() << endl;
-      printUsage();
-      return -1;
+    if (!assigned[i]) {
+      if ((*flags_list)[i]->optional()) {
+        (*flags_list)[i]->assign((*flags_list)[i]->default_value());
+      } else {
+        cerr << "Missing flag " << (*flags_list)[i]->name() << endl;
+        printUsage();
+        return -1;
+      }
+    }
+  }
+  
+  // Parse process_name for log file
+  for (int i = 0; i < flags_list->size(); ++i) {
+    if ((*flags_list)[i]->name() == "process_name") {
+      char* cs = argv[0];
+      while (strstr(cs, "/"))
+        cs = strstr(cs, "/") + 1;
+      (*flags_list)[i]->assign(cs);
     }
   }
   return 0;

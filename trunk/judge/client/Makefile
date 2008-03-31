@@ -1,6 +1,5 @@
 CC=$(CXX)
 CXXFLAGS=-I../../ \
-				 -I../kernel_module -L../kernel_module \
 	       -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
 VPATH=../kernel_module ../../base
 
@@ -27,15 +26,15 @@ rebuild: clean all
 
 test : $(TESTS)
 
-judge_client : $(OBJS) $(DEPS) -lkmmon
+judge_client : $(OBJS) $(DEPS)
 	$(CXX) $(CXXFLAGS) $(EXEFLAGS) -o $@ $^
 
-test_compile : test_compile.cc compile.o trace.o utils.o $(DEPS) -lkmmon
+test_compile : test_compile.cc compile.o trace.o utils.o $(DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-test_run : test_run.cc run.o trace.o utils.o $(DEPS) -lkmmon
+test_run : test_run.cc run.o trace.o utils.o $(DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-test_judge: test_judge.cc judge.o trace.o utils.o run.o $(DEPS) -lkmmon
+test_judge: test_judge.cc judge.o trace.o utils.o $(DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 

@@ -14,8 +14,12 @@ DECLARE_FLAGS(string, root_dir);
 
 DECLARE_FLAGS(string, process_name);
 
+// log level controller, log level less than log_level will be written
+DEFINE_OPTIONAL_FLAGS(int, log_level, 4,
+                      "If true, DEBUG logs will also written");
+
 // Also log to stderr or not
-DEFINE_OPTIONAL_FLAGS(bool, logtostderr, true,
+DEFINE_OPTIONAL_FLAGS(bool, logtostderr, false,
                       "If true, all logs will also written to stderr");
 
 const string LOG_LEVEL_NAME[] = {
@@ -37,12 +41,12 @@ class LogFile {
         return;
       }
       string filename = 
-               stringPrintf("%s/%s.%s.%d.%s.log",
+               stringPrintf("%s/%s.%s.%s.%d.log",
                             dir.c_str(),
                             getlogin(),
                             FLAGS_process_name.c_str(),
-                            getpid(),
-                            getLocalTimeAsString("%Y%m%d.%H%M%S").c_str());
+                            getLocalTimeAsString("%Y%m%d-%H%M%S").c_str(),
+                            getpid());
       file_ = fopen(filename.c_str(), "w");
       if (file_ == NULL) {
         openlog("Flood Judge Client", 0, LOG_USER);
@@ -77,7 +81,8 @@ class LogFile {
     int filesize_;
 } logFile;
 
-Log::Log(const char* filename, int line_number, int level) {
+Log::Log(const char* filename, int line_number, int level) :
+  level_(level) {
   log_stream_ << getLocalTimeAsString("%Y-%m-%d %H:%M:%S")
               << " [" << LOG_LEVEL_NAME[level] << "] "
               << filename << ":" << line_number << ": ";
@@ -88,6 +93,9 @@ Log::Log(const char* filename, int line_number, int level) {
 
 Log::~Log() {
   log_stream_ << endl;
-  logFile.write(log_stream_.str());
+  if (level_ > FLAGS_log_level)
+    log_stream_.flush();
+  else
+    logFile.write(log_stream_.str());
 }
 

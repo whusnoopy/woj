@@ -40,7 +40,7 @@ class FlagsInfo {
                           &FLAGS_##name)
 
 #define DEFINE_OPTIONAL_FLAGS(type, name, default_value, description) \
-  type FLAGS_##name = #default_value; \
+  type FLAGS_##name; \
   FlagsInfo _flags_##name(#type, #name, #default_value, description, true, \
                           &FLAGS_##name)
 
