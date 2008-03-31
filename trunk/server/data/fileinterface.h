@@ -10,9 +10,7 @@
 #include <sys/stat.h>
 #include <libxml/parser.h>
 
-#include "filedata.h"
-#include "configure.h"
-#include "list.h"
+#include "object/objectinc.h"
 using namespace std;
 
 class FileInterface{

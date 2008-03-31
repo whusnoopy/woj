@@ -4,14 +4,15 @@
 template <typename Key>
 class CacheKey{
 public:
+  CacheKey() {}
   CacheKey(Key key, int last_asscess_time, int time_out);
   
   Key getKey() const;
-  int getLastAsscessTime() const;
+  int getLastAccessTime() const;
   int getTimeOut() const;
   
   void setKey(Key key);
-  void setLastAsscessTime(int last_asscess_time);
+  void setLastAccessTime(int last_asscess_time);
   void setTimeOut(int time_out);
   
 private:
@@ -30,7 +31,7 @@ Key CacheKey<Key>::getKey() const {
   return key_;
 }
 template <typename Key>
-int  CacheKey<Key>::getLastAsscessTime() const {
+int  CacheKey<Key>::getLastAccessTime() const {
 	return last_asscess_time_;
 }
 
@@ -45,7 +46,7 @@ void  CacheKey<Key>::setKey(Key key) {
 }
 
 template <typename Key>
-void  CacheKey<Key>::setLastAsscessTime(int last_asscess_time) {
+void  CacheKey<Key>::setLastAccessTime(int last_asscess_time) {
 	last_asscess_time_ = last_asscess_time;
 }
 
@@ -54,5 +55,11 @@ void  CacheKey<Key>::setTimeOut(int time_out) {
 	time_out_ = time_out;
 }
 
+template <typename Key>
+bool operator==(const CacheKey<Key>& a, const CacheKey<Key>& b) {
+  return a.getKey() == b.getKey() && 
+         a.getLastAccessTime() == b.getLastAccessTime() &&
+         a.getTimeOut() == b.getTimeOut();
+}
 
 #endif /*CACHEKEY_H_*/

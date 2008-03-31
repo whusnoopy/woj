@@ -29,6 +29,7 @@ int MysqlConnection::connect(){
 
 int MysqlConnection::close(){
   mysql_close(&m_mysql);
+  return 0;
 }
 
 int MysqlConnection::excuteUpdate(const string& query){

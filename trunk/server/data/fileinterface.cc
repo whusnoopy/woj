@@ -1,5 +1,10 @@
 #include "fileinterface.h"
-#include "inc.h"
+
+#include <sys/stat.h>
+#include <unistd.h>
+#include <errno.h>
+
+using namespace std;
 
 FileInterface * FileInterface::instance = NULL;
 
@@ -20,6 +25,7 @@ int FileInterface::addLink(const LinkList& link_list){
 	if ( file_size == -1)
 	  cout << "write failed." << endl;
 	close(linkfd);
+  return 1;
 }
 
 int FileInterface::updateLink(const LinkList& link_list){
@@ -38,6 +44,7 @@ int FileInterface::updateLink(const LinkList& link_list){
 	if ( file_size != buf.length())
 	  cout << "write failed." << endl;
 	close(linkfd);
+  return 1;
 }
 
 LinkList FileInterface::getLink(){
@@ -54,6 +61,9 @@ LinkList FileInterface::getLink(){
 	memset(buf, 0 ,file_size + 1);
 	int linkfd = open(link_file.c_str(), O_RDONLY | O_CREAT , 0644);
 	ssize_t size = read(linkfd, buf, file_size);
+  if (size != file_size) {
+    LOG(ERROR) << "Get Link failed";
+  }
 	close(linkfd);
 	string str(buf);
 	delete[] buf;
@@ -66,11 +76,25 @@ LinkList FileInterface::getLink(){
 }
 
 int FileInterface::addFile(const string& filename, void * bufi, size_t filelength){
+  string directory = filename.substr(0,filename.find_last_of("/"));
+  if (access (directory.c_str(), F_OK) < 0) {
+    if (errno == ENOENT) {
+      if (mkdir(directory.c_str(), 0755) < 0) {
+        LOG(SYS_ERROR) << "Cannot make the directory";
+        return -1;
+      }
+      LOG(INFO) << "Create directory :" << directory;
+    } else {
+      LOG(SYS_ERROR) << "Cannot access the dir"; 
+      return -1;
+    }
+  }
 	int filefd = open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	ssize_t file_size = write(filefd, bufi, filelength);
 	if ( file_size != filelength)
 	  cout << "write failed." << endl;
 	close(filefd);
+  return 1;
 }
 FileData FileInterface::getFile(const string& filename){
 	struct stat file_stat;
@@ -92,14 +116,26 @@ FileData FileInterface::getFile(const string& filename){
 	return file_data;
 }
 int FileInterface::updateFile(const string& filename, void * buf, size_t filelength){
-	int filefd = open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	string directory = filename.substr(0,filename.find_last_of("/"));
+  if (access (directory.c_str(), F_OK) < 0) {
+    if (errno == ENOENT) {
+      if (mkdir(directory.c_str(), 0755) < 0) {
+        LOG(SYS_ERROR) << "Cannot make the directory";
+        return -1;
+      }
+      LOG(INFO) << "Create directory :" << directory;
+    } else {
+      LOG(SYS_ERROR) << "Cannot access the dir"; 
+      return -1;
+    }
+  }
+  int filefd = open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	ssize_t file_size = write(filefd, buf, filelength);
 	if ( file_size != filelength)
 	  cout << "write failed." << endl;
 	close(filefd);
+  return 1;
 }
-
-
 
 int FileInterface::updateNotice(const string& notice, const string& time){
 	string notice_file = Configure::getInstance().getNoticePath();
@@ -110,6 +146,7 @@ int FileInterface::updateNotice(const string& notice, const string& time){
 	if ( file_size != buf.length())
 	  cout << "write failed." << endl;
 	close(noticefd);
+  return 1;
 }
 string FileInterface::getNotice(){
 	string notice_file = Configure::getInstance().getNoticePath();
@@ -123,6 +160,9 @@ string FileInterface::getNotice(){
 	memset(buf, 0 ,file_size + 1);
 	int noticefd = open(notice_file.c_str(), O_RDONLY | O_CREAT , 0644);
 	ssize_t size = read(noticefd, buf, file_size);
+  if (size != file_size) {
+    LOG(ERROR) << "getNotice failed";
+  }
 	close(noticefd);
 	string str(buf);
 	//cout << buf << endl;

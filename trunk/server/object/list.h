@@ -157,4 +157,6 @@ typedef vector<ContestProblemItem> ContestProblemList;
 typedef set<ProblemUserAC> UserACSet;
 typedef set<int> TopicSet;
 
+bool operator<(const ProblemUserAC& a, const ProblemUserAC& b);
+
 #endif /*LIST_H_*/

@@ -49,6 +49,13 @@ typedef struct _STATUS_INFO_{
   int page_id;
 }StatusInfo;
 
+typedef struct _CONTEST_AC_BEFORE_ {
+  string user_id;
+  string time;
+  int contest_id;
+  int problem_id;
+}ContestAcBefore;
+
 typedef struct _PROBLEM_INFO_{
   int problem_id;
   string title;

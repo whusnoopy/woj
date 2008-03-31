@@ -1,16 +1,17 @@
-#ifndef _FLOOD_SERVER_DATA_DATABASEINTERFACE_H__
-#define _FLOOD_SERVER_DATA_DATABASEINTERFACE_H__
+#ifndef _FLOOD_SERVER_DATA_DATAINTERFACE_H__
+#define _FLOOD_SERVER_DATA_DATAINTERFACE_H__
 
 #include <string>
 
 #include "object/objectinc.h"
-#include "data/result.h"
-#include "data/mysqlconnection.h"
+#include "databaseinterface.h"
+#include "fileinterface.h"
+#include "cachemanager.h"
 using namespace std;
 
-class DatabaseInterface{
+class DataInterface{
 public:
-  DatabaseInterface(){
+  DataInterface(){
   }
 
   int addContest(const Contest& contest);
@@ -35,7 +36,7 @@ public:
   Code getCode(int code_id);
   Contest getContest(int contest_id);
   ContestList getContestList(const ContestInfo& contest_info);
-  ContestRankList getContestRankList(int contest_id);
+  ContestRankList getContestRankList(const ContestRankListInfo& contest_ranklist_info);
   ContestStatistics getContestStatistics(int contestId);
   Discuss getDiscuss(int discuss_id);
   DiscussList getDiscussList(const DiscussInfo& discuss_info);
@@ -73,15 +74,20 @@ public:
   int disableContest(const Contest& contest);
   bool checkContestAcBefore(const ContestAcBefore&);
   int getInContestId(int contest_id, int problem_id);
-  Connection* createConnection(const string& host,
-                              const string& user,
-                              const string& password,
-                              const string& database);
-  Connection* createConnection();
+  
+  int addLink(const LinkList& link_list);
+  int addFile(const string& filename, void* bufi, size_t filelength);
+  FileData getFile(const string& filename);
+  int updateFile(const string& filename, void* buf, size_t filelength);
+  int updateLink(const LinkList& link_list);
+  LinkList getLink();
+  int updateNotice(const string& notice, const string& time);
+  string getNotice();
 
-  static DatabaseInterface& getInstance(){
+
+  static DataInterface& getInstance(){
     if(instance == NULL)
-      instance = new DatabaseInterface;
+      instance = new DataInterface;
     return *instance;
   }
   static void destory(){
@@ -90,7 +96,7 @@ public:
     instance = NULL;
   }
 private:
-  static DatabaseInterface* instance;
+  static DataInterface* instance;
 };
 
 #endif

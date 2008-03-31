@@ -51,6 +51,7 @@ void AddFileToContestProcessImp::process(int socket_fd, const string& ip, int le
     return;
   }
   Contest contest(atoi(buf.getBuf()));
+  //contest = DataInterface::getInstance().getContest(contest.getContestId());
   string::size_type pos = filename.find_last_of(".");
   string suffix("NULL");
   if (pos != string::npos) {

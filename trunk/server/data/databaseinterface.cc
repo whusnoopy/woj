@@ -1,30 +1,24 @@
 #include <iostream>
+#include <set>
 
-#include "databaseinterface.h"
-#include "info.h"
-#include "list.h"
-#include "mysqlconnection.h"
-#include "result.h"
-#include "contest.h"
-#include "news.h"
-#include "problem.h"
-#include "status.h"
-#include "mail.h"
-#include "user.h"
-#include "code.h"
-#include "file.h"
-#include "error.h"
-#include "discuss.h"
-#include "inc.h"
+#include "data/databaseinterface.h"
+
 using namespace std;
 
 DatabaseInterface* DatabaseInterface::instance = NULL;
 
-int DatabaseInterface::addContest(const Contest& contest){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+int DatabaseInterface::addContest(const Contest& contest_){
+  Connection* connection = createConnection();
+  Contest contest = contest_;
+  if (contest.getType() == "N" || contest.getType() == "Y") {
+    string select_query = "select max(public_id) from contests";
+    Result ret = connection->excuteQuery(select_query);
+    if (ret.next()) {
+      contest.setPublicId(ret.getInt(1) + 1);
+    } else {
+      contest.setPublicId(1);
+    }
+  }
   string query;
   query += "insert into contests(public_id, title, description,"; 
   query += "start_time, end_time, contest_type, version, available)" + 
@@ -35,15 +29,15 @@ int DatabaseInterface::addContest(const Contest& contest){
            contest.getStartTime() + "','" +
            contest.getEndTime() + "','" +
            contest.getType() + "','" +
-           contest.getVersion() + "','" +
+           stringPrintf("%d", contest.getVersion()) + "','" +
            changeSymbol(contest.getAvailable()?"Y":"N") + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
-  int ret = connection->excuteUpdate(query);
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID()";
   int contest_id = 0;
-  Result result_set = connection->exuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
     contest_id = result_set.getInt(1);
   }
@@ -53,16 +47,37 @@ int DatabaseInterface::addContest(const Contest& contest){
   return contest_id;
 }
 
+int DatabaseInterface::disableContest(const Contest& contest) {
+  Connection* connection = createConnection();
+  string query = "update contests set available = '";
+  query += changeSymbol(contest.getAvailable()?"Y":"N") + 
+           "' where contest_id = '" + 
+           stringPrintf("%d", contest.getContestId()) + "'";
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::addInputtoOutput(int input_id, int output_id) {
+  Connection* connection = createConnection();
+  string query = "insert into outfiles(in_id, out_id) values ";
+  query += "(" + stringPrintf("\'%d\',\'%d\'", input_id, output_id) + ")";
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 int DatabaseInterface::addProblemListtoContest(const Contest& contest,
                             const ProblemSet& problem_set){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+  Connection* connection = createConnection();
   int in_contest_id = 1;
   ProblemSet::const_iterator problem_iter = problem_set.begin();
-  int ret;
-  cout << "Connection:" << connection->connect() << endl;
+  int ret = 0;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   while(problem_iter != problem_set.end()){
     string query;
     query += "insert into problemtocontests(problem_id, contest_id, "; 
@@ -71,10 +86,10 @@ int DatabaseInterface::addProblemListtoContest(const Contest& contest,
              stringPrintf("%d", contest.getContestId()) + "','" +
              stringPrintf("%d", in_contest_id) + 
              "')";
-    cout << query << endl;
+    LOG(INFO) << query << endl;
     ret = connection->excuteUpdate(query);
     if (ret)
-      cout << "Add Problem " << *problem_iter << "to Contest "
+      LOG(INFO) << "Add Problem " << *problem_iter << "to Contest "
            << contest.getContestId() << endl;
     in_contest_id++;
     problem_iter++;
@@ -85,23 +100,20 @@ int DatabaseInterface::addProblemListtoContest(const Contest& contest,
 }
 
 int DatabaseInterface::addUserListtoContest(const Contest& contest,const UserSet& user_set){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+  Connection* connection = createConnection();
   UserSet::const_iterator user_iter = user_set.begin();
-  int ret;
-  cout << "Connection:" << connection->connect() << endl;
+  int ret = 0;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   while(user_iter != user_set.end()){
     string query;
     query += "insert into contestpermission(user_id, contest_id) values('";
     query += changeSymbol(*user_iter) + "','" +
              stringPrintf("%d", contest.getContestId()) +
              "')";
-    cout << query << endl;
+    LOG(INFO) << query << endl;
     ret = connection->excuteUpdate(query);
     if (ret)
-      cout << "Add User " << *user_iter << "to Contest "
+      LOG(INFO) << "Add User " << *user_iter << "to Contest "
            << contest.getContestId() << endl;
     user_iter++;
   }
@@ -111,18 +123,15 @@ int DatabaseInterface::addUserListtoContest(const Contest& contest,const UserSet
 }
 
 int DatabaseInterface::addNews(const News& news){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "insert into news(publishtime, title, content) values('"; 
   query += changeSymbol(news.getPublishTime()) + "','" +
            changeSymbol(news.getTitle()) + "','" +
            changeSymbol(news.getContent()) + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
@@ -133,10 +142,7 @@ int DatabaseInterface::addNews(const News& news){
 int addNotice(const Notice& notice);
 */
 int DatabaseInterface::addProblem(const Problem& problem){
-	Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
   query += "insert into problems(title, description, input, output, ";
   query += "sample_input, sample_output, hint, source, addin_time, ";
@@ -165,12 +171,12 @@ int DatabaseInterface::addProblem(const Problem& problem){
            stringPrintf("%d",problem.getVersion()) + "','" +
            changeSymbol(problem.getSpj()?"Y":"N") + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
-  int ret = connection->excuteUpdate(query);
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID()";
   int problem_id = 0;
-  Result result_set = connection->exuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
     problem_id = result_set.getInt(1);
   }
@@ -181,10 +187,7 @@ int DatabaseInterface::addProblem(const Problem& problem){
 }
 
 int DatabaseInterface::updateProblem(const Problem& problem) {
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update problems set ";
   query += "title = '" + changeSymbol(problem.getTitle()) + "'," +
@@ -208,20 +211,16 @@ int DatabaseInterface::updateProblem(const Problem& problem) {
            "version = version + 1, " + 
            "spj = '" + changeSymbol(problem.getSpj()?"Y":"N") + 
            "' where problem_id = '" + stringPrintf("%d",problem.getProblemId())+ "'";
-  update
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
   return ret;
 }
 
-int DatabaseInterface::addStatus(const Status& stautus){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+int DatabaseInterface::addStatus(const Status& status){
+  Connection* connection = createConnection();
   string query;
   query += "insert into statuses(user_id, problem_id, contest_id, time, ";
   query += "memory, submit_time, result, language, code_id, code_length, ";
@@ -239,12 +238,12 @@ int DatabaseInterface::addStatus(const Status& stautus){
            changeSymbol(status.getSubmitIp()) + "','" +
            stringPrintf("%d", status.getErrorId()) + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
-  int ret = connection->excuteUpdate(query);
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID()";
   int status_id = 0;
-  Result result_set = connection->exuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
     status_id = result_set.getInt(1);
   }
@@ -255,10 +254,7 @@ int DatabaseInterface::addStatus(const Status& stautus){
 }
 
 int DatabaseInterface::addMail(const Mail& mail){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "insert into mails(topic_id, title, content, unread, time, ";
   query += "to_user, from_user, reader_del, writer_del) values('";
@@ -272,21 +268,18 @@ int DatabaseInterface::addMail(const Mail& mail){
            changeSymbol(mail.getReaderDel()?"Y":"N") + "','" +
            changeSymbol(mail.getWriterDel()?"Y":"N") +
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   query = "update mails set topic_id = mail_id where topic_id = '-1'";
   ret = connection->excuteUpdate(query);
-  connection->sclose();
+  connection->close();
   delete connection; 
   return ret;
 }
 
 int DatabaseInterface::addUser(const User& user){
-  Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "insert into users(user_id, email, show_email, submits, solveds, ";
   query += "available, last_login_ip, last_login_time, volume, language, ";
@@ -295,8 +288,8 @@ int DatabaseInterface::addUser(const User& user){
   query += changeSymbol(user.getId()) + "','" +
            changeSymbol(user.getEmail()) + "','" +
            changeSymbol(user.getShowEmail()?"Y":"N") + "','" +
-           stringPrintf("%d",users.getSubmit()) + "','" +
-           stringPrintf("%d",users.getSolved()) + "','" +
+           stringPrintf("%d",user.getSubmit()) + "','" +
+           stringPrintf("%d",user.getSolved()) + "','" +
            changeSymbol(user.getAvailable()?"Y":"N") + "','" +
            changeSymbol(user.getLastLoginIp()) + "','" +
            changeSymbol(user.getLastLoginTime()) + "','" +
@@ -319,8 +312,8 @@ int DatabaseInterface::addUser(const User& user){
   query += changeSymbol(user.getShareCode()?"Y":"N") + "','" +
            changeSymbol(user.getIndentifyCode()) + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
@@ -328,21 +321,18 @@ int DatabaseInterface::addUser(const User& user){
 }
 
 int DatabaseInterface::addCode(const Code& code){
-	Connection* connection = createConnection("localhost",
-                                           "root",
-                                           "noahoak",
-                                           "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
   query += "insert into codes(share, code_content) values('";
   query += changeSymbol(code.getShare()?"Y":"N") + "','" +
            changeSymbol(code.getCodeContent()) + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
-  int ret = connection->excuteUpdate(query);
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID()";
   int code_id = 0;
-  Result result_set = connection->exuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
     code_id = result_set.getInt(1);
   }
@@ -353,20 +343,17 @@ int DatabaseInterface::addCode(const Code& code){
 }
 
 int DatabaseInterface::addError(const Error& error){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
   query += "insert into errors(content) values('";
   query += changeSymbol(error.getContent()) + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
-  int ret = connection->excuteUpdate(query);
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID()";
   int error_id = 0;
-  Result result_set = connection->exuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
     error_id = result_set.getInt(1);
   }
@@ -377,10 +364,7 @@ int DatabaseInterface::addError(const Error& error){
 }
 
 int DatabaseInterface::addDiscuss(const Discuss& discuss){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "insert into discusses(reply_id, topic_id, user_id, problem_id, ";
   query += "contest_id, title, content, time) values('";
@@ -394,8 +378,8 @@ int DatabaseInterface::addDiscuss(const Discuss& discuss){
            changeSymbol(discuss.getDate()) + "','" + 
            changeSymbol(discuss.getAvailable()?"Y":"N") + 
            "')";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   query = "update discusses set topic_id = message_id where topic_id = '-1'";
   ret = connection->excuteUpdate(query);
@@ -405,10 +389,7 @@ int DatabaseInterface::addDiscuss(const Discuss& discuss){
 }
 
 int DatabaseInterface::updateContest(const Contest& contest){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update contests set ";
   query += "public_id = '" + stringPrintf("%d",contest.getPublicId()) + "', " +
@@ -420,8 +401,8 @@ int DatabaseInterface::updateContest(const Contest& contest){
            "', version = version + 1, ";
   query += " where contest_id = '" + stringPrintf("%d", contest.getContestId()) + 
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -429,15 +410,12 @@ int DatabaseInterface::updateContest(const Contest& contest){
 }
 
 int DatabaseInterface::deleteDiscuss(const Discuss& discuss){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "delete from discusses where message_id = '";
   query += stringPrintf("%d", discuss.getMessageId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -445,15 +423,12 @@ int DatabaseInterface::deleteDiscuss(const Discuss& discuss){
 }
 
 int DatabaseInterface::disableDiscuss(const Discuss& discuss){
-   Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+   Connection* connection = createConnection();
   string query;
   query += "update discusses set available = 'N' where topic_id = '";
   query += stringPrintf("%d", discuss.getTopicId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -461,10 +436,7 @@ int DatabaseInterface::disableDiscuss(const Discuss& discuss){
 }
 
 int DatabaseInterface::updateDiscuss(const Discuss& discuss){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update discusses set ";
   query += "reply_id = '" + stringPrintf("%d", discuss.getReplyId()) + "', " + 
@@ -478,8 +450,8 @@ int DatabaseInterface::updateDiscuss(const Discuss& discuss){
            "time = '" + changeSymbol(discuss.getDate()) + 
            "' where message_id = '" + stringPrintf("%d", discuss.getMessageId()) + 
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   query = "update discusses set topic_id = message_id where topic_id = '-1'";
   ret = connection->excuteUpdate(query);
@@ -488,18 +460,15 @@ int DatabaseInterface::updateDiscuss(const Discuss& discuss){
   return ret;
 }
 
-int updateError(const Error& error){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+int DatabaseInterface::updateError(const Error& error){
+  Connection* connection = createConnection();
   string query;
   query += "update errors set ";
   query += "content = '" + changeSymbol(error.getContent()) + 
            "' where error_id = '" + stringPrintf("%d", error.getErrorId()) + 
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -507,10 +476,7 @@ int updateError(const Error& error){
 }
 
 int DatabaseInterface::updateStatus(const Status& status){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
   query += "update statuses set ";
   query += "user_id = '" + changeSymbol(status.getUserId()) + "'," +
@@ -527,8 +493,8 @@ int DatabaseInterface::updateStatus(const Status& status){
            "error_id = '" + stringPrintf("%d", status.getErrorId()) + 
            "' where status_id = '" + stringPrintf("%d", status.getStatusId()) +
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -536,10 +502,7 @@ int DatabaseInterface::updateStatus(const Status& status){
 }
 
 int DatabaseInterface::updateUser(const User& user){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update users set "; 
   query += "email = '" + changeSymbol(user.getEmail()) + "'," +
@@ -569,8 +532,8 @@ int DatabaseInterface::updateUser(const User& user){
            "indentify_code = '" + changeSymbol(user.getIndentifyCode()) +
            "' where user_id = '" + changeSymbol(user.getId()) +
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -578,10 +541,7 @@ int DatabaseInterface::updateUser(const User& user){
 }
 
 int DatabaseInterface::updateNews(const News& news){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
   query += "update news set "; 
   query += "publishtime = '" + changeSymbol(news.getPublishTime()) + "'," +
@@ -589,8 +549,8 @@ int DatabaseInterface::updateNews(const News& news){
            "content = '" + changeSymbol(news.getContent()) + 
            "' where news_id = '" + stringPrintf("%d", news.getNewsId()) + 
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -598,33 +558,27 @@ int DatabaseInterface::updateNews(const News& news){
 }
 
 int DatabaseInterface::setCodeSharing(const Code& code){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update codes set ";
   query += "share = '" + changeSymbol(code.getShare()?"Y":"N") +
            "' where code_id = '" + stringPrintf("%d", code.getCodeId()) + 
            "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
 }
-
+/*
 int DatabaseInterface::deleteDiscuss(const Discuss& discuss){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "delete from discusses where message_id = '";
   query += stringPrintf("%d", discuss.getMessageId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -632,32 +586,26 @@ int DatabaseInterface::deleteDiscuss(const Discuss& discuss){
 }
 
 int DatabaseInterface::disableDiscuss(const Discuss& discuss){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update discusses set available = 'N' where topic_id = '";
   query += stringPrintf("%d", discuss.getTopicId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
 }
-
+*/
 
 int DatabaseInterface::deleteError(const Error& error){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
   query += "delete from errors where error_id = '";
   query += stringPrintf("%d", error.getErrorId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -665,32 +613,26 @@ int DatabaseInterface::deleteError(const Error& error){
 }
 
 int DatabaseInterface::disableProblem(const Problem& problem){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update problems set available = '" + 
-           changSymbol((problem.getAvailable()?"Y":"N")) + 
+           changeSymbol((problem.getAvailable()?"Y":"N")) + 
            "' where problem_id = '";
   query += stringPrintf("%d", problem.getProblemId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
 }
 int DatabaseInterface::disableUser(const User& users){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
   query += "update users set available = 'N' where user_id = '";
   query += changeSymbol(users.getId()) + "'";
-  cout << query << endl;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -699,31 +641,31 @@ int DatabaseInterface::disableUser(const User& users){
 
 
 int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& problem){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   query += "insert into files(path, style) values('";
   query += changeSymbol(file.getPath()) + "','" +
            stringPrintf("%d", file.getType()) + 
            "')";
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   int ret = connection->excuteUpdate(query);
-  int file_id;
-  query = "select file_id from files where path = '" + 
+  int file_id = 0;
+  /*query = "select file_id from files where path = '" + 
           changeSymbol(file.getPath()) + "' and style = '" +
           stringPrintf("%d", file.getType()) + "' and disable = 'N" +  
           "'";
+  Result result_set = connection->excuteQuery(query);*/
+  query = "select LAST_INSERT_ID()";
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
     query = "insert into filestoproblems values('";
-    file_id = result_set.getInt("file_id");
+    file_id = result_set.getInt(1);
     query += stringPrintf("%d", result_set.getInt("file_id")) + "','" + 
-             stringPrintf("%d", problem.getProblemId()) + 
+             stringPrintf("%d", problem.getProblemId()) + "','" +
+             stringPrintf("%d", problem.getVersion()) + 
              "')";
-    cout << query << endl;
+    LOG(INFO) << query << endl;
     ret = connection->excuteUpdate(query);
   }
   result_set.close();
@@ -733,31 +675,31 @@ int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& pro
 }
 
 int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& contest){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   string query;
-  cout << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
   query += "insert into files(path, style) values('";
   query += changeSymbol(file.getPath()) + "','" +
            stringPrintf("%d", file.getType()) + 
            "')";
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   int ret = connection->excuteUpdate(query);
-  int file_id;
-  query = "select file_id from files where path = '" + 
+  int file_id = 0;
+  /*query = "select file_id from files where path = '" + 
           changeSymbol(file.getPath()) + "' and style = '" +
           stringPrintf("%d", file.getType()) + "' and disable ='N" + 
           "'";
+  Result result_set = connection->excuteQuery(query);*/
+  query = "select LAST_INSERT_ID()";
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
     query = "insert into filestocontests values('"; 
-    file_id = result_set.getInst("file_id");
+    file_id = result_set.getInt(1);
     query += stringPrintf("%d", result_set.getInt("file_id")) + "','" + 
-             stringPrintf("%d", contest.getContestId()) + 
+             stringPrintf("%d", contest.getContestId()) + "','" +
+             stringPrintf("%d", contest.getVersion()) + 
              "')";
-    cout << query << endl;
+    LOG(INFO) << query << endl;
     ret = connection->excuteUpdate(query);
   }
   result_set.close();
@@ -767,10 +709,7 @@ int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& con
 }
 
 Code DatabaseInterface::getCode(int code_id){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   Code code(code_id);
   string query = "select * from codes where code_id = '" + 
                  stringPrintf("%d", code_id) + "'";
@@ -792,15 +731,12 @@ Code DatabaseInterface::getCode(int code_id){
 }
 
 Contest DatabaseInterface::getContest(int contest_id){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   Contest contest(contest_id);
   string query = "select * from contests where contest_id = '" + 
                  stringPrintf("%d", contest_id) + "'";
-  connection.connect();
-  Result result_set= connection.excuteQuery(query);
+  connection->connect();
+  Result result_set= connection->excuteQuery(query);
   if (result_set.next()){
   	contest.setPublicId(result_set.getInt("public_id"));
   	contest.setTitle(result_set.getString("title"));
@@ -811,22 +747,19 @@ Contest DatabaseInterface::getContest(int contest_id){
     contest.setVersion(result_set.getInt("version"));
     contest.setAvailable(result_set.getString("available") == "Y");
   	result_set.close();
-    connection.close();
+    connection->close();
     delete connection;
     return contest;
   } else {
   	result_set.close();
-    connection.close();
+    connection->close();
     delete connection;
     return Contest(0);
   }
 }
 
 Discuss DatabaseInterface::getDiscuss(int discuss_id){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   Discuss discuss(discuss_id);
   string query = "select * from discusses where message_id = '" + 
                  stringPrintf("%d", discuss_id) + "'";
@@ -839,7 +772,7 @@ Discuss DatabaseInterface::getDiscuss(int discuss_id){
   	discuss.setDate(result_set.getString("time"));
   	discuss.setProblemId(result_set.getInt("problem_id"));
   	discuss.setReplyId(result_set.getInt("reply_id"));
-  	discuss.setTilte(result_set.getString("title"));
+  	discuss.setTitle(result_set.getString("title"));
   	discuss.setTopicId(result_set.getInt("topic_id"));
   	discuss.setUserId(result_set.getString("user_id"));
   	result_set.close();
@@ -855,10 +788,7 @@ Discuss DatabaseInterface::getDiscuss(int discuss_id){
 }
 
 Error DatabaseInterface::getError(int error_id){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   Error error(error_id);
   string query = "select * from errors where error_id = '" + 
                  stringPrintf("%d", error_id) + "'";
@@ -868,7 +798,7 @@ Error DatabaseInterface::getError(int error_id){
   	error.setContent(result_set.getString("content"));
   	result_set.close();
     connection->close();
-    delete conection;
+    delete connection;
     return error;
   } else {
   	result_set.close();
@@ -879,10 +809,7 @@ Error DatabaseInterface::getError(int error_id){
 }
 
 Mail DatabaseInterface::getMail(int mail_id){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   Mail mail(mail_id);
   string query = "select * from mails where mail_id = '" + 
                  stringPrintf("%d", mail_id) + "'";
@@ -909,10 +836,7 @@ Mail DatabaseInterface::getMail(int mail_id){
 }
 
 User DatabaseInterface::getUserInfo(const string& user_id){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   User users(user_id);
   string query = "select * from users where user_id = '" + 
                  changeSymbol(user_id) + "'";
@@ -933,7 +857,15 @@ User DatabaseInterface::getUserInfo(const string& user_id){
     users.setLastLoginIp(result_set.getString("last_login_ip"));
     users.setLastLoginTime(result_set.getString("last_login_time"));
     users.setRegTime(result_set.getString("reg_time"));
-    users.setPermission(result_set.getInt("permission"));
+    string permission_string = result_set.getString("permission");
+    int permission = 0;
+    if (permission_string.find_first_of("A") != string::npos) {
+       permission |= 0x02;
+    }
+    if (permission_string.find_first_of("V") != string::npos) {
+      permission |= 0x01;
+    }
+    users.setPermission(permission);
     users.setIndentifyCode(result_set.getString("indentify_code"));
   	result_set.close();
     connection->close();
@@ -941,22 +873,90 @@ User DatabaseInterface::getUserInfo(const string& user_id){
     return users;
   } else {
   	result_set.close();
-    connection.->close();
+    connection->close();
     delete connection;
     return User("NULL");
   }
 }
 
+DiscussList DatabaseInterface::getReplyDiscussList(int message_id) {
+  Connection* connection = createConnection();
+  string query = "select * from discusses where reply_id = '" +
+          stringPrintf("%d", message_id) + "' and available = 'Y'";
+  DiscussList discuss_list;
+  DiscussListItem item;
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.contest_id = result_set.getInt("contest_id");
+  	item.date = result_set.getString("time");
+  	item.discuss_id = result_set.getInt("message_id");
+  	item.problem_id = result_set.getInt("problem_id");
+  	item.reply_id = result_set.getInt("reply_id");
+  	item.title = result_set.getString("title");
+  	item.topic_id = result_set.getInt("topic_id");
+  	item.user_id = result_set.getString("user_id");
+    discuss_list.push_back(item);
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return discuss_list;
+}
+
+TopicSet DatabaseInterface::getDiscussTopicSet(const DiscussInfo& discuss_info) {
+  Connection* connection = createConnection();
+  TopicSet topic_set;
+	bool first = true;
+  string query = "select * from discusses ";
+  if (discuss_info.problem_id){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "problem_id = '" + stringPrintf("%d", discuss_info.problem_id) + 
+             "' ";
+  }
+  if (discuss_info.contest_id){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "contest_id = '" + stringPrintf("%d", discuss_info.contest_id) + 
+             "' ";
+  }
+  if (first) {
+    query += "where ";
+    first = false;
+  } else {
+    query += "and ";
+  }
+  query += " available = 'Y' ";
+  query += " order by time desc ";
+  query += " limit " + stringPrintf("%d, 10", discuss_info.page_id*10);
+  LOG(INFO) << query << endl;
+  connection->connect();
+  Result result_set= connection->excuteQuery(query);
+  while(result_set.next()){
+  	topic_set.insert(result_set.getInt("messageId"));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return topic_set;
+}
+
 Problem DatabaseInterface::getProblem(int problem_id){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   Problem problem(problem_id);
   string query = "select * from problems where problem_id = '" + 
                  stringPrintf("%d",problem_id) + "'";
   connection->connect();
-  Result result_set= connection->excuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
   	problem.setAccepted(result_set.getInt("accepted"));
   	problem.setAddinTime(result_set.getString("addin_time"));
@@ -986,7 +986,7 @@ Problem DatabaseInterface::getProblem(int problem_id){
   } else {
   	result_set.close();
     connection->close();
-    delete connetion;
+    delete connection;
     return Problem(0);
   }
 }
@@ -994,10 +994,7 @@ Problem DatabaseInterface::getProblem(int problem_id){
 ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
 	ProblemList problem_list;
 	bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   ProblemListItem item;
   string query = "select * from problems ";
   if (problem_info.problem_id){
@@ -1041,7 +1038,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   }
   
   query += " limit " + stringPrintf("%d, 100", problem_info.page_id*100);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1049,8 +1046,8 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   	item.problem_id = result_set.getInt("problem_id");
   	item.submit = result_set.getInt("submit");
   	item.title = result_set.getString("title");
-    iter.ac = 0;
-    iter.available = (result_set.getString("available") == "Y");
+    item.ac = 0;
+    item.available = (result_set.getString("available") == "Y");
   	problem_list.push_back(item);
   }
   result_set.close();
@@ -1059,16 +1056,12 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   return problem_list;
 }
 
-RankList DataInterface::getRankList(const RankListInfo& ranklist_info){
+RankList DatabaseInterface::getRankList(const RankListInfo& ranklist_info){
   RankList ranklist;
   RankListItem item;
-  bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query = "select * from users ";
-  switch (ranklist.seq) {
+  switch (ranklist_info.seq) {
     case 0:
       query += "order by solveds desc, submits";
       break;
@@ -1080,7 +1073,7 @@ RankList DataInterface::getRankList(const RankListInfo& ranklist_info){
       break;
   }
   query += " limit " + stringPrintf("%d, 25", ranklist_info.page_id*25);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1090,7 +1083,7 @@ RankList DataInterface::getRankList(const RankListInfo& ranklist_info){
   	item.submit = result_set.getInt("submits");
   	ranklist.push_back(item);
   }
-  cout << "ok" << endl;
+  LOG(INFO) << "ok" << endl;
   result_set.close();
   connection->close();
   delete connection;
@@ -1100,10 +1093,7 @@ RankList DataInterface::getRankList(const RankListInfo& ranklist_info){
 DiscussList DatabaseInterface::getDiscussList(const DiscussInfo& discuss_info){
   DiscussList discuss_list;
 	bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   DiscussListItem item;
   string query = "select * from discusses ";
   if (discuss_info.title != string("NULL")){
@@ -1147,7 +1137,7 @@ DiscussList DatabaseInterface::getDiscussList(const DiscussInfo& discuss_info){
   }
   query += " order by time desc ";
   query += " limit " + stringPrintf("%d, 20", discuss_info.page_id*20);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1170,41 +1160,13 @@ DiscussList DatabaseInterface::getDiscussList(const DiscussInfo& discuss_info){
 FileList DatabaseInterface::getProblemFile(const Problem& problem){
 	FileList filelist;
   File item;
-  bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query = "select * from files where file_id in (select file_id from";
-         query += " filestoproblems where problem_id = '" + 
-                  stringPrintf("%d", problem.getProblemId()) + "')";
-  cout << query << endl;
-  connection->connect();
-  Result result_set= connection->excuteQuery(query);
-  while(result_set.next()){
-  	item.setFileId(result_set.getInt("file_id"));
-  	item.setPath(result_set.getString("path"));
-  	item.setType(result_set.getInt("style"));
-  	filelist.push_back(item);
-  }
-  result_set->close();
-  connection->close();
-  delete connection;
-  return filelist;
-}
-
-FileList DatabaseInterface::getContestFile(const Contest& contest){
-  FileList filelist;
-  File item;
-  bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
-  string query = "select * from files where file_id in (select file_id from";
-         query += " filestocontests where contest_id = '" + 
-                  stringPrintf("%d", contest.getContestId()) + "')";
-  cout << query << endl;
+  query += " filestoproblems as t1, problems as t2 where t1.problem_id ";
+  query += " = t2.problem_id and t1.version = t2.version and ";
+  query += " t1.problem_id = '" +
+           stringPrintf("%d", problem.getProblemId()) + "')";
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1219,13 +1181,36 @@ FileList DatabaseInterface::getContestFile(const Contest& contest){
   return filelist;
 }
 
+FileList DatabaseInterface::getContestFile(const Contest& contest){
+  FileList filelist;
+  File item;
+  Connection* connection = createConnection();
+  string query = "select * from files where file_id in (select file_id from";
+  query += " filestocontests as t1, contests as t2 where t1.contest_id ";
+  query += " = t2.contest_id and t1.version = t2.version and ";
+  query += " t1.contest_id = '"; 
+                  stringPrintf("%d", contest.getContestId()) + "')";
+  LOG(INFO) << query << endl;
+  connection->connect();
+  Result result_set= connection->excuteQuery(query);
+  while(result_set.next()){
+  	item.setFileId(result_set.getInt("file_id"));
+  	item.setPath(result_set.getString("path"));
+  	item.setType(result_set.getInt("style"));
+  	filelist.push_back(item);
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return filelist;
+}
+
+
+
 ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   ContestList contest_list;
 	bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   ContestListItem item;
   string query = "select * from contests ";
   if (contest_info.title != string("NULL")){
@@ -1247,7 +1232,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
     if (contest_info.type == 'C')
       query += "(contest_type = 'N' or contest_type = 'P') ";
     else
-      query += "contest_tyoe = '" + changeSymbol(contest_info.type) + "' ";
+      query += "contest_tyoe = '" + stringPrintf("%c",contest_info.type) + "' ";
   }
   if (contest_info.description != string("NULL")){
     if (first){
@@ -1260,7 +1245,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   }
   query += " order by start_time desc ";
   query += " limit " + stringPrintf("%d, 25", contest_info.page_id*25);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1268,7 +1253,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   	item.type = result_set.getString("contest_type");
   	item.start_time = result_set.getString("start_time");
   	item.end_time = result_set.getString("end_time");
-    item.public_id = result_set.getString("public_id");
+    item.public_id = result_set.getInt("public_id");
     item.available = (result_set.getString("available")  == "Y");
   	contest_list.push_back(item);
   }
@@ -1278,13 +1263,10 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   return contest_list;
 }
 
-MailList getMailList(const MailInfo& mail_info){
+MailList DatabaseInterface::getMailList(const MailInfo& mail_info){
   MailList mail_list;
 	bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   MailListItem item;
   string query = "select * from mails ";
   if (mail_info.title != string("NULL")){
@@ -1310,7 +1292,7 @@ MailList getMailList(const MailInfo& mail_info){
   }
   query += " order by time desc limit " + 
            stringPrintf("%d, 25", mail_info.page_id*25);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1332,10 +1314,7 @@ NewsList DatabaseInterface::getNewsList(const NewsInfo& news_info){
 	NewsList newslist;
   NewsListItem item;
   bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query = "select * from news ";
   if (news_info.title != string("NULL")){
     if (first){
@@ -1348,7 +1327,7 @@ NewsList DatabaseInterface::getNewsList(const NewsInfo& news_info){
   }
   query += " order by publishtime desc ";
   query += " limit " + stringPrintf("%d, 25", news_info.page_id*25);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1366,14 +1345,11 @@ NewsList DatabaseInterface::getNewsList(const NewsInfo& news_info){
 StatusList DatabaseInterface::getNoSearchStatus(){
   StatusList statuslist;
   Status item;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query = "select * from statuses ";
   query += " order by submit_time desc ";
   query += " limit 0, 25";
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1402,10 +1378,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   StatusList statuslist;
   Status item;
   bool first = true;
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   string query = "select * from statuses ";
   if (status_info.user_id != string("NULL")){
     if (first){
@@ -1465,7 +1438,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   }
   query += "order by submit_time desc limit " + 
            stringPrintf("%d, 25", status_info.page_id*25);
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1486,22 +1459,19 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   }
   result_set.close();
   connection->close();
-  delete conection;
+  delete connection;
   return statuslist;
 }
 
 ContestList DatabaseInterface::getUpcomingContest(){
-  Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+  Connection* connection = createConnection();
   ContestList contest_list;
   ContestListItem item;
   string now_time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
   string query = "select * from contests where start_time > '";
          query += changeSymbol(now_time) + "' order by start_time";
   query += " limit 0,3";
-  cout << query << endl;
+  LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1518,21 +1488,18 @@ ContestList DatabaseInterface::getUpcomingContest(){
 }
 
 User DatabaseInterface::getMostDiligenPlayer(){
-	Connection* connection = createConnection("localhost",
-                                            "root",
-                                            "noahoak",
-                                            "onlinejudgetest");
+	Connection* connection = createConnection();
   string query = "select user_id from statuses "
                  "group by user_id having count(*) >= ALL (select count(*) from statuses "
                  "group by user_id ) limit 0,1";
-  //cout << query << endl;
+  //LOG(INFO) << query << endl;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   string user_id = "NULL";
-  //cout << user_id << endl;
+  //LOG(INFO) << user_id << endl;
   if(result_set.next()){
   	user_id = result_set.getString("user_id");
-  	cout << user_id << endl;
+  	LOG(INFO) << user_id << endl;
   }
   result_set.close();
   connection->close();
@@ -1540,17 +1507,20 @@ User DatabaseInterface::getMostDiligenPlayer(){
   return getUserInfo(user_id);
 }
 
-ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo& contest_ranklist_info){
+//ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo& contest_ranklist_info){
+ContestRankList DatabaseInterface::getContestRankList(int contest_id){
   ContestRankList contest_ranklist;
   ContestRankListItem item;
   ContestProblemTime time_item;
   map<string, ContestRankListItem> ranklist_buf;
   map<int, int> problem_id_to_contest;
-  Contest contest = getContest(contest_ranklist_info.contest_id);
-  Connection* connection = createConnection("localhost", "root", "noahoak", "onlinejudgetest");
+  //Contest contest = getContest(contest_ranklist_info.contest_id);
+  Contest contest = getContest(contest_id);
+  Connection* connection = createConnection();
   connection->connect();
   string query = "select * from problemtocontests where contest_id = '";
-  query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
+  //query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
+  query += stringPrintf("%d", contest_id) + "' ";
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()){
   	 int problem_id = result_set.getInt("problem_id");
@@ -1558,7 +1528,8 @@ ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo&
   }
   result_set.close();
   query = "select * from statuses where contest_id = '";
-  query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
+  //query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
+  query += stringPrintf("%d", contest_id);
   query += "order by submit_time ";
   result_set = connection->excuteQuery(query);
   while (result_set.next()){   
@@ -1578,18 +1549,17 @@ ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo&
       time_item.penalty = 0 ;
       time_item.problem_id = problem_id;
       time_item.submit = 0;
+      time_item.in_contest_id = problem_id_to_contest[problem_id];
       ranklist_buf[user_id].problem_penalty[problem_id]=time_item;
     }
     if (!ranklist_buf[user_id].problem_penalty[problem_id].ac)
       ranklist_buf[user_id].problem_penalty[problem_id].submit++;
-    if (result == 0 && !ranklist_buf[user_id].problem_penalty[problem_id].ac){
+    if (result == ACCEPTED && !ranklist_buf[user_id].problem_penalty[problem_id].ac){
       ranklist_buf[user_id].accepted++;
       ranklist_buf[user_id].problem_penalty[problem_id].ac = true;
       ranklist_buf[user_id].problem_penalty[problem_id].penalty = time + 
         20*60*(ranklist_buf[user_id].problem_penalty[problem_id].submit - 1);
       ranklist_buf[user_id].penalty += ranklist_buf[user_id].problem_penalty[problem_id].penalty;
-      ranklist_buf[user_id].problem_penalty[problem_id].in_contest_id = 
-        problem_id_to_contest[problem_id];
     }
   }
   result_set.close();
@@ -1604,11 +1574,46 @@ ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo&
   return contest_ranklist;
 }
 
+bool DatabaseInterface::checkContestAcBefore(const ContestAcBefore& contest_acbefore) {
+  bool ret = false;
+  Connection* connection = createConnection();
+  string query = "select * from statuses ";
+  query += " where user_id = '" + changeSymbol(contest_acbefore.user_id);
+  query += "' and time < '" + changeSymbol(contest_acbefore.time);
+  query += "' and contest_id = '" + stringPrintf("%d", contest_acbefore.contest_id);
+  query += "' and problem_id = '" + stringPrintf("%d", contest_acbefore.problem_id);
+  query += "'";
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  ret = result_set.next();
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::getInContestId(int contest_id, int problem_id) {
+  bool in_contest_id = -1;
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "select in_contest_id from problemtocontests";
+  query += "where contest_id = '" + stringPrintf("%d", contest_id) +"' ";
+  query += "and problem_id = '" + stringPrintf("%d", problem_id) + "'";
+  Result result_set = connection->excuteQuery(query);
+  if (result_set.next()) {
+    in_contest_id = result_set.getInt("in_contest_id");
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return in_contest_id;
+}
+
 ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   ContestStatistics contest_statistics;
   ContestStatisticsItem item;
   map<int, ContestStatisticsItem> statistics_buf;
-  Connection* connection = createConnection("localhost", "root", "noahoak", "onlinejudgetest");
+  Connection* connection = createConnection();
   connection->connect();
   string query = "select problem_id, in_contest_id from problemtocontests ";
   query += "where contest_id = '" + stringPrintf("%d", contestId) + "'";
@@ -1630,6 +1635,11 @@ ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   	int result = result_set.getInt("result");
   	int language = result_set.getInt("language");
     string user_id = result_set.getString("user_id");
+    problem_user_ac.user_id = user_id;
+    problem_user_ac.problem_id = problem_id;
+    if (set.count(problem_user_ac) > 0) {
+      continue;
+    }
   	statistics_buf[problem_id].Total++;
   	switch (language){
   	  case 0:
@@ -1643,38 +1653,38 @@ ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   	    statistics_buf[problem_id].Pascal++;
   	}
   	switch (result){
-  		case 0:
+  		case ACCEPTED:
         problem_user_ac.user_id = user_id;
         problem_user_ac.problem_id = problem_id;
-        if (set.count(problem_user_ac) == 0) {
-  		    statistics_buf[problem_id].AC++;
-          set.insert(problem_user_ac);
-        }
+      //  if (set.count(problem_user_ac) == 0) {
+  		  statistics_buf[problem_id].AC++;
+        set.insert(problem_user_ac);
+      //  }
   	    break;
-  		case 1:
+  		case PRESENTATION_ERROR:
   		  statistics_buf[problem_id].PE++;
   	    break;
-  		case 2:
+  		case TIME_LIMIT_EXCEEDED:
   		  statistics_buf[problem_id].TLE++;
   	    break;
-  		case 3:
+  		case MEMORY_LIMIT_EXCEEDED:
   		  statistics_buf[problem_id].MLE++;
   	    break;
-  		case 4:
+  		case WRONG_ANSWER:
   		  statistics_buf[problem_id].WA++;
   	    break;
-  		case 5:
+  		case OUTPUT_LIMIT_EXCEEDED:
   		  statistics_buf[problem_id].OLE++;
   	    break;
-  		case 6:
+  		case COMPILE_ERROR:
   		  statistics_buf[problem_id].CE++;
   	    break;
-  		case 7:
-  		case 8:
-  		case 9:
-  		case 10:
-  		case 11:
-  		case 12:
+  		case RUNTIME_ERROR_SIGSEGV:
+  		case RUNTIME_ERROR_SIGFPE:
+  		case RUNTIME_ERROR_SIGBUS:
+  		case RUNTIME_ERROR_SIGABRT:
+  		case RUNTIME_ERROR_JAVA:
+  		case RUNTIME_ERROR_PAS:
   		  statistics_buf[problem_id].RE++;
   	    break;
   	}
@@ -1690,7 +1700,68 @@ ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   return contest_statistics;
 }
 
-
+ProblemStatistics DatabaseInterface::getProblemStatistics(int problem_id) {
+  Connection* connection = createConnection();
+  connection->connect();
+  ProblemStatistics problem_statistics;
+  memset(&problem_statistics, 0, sizeof(problem_statistics));
+  problem_statistics.problem_id = problem_id;
+  string query = "select * from statuses where problem_id = '" +
+                 stringPrintf("%d", problem_id) + "'";
+  LOG(INFO) << query;
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    int result = result_set.getInt("result");
+    int language = result_set.getInt("language");
+    problem_statistics.Total++;
+    switch (language){
+  	  case 0:
+  	  case 1:
+  	    problem_statistics.C_CPP++;
+  	    break;
+  	  case 2:
+  	    problem_statistics.Java++;
+  	    break;
+  	  case 3:
+  	    problem_statistics.Pascal++;
+  	}
+  	switch (result){
+  		case ACCEPTED:
+  		  problem_statistics.AC++;
+  	    break;
+  		case PRESENTATION_ERROR:
+  		  problem_statistics.PE++;
+  	    break;
+  		case TIME_LIMIT_EXCEEDED:
+  		  problem_statistics.TLE++;
+  	    break;
+  		case MEMORY_LIMIT_EXCEEDED:
+  		  problem_statistics.MLE++;
+  	    break;
+  		case WRONG_ANSWER:
+  		  problem_statistics.WA++;
+  	    break;
+  		case OUTPUT_LIMIT_EXCEEDED:
+  		  problem_statistics.OLE++;
+  	    break;
+  		case COMPILE_ERROR:
+  		  problem_statistics.CE++;
+  	    break;
+  		case RUNTIME_ERROR_SIGSEGV:
+  		case RUNTIME_ERROR_SIGFPE:
+  		case RUNTIME_ERROR_SIGBUS:
+  		case RUNTIME_ERROR_SIGABRT:
+  		case RUNTIME_ERROR_JAVA:
+  		case RUNTIME_ERROR_PAS:
+  		  problem_statistics.RE++;
+  	    break;
+    }
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return problem_statistics;
+}
 
 Connection* DatabaseInterface::createConnection(const string& host,
                                                const string& user,
@@ -1700,10 +1771,10 @@ Connection* DatabaseInterface::createConnection(const string& host,
 }
 
 Connection* DatabaseInterface::createConnection(){
-	string host;
-	string user;
-	string password;
-	string database;
+	string host = Configure::getInstance().getDatabaseHost();
+	string user = Configure::getInstance().getDatabaseUser();
+	string password = Configure::getInstance().getDatabasePassword();
+	string database = Configure::getInstance().getDatabaseName();
   return new MysqlConnection(host, user, password, database);
 }
 
