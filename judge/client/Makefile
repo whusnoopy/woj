@@ -1,7 +1,7 @@
 CC=$(CXX)
 CXXFLAGS=-I../../ \
 	       -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
-VPATH=../kernel_module ../../base
+VPATH=../../base
 
 ALL_SOURCES:=$(wildcard *.cc)
 TEST_SOURCES:=$(wildcard test_*.cc)

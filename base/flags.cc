@@ -122,14 +122,10 @@ int parseFlags(int argc, char* argv[]) {
 
   // Check optional flags
   for (int i = 0; i < flags_list->size(); ++i) {
-    if (!assigned[i]) {
-      if ((*flags_list)[i]->optional()) {
-        (*flags_list)[i]->assign((*flags_list)[i]->default_value());
-      } else {
-        cerr << "Missing flag " << (*flags_list)[i]->name() << endl;
-        printUsage();
-        return -1;
-      }
+    if (!assigned[i] && !(*flags_list)[i]->optional()) {
+      cerr << "Missing flag " << (*flags_list)[i]->name() << endl;
+      printUsage();
+      return -1;
     }
   }
   
