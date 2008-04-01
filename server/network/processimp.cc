@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "../data/user.h"
 #include "base/util.h"
 #include "base/flags.h"
 #include "base/logging.h"

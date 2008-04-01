@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/contest.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/contest.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AbleContestProcessImp::process(int socket_fd, const string& ip, int length){
@@ -41,7 +42,7 @@ void AbleContestProcessImp::process(int socket_fd, const string& ip, int length)
   }
   contest.setAvailable(*iter == "Y");
   int ret = 0;
-  //ret = DataInterface::getInstance().disableContest(contest);
+  ret = DataInterface::getInstance().disableContest(contest);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

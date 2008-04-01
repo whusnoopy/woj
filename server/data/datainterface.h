@@ -43,7 +43,7 @@ public:
   Error getError(int error_id);
   Mail getMail(int mail_id);
   MailList getMailList(const MailInfo& mail_info);
-  User getMostDiligenPlayer();
+  UserList getMostDiligenPlayer();
   NewsList getNewsList(const NewsInfo& news_info);
   StatusList getNoSearchStatus();
   StatusList getSearchStatus(const StatusInfo& status_info);
@@ -58,8 +58,8 @@ public:
   TopicSet getDiscussTopicSet(const DiscussInfo& discuss_info);
   int updateProblem(const Problem& problem);
   int updateContest(const Contest& contest);
-  int updateProblemListtoContest(const Contest& constest,const ProblemList& problem_list);
-  int updateUserListtoContest(const Contest& contest,const UserList& user_list);
+  //int updateProblemListtoContest(const Contest& constest,const ProblemList& problem_list);
+  //int updateUserListtoContest(const Contest& contest,const UserList& user_list);
   int updateDiscuss(const Discuss& discuss);
   int updateStatus(const Status& status);
   int updateUser(const User& user);
@@ -74,6 +74,16 @@ public:
   int disableContest(const Contest& contest);
   bool checkContestAcBefore(const ContestAcBefore&);
   int getInContestId(int contest_id, int problem_id);
+  int disableContestProblems(const Contest& contest);
+  int disableContestUsers(const Contest& contest);
+  bool checkPermission(int contest_id, const string& user_id);
+  ContestProblemList getContestProblemList(int contest_id);
+  int getContestProblemNum(int contest_id);
+  int disableMail(const string& user_id, int mail_id);
+  int setMailRead(const Mail& mail);
+  ProblemSet getUserACProblem(const string& user_id, bool ac);
+  StatusList getProblemStatus(const StatusInfo& status_info);
+  int getUserRank(const string& user_id);
   
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);
@@ -83,6 +93,7 @@ public:
   LinkList getLink();
   int updateNotice(const string& notice, const string& time);
   string getNotice();
+  ssize_t getFileSize(const string& filename);
 
 
   static DataInterface& getInstance(){
@@ -100,3 +111,4 @@ private:
 };
 
 #endif
+

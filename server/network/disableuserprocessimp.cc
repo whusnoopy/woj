@@ -6,10 +6,11 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/user.h"
-#include "../object/list.h"
-#include "../object/info.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
+#include "object/user.h"
+#include "object/list.h"
+#include "object/info.h"
 using namespace std;
 
 void DisableUserProcessImp::process(int socket_fd, const string& ip, int length){
@@ -34,7 +35,7 @@ void DisableUserProcessImp::process(int socket_fd, const string& ip, int length)
   }
   user.setId(*iter);
   int ret =0;
-  //ret = DataInterface::getInstance().disableUser(user);
+  ret = DataInterface::getInstance().disableUser(user);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

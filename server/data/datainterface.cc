@@ -112,6 +112,30 @@ DiscussList DataInterface::getDiscussList(const DiscussInfo& discuss_info) {
 Error DataInterface::getError(int error_id) {
   return DatabaseInterface::getInstance().getError(error_id);
 }
+
+int DataInterface::disableContestProblems(const Contest& contest) {
+  return DatabaseInterface::getInstance().disableContestProblems(contest);
+}
+
+int DataInterface::disableContestUsers(const Contest& contest) {
+  return DatabaseInterface::getInstance().disableContestUsers(contest);
+}
+
+bool DataInterface::checkPermission(int contest_id, const string& user_id) {
+  return DatabaseInterface::getInstance().checkPermission(contest_id, user_id);
+}
+
+ContestProblemList DataInterface::getContestProblemList(int contest_id) {
+  return DatabaseInterface::getInstance().getContestProblemList(contest_id);
+}
+
+int DataInterface::getContestProblemNum(int contest_id) {
+  return DatabaseInterface::getInstance().getContestProblemNum(contest_id);
+}
+
+int DataInterface::disableMail(const string& user_id, int mail_id) {
+  return DatabaseInterface::getInstance().disableMail(user_id, mail_id);
+}
  
 Mail DataInterface::getMail(int mail_id) {
   return DatabaseInterface::getInstance().getMail(mail_id);
@@ -121,8 +145,12 @@ MailList DataInterface::getMailList(const MailInfo& mail_info) {
   return DatabaseInterface::getInstance().getMailList(mail_info);
 }
 
-User DataInterface::getMostDiligenPlayer() {
+UserList DataInterface::getMostDiligenPlayer() {
   return DatabaseInterface::getInstance().getMostDiligenPlayer();
+}
+
+int DataInterface::setMailRead(const Mail& mail) {
+  return DatabaseInterface::getInstance().setMailRead(mail);
 }
 
 NewsList DataInterface::getNewsList(const NewsInfo& news_info) {
@@ -148,6 +176,18 @@ ProblemList DataInterface::getProblemList(const ProblemInfo& problem_info) {
 
 RankList DataInterface::getRankList(const RankListInfo& ranklist_info) {
   return DatabaseInterface::getInstance().getRankList(ranklist_info);
+}
+
+ProblemSet DataInterface::getUserACProblem(const string& user_id, bool ac) {
+  return DatabaseInterface::getInstance().getUserACProblem(user_id, ac);
+}
+
+StatusList DataInterface::getProblemStatus(const StatusInfo& status_info) {
+  return DatabaseInterface::getInstance().getProblemStatus(status_info);
+}
+
+int DataInterface::getUserRank(const string& user_id) {
+  return DatabaseInterface::getInstance().getUserRank(user_id);
 }
 
 ContestList DataInterface::getUpcomingContest(){
@@ -177,7 +217,7 @@ int DataInterface::updateProblem(const Problem& problem) {
 int DataInterface::updateContest(const Contest& contest) {
   return DatabaseInterface::getInstance().updateContest(contest);
 }
-
+/*
 int DataInterface::updateProblemListtoContest(const Contest& contest,
                                               const ProblemList& problem_list) {
   return DatabaseInterface::getInstance().updateProblemListtoContest(contest, problem_list);
@@ -187,7 +227,7 @@ int DataInterface::updateUserListtoContest(const Contest& contest,
                                            const UserList& user_list) {
   return DatabaseInterface::getInstance().updateUserListtoContest(contest, user_list);
 }
-
+*/
 int DataInterface::updateDiscuss(const Discuss& discuss) {
   return DatabaseInterface::getInstance().updateDiscuss(discuss);
 }
@@ -275,5 +315,8 @@ string DataInterface::getNotice() {
   return FileInterface::getInstance().getNotice();
 }
 
+ssize_t DataInterface::getFileSize(const string& filename) {
+  return FileInterface::getInstance().getFileSize(filename);
+}
 
 

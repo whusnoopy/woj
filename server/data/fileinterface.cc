@@ -176,3 +176,13 @@ string FileInterface::getNotice(){
 	return string("");
 }
 
+ssize_t FileInterface::getFileSize(const string& filename) {
+  struct stat file_stat;
+	FileData file_data;
+	file_data.filename = filename;
+	if (stat(filename.c_str(), &file_stat)){
+	  cout << "Error in stat file " << endl;
+	}
+	return file_stat.st_size;
+}
+

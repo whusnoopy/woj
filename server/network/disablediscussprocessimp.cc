@@ -6,10 +6,11 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/discuss.h"
-#include "../object/list.h"
-#include "../object/info.h"
+#include "util/calulate.h"
+#include "object/discuss.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "data/datainterface.h"
 using namespace std;
 
 void DisableDiscussProcessImp::process(int socket_fd, const string& ip, int length){
@@ -33,9 +34,9 @@ void DisableDiscussProcessImp::process(int socket_fd, const string& ip, int leng
     return;
   }
   discuss.setMessageId(atoi(iter->c_str()));
-  //discuss = DataInterface::getInstance().getDiscuss(discuss.getMessageId());
+  discuss = DataInterface::getInstance().getDiscuss(discuss.getMessageId());
   int ret =0;
-  //ret = DataInterface::getInstance().disableDiscuss(discuss);
+  ret = DataInterface::getInstance().disableDiscuss(discuss);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

@@ -4,10 +4,11 @@
 #include <set>
 #include <vector>
 
-#include "../object/user.h"
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/user.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -32,13 +33,13 @@ void UserInfoProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find user_id from data for:" << ip;
     return;
   }
-  //string user_id = *iter;
+  string user_id = *iter;
   User user;
-  //user = DataInterface::getInstance().getUserInfo(user_id);
+  user = DataInterface::getInstance().getUserInfo(user_id);
   ProblemSet ac;
-  //ac = DataInterface::getInstance().getUserSolved(user_id);
+  ac = DataInterface::getInstance().getUserACProblem(user_id, true);
   int rank = 0;
-  //rank = DataInterface::getInstance().getUserRank();
+  rank = DataInterface::getInstance().getUserRank(user_id);
   string databuf;
   databuf += stringPrintf("%d\001%d\001%d\001%s\001%s",
                           rank,

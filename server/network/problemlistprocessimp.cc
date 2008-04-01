@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/problem.h"
-#include "../object/user.h"
-#include "../object/list.h"
-#include "../object/info.h"
+#include "util/calulate.h"
+#include "object/problem.h"
+#include "object/user.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "data/datainterface.h"
 using namespace std;
 
 void ProblemListProcessImp::process(int socket_fd, const string& ip, int length) {
@@ -76,14 +77,14 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   ProblemList::iterator list_iter;
   if (user_id != "?") {
      User user;
-     //user = DatabaseInterface::getInstance().getUserInfo(user_id);
+     user = DataInterface::getInstance().getUserInfo(user_id);
      if (indentify_code == user.getIndentifyCode()) {
        problem_info.page_id = user.getVolume();
-       //list = DatabaseInterface::getInstance().getProblemList(problem_info);
+       list = DataInterface::getInstance().getProblemList(problem_info);
        ProblemSet ac_set; 
-       //ac_set = DatabaseInterface::getInstance().getUseACProblem(user_id, true);
+       ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
        ProblemSet nac_set;
-       //nac_set = DatabaseInterface::getInstance().getUserACProblem(user_id, false);
+       nac_set = DataInterface::getInstance().getUserACProblem(user_id, false);
        list_iter = list.begin();
        while (list_iter != list.end()){
          if (ac_set.count(list_iter->problem_id) == 1) {
@@ -95,10 +96,10 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
          list_iter++;
        }
      }else {
-       //list = DatabaseInterface::getInstance().getProblemList(problem_info);
+       list = DataInterface::getInstance().getProblemList(problem_info);
      }
   }else {
-    //list = DatabaseInterface::getInstance().getProblemList(problem_info);
+    list = DataInterface::getInstance().getProblemList(problem_info);
   }
 
 

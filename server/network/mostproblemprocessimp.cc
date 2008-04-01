@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "../object/problem.h"
-#include "../util/calulate.h"
+#include "object/problem.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -29,9 +30,9 @@ void MostProblemProcessImp::process(int socket_fd, const string& ip, int length)
     LOG(ERROR) << "Cannot find problem_id from data for:" << ip;
     return;
   }
-  //int problem_id = atoi(iter->c_str());
+  int problem_id = atoi(iter->c_str());
   Problem problem;
-  //problem = DatabaseInterface::getInstance().getProblem(problem_id);
+  problem = DataInterface::getInstance().getProblem(problem_id);
   string databuf;
   string len = stringPrintf("%010d", 0);
   if ((problem.getProblemId() == 0)){

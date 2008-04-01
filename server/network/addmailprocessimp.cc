@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/mail.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/mail.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AddMailProcessImp::process(int socket_fd, const string& ip, int length){
@@ -62,13 +63,13 @@ void AddMailProcessImp::process(int socket_fd, const string& ip, int length){
   mail.setReaderDel(false);
   mail.setWriterDel(false);
   User user;
-  //user = DatabaseInterface::getInstance().getUserInfo(mail.getToUser());
+  user = DataInterface::getInstance().getUserInfo(mail.getToUser());
   if (user.getId() == string("NULL")) {
     sendReply(socket_fd, 'N');
     return;
   }
   int ret = 0;
-  //ret = DatabaseInterface::getInstance().addMail(mail);
+  ret = DatabaseInterface::getInstance().addMail(mail);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

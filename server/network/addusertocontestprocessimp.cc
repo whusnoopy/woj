@@ -6,6 +6,7 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
+#include "data/datainterface.h"
 #include "../util/calulate.h"
 #include "../object/contest.h"
 #include "../object/list.h"
@@ -38,9 +39,9 @@ void AddUserToContestProcessImp::process(int socket_fd, const string& ip, int le
   while (iter != datalist.end()) {
     set.insert(*iter);
   }
-  //DataInterface::getInstance().disableContestUsers(contest);
+  DataInterface::getInstance().disableContestUsers(contest);
   int ret = 0;
-  //ret = DataInterface::getInstance().addUserListtoContest(contest, set);
+  ret = DataInterface::getInstance().addUserListtoContest(contest, set);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

@@ -6,13 +6,14 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/problem.h"
-#include "../object/file.h"
-#include "../object/filedata.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "util/calulate.h"
+#include "object/problem.h"
+#include "object/file.h"
+#include "object/filedata.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
+#include "data/datainterface.h"
 using namespace std;
 
 void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int length){
@@ -37,7 +38,7 @@ void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int leng
   int problem_id = atoi(iter->c_str());
   Problem problem(problem_id);
   FileList file_list;
-  //file_list = DataInterface::getInstance().getProblemFile(problem);
+  file_list = DataInterface::getInstance().getProblemFile(problem);
   FileList::iterator file_iter = file_list.begin();
   while (file_iter != file_list.end()) {
     FileList::iterator buf_iter = file_iter;
@@ -63,7 +64,7 @@ void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int leng
       return;
     }
     int data_size = 0;
-    //data_size = DataInterface::getInstance().getFileSize(file_iter->getPath());
+    data_size = DataInterface::getInstance().getFileSize(file_iter->getPath());
     string datalen = stringPrintf("%010d", data_size);
     if (socket_write(socket_fd, datalen.c_str(), 10)) {
       LOG(ERROR) << "Cannot send data size to:" << ip;
@@ -71,7 +72,7 @@ void GetProblemFileProcessImp::process(int socket_fd, const string& ip, int leng
     }
     FileData file_data;
     file_data.buf = NULL;
-    //file_data = DataInterface::getInstance().getFile(file_iter->getPath());
+    file_data = DataInterface::getInstance().getFile(file_iter->getPath());
     if (socket_write(socket_fd, file_data.buf, data_size)) {
       LOG(ERROR) << "Cannot send data to:" << ip;
       if (file_data.buf != NULL) {

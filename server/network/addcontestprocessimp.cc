@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/contest.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/contest.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AddContestProcessImp::process(int socket_fd, const string& ip, int length){
@@ -63,7 +64,7 @@ void AddContestProcessImp::process(int socket_fd, const string& ip, int length){
   contest.setVersion(1);
   contest.setAvailable(true);
   int contest_id = 0;
-  //contest_id = DataInterface::getInstance().addContest(contest);
+  contest_id = DataInterface::getInstance().addContest(contest);
   string databuf = stringPrintf("%010d", contest_id);
   
   if (socket_write(socket_fd, databuf.c_str(), 10)) {

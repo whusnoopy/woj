@@ -3,7 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "../object/user.h"
+#include "object/user.h"
+#include "data/datainterface.h"
 #include "base/logging.h"
 #include "base/flags.h"
 #include "base/util.h"
@@ -22,7 +23,7 @@ void ExistUserProcessImp::process(int socket_fd, const string& ip, int length) {
   delete[] buf;
   User user;
   char ret = 'Y';
-  //user = DataInterface::getInstance().getUserInfo(user_id);
+  user = DataInterface::getInstance().getUserInfo(user_id);
   if (user.getId() == string("NULL")) {
     ret = 'N';
   }

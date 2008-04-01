@@ -3,9 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "../object/status.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/status.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -30,10 +31,10 @@ void ProblemStatisticsProcessImp::process(int socket_fd, const string& ip, int l
     LOG(ERROR) << "Cannot find problem_id from data for:" << ip;
     return;
   }
-  //int problem_id = atoi(iter->c_str());
+  int problem_id = atoi(iter->c_str());
   ProblemStatistics problem_statistics;
   memset(&problem_statistics, 0, sizeof(problem_statistics));
-  //problem_statistics = DataInterface::getProblemCount(problem_id);
+  problem_statistics = DataInterface::getInstance().getProblemStatistics(problem_id);
   string databuf;
   databuf = stringPrintf("%d\001%d\001%d\001%d\001%d\001%d\001%d\001%d\001%d\001%d\001%d",
                           problem_statistics.AC,

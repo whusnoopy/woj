@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/contest.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/contest.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AddProblemToContestProcessImp::process(int socket_fd, const string& ip, int length){
@@ -38,9 +39,9 @@ void AddProblemToContestProcessImp::process(int socket_fd, const string& ip, int
   while (iter != datalist.end()) {
     set.insert(atoi(iter->c_str()));
   }
-  //DataInterface::getInstance().disableContestProblems(contest);
+  DataInterface::getInstance().disableContestProblems(contest);
   int ret = 0;
-  //ret = DataInterface::getInstance().addProblemListtoContest(contest, set);
+  ret = DataInterface::getInstance().addProblemListtoContest(contest, set);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

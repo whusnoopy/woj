@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/problem.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "util/calulate.h"
+#include "object/problem.h"
+#include "data/datainterface.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int length){
@@ -34,7 +35,7 @@ void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int lengt
     return;
   }
   problem.setProblemId(atoi(iter->c_str()));
-  //problem = DataInterface::getInstance().getProblem(problem.getProblemId());
+  problem = DataInterface::getInstance().getProblem(problem.getProblemId());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot title find from data for:" << ip;
@@ -116,7 +117,7 @@ void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int lengt
   problem.setStandardMemoryLimit(0);
   problem.setAvailable(true);
   int ret = 0;
-  //ret = DataInterface::getInstance().updateProblem(problem);
+  ret = DataInterface::getInstance().updateProblem(problem);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

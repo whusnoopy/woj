@@ -1,4 +1,6 @@
 #include "inc.h"
+#include <iostream>
+using namespace std;
 
 string changeSymbol(const string& str){
   string strbuf(str);

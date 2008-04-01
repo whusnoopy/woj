@@ -3,9 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -41,7 +42,7 @@ void RankListProcessImp::process(int socket_fd, const string& ip, int length){
   rankinfo.seq = atoi(iter->c_str());
   
   RankList ranklist;
-  //ranklist = DataInterface::getInstance().getRankList();
+  ranklist = DataInterface::getInstance().getRankList(rankinfo);
   RankList::iterator rank_iter = ranklist.begin();
   string databuf;
   bool first = true;

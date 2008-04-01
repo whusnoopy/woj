@@ -42,7 +42,7 @@ public:
   Error getError(int error_id);
   Mail getMail(int mail_id);
   MailList getMailList(const MailInfo& mail_info);
-  User getMostDiligenPlayer();
+  UserList getMostDiligenPlayer();
   NewsList getNewsList(const NewsInfo& news_info);
   StatusList getNoSearchStatus();
   StatusList getSearchStatus(const StatusInfo& status_info);
@@ -73,6 +73,17 @@ public:
   int disableContest(const Contest& contest);
   bool checkContestAcBefore(const ContestAcBefore&);
   int getInContestId(int contest_id, int problem_id);
+  int disableContestProblems(const Contest& contest);
+  int disableContestUsers(const Contest& contest);
+  bool checkPermission(int contest_id, const string& user_id);
+  ContestProblemList getContestProblemList(int contest_id);
+  int getContestProblemNum(int contest_id);
+  int disableMail(const string& user_id, int mail_id);
+  int setMailRead(const Mail& mail);
+  ProblemSet getUserACProblem(const string& user_id, bool ac);
+  StatusList getProblemStatus(const StatusInfo& status_info);
+  int getUserRank(const string& user_id);
+
   Connection* createConnection(const string& host,
                               const string& user,
                               const string& password,

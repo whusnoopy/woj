@@ -1,7 +1,8 @@
 #include "mailcontentprocessimp.h"
 
-#include "../object/mail.h"
-#include "../util/calulate.h"
+#include "object/mail.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -26,13 +27,13 @@ void MailContentProcessImp::process(int socket_fd, const string& ip, int length)
     LOG(ERROR) << "Cannot find mail_id from data for:" << ip;
     return;
   }
-  //int mail_id = atoi(iter->c_str());
+  int mail_id = atoi(iter->c_str());
   Mail mail;
-  //mail = DatabaseInterface::getInstance().getMail(mail_id);
-  //if (!mail.getRead()){
-  //  mail.setRead(true);
-  //  DatabaseInterface::getInstance().setMailRead(mail);
-  //}
+  mail = DataInterface::getInstance().getMail(mail_id);
+  if (!mail.getRead()){
+    mail.setRead(true);
+    DataInterface::getInstance().setMailRead(mail);
+  }
   string databuf;
   databuf = stringPrintf("%s\001%s\001%s\001%s\001%s", mail.getToUser().c_str(), 
                                                        mail.getFromUser().c_str(), 

@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/contest.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "util/calulate.h"
+#include "object/contest.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
+#include "data/datainterface.h"
 using namespace std;
 
 void UpdateContestProcessImp::process(int socket_fd, const string& ip, int length){
@@ -34,7 +35,7 @@ void UpdateContestProcessImp::process(int socket_fd, const string& ip, int lengt
     return;
   }
   contest.setContestId(atoi(iter->c_str()));
-  //contest = DataInterface::getInstance().getContest(contest.getContestId());
+  contest = DataInterface::getInstance().getContest(contest.getContestId());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find title from data for:" << ip;
@@ -68,7 +69,7 @@ void UpdateContestProcessImp::process(int socket_fd, const string& ip, int lengt
   iter++;
   contest.setVersion(1);
   int ret = 0;
-  //ret = DataInterface::getInstance().updateContest(contest);
+  ret = DataInterface::getInstance().updateContest(contest);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

@@ -4,10 +4,11 @@
 #include <vector>
 #include <set>
 
-#include "../object/discuss.h"
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/discuss.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -23,7 +24,7 @@ string prefixPlus(int level) {
 
 void findTree(int discuss_id, string& buf, int level) {
   DiscussList discuss_list;
-  //discuss_list = DataInterface::getInstance().getReplyDiscussList(discuss_id);
+  discuss_list = DataInterface::getInstance().getReplyDiscussList(discuss_id);
   DiscussList::iterator iter = discuss_list.begin();
   while (iter != discuss_list.end()) {
     buf += stringPrintf("\001%d\001%d\001%s\001%s\001%s\001%d\001%d",
@@ -100,7 +101,7 @@ void DiscussListProcessImp::process(int socket_fd, const string& ip, int length)
   TopicSet topic_set;
   if (search) {
     DiscussList discuss_list;
-    //discuss_list = DataInterface::getInstance().getDiscussList(discuss_info);
+    discuss_list = DataInterface::getInstance().getDiscussList(discuss_info);
     bool first = true;
     DiscussList::iterator discuss_iter = discuss_list.begin();
     while (discuss_iter != discuss_list.end()) {
@@ -125,12 +126,12 @@ void DiscussListProcessImp::process(int socket_fd, const string& ip, int length)
       discuss_iter++;
     }
   }else {
-    //topic_set = DataInterface::getInstance().getDiscussTopicSet(discuss_info);
+    topic_set = DataInterface::getInstance().getDiscussTopicSet(discuss_info);
     Discuss discuss;
     TopicSet::iterator set_iter = topic_set.begin();
     bool first = true;
     while (set_iter != topic_set.end()) {
-      //discuss = DataInterface::getInstance().getDiscuss(*set_iter);
+      discuss = DataInterface::getInstance().getDiscuss(*set_iter);
       if (first) {
         databuf += stringPrintf("1\001%d\001%s\001%s\001%s\001%d\001%d",
                                 discuss.getMessageId(),

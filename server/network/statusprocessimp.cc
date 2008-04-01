@@ -3,12 +3,13 @@
 #include <string>
 #include <vector>
 
-#include "../object/status.h"
-#include "../object/code.h"
-#include "../object/user.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../util/calulate.h"
+#include "object/status.h"
+#include "object/code.h"
+#include "object/user.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -92,23 +93,23 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     hasuser = true;
   User user;
   ProblemSet acset;
-  //if (hasuser) {
-    //user = DataInterface::getInstance().getUserInfo(user_id);
-    //acset = DataInterface::getInstance().getUserACProblem(user_id, true);
-  //}
-  StatusList list;
+  if (hasuser) {
+    user = DataInterface::getInstance().getUserInfo(user_id);
+    acset = DataInterface::getInstance().getUserACProblem(user_id, true);
+  }
+  StatusList status_list;
   if (type == 0){
-    //list = DataInterface::getStatus(status_info);
+    status_list = DataInterface::getInstance().getSearchStatus(status_info);
     LOG(INFO) << "process st for:" << ip;
   }else if (type == 1) {
-    //list = DataInterface::getProblemStatus(status_info);
+    status_list = DataInterface::getInstance().getProblemStatus(status_info);
     LOG(INFO) << "process ps for:" << ip;
   }
   
-  StatusList::iterator status_iter = list.begin();
+  StatusList::iterator status_iter = status_list.begin();
   string databuf;
   bool first = true;
-  while (status_iter != list.end()) {
+  while (status_iter != status_list.end()) {
     if (first) {
       databuf += stringPrintf("%d\001%s\001%d\001%d\001%d\001%d\001%d\001%d\001%s\001%d", 
                              status_iter->getStatusId(),
@@ -123,7 +124,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
                              status_iter->getCodeId());
       if (hasuser) {
         Code code;
-        //code = DataInterface::getInstance().getCode(status_iter->getCodeId());
+        code = DataInterface::getInstance().getCode(status_iter->getCodeId());
         if (user.getPermission() & 0x01 || (code.getShare() && acset.count(status_iter->getProblemId()))){
           databuf += "\001Y";
         }else 
@@ -145,7 +146,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
                              status_iter->getCodeId());
       if (hasuser) {
         Code code;
-        //code = DataInterface::getInstance().getCode(status_iter->getCodeId());
+        code = DataInterface::getInstance().getCode(status_iter->getCodeId());
         if (user.getPermission() & 0x01 || (code.getShare() && acset.count(status_iter->getProblemId()))){
           databuf += "\001Y";
         }else 

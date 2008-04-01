@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 
-#include "../object/mail.h"
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/mail.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -41,7 +42,7 @@ void MailListProcessImp::process(int socket_fd, const string& ip, int length){
   }
   mail_info.page_id = atoi(iter->c_str());
   MailList mail_list;
-  //mail_list = DatabaseInterface::getInstance().getMailList(mail_info);
+  mail_list = DataInterface::getInstance().getMailList(mail_info);
   string databuf;
   MailList::iterator mail_iter = mail_list.begin();
   bool first = true;
