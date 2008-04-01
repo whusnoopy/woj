@@ -100,7 +100,7 @@ static int runSpecialJudge(const string& special_judge_exe_filename,
   run_info.output_limit = 16;
   run_info.file_limit = 6;
   run_info.trace = true;
-  ExecutiveCallback callback;
+  TraceCallback callback;
 
   pid_t pid = createProcess(commands, run_info);
   if (pid == -1) {
@@ -126,19 +126,20 @@ static int runSpecialJudge(const string& special_judge_exe_filename,
     }
   }
   
-  callback.processResult(status);
-  if (callback.getResult()) {
+  if (!callback.hasExited()) {
+    callback.processResult(status);
     LOG(SYS_ERROR) << "SPJ Errored with result = " << callback.getResult();
     return SYSTEM_ERROR;
-  }
-
-  switch (WEXITSTATUS(status)) {
-    case 0 :
-      return ACCEPTED;
-    case 2 :
-      return PRESENTATION_ERROR;
-    default :
-      return WRONG_ANSWER;
+  } else {
+    waitpid(pid, &status, 0);
+    switch (WEXITSTATUS(status)) {
+      case 0 :
+        return ACCEPTED;
+      case 2 :
+        return PRESENTATION_ERROR;
+      default :
+        return WRONG_ANSWER;
+    }
   }
 }
 

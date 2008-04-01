@@ -55,8 +55,6 @@ int main(int argc, char* argv[]) {
   }
 
   installSignalHandler(SIGPIPE, SIG_IGN);
-  installHandlers();
-  LOG(INFO) << "Install handlers finished";
 
   string test_file_dir = "/tmp/testdata/";
   string standard_filename = test_file_dir + "judge_standard.txt";

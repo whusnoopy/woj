@@ -54,8 +54,6 @@ int main(int argc, char* argv[]) {
 
   installSignalHandler(SIGPIPE, SIG_IGN);
 
-  installHandlers();
-
   const string test_dir = "/tmp/testdata/";
 
   const string ac_file = test_dir + "ac";

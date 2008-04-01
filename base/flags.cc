@@ -143,5 +143,7 @@ int parseFlags(int argc, char* argv[]) {
 
 DEFINE_FLAGS(string, root_dir, "The root work directory");
 
-DEFINE_OPTIONAL_FLAGS(string, process_name, "Proc", "The process name");
+DEFINE_OPTIONAL_FLAGS(string, process_name, "",
+                      "The process name to be logged, it will automaticly "
+                      "generated");
 

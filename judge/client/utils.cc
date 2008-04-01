@@ -73,8 +73,9 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
   string command_line = commands[1];
   for (int i = 2; commands[i]; ++i)
     command_line = command_line + " " + commands[i];
+
+  LOG(DEBUG) << "Create process by command : \"" << command_line << "\"";
 /*
-  LOG(INFO) << "Create process by command : \"" << command_line << "\"";
   int status = 0;
   if (run_info.working_dir)
     chdir(run_info.working_dir);
@@ -107,8 +108,8 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
       LOG(DEBUG) << "Open " << filename[i] << " to " << file[i];
     }
   }
-//  LOG(INFO) << "Success Opened stdin/stdout/stderr to "
-//            << file[0] << "/" << file[1] << "/" << file[2];
+  LOG(DEBUG) << "Success Opened stdin/stdout/stderr to "
+             << file[0] << "/" << file[1] << "/" << file[2];
 
   int pid = fork();
   if (pid < 0) {
@@ -135,6 +136,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
                      << run_info.time_limit << "s";
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set time limit successful";
   }
   if (run_info.memory_limit) {
     if (setLimit(RLIMIT_DATA, run_info.memory_limit * 1024) == -1) {
@@ -142,6 +144,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
                      << run_info.memory_limit << "KiB";
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set memory limit successful";
   }
   if (run_info.output_limit) {
     if (setLimit(RLIMIT_FSIZE, run_info.output_limit * 1024) == -1) {
@@ -149,12 +152,14 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
                      << run_info.output_limit << "KiB";
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set output limit successful";
   }
   if (run_info.file_limit) {
     if (setLimit(RLIMIT_NOFILE, run_info.file_limit) == -1) {
       LOG(SYS_ERROR) << "Fail to set file limit to " << run_info.file_limit;
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set number of file limit successful";
   }
   if (run_info.working_dir) {
     if (chdir(run_info.working_dir) == -1) {
@@ -162,30 +167,35 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
                      << run_info.working_dir;
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "change working directory successful";
   }
   if (run_info.gid) {
     if (setgid(run_info.gid) == -1) {
       LOG(SYS_ERROR) << "Fail to set gid to " << run_info.gid;
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set gid successful";
   }
   if (run_info.uid) {
     if (setuid(run_info.uid) == -1) {
       LOG(SYS_ERROR) << "Fail to set uid to " << run_info.uid;
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set uid successful";
   }
   if (run_info.proc_limit) {
     if (setLimit(RLIMIT_NPROC, run_info.proc_limit) == -1) {
       LOG(SYS_ERROR) << "Fail to set process limit to " << run_info.proc_limit;
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set number of process limit successful";
   }
   if (run_info.trace) {
     if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1) {
       LOG(SYS_ERROR) << "Fail to trace";
       raise(SIGKILL);
     }
+    LOG(DEBUG) << "set trace successful";
   }
   LOG(DEBUG) << "Set run_info successful";
   if (execv(commands[0], (char**)(commands + 1)) == -1) {

@@ -12,8 +12,6 @@ class  TraceCallback {
   public :
     TraceCallback() :
       result_(-1),
-      time_(0),
-      memory_(0),
       exited_(false) {
       TraceCallback::instance_ = this;
     }
@@ -26,17 +24,15 @@ class  TraceCallback {
       return false;
     }
 
-    virtual void processSyscall(pid_t pid, int syscall);
-
+    virtual void onError();
     virtual bool onExecve();
+    virtual void onExit();
     virtual bool onOpen(const string& path, int flags);
     virtual void onMemoryLimitExceeded();
-    virtual void onExit(pid_t pid);
-    virtual void onSigchld();
-    virtual void onError();
     virtual void onRestrictedFunction();
 
     void processResult(int status);
+    void processSyscall(pid_t pid, int syscall);
 
     int getResult() const {
       return result_;
@@ -46,15 +42,7 @@ class  TraceCallback {
       result_ = result;
     }
 
-    int getTime() const {
-      return time_;
-    }
-
-    int getMemory() const {
-      return memory_;
-    }
-
-    bool hasExited() const {
+    bool hasExited() {
       return exited_;
     }
 
@@ -64,20 +52,10 @@ class  TraceCallback {
 
   protected :
     int result_;
-    int time_;
-    int memory_;
     bool exited_;
 
   private :
     static TraceCallback* instance_;
 };
-
-class ExecutiveCallback : public TraceCallback {
-  public :
-    void onSigchld() {}
-};
-
-void installHandlers();
-void uninstallHandlers();
 
 #endif
