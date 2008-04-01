@@ -1,7 +1,8 @@
 #include "discusscontentprocessimp.h"
 
-#include "../object/discuss.h"
-#include "../util/calulate.h"
+#include "object/discuss.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -26,9 +27,9 @@ void DiscussContentProcessImp::process(int socket_fd, const string& ip, int leng
     LOG(ERROR) << "Cannot find discuss_id from data for:" << ip;
     return;
   }
-  //int discuss_id = atoi(iter->c_str());
+  int discuss_id = atoi(iter->c_str());
   Discuss discuss;
-  //discuss = DatabaseInterface::getInstance().getDisucss(discuss_id);
+  discuss = DataInterface::getInstance().getDiscuss(discuss_id);
   string databuf;
   databuf += stringPrintf("%d\001%s\001%d\001%d\001%s\001%s\001%s",
                           discuss.getTopicId(),

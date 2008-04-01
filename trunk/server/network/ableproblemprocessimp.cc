@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/problem.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/problem.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AbleProblemProcessImp::process(int socket_fd, const string& ip, int length){
@@ -41,7 +42,7 @@ void AbleProblemProcessImp::process(int socket_fd, const string& ip, int length)
   }
   problem.setAvailable(*iter == "Y");
   int ret = 0;
-  //ret = DataInterface::getInstance().disableProblem(problem);
+  ret = DataInterface::getInstance().disableProblem(problem);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

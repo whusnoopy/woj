@@ -6,6 +6,7 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
+#include "data/datainterface.h"
 #include "../util/calulate.h"
 #include "../object/mail.h"
 #include "../object/list.h"
@@ -31,18 +32,18 @@ void DisableMailProcessImp::process(int socket_fd, const string& ip, int length)
     LOG(ERROR) << "Cannot find mail_id from data for:" << ip;
     return;
   }
-  //int mail_id = atoi(iter->c_str());
+  int mail_id = atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find user_id from data for:" << ip;
     return;
   }
-  //string user_id = *iter;
-  //int ret = DatabaseInterface::getInstance().disableMail(user_id, mail_id);
-  //if (!ret) {
-  //  sednReply(socket_fd, 'N');
-  //  return;
-  //}
+  string user_id = *iter;
+  int ret = DataInterface::getInstance().disableMail(user_id, mail_id);
+  if (!ret) {
+    sendReply(socket_fd, 'N');
+    return;
+  }
   if (sendReply(socket_fd, 'Y')){
     LOG(ERROR) << "Cannot reply:" << ip;
     return;

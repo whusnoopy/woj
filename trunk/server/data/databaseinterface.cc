@@ -1056,6 +1056,85 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   return problem_list;
 }
 
+ContestProblemList DatabaseInterface::getContestProblemList(int contest_id) {
+  ContestProblemList problem_list;
+  Connection* connection = createConnection();
+  map<int, int> problem_accepted;
+  map<int, int> problem_submit;
+  ContestProblemItem item;
+  string query = "select t1.problem_id, in_contest_id, title from problems as t1, ";
+  query += "problemtocontests as t2 where t1.problem_id = t2.problem_id and ";
+  query += "contest_id = '" + stringPrintf("%d", contest_id) + "' ";
+  query += "order by in_contest_id ";
+  query += " limit 0, 100";
+  LOG(INFO) << query << endl;
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()){
+  	item.problem_id = result_set.getInt("problem_id");
+    item.in_contest_id = result_set.getInt("in_contest_id");
+  	item.title = result_set.getString("title");
+    item.total = 0;
+    item.accepted = 0;
+  	problem_list.push_back(item);
+  }
+  result_set.close();
+  query = "select * from statuses where contest_id = '" + stringPrintf("%d'", contest_id);
+  result_set =connection->excuteQuery(query);
+  while (result_set.next()) {
+    problem_submit[result_set.getInt("problem_id")]++;
+    if (result_set.getInt("result") == ACCEPTED) 
+      problem_accepted[result_set.getInt("problem_id")]++;
+  }
+  result_set.close();
+  ContestProblemList::iterator iter = problem_list.begin();
+  while (iter != problem_list.end()) {
+    if (problem_accepted.count(iter->problem_id) > 0)
+      iter->accepted = problem_accepted[iter->problem_id];
+    if (problem_submit.count(iter->problem_id) > 0) 
+      iter->total = problem_submit[iter->problem_id];
+    iter++;
+  }
+  connection->close();
+  delete connection;
+  return problem_list;
+
+}
+
+int DatabaseInterface::getContestProblemNum(int contest_id){
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "select count(*) from problemtocontests where contest_id = '";
+  query += stringPrintf("%d", contest_id) + "'";
+  Result result_set = connection->excuteQuery(query);
+  int ret = 0;
+  if (result_set.next()) {
+    ret = result_set.getInt(1);
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::disableMail(const string& user_id, int mail_id) {
+  Mail mail = getMail(mail_id);
+  string query = "update mails set ";
+  if (mail.getToUser() == user_id) 
+    query += " writer_del = 'Y' ";
+  else if(mail.getFromUser() == user_id)
+    query += " reader_del = 'Y' ";
+  else 
+    return -1;
+  query += " where mail_id = '" + stringPrintf("%d", mail_id) + "'";
+  Connection* connection = createConnection();
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 RankList DatabaseInterface::getRankList(const RankListInfo& ranklist_info){
   RankList ranklist;
   RankListItem item;
@@ -1487,7 +1566,9 @@ ContestList DatabaseInterface::getUpcomingContest(){
   return contest_list;
 }
 
-User DatabaseInterface::getMostDiligenPlayer(){
+UserList DatabaseInterface::getMostDiligenPlayer(){
+  UserList user_list;
+  UserListItem item;
 	Connection* connection = createConnection();
   string query = "select user_id from statuses "
                  "group by user_id having count(*) >= ALL (select count(*) from statuses "
@@ -1498,13 +1579,26 @@ User DatabaseInterface::getMostDiligenPlayer(){
   string user_id = "NULL";
   //LOG(INFO) << user_id << endl;
   if(result_set.next()){
-  	user_id = result_set.getString("user_id");
+  	item.user_id = result_set.getString("user_id");
   	LOG(INFO) << user_id << endl;
+    user_list.push_back(item);
   }
   result_set.close();
   connection->close();
   delete connection;
-  return getUserInfo(user_id);
+  return user_list;
+}
+
+int DatabaseInterface::setMailRead(const Mail& mail) {
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "update mails ";
+  query += "set unread = '" + changeSymbol((mail.getRead()?"N":"Y")) + 
+           "' where mail_id = '"+ stringPrintf("%d'", mail.getMailId());
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
 }
 
 //ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo& contest_ranklist_info){
@@ -1761,6 +1855,220 @@ ProblemStatistics DatabaseInterface::getProblemStatistics(int problem_id) {
   connection->close();
   delete connection;
   return problem_statistics;
+}
+
+int DatabaseInterface::disableContestProblems(const Contest& contest) {
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "delete from problemtocontests where contest_id = '";
+  query += stringPrintf("%d", contest.getContestId()) + "'";
+  int ret = connection->excuteUpdate(query); 
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::disableContestUsers(const Contest& contest) {
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "delete from contestpermission where contest_id = '";
+  query += stringPrintf("%d", contest.getContestId()) + "'";
+  int ret = connection->excuteUpdate(query); 
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+bool DatabaseInterface::checkPermission(int contest_id, const string& user_id) {
+  Contest contest = getContest(contest_id);
+  if (contest.getType() != "P") {
+    return true;
+  }
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "select * from contestpermission where contest_id = '";
+  query += stringPrintf("%d' and user_id = '%s'", user_id.c_str());
+  Result result_set = connection->excuteQuery(query);
+  bool ret = result_set.next();
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+ProblemSet DatabaseInterface::getUserACProblem(const string& user_id, bool ac) {
+  Connection* connection = createConnection();
+  ProblemSet problem_set;
+  connection->connect();
+  string query = "select * from statuses where user_id = '";
+  query += changeSymbol(query) + "' and result ";
+  if (ac) 
+    query += " = '" + stringPrintf("%d", ACCEPTED) + "'";
+  else
+    query += " != '" + stringPrintf("%d", ACCEPTED) + "'";
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    problem_set.insert(result_set.getInt("problem_id"));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return problem_set;
+}
+
+StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
+  StatusList statuslist;
+  Status item;
+  bool first = true;
+  Connection* connection = createConnection();
+  string query = "select * from statuses ";
+  if (status_info.user_id != string("NULL")){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "user_id like '%" + changeSymbol(status_info.user_id) + "%' ";
+  }
+  if (status_info.problem_id){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "problem_id = '" + stringPrintf("%d", status_info.problem_id) + "' ";
+  }
+  if (status_info.result != -1){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "result = '" + stringPrintf("%d", status_info.result) + "' ";
+  }
+  if (status_info.contest_id){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "contest_id = '" + stringPrintf("%d", status_info.contest_id) + "' ";
+  }
+  if (status_info.language != -1){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "language = '" + stringPrintf("%d", status_info.language) + "' ";
+  }
+  if (status_info.share_code_enable){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "code_id in (select code_id from codes where ";
+    query += "share = '";
+    query += changeSymbol((status_info.share_code)?"Y":"N") + "') ";
+  }
+  query += "order by time, memory, submit_time desc limit " + 
+           stringPrintf("%d, 25", status_info.page_id*25);
+  LOG(INFO) << query << endl;
+  connection->connect();
+  Result result_set= connection->excuteQuery(query);
+  while(result_set.next()){
+  	item.setStatusId(result_set.getInt("status_id"));
+	  item.setUseId(result_set.getString("user_id"));
+	  item.setProblemId(result_set.getInt("problem_id"));
+	  item.setContestId(result_set.getInt("contest_id"));
+	  item.setTime(result_set.getInt("time"));
+	  item.setMemory(result_set.getInt("memory"));
+	  item.setSubmitTime(result_set.getString("submit_time"));
+	  item.setResult(result_set.getInt("result"));
+	  item.SetLanguage(result_set.getInt("language"));
+	  item.setCodeId(result_set.getInt("code_id"));
+	  item.setCodeLength(result_set.getInt("code_length"));
+	  item.setSubmitIp(result_set.getString("submit_ip"));
+	  item.setErrorId(result_set.getInt("error_id"));
+  	statuslist.push_back(item);
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return statuslist;
+}
+
+int DatabaseInterface::getUserRank(const string& user_id) {
+  Connection* connection = createConnection();
+  connection->connect();
+  int accepted = 0;
+  int submit = 0;
+  string query = "select * from users where user_id = '";
+  query += changeSymbol(user_id) + "'";
+  Result result_set = connection->excuteQuery(query);
+  if (result_set.next()) {
+    accepted = result_set.getInt("solveds");
+    submit = result_set.getInt("submits");
+  }
+  result_set.close();
+  query = "select count(*) from users where solveds > '";
+  query += stringPrintf("%d' or (solveds = '%d' and ", accepted, accepted);
+  query += stringPrintf(" submits < '%d')", submit);
+  result_set = connection->excuteQuery(query);
+  int ret = -1;
+  if (result_set.next())
+    ret = result_set.getInt(1);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+UserList DatabaseInterface::getUserList(const UserInfo& user_info) {
+  Connection* connection = createConnection();
+  UserList user_list;
+  UserListItem item;
+  bool first = true;
+  string query = "select * from users ";
+  if (user_info.user_id != string("NULL")){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "user_id like '%" + changeSymbol(user_info.user_id) + "%' ";
+  }
+  if (user_info.nickname != string("NULL")){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "nickname like '%" + changeSymbol(user_info.nickname) + "%' ";
+  }
+  query += "limit " + stringPrintf("%d, 25", user_info.page_id*25);
+  LOG(INFO) << query;
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.user_id = result_set.getString("user_id");
+    item.nickname = result_set.getString("nickname");
+    item.last_login_time = result_set.getString("last_login_time");
+    item.last_login_ip = result_set.getString("last_login_ip");
+    item.reg_time = result_set.getString("reg_time");
+    user_list.push_back(item);
+  }
+  connection->close();
+  delete connection;
+  return user_list;
 }
 
 Connection* DatabaseInterface::createConnection(const string& host,

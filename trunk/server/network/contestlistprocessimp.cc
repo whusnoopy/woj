@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 
-#include "../object/contest.h"
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/contest.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -42,7 +43,7 @@ void ContestListProcessImp::process(int socket_fd, const string& ip, int length)
   contest_info.title = string("NULL");
   contest_info.description = string("NULL");
   ContestList contest_list;
-  //contest_list = DatabaseInterface::getInstance().getContestList();
+  contest_list = DataInterface::getInstance().getContestList(contest_info);
   string databuf;
   ContestList::iterator contest_iter = contest_list.begin();
   bool first = true;

@@ -6,13 +6,14 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/file.h"
-#include "../object/contest.h"
-#include "../object/list.h"
-#include "../object/bufsize.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/file.h"
+#include "object/contest.h"
+#include "object/list.h"
+#include "object/bufsize.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void toUpCase(string& suffix) {
@@ -51,7 +52,7 @@ void AddFileToContestProcessImp::process(int socket_fd, const string& ip, int le
     return;
   }
   Contest contest(atoi(buf.getBuf()));
-  //contest = DataInterface::getInstance().getContest(contest.getContestId());
+  contest = DataInterface::getInstance().getContest(contest.getContestId());
   string::size_type pos = filename.find_last_of(".");
   string suffix("NULL");
   if (pos != string::npos) {
@@ -81,11 +82,11 @@ void AddFileToContestProcessImp::process(int socket_fd, const string& ip, int le
                 stringPrintf("%d", contest.getContestId()) + "/" + 
                 time + "_" +
                 filename; 
-  //DataInterface::getInstance().addFile(path, buf.getBuf(), len);
+  DataInterface::getInstance().addFile(path, buf.getBuf(), len);
   File file;
   file.setPath(path);
   file.setType(type);
-  //DataInterface::getInstance().addFiletoProblem(file,contest);
+  DataInterface::getInstance().addFilePathtoContest(file,contest);
   string url = path;
   string url_len = stringPrintf("%010d", url.length());
   if (socket_write(socket_fd, url_len.c_str(), 10)) {

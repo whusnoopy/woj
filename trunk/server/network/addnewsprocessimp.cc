@@ -6,6 +6,7 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
+#include "data/datainterface.h"
 #include "../util/calulate.h"
 #include "../object/news.h"
 #include "../object/list.h"
@@ -41,7 +42,7 @@ void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
   }
   news.setContent(*iter);
   int ret = 0;
-  //ret = DatabaseInterface::getInstance().addNews(news);
+  ret = DataInterface::getInstance().addNews(news);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

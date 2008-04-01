@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "../object/user.h"
-#include "../util/calulate.h"
+#include "object/user.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -43,7 +44,7 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
   }
   connect_ip = *iter;
   User user;
-  //user = DatabaseInterface::getInstance().getUserInfo(user_id);
+  user = DataInterface::getInstance().getUserInfo(user_id);
   if (password != user.getPassword()) {
     sendReply(socket_fd, 'N');
     return ;
@@ -52,7 +53,7 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
   user.setLastLoginTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
   string indentify_code = calIndentifyCode(user_id);
   user.setIndentifyCode(indentify_code);
-  //DatabaseInterface::getInstance().updateUserInfo(user);
+  DataInterface::getInstance().updateUser(user);
   if (sendReply(socket_fd, 'Y')){
     LOG(ERROR) << "Cannot reply the login for:" << ip;
     return;

@@ -2,8 +2,11 @@
 #include "base/logging.h"
 #include "base/flags.h"
 #include "base/util.h"
-#include "../util/calulate.h"
-#include "../object/user.h"
+#include "util/calulate.h"
+#include "object/user.h"
+#include "data/datainterface.h"
+
+using namespace std;
 
 void RegisterProcessImp::process(int socket_fd, const string& ip, int length){
   LOG(INFO) << "Process the data.";
@@ -78,8 +81,8 @@ void RegisterProcessImp::process(int socket_fd, const string& ip, int length){
   user.setRegTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
   user.setPermission(0);
   user.setIndentifyCode(calIndentifyCode(user.getId()));
-  //DatabaseInterface interface = DatabaseInterface::getInstance();
-  //interface.addUser(user);
+  DataInterface interface = DataInterface::getInstance();
+  interface.addUser(user);
   if (sendReply(socket_fd, 's')){
     LOG(ERROR) << "Cannot ack.";
     return;

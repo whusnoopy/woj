@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/problem.h"
-#include "../object/user.h"
-#include "../object/list.h"
-#include "../object/info.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/problem.h"
+#include "object/user.h"
+#include "object/list.h"
+#include "object/info.h"
 using namespace std;
 
 void AdminProblemListProcessImp::process(int socket_fd, const string& ip, int length) {
@@ -41,7 +42,7 @@ void AdminProblemListProcessImp::process(int socket_fd, const string& ip, int le
   problem_info.related_contest = 0;
   ProblemList list;
   ProblemList::iterator list_iter;
-  //list = DatabaseInterface::getInstance().getProblemList(problem_info);
+  list = DatabaseInterface::getInstance().getProblemList(problem_info);
 
   string databuf;
   list_iter = list.begin();

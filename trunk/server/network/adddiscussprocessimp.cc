@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/discuss.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/discuss.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AddDiscussProcessImp::process(int socket_fd, const string& ip, int length){
@@ -76,13 +77,13 @@ void AddDiscussProcessImp::process(int socket_fd, const string& ip, int length){
   discuss.setAvailable(true);
 
   User user;
-  //user = DataInterface::getInstance().getUserInfo(discuss.getUserId());
+  user = DataInterface::getInstance().getUserInfo(discuss.getUserId());
   if (user.getId() == string("NULL")) {
     sendReply(socket_fd, 'N');
     return;
   }
   int ret = 0;
-  //ret = DataInterface::getInstance().addDisucss(discuss);
+  ret = DataInterface::getInstance().addDiscuss(discuss);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

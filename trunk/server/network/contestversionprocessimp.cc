@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "../object/contest.h"
-#include "../util/calulate.h"
+#include "object/contest.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -29,17 +30,17 @@ void ContestVersionProcessImp::process(int socket_fd, const string& ip, int leng
     LOG(ERROR) << "Cannot find contest_id from data for:" << ip;
     return;
   }
-  //int contest_id = atoi(iter->c_str());
+  int contest_id = atoi(iter->c_str());
   Contest contest;
-  //contest = DatabaseInterface::getInstance().getContest(contest_id);
+  contest = DatabaseInterface::getInstance().getContest(contest_id);
   string databuf;
   string len = stringPrintf("%010d", 0);
   if ((contest.getContestId() == 0)||(!contest.getAvailable())){
     socket_write(socket_fd, len.c_str(), 10);
     return;
   }
-  databuf = stringPrintf("%d",contest.getVersion());
-  len = stringPrintf("%010d",databuf.length());
+  databuf = stringPrintf("%d", contest.getVersion());
+  len = stringPrintf("%010d", databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
     return;

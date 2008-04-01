@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "../object/user.h"
-#include "../util/calulate.h"
+#include "object/user.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -83,7 +84,7 @@ void UpdateUserProcessImp::process(int socket_fd, const string& ip, int length){
   iter++;
  
   User user;
-  //user = DatabaseInterface::getInstance().getUserInfo(user_id);
+  user = DatabaseInterface::getInstance().getUserInfo(user_buf.getId());
   if (old_password != user.getPassword()) {
     sendReply(socket_fd, 'N');
     return ;
@@ -91,7 +92,7 @@ void UpdateUserProcessImp::process(int socket_fd, const string& ip, int length){
 
   user.updateUser(user_buf);
   int ret = 0;
-  //ret = DatabaseInterface::getInstance().updateUserInfo(user);
+  ret = DatabaseInterface::getInstance().updateUser(user);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

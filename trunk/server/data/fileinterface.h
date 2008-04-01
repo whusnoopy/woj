@@ -26,6 +26,7 @@ public:
   LinkList getLink();
   int updateNotice(const string& notice, const string& time);
   string getNotice();
+  ssize_t getFileSize(const string& filename);
   
   static FileInterface& getInstance(){
     if(instance == NULL)

@@ -6,13 +6,14 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/file.h"
-#include "../object/bufsize.h"
-#include "../object/problem.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/file.h"
+#include "object/bufsize.h"
+#include "object/problem.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int length){
@@ -30,7 +31,7 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
   int problem_id = atoi(problem_buf);
   //the sentence in not need because i have solved the file version for problem//DataInterface::getInstance().disableInputAndOutput(problem_id);
   Problem problem(problem_id);
-  //problem = DataInterface::getInstance().getProblem(problem_id);
+  problem = DataInterface::getInstance().getProblem(problem_id);
   string path;
   string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
   for (int i = 0; i < length; i++) {
@@ -47,8 +48,8 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
     path = stringPrintf("\\file\\data\\p%d\\%s_%d.in", problem_id, time.c_str(), i);
     input.setPath(path);
     input.setType(1);
-    //int input_id = DataInterface::getInstance().addFilePathtoproblem(input, problem);
-    //DataInterface::getInstance().addFile(path, buf.getBuf(), input_len);
+    int input_id = DataInterface::getInstance().addFilePathtoProblem(input, problem);
+    DataInterface::getInstance().addFile(path, buf.getBuf(), input_len);
     if (socket_read(socket_fd, len, 10) != 10) {
       LOG(ERROR) << "Cannot read output length from:" << ip;
       return;
@@ -62,9 +63,9 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
     path = stringPrintf("\\file\\data\\p%d\\%s_%d.out", problem_id, time.c_str(), i);
     output.setPath(path);
     output.setType(2);
-    //int output_id = DataInterface::getInstance().addFilePathtoproblem(output, problem);
-    //DataInterface::getInstance().addFile(path, buf.getBuf(), output_len);
-    //DataInterface::getInstance().addInputtoOutput(input_id, output_id);
+    int output_id = DataInterface::getInstance().addFilePathtoProblem(output, problem);
+    DataInterface::getInstance().addFile(path, buf.getBuf(), output_len);
+    DataInterface::getInstance().addInputtoOutput(input_id, output_id);
   }
   sendReply(socket_fd, 'Y');
   LOG(ERROR) << "Process add input and output file completed for:" << ip;

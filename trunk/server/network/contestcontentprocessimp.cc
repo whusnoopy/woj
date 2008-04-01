@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 
-#include "../object/contest.h"
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/contest.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -31,9 +32,9 @@ void ContestContentProcessImp::process(int socket_fd, const string& ip, int leng
     LOG(ERROR) << "Cannot find contest_id from data for:" << ip;
     return;
   }
-  //int contest_id = atoi(iter->c_str());
+  int contest_id = atoi(iter->c_str());
   Contest contest;
-  //contest = DatabaseInterface::getInstance().getContestList();
+  contest = DataInterface::getInstance().getContest(contest_id);
   string databuf;
   databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d",
                           contest.getTitle().c_str(),

@@ -6,11 +6,12 @@
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
-#include "../util/calulate.h"
-#include "../object/problem.h"
-#include "../object/list.h"
-#include "../object/info.h"
-#include "../object/user.h"
+#include "data/datainterface.h"
+#include "util/calulate.h"
+#include "object/problem.h"
+#include "object/list.h"
+#include "object/info.h"
+#include "object/user.h"
 using namespace std;
 
 void AddProblemProcessImp::process(int socket_fd, const string& ip, int length){
@@ -110,7 +111,7 @@ void AddProblemProcessImp::process(int socket_fd, const string& ip, int length){
   problem.setAvailable(true);
   problem.setVersion(1);
   int problem_id = 0;
-  //problem_id = DataInterface::getInstance().addProblem(problem);
+  problem_id = DataInterface::getInstance().addProblem(problem);
   string databuf = stringPrintf("%010d", problem_id);
   
   if (socket_write(socket_fd, databuf.c_str(), 10)) {

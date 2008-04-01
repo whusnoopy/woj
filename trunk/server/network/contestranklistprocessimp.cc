@@ -5,9 +5,10 @@
 #include <map>
 #include <algorithm>
 
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -83,8 +84,8 @@ void ContestRankListProcessImp::process(int socket_fd, const string& ip, int len
 
   ContestRankList contest_ranklist;
   int contest_problem_num = 0;
-  //contest_problem_num = DataInterface::getInstance().getContestProblemNum(contest_ranklist_info.contest_id);
-  //contest_ranklist = DataInterface::getInstance().getContestRankList(contest_ranklist_info);
+  contest_problem_num = DataInterface::getInstance().getContestProblemNum(contest_ranklist_info.contest_id);
+  contest_ranklist = DataInterface::getInstance().getContestRankList(contest_ranklist_info);
   //should sort the seq in DataInterface;
   string databuf;
   databuf += stringPrintf("%d", contest_problem_num);

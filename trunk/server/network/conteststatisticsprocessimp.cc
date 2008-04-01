@@ -4,9 +4,10 @@
 #include <vector>
 #include <algorithm>
 
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -35,11 +36,15 @@ void ContestStatisticsProcessImp::process(int socket_fd, const string& ip, int l
     LOG(ERROR) << "Cannot find contest_id from data for:" << ip;
     return;
   }
-  //int contest_id = atoi(iter->c_str());
+  int contest_id = atoi(iter->c_str());
   ContestStatistics contest_statistics;
-  //contest_statistics = DataInterface::getInstance().getContestStatistics();
-  //problem_num = DataInterface::getInstance().getContestProblemNum();
-
+  contest_statistics = DataInterface::getInstance().getContestStatistics(contest_id);
+  int problem_num = DataInterface::getInstance().getContestProblemNum(contest_id);
+  string problem_num_str = stringPrintf("%010d", problem_num);
+  if (socket_write(socket_fd, problem_num_str.c_str(), 10)) {
+    LOG(ERROR) << "Cannot send problem number to" << ip;
+    return ;
+  }
   stable_sort(contest_statistics.begin(), contest_statistics.end(), isShorter);
   string databuf;
   ContestStatistics::iterator statistics_iter = contest_statistics.begin();

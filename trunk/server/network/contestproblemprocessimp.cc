@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 
-#include "../object/contest.h"
-#include "../object/info.h"
-#include "../object/list.h"
-#include "../util/calulate.h"
+#include "object/contest.h"
+#include "object/info.h"
+#include "object/list.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
@@ -42,14 +43,14 @@ void ContestProblemProcessImp::process(int socket_fd, const string& ip, int leng
   user_id = *iter;
   string databuf;
   bool permission = false;
-  //permission = DataInterface::getInstance().checkPermission(contest_id, user_id);
+  permission = DataInterface::getInstance().checkPermission(contest_id, user_id);
   if (!permission) {
     sendReply(socket_fd, 'N');
     LOG(ERROR) << "Cannot access the file:" << ip;
     return;
   }
   ContestProblemList contest_problems;
-  //contest_problems = DataInterface::getInstance().getContestProblemList(contest_id);
+  contest_problems = DataInterface::getInstance().getContestProblemList(contest_id);
   ContestProblemList::iterator problem_iter = contest_problems.begin();
   bool first = true;
   while (problem_iter != contest_problems.end()) {
