@@ -5,8 +5,9 @@ VPATH=../../base
 
 ALL_SOURCES:=$(wildcard *.cc)
 TEST_SOURCES:=$(wildcard test_*.cc)
-SOURCES=$(filter-out $(TEST_SOURCES),$(ALL_SOURCES))
-DEPS_SOURCES:=$(wildcard ../../base/*.cc)
+SOURCES=$(filter-out $(TEST_SOURCES), $(ALL_SOURCES))
+DEPS_SOURCES:=$(filter-out $(wildcard ../../base/test_*.cc), \
+		                       $(wildcard ../../base/*.cc))
 
 # All objects will auto build by "$(CXX) $(CXXFLAGS) -c" if there is no rule
 # to make it

@@ -29,18 +29,12 @@ bool TraceCallback::onExecve() {
   }
 }
 
+void TraceCallback::onExit() {
+  exited_ = true;
+}
+
 void TraceCallback::onMemoryLimitExceeded() {
   result_ = MEMORY_LIMIT_EXCEEDED;
-}
-
-void TraceCallback::onExit(pid_t pid) {
-  time_ = readTime(pid);
-  memory_ = readMemory(pid);
-  result_ = 0;
-}
-
-void TraceCallback::onSigchld() {
-  exited_ = true;
 }
 
 void TraceCallback::onError() {
@@ -52,6 +46,7 @@ void TraceCallback::onRestrictedFunction() {
 }
 
 bool TraceCallback::onOpen(const string& path, int flags) {
+  LOG(DEBUG) << "Test file \'" << path << "\' with flags = " << flags;
   if ((flags & O_WRONLY) == O_WRONLY ||
       (flags & O_RDWR) == O_RDWR ||
       (flags & O_CREAT) == O_CREAT ||
@@ -111,12 +106,6 @@ void TraceCallback::processResult(int status) {
   }
 }
 
-static void sigchldHandler(int signal) {
-  if (TraceCallback::getInstance()) {
-    TraceCallback::getInstance()->onSigchld();
-  }
-}
-
 static int readStringFromTracedProcess(pid_t pid,
                                        int address,
                                        char* buffer,
@@ -151,7 +140,7 @@ void TraceCallback::processSyscall(pid_t pid, int syscall) {
   switch (syscall) {
     case SYS_exit :
     case SYS_exit_group :
-      callback->onExit(pid);
+      callback->onExit();
       ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
       break;
 
@@ -213,15 +202,5 @@ void TraceCallback::processSyscall(pid_t pid, int syscall) {
       TraceCallback::getInstance()->onRestrictedFunction();
       kill(SIGKILL, pid);
   }
-}
-
-static sighandler_t sigchld_act;
-
-void installHandlers() {
-  sigchld_act = installSignalHandler(SIGCHLD, sigchldHandler);
-}
-
-void uninstallHandlers() {
-  installSignalHandler(SIGCHLD, sigchld_act);
 }
 

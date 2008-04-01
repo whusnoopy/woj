@@ -5,6 +5,8 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
+#include <sys/ptrace.h>
+#include <sys/reg.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -14,6 +16,7 @@
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/client/syscall.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
 
@@ -39,71 +42,71 @@ int monitor(int communicate_socket,
             int time_limit,
             int memory_limit,
             TraceCallback* callback) {
-  LOG(INFO) << "Start to monitor process " << pid;
+  time_limit *= 1000; // Transfer time limit from s to ms
+  LOG(DEBUG) << "Start to monitor process " << pid;
   int result = -1;
   int time_ = 0;
   int memory_ = 0;
+  int status;
+  int ts;
+  int ms;
   while (result < 0 && !callback->hasExited()) {
-    struct timespec request, remain;
-    request.tv_sec = 1;
-    request.tv_nsec = 0;
-    while (result < 0 &&
-           !callback->hasExited() &&
-           nanosleep(&request, &remain) < 0) {
-      if (errno != EINTR) {
-        LOG(SYS_ERROR) << "Fail to nanosleep";
-        kill(pid, SIGKILL);
-        result = SYSTEM_ERROR;
-      }
-      request = remain;
+    waitpid(pid, &status, 0);
+    LOG(DEBUG) << "Get status from pid : " << stringPrintf("%04x", status);
+    if (WIFEXITED(status))
+      break;
+    if (WIFSIGNALED(status)) {
+      callback->processResult(status);
+      result = callback->getResult();
     }
-    int ts;
-    int ms;
-    if (result < 0 && !callback->hasExited()) {
-      ts = callback->getTime();
-      ms = callback->getMemory();
+
+    int syscall = ptrace(PTRACE_PEEKUSER, pid, 4 * ORIG_EAX, NULL);
+    LOG(DEBUG) << "Syscall " << syscall << " from " << pid;
+    if (syscall_filter_table[syscall]) {
+      callback->processSyscall(pid, syscall);
+    } else {
+      ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+    }
+
+    ts = readTime(pid);
+    ms = readMemory(pid);
+    if (ts > time_)
+      time_ = ts;
+    if (ms > memory_)
+      memory_ = ms;
+
+    if (time_ > time_limit) {
+      result = TIME_LIMIT_EXCEEDED;
+      time_ = time_limit + 36;
+    }
+    if (memory_ > memory_limit) {
+      result = MEMORY_LIMIT_EXCEEDED;
+      memory_ = memory_limit + 36;
+    }
+  
+    LOG(DEBUG) << "Monitor process " << pid << " with time/memory("
+              << time_ << "/" << memory_ << ")";
+
+    if (sendRunningMessage(communicate_socket, time_, memory_)) {
+      if (!callback->hasExited())
+        kill(pid, SIGKILL);
+      result = SYSTEM_ERROR;
+      break;
+    }
+  }
+
+  if (callback->hasExited()) {
+    waitpid(pid, &status, 0);
+    LOG(DEBUG) << "Exited " << pid << " normally";
+    result = 0;
+  } else if (result < 0) {
+    if (callback->getResult() == 0) {
+      int ts = readTime(pid);
+      int ms = readMemory(pid);
       if (ts > time_)
         time_ = ts;
       if (ms > memory_)
         memory_ = ms;
-      if (time_ > time_limit) {
-        result = TIME_LIMIT_EXCEEDED;
-        time_ = time_limit + 36;
-      }
-      if (memory_ > memory_limit) {
-        result = MEMORY_LIMIT_EXCEEDED;
-        memory_ = memory_limit + 36;
-      }
-      
-      LOG(INFO) << "Monitor process " << pid << " with time/memory("
-                << time_ << "/" << memory_ << ")";
-
-      if (sendRunningMessage(communicate_socket, time_, memory_)) {
-        if (!callback->hasExited())
-          kill(pid, SIGKILL);
-        result = SYSTEM_ERROR;
-        break;
-      }
-    }
-  }
-
-  int status;
-  while (waitpid(pid, &status, 0) < 0) {
-    if (errno != EINTR) {
-      LOG(SYS_ERROR) << "Error when waitpid for " << pid << " with errno = "
-                     << errno;
-      return SYSTEM_ERROR;
-    }
-  }
-  if (!WIFEXITED(status)) {
-    LOG(SYS_ERROR) << "Child process not exited";
-    return SYSTEM_ERROR;
-  }
-
-  if (result < 0) {
-    if (callback->getResult() == 0) {
-      time_ = callback->getTime();
-      memory_ = callback->getMemory();
     }
     callback->processResult(status);
     result = callback->getResult();
@@ -111,9 +114,11 @@ int monitor(int communicate_socket,
       time_ = time_limit + 36;
     if (result == MEMORY_LIMIT_EXCEEDED)
       memory_ = memory_limit + 36;
+    kill(pid, SIGKILL);
     if (sendRunningMessage(communicate_socket, time_, memory_))
       return SYSTEM_ERROR;
   }
+
   return result;
 }
 
@@ -136,7 +141,7 @@ int runExe(int communicate_socket,
   run_info.output_limit = output_limit;
   run_info.proc_limit = 1;
   run_info.file_limit = 5;
-  run_info.trace = 1;
+  run_info.trace = true;
   TraceCallback callback;
   pid_t pid = createProcess(commands, run_info);
   if (pid == -1) {
