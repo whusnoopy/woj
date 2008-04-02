@@ -26,6 +26,7 @@
 using namespace std;
 
 DECLARE_FLAGS(string, root_dir);
+
 DEFINE_FLAGS(string, server_address, "The server address");
 DEFINE_FLAGS(int, server_port, "The server port");
 
@@ -36,21 +37,44 @@ void process(int communicate_socket) {
 }
 
 int terminated = 0;
+int socket_broken = 0;
 
-void sigterm_handler(int siginal) {
+void sigterm_handler(int signal) {
   terminated = 1;
+}
+
+void sigpipe_handler(int signal) {
+  socket_broken = 1;
+}
+
+void sigchld_handler(int signal) {
+  pid_t pid;
+  while ((pid = waitpid(-1, NULL, WNOHANG)) > 0 || pid < 0 && errno == EINTR)
+    ;
 }
 
 int main(int argc, char* argv[]) {
   if (parseFlags(argc, argv) < 0) {
     return 1;
   }
+
+  // Run in daemonize mode
+  if (FLAGS_daemon) {
+  }
+
+  // change working directory
   if (chdir(FLAGS_root_dir.c_str()) < 0) {
     LOG(SYS_ERROR) << strerror(errno) << endl
                    << "Fail to change working dir to " << FLAGS_root_dir;
     return 1;
   }
 
+  // sigaction SIGCHLD, SIGTERM, SIGPIPE
+  installSignalHandler(SIGCHLD, sigchld_handler);
+  installSignalHandler(SIGTERM, sigterm_handler);
+  installSignalHandler(SIGPIPE, sigpipe_handler);
+
+  // connect to server
   sigset_t mask;
   sigemptyset(&mask);
   installSignalHandler(SIGTERM, sigterm_handler, 0, mask);

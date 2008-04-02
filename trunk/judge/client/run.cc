@@ -9,6 +9,7 @@
 #include <sys/reg.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "base/flags.h"
@@ -50,14 +51,22 @@ int monitor(int communicate_socket,
   int status;
   int ts;
   int ms;
+  time_t last_time = time(NULL) - 1;
+  time_t current_time = 0;
+  if (sendRunningMessage(communicate_socket, time_, memory_))
+    return SYSTEM_ERROR;
+
   while (result < 0 && !callback->hasExited()) {
     waitpid(pid, &status, 0);
     LOG(DEBUG) << "Get status from pid : " << stringPrintf("%04x", status);
     if (WIFEXITED(status))
       break;
-    if (WIFSIGNALED(status)) {
-      callback->processResult(status);
+
+    if ((status >> 8) != 0x05) {
+      callback->processResult(status >> 8);
       result = callback->getResult();
+      ptrace(PTRACE_KILL, pid, NULL, NULL);
+      break;
     }
 
     int syscall = ptrace(PTRACE_PEEKUSER, pid, 4 * ORIG_EAX, NULL);
@@ -68,30 +77,31 @@ int monitor(int communicate_socket,
       ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
     }
 
-    ts = readTime(pid);
-    ms = readMemory(pid);
-    if (ts > time_)
-      time_ = ts;
-    if (ms > memory_)
-      memory_ = ms;
+    current_time = time(NULL);
+    if (current_time - last_time > 0) {
+      last_time = current_time;
 
-    if (time_ > time_limit) {
-      result = TIME_LIMIT_EXCEEDED;
-      time_ = time_limit + 36;
-    }
-    if (memory_ > memory_limit) {
-      result = MEMORY_LIMIT_EXCEEDED;
-      memory_ = memory_limit + 36;
-    }
-  
-    LOG(DEBUG) << "Monitor process " << pid << " with time/memory("
-              << time_ << "/" << memory_ << ")";
+      ts = readTime(pid);
+      ms = readMemory(pid);
+      if (ts > time_)
+        time_ = ts;
+      if (ms > memory_)
+        memory_ = ms;
 
-    if (sendRunningMessage(communicate_socket, time_, memory_)) {
-      if (!callback->hasExited())
-        kill(pid, SIGKILL);
-      result = SYSTEM_ERROR;
-      break;
+      if (time_ > time_limit)
+        result = TIME_LIMIT_EXCEEDED;
+      if (memory_ > memory_limit)
+        result = MEMORY_LIMIT_EXCEEDED;
+    
+      LOG(DEBUG) << "Monitor process " << pid << " with time/memory("
+                 << time_ << "/" << memory_ << ")";
+
+      if (sendRunningMessage(communicate_socket, time_, memory_)) {
+        if (!callback->hasExited())
+          kill(pid, SIGKILL);
+        result = SYSTEM_ERROR;
+        break;
+      }
     }
   }
 
@@ -110,14 +120,16 @@ int monitor(int communicate_socket,
     }
     callback->processResult(status);
     result = callback->getResult();
-    if (result == TIME_LIMIT_EXCEEDED)
-      time_ = time_limit + 36;
-    if (result == MEMORY_LIMIT_EXCEEDED)
-      memory_ = memory_limit + 36;
     kill(pid, SIGKILL);
-    if (sendRunningMessage(communicate_socket, time_, memory_))
-      return SYSTEM_ERROR;
   }
+
+  if (result == TIME_LIMIT_EXCEEDED)
+    time_ = time_limit + 36;
+  if (result == MEMORY_LIMIT_EXCEEDED)
+    memory_ = memory_limit + 36;
+
+  if (sendRunningMessage(communicate_socket, time_, memory_))
+    return SYSTEM_ERROR;
 
   return result;
 }
