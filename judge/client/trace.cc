@@ -71,6 +71,7 @@ void TraceCallback::processResult(int status) {
     case RUNNING :
       switch (WTERMSIG(status)) {
         case SIGXCPU :
+        case SIGALRM :
           LOG(INFO) << "Time Limit Exceeded";
           result_ = TIME_LIMIT_EXCEEDED;
           break;
@@ -149,7 +150,7 @@ void TraceCallback::processSyscall(pid_t pid, int syscall) {
       brk = ptrace(PTRACE_PEEKUSER, pid, 4 * EBX, NULL);
       if (brk) {
         callback->onMemoryLimitExceeded();
-        kill(SIGKILL, pid);
+        ptrace(PTRACE_KILL, pid, NULL, NULL);
       } else {
         ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
       }
@@ -158,17 +159,19 @@ void TraceCallback::processSyscall(pid_t pid, int syscall) {
     case SYS_clone :
     case SYS_fork :
     case SYS_vfork :
-      if (callback->onClone())
+      if (callback->onClone()) {
         ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
-      else
-        kill(SIGKILL, pid);
+      } else {
+        callback->onRestrictedFunction();
+        ptrace(PTRACE_KILL, pid, NULL, NULL);
+      }
       break;
 
     case SYS_execve :
       if (callback->onExecve())
         ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
       else
-        kill(SIGKILL, pid);
+        ptrace(PTRACE_KILL, pid, NULL, NULL);
       break;
 
     case SYS_open :
@@ -190,17 +193,18 @@ void TraceCallback::processSyscall(pid_t pid, int syscall) {
                                              sizeof(buffer)) < 0) {
         LOG(ERROR) << "Fail to read memory from traced process";
         callback->onError();
-        kill(SIGKILL, pid);
+        ptrace(PTRACE_KILL, pid, NULL, NULL);
       } else if (callback->onOpen(buffer, flags)) {
         ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
       } else {
-        kill(SIGKILL, pid);
+        callback->onRestrictedFunction();
+        ptrace(PTRACE_KILL, pid, NULL, NULL);
       }
       break;
     default :
       LOG(ERROR) << "Unexpected syscall : " << syscall;
       TraceCallback::getInstance()->onRestrictedFunction();
-      kill(SIGKILL, pid);
+      ptrace(PTRACE_KILL, pid, NULL, NULL);
   }
 }
 
