@@ -15,7 +15,11 @@ using namespace std;
 #define SERVER_PORT 3030
 #define BACKLOG 20
 
-int main(){
+int main(int argc, char* argv[]){
+  if (parseFlags(argc,argv)) {
+    LOG(SYS_ERROR) << "Cannot parse flags!";
+    return -1;
+  }
   pthread_mutex_t lock;
   pthread_mutex_init(&lock, NULL);
   ProcessThread threads[250];
