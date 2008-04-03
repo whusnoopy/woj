@@ -22,7 +22,7 @@
 	else
 		$start = '0';
 
-	$cl = new contest_list_t($start, 'c');
+	$cl = new contest_list_t($start, 'C');
 	$cl->getResult();
 	$rows = $cl->getRow();
 
@@ -41,7 +41,23 @@
 	}
 ?>
 </tbody></table>
+
 <br />
+
+<?php
+  $current = intval($start);
+  if ( $current > 0){
+	  $pre = $current - 1;
+      echo "<span class=bt><a href=\"contestStanding.php?start=$pre&contest_id=$contest_id&title=$title\">
+    &nbsp;Prev Page&nbsp;</a></span>&nbsp;";
+  }
+  if ($rows == 20){
+	  $next = $current + 1;
+      echo "<span class=bt><a href=\"contestStanding.php?start=$next&contest_id=$contest_id&title=$title\">&nbsp;Next Page&nbsp;</a></span>";
+  }
+?>
+  </div><br>
+
 
 <?php
 	include('../include/tailer.php');

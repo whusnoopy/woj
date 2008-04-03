@@ -17,10 +17,11 @@
     <a href="index.php">Home</a>&nbsp;|&nbsp;
     <a href="problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="contest/contestList.php">Contests</a>&nbsp;|&nbsp;
+	<a href="contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
     <a href="submit/submit.php">Submit</a>&nbsp;|&nbsp;
     <a href="status/status.php">Status</a>&nbsp;|&nbsp;
     <a href="ranklist/ranklist.php">Ranklist</a>&nbsp;|&nbsp;
-    <a href="discuss/discuss.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
     <a href="user/user.php">User</a>&nbsp;|&nbsp;
     <a href="mail/mailList.php">
       <?php
@@ -30,17 +31,15 @@
           echo "Mail</a>&nbsp;|&nbsp;";
 	  ?>
      &nbsp;|&nbsp;
-    <a href="faq.php" target="_blank">FAQ</a>
+    <a href="faq.html" target="_blank">FAQ</a>
 	</div>
 
   <div id="tt">
     Welcome to Flood
   </div>
-  <div id="move">
-  <MARQUEE SCROLLAMOUNT=3 BEHAVIOR=ALTERNATE SCROLLDELAY=150><font color=red>Upcoming contest : </font></font><a href="http://acm.whu.edu.cn/noah/contest/contest.php?contest_id=1015">2007 WarmUp Contest 2
-  Start at 2007-03-17 12:00:00</a></MARQUEE>
-  </div>
-
+<?php
+	include('include/notice.php');
+?>
   <div id="main" align="left">
 	<div id="right">
 		<div class="hpt">Upcoming Contest</div>
@@ -76,6 +75,7 @@
 		<div class="ir"><a href="http://acm.pku.edu.cn/JudgeOnline/" target=_blank>OnlineJudge of PeKing Univ.</a></div>
 		<div class="ir"><a href="http://acm.zju.edu.cn/" target=_blank>OnlineJudge of ZheJiang Univ.</a></div>
 		<div class="ir"><a href="http://acm.scu.edu.cn/" target=_blank>OnlineJudge of SiChuan Univ.</a></div>
+		<div class="ir"><a href="http://acm.tju.edu.cn/toj" target=_blank>OnlineJudge of TianJin Univ.</a></div>
 		</div>
 	</div>
 

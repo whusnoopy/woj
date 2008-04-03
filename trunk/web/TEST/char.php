@@ -39,4 +39,9 @@ echo "s=".($s+1).'<br>';
 
 $A=41;
 echo "\x41";
+
+$d="\001";
+$str = $d.'6';
+$s= explode($d, $str);
+echo count($s);
 ?>

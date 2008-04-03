@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include('../common/tcpclient.php')
+include('../common/tcpclient.php');
 
 function user_exist($user_id)
 {
@@ -32,7 +32,7 @@ function add_mail($to_user, $user_id, $title, $content, $reply )
 
 	$d="\001";
 	$message =$reply.$d.$title.$d.$content.$d.$to_user.$user_id;
-	$header = sprintf("%s%08d", "dm", strlen($message));
+	$header = sprintf("%s%08d", "am", strlen($message));
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
@@ -84,8 +84,13 @@ function delete_mail($mail_id, $user_id)
 	$mail_id = $_POST['mail_id'];
   else
     $mail_id = $_GET['mail_id'];
-
-
+/*
+ echo $to_user.'<br>';
+ echo $title.'<br>';
+ echo $type.'<br>';
+ echo $content.'<br>';
+ exit;
+*/
   if (isset($_SESSION['user_id']))
 	  $user_id = $_SESSION['user_id'];
   else{

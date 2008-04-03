@@ -2,176 +2,159 @@
 
 class status_t
 {
+	var $pagenum;
 	var $problem_id;
 	var $user_id;
-	var $result;
+	var $rst;
 	var $language;
 	var $contest_id;
-	var $startRow;
-	var $noOfRow;
-	var $tatus;
-	var $totalRow;
+	var $share_code;
+	var $type;
+	var $cur_user_id;
 
+	var $result = array();
 
-	public function setProblem_id($problem_id){
+	function status_t($pagenum, $problem_id='0', $user_id='?', $rst='?',
+		$language='?', $contest_id='?', $share_code='N', $type='0', $cur_user_id='?')
+	{
+		$this->pagenum = $pagenum;
+		$this->problem_id = $problem_id;
+		$this->user_id = $user_id;
+		$this->rst = $rst;
+		$this->language = $language;
+		$this->contest_id = $contest_id;
+		$this->share_code = $share_code;
+		$this->type = $type;
+		$this->cur_user_id = $cur_user_id;
+	}
+
+	function setPagenum($pagenum)
+	{
+		$this->pagenum = $pagenum;
+	}
+	function setProblem_id($problem_id)
+	{
 		$this->problem_id = $problem_id;
 	}
-
-	public function setUser_id($user_id){
+	function setUser_id($puser_id)
+	{
 		$this->user_id = $user_id;
 	}
-
-	public function setResult($result){
-		$this->result = $result;
+	function setRst($rst)
+	{
+		$this->rst = $rst;
 	}
-
-	public function setLanguage($language){
+	function setLanguage($language)
+	{
 		$this->language = $language;
 	}
-
-	public function setContest_id($contest_id){
+	function setContest_id($contest_id)
+	{
 		$this->contest_id = $contest_id;
 	}
-
-	public function setStartRow($startRow){
-		$this->startRow = $startRow;
-		if($this->startRow == null || strlen($this->startRow) == 0){
-			$this->startRow = "0";
-		}
-	}
-
-	public function setNoOfRow($noOfRow){
-		$this->noOfRow = $noOfRow;
-	}
-
-	public function getStatus()
+	function setShare_code($share_code)
 	{
-		$result = null;
-/*		sql.append("select solution_id,user_id,problem_id,result,memory,time,language,code_length,in_date ")
-			.append("from solution ");
-
-		boolean first = true;
-		if(problem_id != null && problem_id.length() != 0){
-			sql.append("where problem_id = ? ");
-			first = false;
-		}
-		if(user_id != null && user_id.length() != 0){
-			if(first) sql.append("where user_id = ? ");
-			else sql.append("and user_id = ? ");
-			first = false;
-		}
-		if(result != null && result.length() != 0){
-			if(first) sql.append("where result = ? ");
-			else sql.append("and result = ? ");
-			first = false;
-		}
-		if(language != null && language.length() != 0){
-			if(first) sql.append("where language = ? ");
-			else sql.append("and language = ? ");
-			first = false;
-		}
-		if(contest_id != null && contest_id.length() != 0){
-			if(first) sql.append("where contest_id = ? ");
-			else sql.append("and contest_id = ? ");
-			first = false;
-		}
-
-		sql.append("order by solution_id desc ");
-        sql.append("limit "+startRow+","+noOfRow);
-
-		sqlCommandBean.setSqlValue(sql.toString());
-		List values = new ArrayList();
-		if(problem_id != null && problem_id.length() != 0) values.add(problem_id);
-		if(user_id != null && user_id.length() != 0) values.add(user_id);
-		if(result != null && result.length() != 0) values.add(result);
-		if(language != null && language.length() != 0) values.add(language);
-		if(contest_id != null && contest_id.length() != 0) values.add(contest_id);
-		sqlCommandBean.setValues(values);
-		Result result = null;
-		try{
-		   result = sqlCommandBean.executeQuery();
-		}
-		catch(SQLException e){
-			throw new ServletException("Database error"+sql.toString(),e);
-		}
-		finally{
-			try{
-				conn.close();
-			}
-			catch(SQLException e){
-				throw new ServletException("Connection closing error" ,e);
-			}
-		}
-		sqlString = sql.toString();
-*/
-		return $result;
+		$this->share_code = $share_code;
 	}
-
-
-	public function getTotalRow()
+	function set_Type($type)
 	{
-/*		throws SQLException,ServletException{
-		Connection conn = dataSource.getConnection();
-
-		SQLCommandBean sqlCommandBean = new SQLCommandBean();
-		sqlCommandBean.setConnection(conn);
-		StringBuffer sql = new StringBuffer();
-
-		sql.append("select count(*) as count from solution ");
-		boolean first = true;
-		if(problem_id != null && problem_id.length() != 0){
-			sql.append("where problem_id = ? ");
-			first = false;
-		}
-		if(user_id != null && user_id.length() != 0){
-			if(first) sql.append("where user_id = ? ");
-			else sql.append("and user_id = ? ");
-			first = false;
-		}
-		if(result != null && result.length() != 0){
-			if(first) sql.append("where result = ? ");
-			else sql.append("and result = ? ");
-			first = false;
-		}
-		if(language != null && language.length() != 0){
-			if(first) sql.append("where language = ? ");
-			else sql.append("and language = ? ");
-			first = false;
-		}
-		if(contest_id != null && contest_id.length() != 0){
-			if(first) sql.append("where contest_id = ? ");
-			else sql.append("and language = ? ");
-			first = false;
-		}
-
-
-		sqlCommandBean.setSqlValue(sql.toString());
-		List values = new ArrayList();
-		if(problem_id != null && problem_id.length() != 0) values.add(problem_id);
-		if(user_id != null && user_id.length() != 0) values.add(user_id);
-		if(result != null && result.length() != 0) values.add(result);
-		if(language != null && language.length() != 0) values.add(language);
-		if(contest_id != null && contest_id.length() != 0) values.add(contest_id);
-		sqlCommandBean.setValues(values);
-		Result result = null;
-		try{
-			result = sqlCommandBean.executeQuery();
-		}
-		catch(SQLException e){
-			throw new ServletException("Database error"+sql.toString(),e);
-		}
-		finally{
-			try{conn.close();}
-			catch(SQLException e){}
-		}
-		return Integer.parseInt(((result.getRows()[0]).get("count")).toString());
-	*/
-		return 12;
+		$this->type = $type;
 	}
+	function setCur_user_id($cur_user_id)
+	{
+		$this->cur_user_id = $cur_user_id;
+	}
+
+	function getSolution_id($i)
+	{
+		return $this->result[$i*11];
+	}
+	function getUser_id($i)
+	{
+		return $this->result[$i*11 + 1];
+	}
+	function getProblem_id($i)
+	{
+		return $this->result[$i*11 + 2];
+	}
+	function getRst($i)
+	{
+		return $this->result[$i*11 + 3];
+	}
+	function getMemory($i)
+	{
+		return $this->result[$i*11 + 4];
+	}
+	function getTime($i)
+	{
+		return $this->result[$i*11 + 5];
+	}
+	function getLanguage($i)
+	{
+		return $this->result[$i*11 + 6];
+	}
+	function getCode_length($i)
+	{
+		return $this->result[$i*11 + 7];
+	}
+	function getIn_date($i)
+	{
+		return $this->result[$i*11 + 8];
+	}
+	function getCode_id($i)
+	{
+		return $this->result[$i*11 + 9];
+	}
+	function getPermission($i)
+	{
+		return $this->result[$i*11 + 10];
+	}
+
+	function getRow()
+	{
+		return count($this->result) / 11;
+	}
+
+	function getResult()
+	{
+
+		///////////////////////////////
+		$d = "\001";
+		$recv = '10634'.$d.'magiii'.$d.'1002'.$d.'AC'.$d.'72'.$d.'0'.$d.'GCC'.$d.'122'.$d.'2006-05-04 05:41:19.0'.$d.'1024'.$d.'Y'.$d.
+				'10634'.$d.'kittyshow'.$d.'1002'.$d.'AC'.$d.'75'.$d.'0'.$d.'GCC'.$d.'160'.$d.'2006-05-05 05:41:19.0'.$d.'1024'.$d.'N';
+		$this->result = explode("\001", $recv);
+		return;
+		////////////////////////////////
+
+		$d = "\001";
+		$message = $this->pagenum
+			.$d.$this->problem_id
+			.$d.$this->user_id
+			.$d.$this->rst
+			.$d.$this->language
+			.$d.$this->contest_id
+			.$d.$this->share_code
+			.$d.$this->type
+			.$d.$this->cur_user_id;
+
+		$header = sprintf("%s%08d", "st", strlen($message));
+
+		$tc = new TCPClient();
+		$tc->create() or die("unable to create socket!");
+		$tc->connect() or die("unable to connect to server!");
+		$tc->sendstr($header) or die("send header failed");
+		$tc->sendstr($message)or die("send message failed");
+		$recv= $tc->recvstr(10);
+		$len = sscanf($recv, "%d");
+		if($len > 0){
+			$recv = $tc->recvstr($len);
+			$this->result = explode($d, $recv);
+		}
+		else
+			$this->result = null;
+		$tc->close();
+	}
+
 }
-
-	$status = new status_t;
-	$status->setProblem_id('1001');
-	echo $status->getTotalRow();
 
 ?>
