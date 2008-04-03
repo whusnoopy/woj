@@ -1,5 +1,4 @@
 <?php
-	session_start();
 	include('../include/header.php');
     echo '<div id=tt>Status</div>';
 	include('../include/notice.php');
@@ -145,5 +144,5 @@
 
 
 <?php
-	include('..\include\tailer.php');
+	include('../include/tailer.php');
 ?>

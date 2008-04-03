@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -5,7 +8,6 @@
   <link href="../style/noah.css" rel="stylesheet" type="text/css" />
 </head>
 <?php
-	session_start();
 	if (isset($_SESSION['user_id']))
 		$user_id = $_SESSION['user_id'];
 	else

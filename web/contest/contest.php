@@ -1,6 +1,4 @@
 <?php
-	session_start();
-
 	include('../include/header.php');
 	include('classes/contest_problem_list_t.php');
 	if (isset($_SESSION['user_id']))

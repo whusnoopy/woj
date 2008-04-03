@@ -1,6 +1,4 @@
 <?php
-include_once('../../common/tcpclient.php');
-
 class ranklist_t
 {
 	var $pagenum;

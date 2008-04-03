@@ -1,5 +1,5 @@
 <?php
-include_once('../../common/tcpclient.php');
+//include_once('../../common/tcpclient.php');
 
 class contest_problem_list_t
 {

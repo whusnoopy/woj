@@ -1,5 +1,4 @@
 <?php
-
  include('../include/header.php');
  include('classes/problem_solution_t.php');
 
