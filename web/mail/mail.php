@@ -5,35 +5,11 @@
 	if (isset($_GET['mail_id']))
 		$mail_id = $_GET['mail_id'];
 	else
-		$mail_id = -1;
+		$mail_id = '0';
 
-	$mail = new mail_t($mail_id);
+	$mail = array();
+	get_mail_content($maul_id, $mail);
 
-/*
-<jsp:useBean id="mailBean" class="com.whu.noah.beans.mail.MailBean" scope="page" />
-<jsp:useBean id="formatBean" class="com.whu.noah.beans.admin.FormatOutputBean" scope="page" />
-<jsp:useBean id="validUser" class="com.whu.noah.beans.user.UserBean" scope="session" />
-<jsp:useBean id="mailValidateBean" class="com.whu.noah.beans.validate.mail.MailValidateBean" scope="page" />
-
-<jsp:setProperty name="mailValidateBean" property="dataSource" value="${appDataSource}" />
-<jsp:setProperty name="mailValidateBean" property="user_id" value="${validUser.uid}" />
-<jsp:setProperty name="mailValidateBean" property="mail_id" value="${param.mail_id}" />
-
-<c:if test="${fn:contains(mailValidateBean.authenticate, 'false')}">
-  <jsp:forward page="mailerror.jsp">
-    <jsp:param name="errorMsg" value="mail doesn't exist" />
-  </jsp:forward>
-</c:if>
-
-<jsp:setProperty name="mailBean" property="dataSource" value="${appDataSource}" />
-<jsp:setProperty name="mailBean" property="mail_id" value="${param.mail_id}" />
-
-<c:set var="user_id" value="${validUser.uid}" scope="page" />
-<jsp:useBean id="checkNewMailBean" class="com.whu.noah.beans.mail.CheckNewMailBean" scope="page" />
-<jsp:setProperty name="checkNewMailBean" property="dataSource" value="${appDataSource}" />
-<jsp:setProperty name="checkNewMailBean" property="user_id" value="${user_id}" />
-<c:set var="hasNewMail" value="${checkNewMailBean.newMail}" />
-*/
 ?>
 
 
@@ -47,25 +23,25 @@
   <tr>
     <th width=80></th>
     <th width=100 align=right>Title:&nbsp;&nbsp;</th>
-    <th width=700 align=left><?php echo $mail->title; ?></th>
+    <th width=700 align=left><?php echo $mail[1]; ?></th>
     <th width=70></th>
   </tr>
   <tr class=tro>
     <td></td>
     <td align=right><strong>From:&nbsp;&nbsp;</strong></td>
-    <td align=left><?php echo $mail->from_user; ?></td>
+    <td align=left><?php echo $mail[0]; ?></td>
     <td></td>
   </tr>
   <tr class=tre>
     <td></td>
     <td align=right><strong>Send Time:&nbsp;&nbsp;</strong></td>
-    <td align=left><?php echo $mail->in_date; ?></td>
+    <td align=left><?php echo $mail[2]; ?></td>
     <td></td>
   </tr>
   <tr class=tro valign=top>
     <td></td>
     <td align=right><strong>Content:&nbsp&nbsp;</strong></td>
-    <td align=left><textArea name="content" rows=20 cols=80><?php echo $mail->content; ?></textArea></td>
+    <td align=left><textArea name="content" rows=20 cols=80><?php echo $mail[3]; ?></textArea></td>
     <td></td>
   </tr>
   </tbody></table>
@@ -79,4 +55,39 @@
 
 <?php
 	include('../include/tailer.php');
+?>
+
+<?php
+
+function get_mail_content($mail_id, &$mail)
+{
+	/////////////////////////////
+	$d="\001";
+	$recv = "mcje".$d."hello".$d."2008-03-25 12:12:12".$d."hello, world";
+	$mail = explode("\001", $recv);
+	return;
+	//////////////////////////////
+
+	if(empty($mail_id)){
+		$mail = null;
+		return;
+	}
+
+	$header = sprintf("%s%08d", "mc", strlen($mail_id));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($mail_id)or die("send message failed");
+	$recv= $tc->recvstr(10);
+	$len = sscanf($recv, "%d");
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$mail =  explode("\001", $recv);
+	}
+	else $mail = null;
+	$tc->close();
+	return;
+}
 ?>

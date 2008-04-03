@@ -17,10 +17,6 @@
 		$language = '0';
 	}
 
-	if(!confirm($user_id, $oldPass)){
-		header("Location: modifyerr.php?errorMsg=The ID( $user_id ) is not existed or password is not correct");
-		exit;
-	}
 	if($newPass != $rptNewPass){
 		header("Location: modifyerr.php?errorMsg=The New Password doesn't match");
 		exit;
@@ -28,7 +24,8 @@
 	if(empty($newPass))
 		$newPass = $oldPass;
 
-	if(update_user_info($user_id, $newPass, $nick, $share_code, $school, $email, $share_email, $language)){
+	if(update_user_info($user_id, $oldPass, $newPass, $email,
+							$share_email, $nick, $school, $share_code, $language)){
 		header("Location: modifysuc.php?user_id=$user_id&nick=$nick&school=$school&email=$email");
 		exit;
 	}
@@ -40,15 +37,28 @@
 ?>
 
 <?php
-function confirm($user_id, $oldPass)
-{
-	return true;
-}
 
-function update_user_info($user_id, $newPass, $nick, $share_code, $school, $email, $share_email, $language )
-{
-	return true;
-}
+	function update_user_info($user_id, $oldPass, $newPass, $email,
+							$show_email, $nick, $school, $share_code, $language)
+	{
+		return true;
+
+		$d="\001";
+		$message = $user_id.$d.$oldPass.$d.$newPass.$d.$email.$d.$show_email.$d.$nick.$d.$school.$d.$share_code.$d.$language;
+		$header = sprintf("%s%08d", "uu", strlen($message));
+
+		$tc = new TCPClient();
+		$tc->create() or die("unable to create socket!");
+		$tc->connect() or die("unable to connect to server!");
+		$tc->sendstr($header) or die("send header failed");
+		$tc->sendstr($message) or die("send header failed");
+		if($tc->recvstr(1) == 'Y'){
+			$tc->close();
+			return true;
+		}
+		$tc->close();
+		return false;
+	}
 ?>
 
 

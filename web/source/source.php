@@ -7,37 +7,33 @@
     include('../include/header.php');
 	include('classes/format_code_t.php');
 
-	if(isset($_GET['solution_id']))
-		$solution_id = $_GET('solution_id');
-	else
-		$solution_id = '0';
-
-	$solution_info = 1;
-	$isValid = 1;
-	$problem["title"] = $_GET['tt'];
-	$problem["id"] = $_GET['id'];
+	if(isset($_GET['cid']))
+		$code_id = $_GET['cid'];
+	else{
+//		echo 'solution does not exist';
+//		exit;
+	}
+	$problem["sid"] = $_GET['sid'];
+	$problem["pid"] = $_GET['pid'];
 	$problem["uid"] = $_GET['uid'];
 	$problem["limit_time"] = $_GET['tm'];
 	$problem["memory"] = $_GET['mem'];
 	$problem["language"] = $_GET['lan'];
-	$problem["result"] = $_GET['res'];
-	$problem["source"] = getSource($solution_id, $user_id);
+	$problem["result"] = $_GET['rst'];
+	$problem["source"] = getSource($code_id, $user_id);
 ?>
 
 <?php
 
- if(empty($solution_info))
-   echo  ' <div><br /><span class="cl">No such solution id</span></div><br /> ';
-
- else if (empty($problem["source"]))
+ if (empty($problem["source"]))
    echo ' <div><br /><span class="cl">You have no access to view this code</span></div><br /> ';
  else{
 	 $fc = new format_code_t($problem["source"], "G++");
 ?>
-  <div id="tt">Source - <?php echo $problem["title"];?></div>
+  <div id="tt">Source - <?php echo $problem["sid"];?></div>
   <?php include('..\include\notice.php'); ?>
    <div class="ifm">
-   <strong>Problem id</strong>: <?php echo $problem["id"];?>&nbsp;&nbsp;
+   <strong>Problem id</strong>: <?php echo $problem["pid"];?>&nbsp;&nbsp;
    <strong>User id</strong>: <?php echo $problem["uid"];?><br>
    <strong>Memory</strong>: <?php echo $problem["memory"];?>KB&nbsp;&nbsp;
    <strong>Time</strong>: <?php echo $problem["limit_time"];?>ms<br>
@@ -60,7 +56,7 @@
 ?>
 
 <?php
-function getSource($solution_id, $user_id)
+function getSource($code_id, $user_id)
 {
 	return
 "#include<stdio.h>
@@ -69,21 +65,19 @@ int main()
 	return 0;  //hello, magiii
 }";
 
-	$message = $solution_id."\001".$user_id;
+	$message = $code_id."\001".$user_id;
 	$header = sprintf("%s%08d", "sc", strlen($message));
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
 	$tc->connect() or die("unable to connect to server!");
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($message);
-	$recv = $tc->recvstr(1);
-	if($recv=="N"){//没有阅读代码的权限
-		$tc->close();
-		return '';
-	}
 	$recv = $tc->recvstr(10);
 	$len = sscanf($recv, "%d");
-	$recv = $tc->recvstr($len);
+	if($len > 0)
+		$recv = $tc->recvstr($len);
+	else
+		$recv = null;
 	$tc->close();
 	return $recv;
 }

@@ -1,8 +1,8 @@
 
-#mainp{padding:10px 10px 0px 10px;width:1000px;font-family:Verdana}
+#mainp{padding:10px 10px 0px 10px;width:1000px;font-family:Verdana;background-color:#f7ffe7;margin-left:10%;font-size:15px}
 #leftp{clear:left;margin-right:750px;margin-left:10px}
 #rightp{clear:left;float:right;width:730px;margin-right:5px}
-
+#discuss{clear:left;}
 
 body,form{margin:0}
 img{border:0}

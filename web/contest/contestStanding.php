@@ -65,8 +65,10 @@
       echo "<span class=bt><a href=\"contestStanding.php?start=$pre&contest_id=$contest_id&title=$title\">
     &nbsp;Prev Page&nbsp;</a></span>&nbsp;";
   }
-  $next = $current + 1;
-  echo "<span class=bt><a href=\"contestStanding.php?start=$next&contest_id=$contest_id&title=$title\">&nbsp;Next Page&nbsp;</a></span>";
+  if ($rows == 20){
+	  $next = $current + 1;
+      echo "<span class=bt><a href=\"contestStanding.php?start=$next&contest_id=$contest_id&title=$title\">&nbsp;Next Page&nbsp;</a></span>";
+  }
 ?>
 
   </div><br>
