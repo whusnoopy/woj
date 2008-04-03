@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 include('../common/tcpclient.php');
 
 function user_exist($user_id)
