@@ -33,9 +33,9 @@ enum COMMUNICATION_STATUS {
   LAST_JUDGE_STATUS,
   FIRST_REPLY_STATUS = 100,
   READY = 100,            // 100. Judge is ready to judge
+  UNSUPPORTED_SOURCE_FILE_TYPE,
+  DATA_EXSIST,
   LAST_STATUS,
 };
-
-const int COMPILE_TIME_LIMIT = 30;
 
 #endif

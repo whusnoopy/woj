@@ -56,5 +56,7 @@ sighandler_t installSignalHandler(int signal,
                                   int flags,
                                   sigset_t mask);
 
+int connectServer(const string& address, int port);
+
 #endif
 

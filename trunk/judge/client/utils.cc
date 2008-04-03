@@ -75,18 +75,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
     command_line = command_line + " " + commands[i];
 
   LOG(DEBUG) << "Create process by command : \"" << command_line << "\"";
-/*
-  int status = 0;
-  if (run_info.working_dir)
-    chdir(run_info.working_dir);
-  if (run_info.stdin_filename)
-    command_line += " <" + stringPrintf("%s", run_info.stdin_filename);
-  if (run_info.stdout_filename)
-    command_line += " >" + stringPrintf("%s", run_info.stdout_filename);
-  LOG(INFO) << "system (" << command_line << ")return : " << status;
-  status = system(command_line.c_str());
-  LOG(INFO) << "system (" << command_line << ")return : " << status;
-*/
+
   const char* filename[] = {run_info.stdin_filename,
                             run_info.stdout_filename,
                             run_info.stderr_filename};
@@ -228,17 +217,27 @@ sighandler_t installSignalHandler(int signal,
   act.sa_handler = handler;
   act.sa_mask = mask;
   act.sa_flags = flags;
-  if (signal == SIGALRM) {
-#ifdef SA_INTERRUPT
-    act.sa_flags |= SA_INTERRUPT;
-#endif
-  } else {
-#ifdef SA_RESTART
-    act.sa_flags |= SA_RESTART;
-#endif
-  }
   if (sigaction(signal, &act, &old_act) < 0)
     return SIG_ERR;
   return old_act.sa_handler;
+}
+
+int connectServer(const string& address, int port) {
+  int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
+  struct sockaddr_in server_address;
+  memset(&server_address, 0, sizeof(server_address));
+  server_address.sin_family = AF_INET;
+  server_address.sin_port = htons(port);
+  if (inet_pton(AF_INET, address.c_str(), &server_address.sin_addr) <= 0) {
+    LOG(SYS_ERROR) << "Invalid Server Address: " << address;
+    return -1;
+  }
+  if (connect(communicate_socket,
+              (const sockaddr*)&server_address,
+              sizeof(server_address)) < 0) {
+    LOG(SYS_ERROR) << "Fail to connect to " << address << ":" << port;
+    return -1;
+  }
+  return communicate_socket;
 }
 

@@ -10,7 +10,6 @@
 using namespace std;
 
 const int MAX_LOG_FILE_SIZE = 256 * 1024;
-const int MAX_PATH_LENGTH = 256;
 
 #define LOG(level) Log(__FILE__, __LINE__, level).stream()
 
