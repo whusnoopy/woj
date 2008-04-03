@@ -1,5 +1,5 @@
 <?php
-	include_once('../../common/tcpclient.php');
+//	include_once('../../common/tcpclient.php');
 
 class discuss_list_t
 {

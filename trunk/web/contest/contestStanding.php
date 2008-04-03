@@ -1,4 +1,3 @@
-
 <?php
 	include('../include/header.php');
 	include('classes/contest_standing_t.php');

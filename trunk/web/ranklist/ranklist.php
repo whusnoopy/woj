@@ -1,4 +1,3 @@
-
 <?php
   include('../include/header.php');
   echo '<div id=tt>User Ranklist</div>';
