@@ -32,5 +32,7 @@ inline string toString(T obj) {
 
 string getLocalTimeAsString(const char* format);
 
+int mkdirRecursive(const string& path, mode_t mode);
+
 #endif
 
