@@ -1,4 +1,3 @@
-
 <?php
 	include('../include/header.php');
 	include('classes/mail_t.php');

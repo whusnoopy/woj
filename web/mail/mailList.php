@@ -1,5 +1,4 @@
 <?php
-	session_start();
 	include ('../include/header.php');
 	include('classes/mail_list_t.php');
 
