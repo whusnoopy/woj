@@ -83,6 +83,10 @@ public:
   ProblemSet getUserACProblem(const string& user_id, bool ac);
   StatusList getProblemStatus(const StatusInfo& status_info);
   int getUserRank(const string& user_id);
+  int updateFileVersion(int problem_id, int contest_id);
+  map<string, string> getProblemInAndOutFile(const Problem& problem);
+  string getProblemSpjFile(const Problem& problem);
+  Status getStatus(int status_id);
 
   Connection* createConnection(const string& host,
                               const string& user,

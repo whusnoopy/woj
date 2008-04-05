@@ -114,7 +114,7 @@ void Status::setResult(int result){
   result_ = result;
 }
 
-void Status::SetLanguage(int language){
+void Status::setLanguage(int language){
   language_ = language;
 }
 

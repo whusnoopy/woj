@@ -109,6 +109,11 @@ void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int lengt
   }
   problem.setSpj(*iter == "Y");
   iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find update file flag. ";
+    return;
+  }
+  bool updatefile = (*iter == "Y");
   problem.setAccepted(0);
   problem.setSubmit(0);
   problem.setSolvedUsers(0);
@@ -118,6 +123,8 @@ void UpdateProblemProcessImp::process(int socket_fd, const string& ip, int lengt
   problem.setAvailable(true);
   int ret = 0;
   ret = DataInterface::getInstance().updateProblem(problem);
+  if (!updatefile)  
+    DataInterface::getInstance().updateFileVersion(problem.getProblemId(), -1);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;

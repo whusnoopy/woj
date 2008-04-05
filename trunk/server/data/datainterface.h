@@ -84,6 +84,9 @@ public:
   ProblemSet getUserACProblem(const string& user_id, bool ac);
   StatusList getProblemStatus(const StatusInfo& status_info);
   int getUserRank(const string& user_id);
+  map<string, string> getProblemInAndOutFile(const Problem& problem);
+  string getProblemSpjFile(const Problem& problem);
+  Status getStatus(int status_id);
   
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);
@@ -94,7 +97,7 @@ public:
   int updateNotice(const string& notice, const string& time);
   string getNotice();
   ssize_t getFileSize(const string& filename);
-
+  int updateFileVersion(int problem_id, int contest_id);
 
   static DataInterface& getInstance(){
     if(instance == NULL)

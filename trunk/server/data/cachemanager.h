@@ -20,6 +20,7 @@ public:
   int updateContestRankList(const Status&, bool);
   Contest getContest(int contest_id);
   FileData getFileData(const string& filename);
+  int addStatus(const Status& status);
   
   static CacheManager& getInstance() {
     if (instance == NULL) {

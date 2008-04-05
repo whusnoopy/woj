@@ -5,6 +5,7 @@
 #include <vector>
 using namespace std;
 
+string getIp(unsigned int ip_);
 string calIndentifyCode(const string& key);
 void spriteString(const string& buf, char separator, vector<string>& output);
 

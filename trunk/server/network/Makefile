@@ -16,6 +16,7 @@ DEPS_SOURCES:=$(filter-out $(wildcard ../../base/test_*.cc),$(wildcard ../../bas
 UTIL_SOURCES:=$(wildcard ../util/*.cc)
 OBJECT_SOURCES:=$(wildcard ../object/*.cc)
 DATA_SOURCES:=$(wildcard ../data/*.cc)
+JUDGECONTROL_SOURCES:=$(filter-out $(wildcard ../judgecontrol/test_*.cc),$(wildcard ../judgecontrol/*.cc))
 
 # All objects will auto build by "$(CXX) $(CXXFLAGS) -c" if there is no rule
 # to make it
@@ -24,6 +25,7 @@ DEPS:=$(patsubst %.cc,%.o,$(DEPS_SOURCES))
 UTIL:=$(patsubst %.cc,%.o,$(UTIL_SOURCES))
 OBJECT:=$(patsubst %.cc,%.o,$(OBJECT_SOURCES))
 DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
+JUDGECONTROL:=$(patsubst %.cc,%.o,$(JUDGECONTROL_SOURCES))
 
 .PHONY: all clean rebuild 
 
@@ -34,6 +36,6 @@ clean:
 
 rebuild: clean all
 
-server : $(OBJS) $(DEPS) $(UTIL) $(OBJECT) $(DATA)
+server : $(OBJS) $(DEPS) $(UTIL) $(OBJECT) $(DATA) $(JUDGECONTROL)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 

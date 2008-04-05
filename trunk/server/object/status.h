@@ -44,7 +44,7 @@ public:
 	void setMemory(int memory);
 	void setSubmitTime(const string& submit_time);
 	void setResult(int result);
-	void SetLanguage(int language);
+	void setLanguage(int language);
 	void setCodeId(int code_id);
 	void setCodeLength(int code_length);
 	void setSubmitIp(const string& submit_ip);

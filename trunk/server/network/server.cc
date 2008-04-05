@@ -26,8 +26,8 @@ int main(int argc, char* argv[]){
   int listen_fd;
   struct sockaddr_in server_addr;
   if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    LOG(ERROR) << "Cannot create socket";
-    return 1;
+    LOG(SYS_ERROR) << "Cannot create socket";
+    exit(-1);
   }
   bzero(&server_addr, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
@@ -35,12 +35,14 @@ int main(int argc, char* argv[]){
   server_addr.sin_port = htons(SERVER_PORT);
 
   if (bind(listen_fd, (struct sockaddr*) &server_addr, sizeof(server_addr)) == -1){
-    LOG(ERROR) << "Cannot bind socket.";
-    return 1;
+    LOG(SYS_ERROR) << "Cannot bind socket.";
+    close(listen_fd);
+    exit(-1);
   }
   if (listen(listen_fd, BACKLOG) == -1) {
-    LOG(ERROR) << "Cannot listen the socket.";
-    return 1;
+    LOG(SYS_ERROR) << "Cannot listen the socket.";
+    close(listen_fd);
+    exit(-1);
   }
   LOG(INFO) << "Begin listen socket..........";
   for (int i = 0; i < 250; i++){

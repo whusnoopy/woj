@@ -67,7 +67,6 @@ void UpdateContestProcessImp::process(int socket_fd, const string& ip, int lengt
   }
   contest.setType(*iter);
   iter++;
-  contest.setVersion(1);
   int ret = 0;
   ret = DataInterface::getInstance().updateContest(contest);
   if (ret) {

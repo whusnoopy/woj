@@ -2,6 +2,7 @@
 #include <set>
 
 #include "data/databaseinterface.h"
+#include "util/filetype.h"
 
 using namespace std;
 
@@ -217,6 +218,43 @@ int DatabaseInterface::updateProblem(const Problem& problem) {
   connection->close();
   delete connection; 
   return ret;
+}
+
+map<string, string> DatabaseInterface::getProblemInAndOutFile(const Problem& problem) {
+  map<string, string> in_and_out_path;
+  Connection* connection = createConnection();
+  string query;
+  query = "select t1.path as in_path, t2.path as out_path from files as t1, files as t2, ";
+  query += "intooutfiles where in_id = t1.file_id and out_id = t2.file_id and t1.file_id in";
+  query += " (select file_id from filestoproblems where problem_id = ";
+  query == stringPrintf("'%d' and version = '%d')", problem.getProblemId(), problem.getVersion());
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    in_and_out_path[result_set.getString("in_path")] = result_set.getString("out_path");
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return in_and_out_path;
+}
+
+string DatabaseInterface::getProblemSpjFile(const Problem& problem) {
+  string path = "";
+  Connection* connection = createConnection();
+  string query;
+  query = "select path from files where style = " + stringPrintf("'%d' and ", SPJ);
+  query += "file_id in (select file_id from filestoproblems where problem_id = ";
+  query == stringPrintf("'%d' and version = '%d')", problem.getProblemId(), problem.getVersion());
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  if (result_set.next()) {
+    path = result_set.getString("path");
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return path;
 }
 
 int DatabaseInterface::addStatus(const Status& status){
@@ -1244,7 +1282,8 @@ FileList DatabaseInterface::getProblemFile(const Problem& problem){
   query += " filestoproblems as t1, problems as t2 where t1.problem_id ";
   query += " = t2.problem_id and t1.version = t2.version and ";
   query += " t1.problem_id = '" +
-           stringPrintf("%d", problem.getProblemId()) + "')";
+           stringPrintf("%d", problem.getProblemId()) + "') and type = '";
+  query += stringPrintf("%d", IMG) + "'";
   LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
@@ -1267,8 +1306,9 @@ FileList DatabaseInterface::getContestFile(const Contest& contest){
   string query = "select * from files where file_id in (select file_id from";
   query += " filestocontests as t1, contests as t2 where t1.contest_id ";
   query += " = t2.contest_id and t1.version = t2.version and ";
-  query += " t1.contest_id = '"; 
-                  stringPrintf("%d", contest.getContestId()) + "')";
+  query += " t1.contest_id = '" +  
+           stringPrintf("%d", contest.getContestId()) + "') and type = '";
+  query += stringPrintf("%d",IMG) + "'";
   LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
@@ -1440,7 +1480,7 @@ StatusList DatabaseInterface::getNoSearchStatus(){
 	  item.setMemory(result_set.getInt("memory"));
 	  item.setSubmitTime(result_set.getString("submit_time"));
 	  item.setResult(result_set.getInt("result"));
-	  item.SetLanguage(result_set.getInt("language"));
+	  item.setLanguage(result_set.getInt("language"));
 	  item.setCodeId(result_set.getInt("code_id"));
 	  item.setCodeLength(result_set.getInt("code_length"));
 	  item.setSubmitIp(result_set.getString("submit_ip"));
@@ -1452,6 +1492,36 @@ StatusList DatabaseInterface::getNoSearchStatus(){
   delete connection;
   return statuslist;
 }
+
+Status DatabaseInterface::getStatus(int status_id){
+  Status item;
+  Connection* connection = createConnection();
+  string query = "select * from statuses ";
+  query += " where status_id = '" + stringPrintf("%d'", status_id);
+  LOG(INFO) << query << endl;
+  connection->connect();
+  Result result_set= connection->excuteQuery(query);
+  if(result_set.next()){
+  	item.setStatusId(result_set.getInt("status_id"));
+	  item.setUseId(result_set.getString("user_id"));
+	  item.setProblemId(result_set.getInt("problem_id"));
+	  item.setContestId(result_set.getInt("contest_id"));
+	  item.setTime(result_set.getInt("time"));
+	  item.setMemory(result_set.getInt("memory"));
+	  item.setSubmitTime(result_set.getString("submit_time"));
+	  item.setResult(result_set.getInt("result"));
+	  item.setLanguage(result_set.getInt("language"));
+	  item.setCodeId(result_set.getInt("code_id"));
+	  item.setCodeLength(result_set.getInt("code_length"));
+	  item.setSubmitIp(result_set.getString("submit_ip"));
+	  item.setErrorId(result_set.getInt("error_id"));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return item;
+}
+
 
 StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   StatusList statuslist;
@@ -1529,7 +1599,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
 	  item.setMemory(result_set.getInt("memory"));
 	  item.setSubmitTime(result_set.getString("submit_time"));
 	  item.setResult(result_set.getInt("result"));
-	  item.SetLanguage(result_set.getInt("language"));
+	  item.setLanguage(result_set.getInt("language"));
 	  item.setCodeId(result_set.getInt("code_id"));
 	  item.setCodeLength(result_set.getInt("code_length"));
 	  item.setSubmitIp(result_set.getString("submit_ip"));
@@ -1778,7 +1848,6 @@ ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   		case RUNTIME_ERROR_SIGBUS:
   		case RUNTIME_ERROR_SIGABRT:
   		case RUNTIME_ERROR_JAVA:
-  		case RUNTIME_ERROR_PAS:
   		  statistics_buf[problem_id].RE++;
   	    break;
   	}
@@ -1846,7 +1915,6 @@ ProblemStatistics DatabaseInterface::getProblemStatistics(int problem_id) {
   		case RUNTIME_ERROR_SIGBUS:
   		case RUNTIME_ERROR_SIGABRT:
   		case RUNTIME_ERROR_JAVA:
-  		case RUNTIME_ERROR_PAS:
   		  problem_statistics.RE++;
   	    break;
     }
@@ -1992,7 +2060,7 @@ StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
 	  item.setMemory(result_set.getInt("memory"));
 	  item.setSubmitTime(result_set.getString("submit_time"));
 	  item.setResult(result_set.getInt("result"));
-	  item.SetLanguage(result_set.getInt("language"));
+	  item.setLanguage(result_set.getInt("language"));
 	  item.setCodeId(result_set.getInt("code_id"));
 	  item.setCodeLength(result_set.getInt("code_length"));
 	  item.setSubmitIp(result_set.getString("submit_ip"));
@@ -2003,6 +2071,25 @@ StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
   connection->close();
   delete connection;
   return statuslist;
+}
+
+int DatabaseInterface::updateFileVersion(int problem_id, int contest_id) {
+  Connection* connection = createConnection();
+  string query;
+  connection->connect();
+  if (problem_id != -1) {
+    query = "update filestoproblems set version = version + 1 where problem_id = '";
+    query += stringPrintf("%d", problem_id) + "' and file_id in (select file_id from ";
+    query += " files where style in (" + stringPrintf("'%d','%d','%d'))", INFILE, OUTFILE, SPJ);
+  } else {
+    query = "update filestocontests set version = version + 1 where contest_id = '";
+    query += stringPrintf("%d", contest_id) + "' and file_id in (select file_id from ";
+    query += " files where style in (" + stringPrintf("'%d','%d','%d'))", INFILE, OUTFILE, SPJ);
+  }
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
 }
 
 int DatabaseInterface::getUserRank(const string& user_id) {
