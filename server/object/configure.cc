@@ -16,6 +16,31 @@ string Configure::getDatabaseHost() const {
 	return database_configure.host;
 }
 
+int Configure::getJudgeControlMaxClient() const {
+  return judgecontrol.max_client;
+}
+
+int Configure::getJudgeControlPort() const {
+  return judgecontrol.port;
+}
+
+vector<string> Configure::getJudgeControlIpTabs() const {
+  return judgecontrol.ip_tabs;
+}
+
+int Configure::getNetWorkMaxClient() const {
+  return network.max_client;
+}
+
+int Configure::getNetWorkPort() const {
+  return network.port;
+}
+
+vector<string> Configure::getNetWorkIpTabs() const {
+  return network.ip_tabs;
+}
+
+
 string Configure::getDatabaseUser() const {
 	return database_configure.user;
 }
@@ -75,27 +100,62 @@ void Configure::addDatabasetoConfigture(xmlNodePtr cur, Configure& configure){
 void Configure::addJudgeClienttoConfigture(xmlNodePtr cur, Configure& configure){
 	xmlChar * szKey;
 	while (cur != NULL) {
-	  if ((!xmlStrcmp(cur->name, (const xmlChar*) "client"))) {
-	  	xmlNodePtr node = cur->xmlChildrenNode;
-	  	string ip;
-	  	int port;
-	  	while (node != NULL) {
-	  	  if ((!xmlStrcmp(node->name, (const xmlChar*) "ip"))) {
-	  	  	szKey = xmlNodeGetContent(node);
-	  	    ip = string((char *)szKey);
-	  	    xmlFree(szKey);
-	  	  }
-	  	  if ((!xmlStrcmp(node->name, (const xmlChar*) "port"))) {
-	  	  	szKey = xmlNodeGetContent(node);
-	  	    port = atoi(string((char *)szKey).c_str());
-	  	    xmlFree(szKey);
-	  	  }
-	  	  node = node->next;
-	  	}
-	  }
+    xmlNodePtr node = cur;
+    string ip;
+    int port;
+    int max_client;
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "ip"))) {
+      szKey = xmlNodeGetContent(node);
+      ip = string((char *)szKey);
+      configure.judgecontrol.ip_tabs.push_back(ip);
+      xmlFree(szKey);
+    }
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "port"))) {
+      szKey = xmlNodeGetContent(node);
+      port = atoi(string((char *)szKey).c_str());
+      configure.judgecontrol.port = port;
+      xmlFree(szKey);
+    }
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "maxclient"))) {
+      szKey = xmlNodeGetContent(node);
+      max_client = atoi(string((char *)szKey).c_str());
+      configure.judgecontrol.max_client = max_client;
+      xmlFree(szKey);
+    }
 	  cur = cur->next;
 	}
 }
+
+void Configure::addNetWorktoConfigture(xmlNodePtr cur, Configure& configure){
+	xmlChar * szKey;
+	while (cur != NULL) {
+    xmlNodePtr node = cur;
+    string ip;
+    int port;
+    int max_client;
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "ip"))) {
+      szKey = xmlNodeGetContent(node);
+      ip = string((char *)szKey);
+      configure.network.ip_tabs.push_back(ip);
+      xmlFree(szKey);
+    }
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "port"))) {
+      szKey = xmlNodeGetContent(node);
+      port = atoi(string((char *)szKey).c_str());
+      configure.network.port = port;
+      xmlFree(szKey);
+    }
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "maxclient"))) {
+      szKey = xmlNodeGetContent(node);
+      max_client = atoi(string((char *)szKey).c_str());
+      configure.network.max_client = max_client;
+      xmlFree(szKey);
+    } 
+	  cur = cur->next;
+	}
+}
+
+
 void Configure::addLinktoConfigture(xmlNodePtr cur, Configure& configure){
 	xmlChar * szKey;
 	while (cur != NULL) {
@@ -147,7 +207,7 @@ Configure* Configure::createConfigure(){
       xmlNodePtr node = cur->xmlChildrenNode;
       addDatabasetoConfigture(node, *configure);
     }
-    if ((!xmlStrcmp(cur->name, (const xmlChar*) "judgeclient"))) {
+    if ((!xmlStrcmp(cur->name, (const xmlChar*) "judgecontrol"))) {
       xmlNodePtr node = cur->xmlChildrenNode;
       addJudgeClienttoConfigture(node, *configure);
     }
@@ -159,6 +219,11 @@ Configure* Configure::createConfigure(){
       xmlNodePtr node = cur->xmlChildrenNode;
       addNoticetoConfigture(node, *configure);
     }
+    if ((!xmlStrcmp(cur->name, (const xmlChar*) "network"))) {
+      xmlNodePtr node = cur->xmlChildrenNode;
+      addNetWorktoConfigture(node, *configure);
+    }
+
     cur = cur->next;
   }
   xmlFreeDoc(doc);

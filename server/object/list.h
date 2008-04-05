@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <deque>
 
 #include "file.h"
 #include "status.h"
@@ -139,6 +140,19 @@ typedef struct _CONTEST_PROBLEM_ITEM_{
   int total;
 }ContestProblemItem;
 
+typedef struct _JUDGE_MISSION_{
+  Status status; 
+  string source;
+  int version;
+  map<string, string> in_and_out_path;
+  string spj_source_path;
+  int time_limit;
+  int case_time_limit;
+  int memory_limit;
+  string data_path;
+  bool spj;
+}JudgeMission;
+
 typedef vector<UserListItem> UserList;
 typedef vector<ProblemListItem> ProblemList;
 typedef vector<ContestListItem> ContestList;
@@ -156,6 +170,7 @@ typedef set<string> UserSet;
 typedef vector<ContestProblemItem> ContestProblemList;
 typedef set<ProblemUserAC> UserACSet;
 typedef set<int> TopicSet;
+typedef deque<JudgeMission> JudgeQueue;
 
 bool operator<(const ProblemUserAC& a, const ProblemUserAC& b);
 

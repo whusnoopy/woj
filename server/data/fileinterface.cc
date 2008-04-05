@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include "base/util.h"
+#include "base/flags.h"
+#include "base/logging.h"
+
 using namespace std;
 
 FileInterface * FileInterface::instance = NULL;
@@ -79,7 +83,7 @@ int FileInterface::addFile(const string& filename, void * bufi, size_t filelengt
   string directory = filename.substr(0,filename.find_last_of("/"));
   if (access (directory.c_str(), F_OK) < 0) {
     if (errno == ENOENT) {
-      if (mkdir(directory.c_str(), 0755) < 0) {
+      if (mkdirRecursive(directory.c_str(), 0755) < 0) {
         LOG(SYS_ERROR) << "Cannot make the directory";
         return -1;
       }
@@ -119,7 +123,7 @@ int FileInterface::updateFile(const string& filename, void * buf, size_t filelen
 	string directory = filename.substr(0,filename.find_last_of("/"));
   if (access (directory.c_str(), F_OK) < 0) {
     if (errno == ENOENT) {
-      if (mkdir(directory.c_str(), 0755) < 0) {
+      if (mkdirRecursive(directory.c_str(), 0755) < 0) {
         LOG(SYS_ERROR) << "Cannot make the directory";
         return -1;
       }

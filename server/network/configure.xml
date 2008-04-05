@@ -12,4 +12,12 @@
   <notice>
     <path>./notice.note</path>
   </notice>
+  <judgecontol>
+    <maxclient>20</maxclient>
+    <port>3241</port>
+  </judgecontrol>
+  <network>
+    <maxclient>100</maxclient>
+    <port>3030</port>
+  </network>
 </server>

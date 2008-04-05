@@ -17,5 +17,9 @@ string changeSymbol(const string& str);
 time_t changeTime(const string& time);
 
 int caltime(const string& end_time, const string& start_time);
+
+string getProblemDataPath(int problem_id);
+
+string getContestDataPath(int contest_id); 
 #endif
 

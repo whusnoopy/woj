@@ -2,6 +2,8 @@
 #include <iostream>
 using namespace std;
 
+DECLARE_FLAGS(string, root_dir);
+
 string changeSymbol(const string& str){
   string strbuf(str);
   string::size_type pos = 0;
@@ -30,4 +32,11 @@ int caltime(const string& end_time, const string& start_time){
   return static_cast<int> (diff);
 }
 
+string getProblemDataPath(int problem_id) {
+  return FLAGS_root_dir + stringPrintf("/file/data/p%d/", problem_id);
+}
+
+string getContestDataPath(int contest_id) {
+  return FLAGS_root_dir + stringPrintf("/file/data/p%d/", contest_id);
+}
 

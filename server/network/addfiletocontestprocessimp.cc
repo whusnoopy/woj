@@ -13,8 +13,11 @@
 #include "object/list.h"
 #include "object/bufsize.h"
 #include "object/info.h"
+#include "util/filetype.h"
 #include "object/user.h"
 using namespace std;
+
+DECLARE_FLAGS(string, root_dir);
 
 void toUpCase(string& suffix) {
   for (int i =0 ;i < suffix.length(); i++) {
@@ -29,10 +32,10 @@ int getSuffix(string& suffix) {
   if (suffix == "JPG" || suffix == "JPEG" || suffix == "GIF"|| 
       suffix == "BMP" || suffix == "PNG") {
     suffix = "imp";
-    return 3;
+    return IMG;
   } else if (suffix == "cc" || suffix == "c" || suffix == "cpp") {
     suffix = "spj";
-    return 4;
+    return SPJ;
   } 
   return 0;
 }
@@ -78,7 +81,7 @@ void AddFileToContestProcessImp::process(int socket_fd, const string& ip, int le
     return;
   }
   string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S"); 
-  string path = "/file/" + suffix + "/c"+ 
+  string path = FLAGS_root_dir + "/file/" + suffix + "/c"+ 
                 stringPrintf("%d", contest.getContestId()) + "/" + 
                 time + "_" +
                 filename; 

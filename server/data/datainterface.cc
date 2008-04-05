@@ -33,6 +33,10 @@ int DataInterface::addMail(const Mail& mail) {
   return DatabaseInterface::getInstance().addMail(mail);
 }
 
+Status DataInterface::getStatus(int status_id) {
+  return DatabaseInterface::getInstance().getStatus(status_id);
+}
+
 int DataInterface::addCode(const Code& code) {
   return DatabaseInterface::getInstance().addCode(code);
 }
@@ -95,6 +99,10 @@ ContestRankList DataInterface::getContestRankList(const ContestRankListInfo& con
   ContestRankList contest_ranklist = CacheManager::getInstance().getContestRankList(contest_ranklist_info.contest_id);
   //return the $page_id page
   return contest_ranklist;
+}
+
+int DataInterface::updateFileVersion(int problem_id, int contest_id) {
+  return DatabaseInterface::getInstance().updateFileVersion(problem_id, contest_id);
 }
 
 ContestStatistics DataInterface::getContestStatistics(int contest_id) {
@@ -234,7 +242,7 @@ int DataInterface::updateDiscuss(const Discuss& discuss) {
 
 int DataInterface::updateStatus(const Status& status) {
   //chinese :tong bu cache
-  return DatabaseInterface::getInstance().updateStatus(status);
+  return CacheManager::getInstance().updateStatus(status);
 }
 
 int DataInterface::updateUser(const User& user) {
@@ -257,6 +265,14 @@ ProblemStatistics DataInterface::getProblemStatistics(int problem_id) {
 
 int DataInterface::addUser(const User& user) {
   return DatabaseInterface::getInstance().addUser(user);
+}
+
+map<string, string> DataInterface::getProblemInAndOutFile(const Problem& problem) {
+  return DatabaseInterface::getInstance().getProblemInAndOutFile(problem);
+}
+
+string DataInterface::getProblemSpjFile(const Problem& problem) {
+  return DatabaseInterface::getInstance().getProblemSpjFile(problem);
 }
 
 int DataInterface::setCodeSharing(const Code& code) {

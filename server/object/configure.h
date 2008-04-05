@@ -25,6 +25,12 @@ public:
   string getDatabaseName() const ;
   string getLinkPath() const;
   string getNoticePath() const;
+  int getJudgeControlMaxClient() const;
+  int getJudgeControlPort() const;
+  vector<string> getJudgeControlIpTabs() const;
+  int getNetWorkMaxClient() const;
+  int getNetWorkPort() const;
+  vector<string> getNetWorkIpTabs() const;
   
   static Configure& getInstance(){
   	if (instance == NULL) {
@@ -47,11 +53,22 @@ private:
   } database_configure;
   string linkpath;
   string noticepath;
+  struct _JUDGECONTROL_CONFIGURE_{
+    int max_client;
+    int port;
+    vector<string> ip_tabs;
+  } judgecontrol;
+  struct _NETWORK_CONFIGURE_{
+    int max_client;
+    int port;
+    vector<string> ip_tabs;
+  } network;
   static Configure * instance;
   static void addDatabasetoConfigture(xmlNodePtr cur, Configure& configure);
   static void addJudgeClienttoConfigture(xmlNodePtr cur, Configure& configure);
   static void addLinktoConfigture(xmlNodePtr cur, Configure& configure);
   static void addNoticetoConfigture(xmlNodePtr cur, Configure& configure);
+  static void addNetWorktoConfigture(xmlNodePtr cur, Configure& configure);
   static Configure* createConfigure();
 };
 

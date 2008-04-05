@@ -1,7 +1,7 @@
 #ifndef _FLOOD_TEAM_PROCESS_THREAD_
 #define _FLOOD_TEAM_PROCESS_THREAD_
 
-#include "../util/thread.h"
+#include "util/thread.h"
 #include "processimp.h"
 #include <iostream>
 using namespace std;

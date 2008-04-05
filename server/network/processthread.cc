@@ -51,11 +51,14 @@
 #include "getcontestfileprocessimp.h"
 #include "addproblemtocontestprocessimp.h"
 #include "addusertocontestprocessimp.h"
+#include "submitprocessimp.h"
+#include "rejudgeprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
+#include "util/calulate.h"
 using namespace std;
-
+/*
 string getIp(unsigned int ip_){
   unsigned int a, b, c, d;
   a = ip_ % 256;
@@ -67,7 +70,7 @@ string getIp(unsigned int ip_){
   d = ip_ % 256;
   return stringPrintf("%u.%u.%u.%u", d, c, b, a);
 }
-
+*/
 void ProcessThread::running(){
   //cout<<"Socket is "<<m_socket<<endl;
   int connect_fd;
@@ -222,6 +225,12 @@ void ProcessThread::running(){
         break;
       case 72:  //cu
         m_process_imp = new AddUserToContestProcessImp();
+        break;
+      case 480:  //sm
+        m_process_imp = new SubmitProcessImp();
+        break;
+      case 451:  //rj
+        m_process_imp = new RejudgeProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

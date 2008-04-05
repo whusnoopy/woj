@@ -3,9 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "base/util.h"
-#include "base/logging.h"
-#include "base/flags.h"
+#include "object/inc.h"
 #include "data/datainterface.h"
 #include "util/calulate.h"
 #include "object/file.h"
@@ -13,8 +11,11 @@
 #include "object/problem.h"
 #include "object/list.h"
 #include "object/info.h"
+#include "util/filetype.h"
 #include "object/user.h"
 using namespace std;
+
+DECLARE_FLAGS(string, root_dir);
 
 void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int length){
   LOG(INFO) << "Process add input and output file for:" << ip;
@@ -45,9 +46,9 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
       LOG(ERROR) << "Cannot read input from:" << ip;
       return;
     }
-    path = stringPrintf("\\file\\data\\p%d\\%s_%d.in", problem_id, time.c_str(), i);
+    path = getProblemDataPath(problem_id) + stringPrintf("%d.in", i);
     input.setPath(path);
-    input.setType(1);
+    input.setType(INFILE);
     int input_id = DataInterface::getInstance().addFilePathtoProblem(input, problem);
     DataInterface::getInstance().addFile(path, buf.getBuf(), input_len);
     if (socket_read(socket_fd, len, 10) != 10) {
@@ -60,9 +61,9 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
       LOG(ERROR) << "Cannot read output from:" << ip;
       return;
     }
-    path = stringPrintf("\\file\\data\\p%d\\%s_%d.out", problem_id, time.c_str(), i);
+    path = getProblemDataPath(problem.getProblemId()) + stringPrintf("%d.out", i);
     output.setPath(path);
-    output.setType(2);
+    output.setType(OUTFILE);
     int output_id = DataInterface::getInstance().addFilePathtoProblem(output, problem);
     DataInterface::getInstance().addFile(path, buf.getBuf(), output_len);
     DataInterface::getInstance().addInputtoOutput(input_id, output_id);

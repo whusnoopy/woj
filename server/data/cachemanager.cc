@@ -41,8 +41,21 @@ StatusList CacheManager::getStatus() {
   return status_cache.getValues();
 }
 
+int CacheManager::addStatus(const Status& status) {
+  int status_id = DatabaseInterface::getInstance().addStatus(status);
+  Status status_buf = status;
+  status_buf.setStatusId(status_id);
+  status_cache.put(status_id, status_buf);
+  return status_id;
+}
+
 int CacheManager::updateStatus(const Status& status) {
   status_cache.put(status.getStatusId(), status); 
+  if (status.getContestId() > 0) {
+    updateContestStatistics(status, false);
+    updateContestStatistics(status, false);
+  }
+  DatabaseInterface::getInstance().updateStatus(status);
   return 1;
 }
 
@@ -102,7 +115,6 @@ int CacheManager::updateContestStatistics(const Status& status, bool add) {
   		  case RUNTIME_ERROR_SIGBUS:
   		  case RUNTIME_ERROR_SIGABRT:
   		  case RUNTIME_ERROR_JAVA:
-  		  case RUNTIME_ERROR_PAS:
   		    iter->RE++;
   	      break;
   	  }  
