@@ -1,6 +1,7 @@
 // Copyright 2008 Flood Team of Wuhan Univ.
 // Author: yewen@mail.whu.edu.cn (Wen, YE)
 
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -222,7 +223,7 @@ sighandler_t installSignalHandler(int signal,
   return old_act.sa_handler;
 }
 
-int connectServer(const string& address, int port) {
+int connectToServer(const string& address, int port) {
   int communicate_socket = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in server_address;
   memset(&server_address, 0, sizeof(server_address));

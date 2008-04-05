@@ -17,6 +17,7 @@
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/client/result.h"
 #include "judge/client/syscall.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
@@ -26,24 +27,11 @@
 DECLARE_FLAGS(int, uid);
 DECLARE_FLAGS(int, gid);
 
-int sendRunningMessage(int communicate_socket, int time_, int memory_) {
-  static char message[9];
-  message[0] = RUNNING;
-  *(unsigned int*)(message + 1) = htonl((unsigned int)(time_));
-  *(unsigned int*)(message + 5) = htonl((unsigned int)(memory_));
-  if (socket_write(communicate_socket, message, sizeof(message)) == -1) {
-    LOG(ERROR) << "Fail to send running message back";
-    return -1;
-  }
-  return 0;
-}
-
 int monitor(int communicate_socket,
             pid_t pid,
             int time_limit,
             int memory_limit,
             TraceCallback* callback) {
-  time_limit *= 1000; // Transfer time limit from s to ms
   LOG(DEBUG) << "Start to monitor process " << pid;
   int result = -1;
   int time_ = 0;
@@ -53,8 +41,6 @@ int monitor(int communicate_socket,
   int ms;
   time_t last_time = time(NULL) - 1;
   time_t current_time = 0;
-  if (sendRunningMessage(communicate_socket, time_, memory_))
-    return SYSTEM_ERROR;
 
   while (result < 0 && !callback->hasExited()) {
     waitpid(pid, &status, 0);
@@ -95,13 +81,6 @@ int monitor(int communicate_socket,
     
       LOG(DEBUG) << "Monitor process " << pid << " with time/memory("
                  << time_ << "/" << memory_ << ")";
-
-      if (sendRunningMessage(communicate_socket, time_, memory_)) {
-        if (!callback->hasExited())
-          kill(pid, SIGKILL);
-        result = SYSTEM_ERROR;
-        break;
-      }
     }
   }
 
@@ -128,8 +107,8 @@ int monitor(int communicate_socket,
   if (result == MEMORY_LIMIT_EXCEEDED)
     memory_ = memory_limit + 36;
 
-  if (sendRunningMessage(communicate_socket, time_, memory_))
-    return SYSTEM_ERROR;
+  JudgeResult::getInstance()->updateTime(time_);
+  JudgeResult::getInstance()->updateMemory(memory_);
 
   return result;
 }
@@ -188,14 +167,11 @@ int doRun(int communicate_socket,
                     memory_limit,
                     output_limit);
   } else {
-    return -1;
+    return SYSTEM_ERROR;
   }
   if (result) {
     sendReply(communicate_socket, result);
-    if (result == SYSTEM_ERROR)
-      return -1;
-    else
-      return 1;
+    return result;
   }
   return 0;
 }

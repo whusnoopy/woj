@@ -7,12 +7,12 @@
 enum COMMUNICATION_STATUS {
   FIRST_STATUS = 1,
   ACCEPTED = 1,           // 1. Correct answer
-  PRESENTATION_ERROR,     // 2. Presentation error
-  TIME_LIMIT_EXCEEDED,    // 3. Time limit exceed
-  MEMORY_LIMIT_EXCEEDED,  // 4. Memory limit exceed
-  WRONG_ANSWER,           // 5. Wrong answer
-  OUTPUT_LIMIT_EXCEEDED,  // 6. Output limit exceed
-  COMPILE_ERROR,          // 7. Compile error
+  WRONG_ANSWER,           // 2. Wrong answer
+  PRESENTATION_ERROR,     // 3. Presentation error
+  COMPILE_ERROR,          // 4. Compile error
+  TIME_LIMIT_EXCEEDED,    // 5. Time limit exceed
+  MEMORY_LIMIT_EXCEEDED,  // 6. Memory limit exceed
+  OUTPUT_LIMIT_EXCEEDED,  // 7. Output limit exceed
   RUNTIME_ERROR_SIGSEGV,  // 8. Runtime-error when buffer overflow, stack
                           //    overflow or illegal file access
   RUNTIME_ERROR_SIGFPE,   // 9. Runtime-error when divided by 0
@@ -21,20 +21,19 @@ enum COMMUNICATION_STATUS {
                           //     should be finished
   RUNTIME_ERROR_JAVA,     // 12. Runtime-error of JAVA when there is outputable
                           //     info
-  RUNTIME_ERROR_PAS,      // 13. Runtime-error of PASCAL when there is
-                          //     outputable info
-  RESTRICTED_FUNCTION,    // 14. Restricted functions, like system call
-  SYSTEM_ERROR,           // 15. Unknown system errors
-  PENDING,                // 16. Pending for Judge
-  COMPILING,              // 17. Judge is compiling the source file
-  RUNNING,                // 18. Judge is running the submit executable file
-  JUDGING,                // 19. Judge is compare the submit result and the
+  RESTRICTED_FUNCTION,    // 13. Restricted functions, like system call
+  SYSTEM_ERROR,           // 14. Unknown system errors
+  PENDING,                // 15. Pending for Judge
+  COMPILING,              // 16. Judge is compiling the source file
+  RUNNING,                // 17. Judge is running the submit executable file
+  JUDGING,                // 18. Judge is compare the submit result and the
                           //     standard output
   LAST_JUDGE_STATUS,
   FIRST_REPLY_STATUS = 100,
   READY = 100,            // 100. Judge is ready to judge
   UNSUPPORTED_SOURCE_FILE_TYPE,
   DATA_EXSIST,
+  INVALID_FILE_SIZE,
   LAST_STATUS,
 };
 
