@@ -12,6 +12,7 @@
 #include "base/util.h"
 #include "base/judge_result.h"
 
+#include "judge/client/client.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
 

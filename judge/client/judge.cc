@@ -14,6 +14,7 @@
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/client/client.h"
 #include "judge/client/syscall.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
