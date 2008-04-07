@@ -32,7 +32,7 @@ public:
     return *instance;
   }
 
-  static void destory() {
+  static void destroy() {
     if (instance != NULL)
       delete instance;
     instance = NULL;
