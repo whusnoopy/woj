@@ -242,3 +242,12 @@ int connectToServer(const string& address, int port) {
   return communicate_socket;
 }
 
+int lockFile(int file, int cmd) {
+  struct flock lock;
+  lock.l_type = F_WRLCK;
+  lock.l_start = 0;
+  lock.l_whence = SEEK_SET;
+  lock.l_len = 0;
+  return fcntl(file, cmd, &lock);
+}
+

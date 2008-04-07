@@ -28,7 +28,7 @@ rebuild: clean all
 test : $(TESTS)
 
 judge_client : $(OBJS) $(DEPS)
-	$(CXX) $(CXXFLAGS) $(EXEFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 test_compile : test_compile.cc compile.o trace.o utils.o $(DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
@@ -39,3 +39,5 @@ test_run : test_run.cc run.o trace.o utils.o $(DEPS)
 test_judge: test_judge.cc judge.o trace.o utils.o $(DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
+test_main: test_main.cc $(OBJS) $(DEPS)
+	$(CXX) $(CXXFLAGS) -O $@ $^
