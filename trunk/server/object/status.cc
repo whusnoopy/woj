@@ -133,3 +133,8 @@ void Status::setSubmitIp(const string& submit_ip){
 void Status::setErrorId(int error_id){
   error_id_ = error_id;
 }
+
+bool operator<(const Status& a, const Status& b) {
+  return a.getSubmitTime() > b.getSubmitTime();
+}
+

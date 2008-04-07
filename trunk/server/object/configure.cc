@@ -1,6 +1,18 @@
 #include "configure.h"
 
+#include "inc.h"
+#include <pthread.h>
+
 Configure* Configure::instance = NULL;
+pthread_mutex_t Configure::lock;
+
+Configure::Configure(const Configure& other) {
+  database_configure = other.database_configure;
+  linkpath = other.linkpath;
+  noticepath = other.noticepath;
+  judgecontrol = other.judgecontrol;
+  network = other.network;
+}
 
 void Configure::setDatabase(const string& host, 
                             const string& user, 
@@ -24,7 +36,7 @@ int Configure::getJudgeControlPort() const {
   return judgecontrol.port;
 }
 
-vector<string> Configure::getJudgeControlIpTabs() const {
+set<string> Configure::getJudgeControlIpTabs() const {
   return judgecontrol.ip_tabs;
 }
 
@@ -36,7 +48,7 @@ int Configure::getNetWorkPort() const {
   return network.port;
 }
 
-vector<string> Configure::getNetWorkIpTabs() const {
+set<string> Configure::getNetWorkIpTabs() const {
   return network.ip_tabs;
 }
 
@@ -107,7 +119,7 @@ void Configure::addJudgeClienttoConfigture(xmlNodePtr cur, Configure& configure)
     if ((!xmlStrcmp(node->name, (const xmlChar*) "ip"))) {
       szKey = xmlNodeGetContent(node);
       ip = string((char *)szKey);
-      configure.judgecontrol.ip_tabs.push_back(ip);
+      configure.judgecontrol.ip_tabs.insert(ip);
       xmlFree(szKey);
     }
     if ((!xmlStrcmp(node->name, (const xmlChar*) "port"))) {
@@ -136,7 +148,7 @@ void Configure::addNetWorktoConfigture(xmlNodePtr cur, Configure& configure){
     if ((!xmlStrcmp(node->name, (const xmlChar*) "ip"))) {
       szKey = xmlNodeGetContent(node);
       ip = string((char *)szKey);
-      configure.network.ip_tabs.push_back(ip);
+      configure.network.ip_tabs.insert(ip);
       xmlFree(szKey);
     }
     if ((!xmlStrcmp(node->name, (const xmlChar*) "port"))) {
@@ -187,17 +199,17 @@ Configure* Configure::createConfigure(){
 	//xmlChar* szKey;
   doc = xmlParseFile(configure_file.c_str());
   if (doc == NULL){
-    cout << "open configure.xml error" << endl;
+    LOG(ERROR) << "open configure.xml error";
     return configure;
   }
   cur = xmlDocGetRootElement(doc);
   if (cur == NULL){
-  	cout << "Empty configure." << endl;
+  	LOG(ERROR) << "Empty configure.";
   	xmlFreeDoc(doc);
   	return configure;
   }
   if (xmlStrcmp(cur->name, (const xmlChar *)"server")) {
-    cout << "Wrong type document." << endl;
+    LOG(ERROR) << "Wrong type document.";
     xmlFreeDoc(doc);
     return configure;
   }

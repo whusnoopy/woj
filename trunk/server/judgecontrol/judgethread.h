@@ -16,6 +16,7 @@ public:
   void quit();
   void failed();
 	void running();
+  bool check(const string& ip);
 private:
   bool flag;
 

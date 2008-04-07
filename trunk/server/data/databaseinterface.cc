@@ -1,5 +1,6 @@
 #include <iostream>
 #include <set>
+#include <algorithm>
 
 #include "data/databaseinterface.h"
 #include "util/filetype.h"
@@ -185,6 +186,44 @@ int DatabaseInterface::addProblem(const Problem& problem){
   connection->close();
   delete connection; 
   return problem_id;
+}
+
+int DatabaseInterface::getProblemListNum() {
+  Connection* connection = createConnection();
+  connection->connect();
+  int ret = 0;
+  string query = "select problem_id from problems where problem_id";
+  query += " >= all (select problem_id from problems)";
+  Result result_set = connection->excuteQuery(query);
+  if (result_set.next()) {
+    ret = result_set.getInt("problem_id")/100 + 1;
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::getContestListNum(bool normal) {
+  Connection* connection = createConnection();
+  connection->connect();
+  string buf;
+  if (normal)
+    buf = " != 'V' ";
+  else
+    buf = " == 'V' ";
+  int ret = 0;
+  string query = "select contest_id from contests where contest_id";
+  query += " >= all (select contest_id from contests where contest_type ";
+  query += buf + ") and contest_type " + buf;
+  Result result_set = connection->excuteQuery(query);
+  if (result_set.next()) {
+    ret = result_set.getInt("contest_id")/100 + 1;
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
 }
 
 int DatabaseInterface::updateProblem(const Problem& problem) {
@@ -1735,6 +1774,7 @@ ContestRankList DatabaseInterface::getContestRankList(int contest_id){
     contest_ranklist.push_back(iter->second);
     iter++;
   }
+  sort(contest_ranklist.begin(), contest_ranklist.end());
   return contest_ranklist;
 }
 

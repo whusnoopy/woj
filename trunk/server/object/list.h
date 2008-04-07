@@ -173,5 +173,6 @@ typedef set<int> TopicSet;
 typedef deque<JudgeMission> JudgeQueue;
 
 bool operator<(const ProblemUserAC& a, const ProblemUserAC& b);
+bool operator<(const ContestRankListItem& a, const ContestRankListItem& b);
 
 #endif /*LIST_H_*/

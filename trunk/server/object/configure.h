@@ -3,14 +3,17 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <iostream>
 
 #include <libxml/parser.h>
+#include <pthread.h>
 using namespace std;
 
 class Configure{
 public:
   Configure() {};
+  Configure(const Configure& );
 
   void setDatabase(const string& host, 
                    const string& user, 
@@ -27,12 +30,18 @@ public:
   string getNoticePath() const;
   int getJudgeControlMaxClient() const;
   int getJudgeControlPort() const;
-  vector<string> getJudgeControlIpTabs() const;
+  set<string> getJudgeControlIpTabs() const;
   int getNetWorkMaxClient() const;
   int getNetWorkPort() const;
-  vector<string> getNetWorkIpTabs() const;
+  set<string> getNetWorkIpTabs() const;
+
+  static void init() {
+    pthread_mutex_init(&lock, NULL);
+  }
   
   static Configure& getInstance(){
+    pthread_mutex_lock(&lock);
+    pthread_mutex_unlock(&lock);
   	if (instance == NULL) {
   	  instance = createConfigure();
   	}
@@ -42,6 +51,19 @@ public:
   	if (instance) {
   	  delete instance;
   	}
+    instance = NULL;
+    pthread_mutex_destroy(&lock);
+  }
+
+  static Configure reGet() {
+    pthread_mutex_lock(&lock);
+    if (instance) {
+      delete instance;
+    }
+    instance = createConfigure();
+    Configure conf(*instance);
+    pthread_mutex_unlock(&lock);
+    return conf;
   }
   
 private:
@@ -56,14 +78,15 @@ private:
   struct _JUDGECONTROL_CONFIGURE_{
     int max_client;
     int port;
-    vector<string> ip_tabs;
+    set<string> ip_tabs;
   } judgecontrol;
   struct _NETWORK_CONFIGURE_{
     int max_client;
     int port;
-    vector<string> ip_tabs;
+    set<string> ip_tabs;
   } network;
   static Configure * instance;
+  static pthread_mutex_t lock;
   static void addDatabasetoConfigture(xmlNodePtr cur, Configure& configure);
   static void addJudgeClienttoConfigture(xmlNodePtr cur, Configure& configure);
   static void addLinktoConfigture(xmlNodePtr cur, Configure& configure);

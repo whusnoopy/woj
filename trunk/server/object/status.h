@@ -68,4 +68,6 @@ private:
 	int error_id_;
 };
 
+bool operator<(const Status& a, const Status& b);
+
 #endif /*STATUS_H_*/

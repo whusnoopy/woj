@@ -87,6 +87,8 @@ public:
   map<string, string> getProblemInAndOutFile(const Problem& problem);
   string getProblemSpjFile(const Problem& problem);
   Status getStatus(int status_id);
+  int getProblemListNum();
+  int getContestListNum(bool normal);
 
   Connection* createConnection(const string& host,
                               const string& user,

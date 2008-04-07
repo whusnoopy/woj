@@ -1,4 +1,5 @@
 #include <string>
+#include <set>
 
 #include "processthread.h"
 #include <sys/socket.h>
@@ -57,20 +58,13 @@
 #include "base/util.h"
 #include "base/flags.h"
 #include "util/calulate.h"
+#include "object/configure.h"
 using namespace std;
-/*
-string getIp(unsigned int ip_){
-  unsigned int a, b, c, d;
-  a = ip_ % 256;
-  ip_ /= 256;
-  b = ip_ % 256;
-  ip_ /= 256;
-  c = ip_ % 256;
-  ip_ /= 256;
-  d = ip_ % 256;
-  return stringPrintf("%u.%u.%u.%u", d, c, b, a);
+
+bool ProcessThread::check(const string& ip) {
+  return Configure::reGet().getNetWorkIpTabs().count(ip) > 0;
 }
-*/
+
 void ProcessThread::running(){
   //cout<<"Socket is "<<m_socket<<endl;
   int connect_fd;
@@ -81,6 +75,11 @@ void ProcessThread::running(){
     connect_fd = accept(m_socket, (struct sockaddr *)&childaddr, &len);
     pthread_mutex_unlock(m_lock);
     string ip = getIp(ntohl(childaddr.sin_addr.s_addr));
+    if (!check(ip)) {
+      LOG(WARNING) << "Unknown connection from:" << ip;
+      close(connect_fd);
+      continue;
+    }
     LOG(INFO) << "Connection from :" << ip; 
     char buf[20];
     if (socket_read(connect_fd, buf, 10) != 10) {

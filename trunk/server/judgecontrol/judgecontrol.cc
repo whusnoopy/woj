@@ -41,7 +41,7 @@ void JudgeControl::addMission(const JudgeMission& judge_mission) {
 void JudgeControl::start(){
   //configure judgeserver;
   struct sockaddr_in server_addr;
-  if ((listen_fd_ = socket(AF_INET, SOCK_STREAM, 0)) != -1) {
+  if ((listen_fd_ = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     LOG(SYS_ERROR) << "Cannot create judge socket.";
     exit(-1);
   }
@@ -66,6 +66,7 @@ void JudgeControl::start(){
     judge_pool_[i] = JudgeThread();
     judge_pool_[i].start();
   }
+  LOG(INFO) << "Judge Pool creat complete.";
 }
 
 void JudgeControl::join() {

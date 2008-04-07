@@ -310,6 +310,13 @@ int DataInterface::addFile(const string& filename, void* bufi, size_t filelength
 FileData DataInterface::getFile(const string& filename) {
   return CacheManager::getInstance().getFileData(filename);
 }
+
+int DataInterface::getProblemListNum() {
+  return DatabaseInterface::getInstance().getProblemListNum();
+}
+int DataInterface::getContestListNum(bool normal) {
+  return DatabaseInterface::getInstance().getContestListNum(normal);
+}
  
 int DataInterface::updateFile(const string& filename, void* buf, size_t filelength) {
   return FileInterface::getInstance().updateFile(filename, buf, filelength);

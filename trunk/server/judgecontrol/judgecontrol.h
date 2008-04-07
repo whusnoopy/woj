@@ -23,7 +23,7 @@ public:
   JudgeMission getMission();
   void start();
   void join();
-  
+
   static JudgeControl& getInstance() {
     if (instance == NULL) {
       instance = new JudgeControl;

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #include <pthread.h>
 #include <arpa/inet.h>
@@ -12,8 +13,13 @@
 #include "judgecontrol/judgecontrol.h"
 #include "util/calulate.h"
 #include "base/judge_result.h"
+#include "object/configure.h"
 
 using namespace std;
+
+bool JudgeThread::check(const string& ip) {
+  return Configure::reGet().getJudgeControlIpTabs().count(ip) > 0;
+}
 
 int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const string& ip) {
   Status status = mission.status;
@@ -374,6 +380,11 @@ void JudgeThread::running() {
                         (struct sockaddr *)&child_addr, &len);
     pthread_mutex_unlock(&JudgeControl::getInstance().socket_lock);
     string ip = getIp(ntohl(child_addr.sin_addr.s_addr));
+    if (!check(ip)) {
+      LOG(ERROR) << "Unknown connection from:" << ip;
+      close(connect_fd);
+      continue;
+    }
     LOG(INFO) << "Judge Control Connection from:" << ip;
     
     while (!flag) {
