@@ -34,7 +34,7 @@ public:
     return *instance;
   }
 
-  static void destory(){
+  static void destroy(){
     if(instance)
       delete instance;
     instance = NULL;

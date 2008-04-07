@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<server>
+  <database>
+    <host>localhost</host>
+    <user>root</user>
+    <password>noahoak</password>
+    <name>onlinejudgetest</name>
+  </database>
+  <link>
+    <path>./link.ln</path>
+  </link>
+  <notice>
+    <path>./notice.note</path>
+  </notice>
+  <judgecontol>
+    <maxclient>20</maxclient>
+    <port>3241</port>
+  </judgecontrol>
+  <network>
+    <maxclient>100</maxclient>
+    <port>3030</port>
+  </network>
+</server>

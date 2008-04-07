@@ -28,7 +28,7 @@ public:
     }
     return *instance;
   }
-  static void destory() {
+  static void destroy() {
     delete instance;
   }
   
