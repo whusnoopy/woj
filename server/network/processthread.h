@@ -17,6 +17,7 @@ public:
   void quit();
 
 	void running();
+  bool check(const string& ip);
 private:
 	int m_socket;
 	ProcessImp* m_process_imp;

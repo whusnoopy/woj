@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <pthread.h>
+
 #include "data/cache.h"
 #include "object/objectinc.h"
 using namespace std;
@@ -11,7 +13,8 @@ using namespace std;
 class CacheManager{
 public:
   CacheManager();
-  
+  ~CacheManager();
+
   ContestStatistics getContestStatistics(int contest_id);
   ContestRankList getContestRankList(int contest_id);
   StatusList getStatus();
@@ -38,6 +41,13 @@ private:
   Cache<int, Contest> contest_cache;
   Cache<string, FileData> filedata_cache;
   Cache<int, Status> status_cache;
+
+  pthread_mutex_t contest_statistics_lock;
+  pthread_mutex_t contest_ranklist_lock;
+  pthread_mutex_t contest_lock;
+  pthread_mutex_t status_lock;
+  pthread_mutex_t filedata_lock;
+
   static CacheManager* instance;
 };
 

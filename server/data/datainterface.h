@@ -87,6 +87,8 @@ public:
   map<string, string> getProblemInAndOutFile(const Problem& problem);
   string getProblemSpjFile(const Problem& problem);
   Status getStatus(int status_id);
+  int getProblemListNum();
+  int getContestListNum(bool normal);
   
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);

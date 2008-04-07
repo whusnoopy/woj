@@ -55,12 +55,13 @@ void Server::start() {
     threads[i] = ProcessThread(listen_fd_, &socket_lock);
     threads[i].start();
   }
-
+  LOG(INFO) << "Process Thread Pool create complete.";
 }
 
 void Server::join() {
   for (int i = 0; i < max_client_; i++){
     threads[i].join();
   }
+  close(listen_fd_);
 }
 

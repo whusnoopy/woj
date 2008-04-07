@@ -15,6 +15,7 @@
 using namespace std;
 
 void init() {
+  Configure::init();
   Configure::getInstance();
   DataInterface::getInstance();
   FileInterface::getInstance();
