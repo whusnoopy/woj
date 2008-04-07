@@ -299,6 +299,30 @@ void process(int communicate_socket) {
   return;
 }
 
+int alreadyRunning() {
+  int file = open(stringPrintf("%s/judge.pid", FLAGS_root_dir.c_str()).c_str(),
+                  O_RDWR | O_CREAT,
+                  0644);
+  if (file < 0) {
+    LOG(SYS_ERROR) << "Fail to open judge.pid";
+    exit(1);
+  }
+  if (lockFile(file, F_SETLK) == -1) {
+    if (errno == EACCES || errno == EAGAIN) {
+      close(file);
+      return 1;
+    } else {
+      LOG(SYS_ERROR) << "Fail to lock judge.pid";
+      exit(1);
+    }
+  }
+  ftruncate(file, 0);
+  char buffer[20];
+  sprintf(buffer, "%ld", (long)(getpid()));
+  socket_write(file, buffer, strlen(buffer) + 1);
+  return 0;
+}
+
 int terminated = 0;
 int socket_broken = 0;
 
@@ -324,7 +348,11 @@ int main(int argc, char* argv[]) {
 
   // Run in daemonize mode
   if (FLAGS_daemon) {
-    
+    // daemon();
+    if (alreadyRunning()) {
+      LOG(ERROR) << "Another instance of judge_client exists";
+      return 1;
+    }
   }
 
   // change working directory
@@ -333,6 +361,8 @@ int main(int argc, char* argv[]) {
                    << "Fail to change working dir to " << FLAGS_root_dir;
     return 1;
   }
+  LOG(DEBUG) << "Change root_dir successful";
+
   char path[MAX_PATH_LENGTH + 1];
   if (getcwd(path, sizeof(path)) == NULL) {
     LOG(SYS_ERROR) << "Cannot get current working directory";
@@ -356,8 +386,10 @@ int main(int argc, char* argv[]) {
   // connect to server
   int communicate_socket =
     connectToServer(FLAGS_server_address, FLAGS_server_port);
-  if (communicate_socket == -1)
+  if (communicate_socket == -1) {
+    system(stringPrintf("rm -rf %s", working_root.c_str()).c_str());
     return -1;
+  }
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);

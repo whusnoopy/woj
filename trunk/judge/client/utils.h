@@ -58,5 +58,7 @@ sighandler_t installSignalHandler(int signal,
 
 int connectToServer(const string& address, int port);
 
+int lockFile(int file, int cmd);
+
 #endif
 
