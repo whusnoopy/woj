@@ -1,5 +1,5 @@
-#ifndef _SERVER_NETWORK_JUDGECONTROL_H__
-#define _SERVER_NETWORK_JUDGECONTROL_H__
+#ifndef _SERVER_NETWORK_SERVER_H__
+#define _SERVER_NETWORK_SERVER_H__
 
 #include <vector>
 

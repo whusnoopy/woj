@@ -34,6 +34,8 @@ public:
   int getNetWorkMaxClient() const;
   int getNetWorkPort() const;
   set<string> getNetWorkIpTabs() const;
+  int getClientServerMaxClient() const;
+  int getClientServerPort() const;
 
   static void init() {
     pthread_mutex_init(&lock, NULL);
@@ -85,6 +87,10 @@ private:
     int port;
     set<string> ip_tabs;
   } network;
+  struct _CLIENTSERVER_CONFIGURE_{
+    int max_client;
+    int port;
+  } client_server;
   static Configure * instance;
   static pthread_mutex_t lock;
   static void addDatabasetoConfigture(xmlNodePtr cur, Configure& configure);
@@ -92,6 +98,7 @@ private:
   static void addLinktoConfigture(xmlNodePtr cur, Configure& configure);
   static void addNoticetoConfigture(xmlNodePtr cur, Configure& configure);
   static void addNetWorktoConfigture(xmlNodePtr cur, Configure& configure);
+  static void addClientServertoConfigture(xmlNodePtr cur, Configure& configure);
   static Configure* createConfigure();
 };
 

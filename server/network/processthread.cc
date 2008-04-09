@@ -62,7 +62,7 @@
 using namespace std;
 
 bool ProcessThread::check(const string& ip) {
-  return Configure::reGet().getNetWorkIpTabs().count(ip) > 0;
+  return Configure::getInstance().getNetWorkIpTabs().count(ip) > 0;
 }
 
 void ProcessThread::running(){

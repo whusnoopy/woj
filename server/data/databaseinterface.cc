@@ -1561,6 +1561,78 @@ Status DatabaseInterface::getStatus(int status_id){
   return item;
 }
 
+StatusList DatabaseInterface::getClientStatusList(const string& user_id) {
+  StatusList status_list;
+  Status item;
+  string query = "select * from statuses where user_id = '";
+  query += changeSymbol(user_id) + "' order by submit_time desc limit 0, 200";
+  Connection* connection =  createConnection();
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.setStatusId(result_set.getInt("status_id"));
+	  item.setUseId(result_set.getString("user_id"));
+	  item.setProblemId(result_set.getInt("problem_id"));
+	  item.setContestId(result_set.getInt("contest_id"));
+	  item.setTime(result_set.getInt("time"));
+	  item.setMemory(result_set.getInt("memory"));
+	  item.setSubmitTime(result_set.getString("submit_time"));
+	  item.setResult(result_set.getInt("result"));
+	  item.setLanguage(result_set.getInt("language"));
+	  item.setCodeId(result_set.getInt("code_id"));
+	  item.setCodeLength(result_set.getInt("code_length"));
+	  item.setSubmitIp(result_set.getString("submit_ip"));
+	  item.setErrorId(result_set.getInt("error_id"));
+  	status_list.push_back(item);
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return status_list;
+}
+
+ProblemIdList DatabaseInterface::getClientProblemList() {
+  ProblemIdList problem_list;
+  string query = "select problem_id from problems where available = 'Y' order by problem_id";
+  Connection* connection = createConnection();
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    problem_list.push_back(result_set.getInt("problem_id"));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return problem_list;
+}
+
+ContestInfoList DatabaseInterface::getClientContestList() {
+  ContestInfoList contest_list;
+  ContestInfoItem item;
+  Connection* connection = createConnection();
+  connection->connect();
+  string query = "select contest_id from contests where available = 'Y' and contest_type != 'C' order by contest_id";
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.contest_id = result_set.getInt("contest_id");
+    contest_list.push_back(item);
+  }
+  result_set.close();
+  ContestInfoList::iterator iter = contest_list.begin();
+  while (iter != contest_list.end()) {
+    query = "select problem_id from problemtocontests where contest_id = '" +
+            stringPrintf("%d' ", iter->contest_id) + " order by in_contest_id";
+    result_set = connection->excuteQuery(query);
+    while (result_set.next()) {
+      iter->problem_list.push_back(result_set.getInt("problem_id"));
+    }
+    result_set.close();
+    iter++;
+  }
+  connection->close();
+  delete connection;
+  return contest_list;
+}
 
 StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   StatusList statuslist;
