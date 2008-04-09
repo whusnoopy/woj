@@ -444,7 +444,7 @@ int DatabaseInterface::addDiscuss(const Discuss& discuss){
   Connection* connection = createConnection();
   string query;
   query += "insert into discusses(reply_id, topic_id, user_id, problem_id, ";
-  query += "contest_id, title, content, time) values('";
+  query += "contest_id, title, content, time, available) values('";
   query += stringPrintf("%d", discuss.getReplyId()) + "','" + 
            stringPrintf("%d", discuss.getTopicId()) + "','" + 
            changeSymbol(discuss.getUserId()) + "','" +
@@ -985,7 +985,7 @@ TopicSet DatabaseInterface::getDiscussTopicSet(const DiscussInfo& discuss_info) 
   Connection* connection = createConnection();
   TopicSet topic_set;
 	bool first = true;
-  string query = "select * from discusses ";
+  string query = "select topic_id, time from discusses ";
   if (discuss_info.problem_id){
     if (first){
       query += "where ";
@@ -1012,14 +1012,19 @@ TopicSet DatabaseInterface::getDiscussTopicSet(const DiscussInfo& discuss_info) 
   } else {
     query += "and ";
   }
-  query += " available = 'Y' ";
+  query += " available = 'Y'";
   query += " order by time desc ";
   query += " limit " + stringPrintf("%d, 10", discuss_info.page_id*10);
   LOG(INFO) << query << endl;
+  set<int> topic;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
-  	topic_set.insert(result_set.getInt("messageId"));
+    int topic_id = result_set.getInt("topic_id");
+    if (topic.count(topic_id) == 0){
+  	  topic_set.push_back(topic_id);
+      topic.insert(topic_id);
+    }
   }
   result_set.close();
   connection->close();

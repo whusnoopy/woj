@@ -268,7 +268,7 @@ Configure* Configure::createConfigure(){
     }
     if ((!xmlStrcmp(cur->name, (const xmlChar*) "client"))) {
       xmlNodePtr node = cur->xmlChildrenNode;
-      addNetWorktoConfigture(node, *configure);
+      addClientServertoConfigture(node, *configure);
     }
 
 

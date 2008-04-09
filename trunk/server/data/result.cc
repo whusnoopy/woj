@@ -31,7 +31,7 @@ int Result::getRowNum(){
 
 string Result::getString(const string& name){
   if(m_name_map.count(name) == 0){
-		cout<<"No such field."<<endl;
+		cout << "No such field:" << name << endl;
 		string str;
 		return str;
 	}else{
@@ -47,7 +47,7 @@ string Result::getString(const string& name){
 
 int Result::getInt(const string& name){
   if(m_name_map.count(name) == 0){
-		cout<<"No such field."<<endl;
+		cout << "No such field."<< name << endl;
 		return 0;
 	}else{
 	  int l = m_name_map[name],ret;

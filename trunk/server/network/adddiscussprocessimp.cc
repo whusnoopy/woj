@@ -82,16 +82,17 @@ void AddDiscussProcessImp::process(int socket_fd, const string& ip, int length){
     sendReply(socket_fd, 'N');
     return;
   }
-  int ret = 0;
+  int ret = -1;
   ret = DataInterface::getInstance().addDiscuss(discuss);
   if (ret) {
     sendReply(socket_fd, 'N');
+    LOG(ERROR) << "Add discusses error." << ip;
     return;
   }
   if (sendReply(socket_fd, 'Y')) {
     LOG(ERROR) << "Cannot reply to:" << ip;
     return;
   }
-  LOG(ERROR) << "Process adddiscuss completed for:" << ip;
+  LOG(INFO) << "Process adddiscuss completed for:" << ip;
 }
 
