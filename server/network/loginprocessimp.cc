@@ -37,12 +37,14 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find password from data for:" << ip;
     return;
   }
-  iter++;
   password = *iter;
+  iter++;
+  LOG(DEBUG) << password;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find ip from data for:" << ip;
   }
   connect_ip = *iter;
+  LOG(DEBUG) << connect_ip;
   User user;
   user = DataInterface::getInstance().getUserInfo(user_id);
   if (password != user.getPassword()) {
@@ -63,10 +65,10 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Send data failed to:" << ip;
     return;
   }
-  if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length())) {
-    LOG(ERROR) << "Cannot return data to:" << ip;
-    return;
-  }
+ // if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length())) {
+ //   LOG(ERROR) << "Cannot return data to:" << ip;
+ //   return;
+ // }
   LOG(INFO) << "Process Login completed for" << ip;
 }
 

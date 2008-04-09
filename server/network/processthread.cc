@@ -74,6 +74,7 @@ void ProcessThread::running(){
     pthread_mutex_lock(m_lock);
     connect_fd = accept(m_socket, (struct sockaddr *)&childaddr, &len);
     pthread_mutex_unlock(m_lock);
+    LOG(DEBUG) << "Connection happen";
     string ip = getIp(ntohl(childaddr.sin_addr.s_addr));
     if (!check(ip)) {
       LOG(WARNING) << "Unknown connection from:" << ip;

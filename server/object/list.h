@@ -176,7 +176,7 @@ typedef set<int> ProblemSet;
 typedef set<string> UserSet;
 typedef vector<ContestProblemItem> ContestProblemList;
 typedef set<ProblemUserAC> UserACSet;
-typedef set<int> TopicSet;
+typedef vector<int> TopicSet;
 typedef deque<JudgeMission> JudgeQueue;
 
 bool operator<(const ProblemUserAC& a, const ProblemUserAC& b);
