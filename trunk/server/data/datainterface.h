@@ -89,7 +89,10 @@ public:
   Status getStatus(int status_id);
   int getProblemListNum();
   int getContestListNum(bool normal);
-  
+  StatusList getClientStatusList(const string& user_id);
+  ProblemIdList getClientProblemList();
+  ContestInfoList getClientContestList();
+
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);
   FileData getFile(const string& filename);

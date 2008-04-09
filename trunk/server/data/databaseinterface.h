@@ -89,6 +89,9 @@ public:
   Status getStatus(int status_id);
   int getProblemListNum();
   int getContestListNum(bool normal);
+  StatusList getClientStatusList(const string& user_id);
+  ProblemIdList getClientProblemList();
+  ContestInfoList getClientContestList();
 
   Connection* createConnection(const string& host,
                               const string& user,

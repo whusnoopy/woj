@@ -298,7 +298,19 @@ bool DataInterface::checkContestAcBefore(const ContestAcBefore& contest_acbefore
 int DataInterface::getInContestId(int contest_id, int problem_id) {
   return DatabaseInterface::getInstance().getInContestId(contest_id, problem_id);
 }
-  
+
+StatusList DataInterface::getClientStatusList(const string& user_id) {
+  return DatabaseInterface::getInstance().getClientStatusList(user_id);
+}
+
+ProblemIdList DataInterface::getClientProblemList() {
+  return DatabaseInterface::getInstance().getClientProblemList();
+}
+
+ContestInfoList DataInterface::getClientContestList() {
+  return DatabaseInterface::getInstance().getClientContestList();
+}
+
 int DataInterface::addLink(const LinkList& link_list) {
   return FileInterface::getInstance().addLink(link_list);
 }

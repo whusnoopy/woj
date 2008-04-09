@@ -153,6 +153,13 @@ typedef struct _JUDGE_MISSION_{
   bool spj;
 }JudgeMission;
 
+typedef struct _CONTEST_INFO_ITEM_ {
+  int contest_id;
+  vector<int> problem_list;
+}ContestInfoItem;
+
+typedef vector<int> ProblemIdList;
+typedef vector<ContestInfoItem> ContestInfoList;
 typedef vector<UserListItem> UserList;
 typedef vector<ProblemListItem> ProblemList;
 typedef vector<ContestListItem> ContestList;

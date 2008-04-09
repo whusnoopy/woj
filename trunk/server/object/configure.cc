@@ -12,6 +12,7 @@ Configure::Configure(const Configure& other) {
   noticepath = other.noticepath;
   judgecontrol = other.judgecontrol;
   network = other.network;
+  client_server = other.client_server;
 }
 
 void Configure::setDatabase(const string& host, 
@@ -46,6 +47,14 @@ int Configure::getNetWorkMaxClient() const {
 
 int Configure::getNetWorkPort() const {
   return network.port;
+}
+
+int Configure::getClientServerMaxClient() const {
+  return client_server.max_client;
+}
+
+int Configure::getClientServerPort() const {
+  return client_server.port;
 }
 
 set<string> Configure::getNetWorkIpTabs() const {
@@ -167,6 +176,28 @@ void Configure::addNetWorktoConfigture(xmlNodePtr cur, Configure& configure){
 	}
 }
 
+void Configure::addClientServertoConfigture(xmlNodePtr cur, Configure& configure){
+	xmlChar * szKey;
+	while (cur != NULL) {
+    xmlNodePtr node = cur;
+    string ip;
+    int port;
+    int max_client;
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "port"))) {
+      szKey = xmlNodeGetContent(node);
+      port = atoi(string((char *)szKey).c_str());
+      configure.client_server.port = port;
+      xmlFree(szKey);
+    }
+    if ((!xmlStrcmp(node->name, (const xmlChar*) "maxclient"))) {
+      szKey = xmlNodeGetContent(node);
+      max_client = atoi(string((char *)szKey).c_str());
+      configure.client_server.max_client = max_client;
+      xmlFree(szKey);
+    } 
+	  cur = cur->next;
+	}
+}
 
 void Configure::addLinktoConfigture(xmlNodePtr cur, Configure& configure){
 	xmlChar * szKey;
@@ -235,6 +266,11 @@ Configure* Configure::createConfigure(){
       xmlNodePtr node = cur->xmlChildrenNode;
       addNetWorktoConfigture(node, *configure);
     }
+    if ((!xmlStrcmp(cur->name, (const xmlChar*) "client"))) {
+      xmlNodePtr node = cur->xmlChildrenNode;
+      addNetWorktoConfigture(node, *configure);
+    }
+
 
     cur = cur->next;
   }

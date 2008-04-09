@@ -18,7 +18,7 @@
 using namespace std;
 
 bool JudgeThread::check(const string& ip) {
-  return Configure::reGet().getJudgeControlIpTabs().count(ip) > 0;
+  return Configure::getInstance().getJudgeControlIpTabs().count(ip) > 0;
 }
 
 int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const string& ip) {

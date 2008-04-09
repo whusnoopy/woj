@@ -20,4 +20,8 @@
     <maxclient>100</maxclient>
     <port>3030</port>
   </network>
+  <client>
+    <maxclient>50</maxclient>
+    <port>3764</port>
+  </client>
 </server>

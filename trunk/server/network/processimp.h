@@ -1,5 +1,5 @@
-#ifndef _FLOOD_SERVER_NETWORK_H__
-#define _FLOOD_SERVER_NETWORK_H__
+#ifndef _FLOOD_SERVER_NETWORK_PROCESSIMP_H__
+#define _FLOOD_SERVER_NETWORK_PROCESSIMP_H__
 
 #include <string>
 
