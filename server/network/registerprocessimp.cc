@@ -83,7 +83,7 @@ void RegisterProcessImp::process(int socket_fd, const string& ip, int length){
   user.setIndentifyCode(calIndentifyCode(user.getId()));
   DataInterface interface = DataInterface::getInstance();
   interface.addUser(user);
-  if (sendReply(socket_fd, 's')){
+  if (sendReply(socket_fd, 's') != 0){
     LOG(ERROR) << "Cannot ack.";
     return;
   }

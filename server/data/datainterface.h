@@ -73,6 +73,7 @@ public:
   int disableUser(const User& user);
   int disableContest(const Contest& contest);
   bool checkContestAcBefore(const ContestAcBefore&);
+  int updateUserSolved(const Status& status, int op);
   int getInContestId(int contest_id, int problem_id);
   int disableContestProblems(const Contest& contest);
   int disableContestUsers(const Contest& contest);

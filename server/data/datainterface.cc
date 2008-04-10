@@ -295,6 +295,10 @@ bool DataInterface::checkContestAcBefore(const ContestAcBefore& contest_acbefore
   return DatabaseInterface::getInstance().checkContestAcBefore(contest_acbefore);
 }
 
+int DataInterface::updateUserSolved(const Status& status, int op) {
+  return DatabaseInterface::getInstance().updateUserSolved(status, op);
+}
+
 int DataInterface::getInContestId(int contest_id, int problem_id) {
   return DatabaseInterface::getInstance().getInContestId(contest_id, problem_id);
 }

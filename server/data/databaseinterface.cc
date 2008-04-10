@@ -1873,6 +1873,27 @@ bool DatabaseInterface::checkContestAcBefore(const ContestAcBefore& contest_acbe
   return ret;
 }
 
+int DatabaseInterface::updateUserSolved(const Status& status, int op) {
+  Connection* connection = createConnection();
+  string query;
+  if (op == -1)
+    query = "update users set solved = solved - 1 where ";  
+  else 
+    query = "update users set solved = solved + 1 where ";
+  query += "user_id = '" + changeSymbol(status.getUserId()) + "' and ";
+  query += " not exist (select * from statuses where status_id != '";
+  query += stringPrintf("%d", status.getStatusId()) + "' and problem_id ";
+  query += " = '" + stringPrintf("%d", status.getProblemId()) + "' and ";
+  query += " result = '" + stringPrintf("%d", ACCEPTED) + "' and ";
+  query += " user_id = users.user_id)";
+  LOG(INFO) << query;
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 int DatabaseInterface::getInContestId(int contest_id, int problem_id) {
   bool in_contest_id = -1;
   Connection* connection = createConnection();

@@ -1,4 +1,4 @@
-#include "submitprocessimp.h"
+#include "clientsubmitprocessimp.h"
 
 #include <vector>
 #include <string>
@@ -10,7 +10,7 @@
 #include "judgecontrol/judgecontrol.h"
 using namespace std;
 
-void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
+void ClientSubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   LOG(INFO) << "Process the Submit for:" << ip;
   char* buf;
   buf = new char[length+1];
@@ -71,12 +71,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   }
   problem_id = (*iter == "Y");
   iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find ip from data for:" << ip;
-    return;
-  }
-  submit_ip = *iter;
-  iter++;
+  submit_ip = ip;
   BufSize source_buf;
   source_buf.alloc(code_length);
   if (socket_read(socket_fd, source_buf.getBuf(), code_length) != code_length) {
