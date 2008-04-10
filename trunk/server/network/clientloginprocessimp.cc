@@ -1,4 +1,4 @@
-#include "loginprocessimp.h"
+#include "clientloginprocessimp.h"
 
 #include <string>
 #include <vector>
@@ -11,7 +11,7 @@
 #include "base/flags.h"
 using namespace std;
 
-void LoginProcessImp::process(int socket_fd, const string& ip, int length){
+void ClientLoginProcessImp::process(int socket_fd, const string& ip, int length){
   LOG(INFO) << "Process the Login for:" << ip;
   char* buf;
   buf = new char[length+1];
@@ -39,13 +39,8 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
   }
   password = *iter;
   iter++;
-  LOG(DEBUG) << password;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find ip from data for:" << ip;
-  }
-  connect_ip = *iter;
-  LOG(DEBUG) << connect_ip;
   User user;
+  connect_ip = ip;
   user = DataInterface::getInstance().getUserInfo(user_id);
   if (password != user.getPassword()) {
     sendReply(socket_fd, 'N');
@@ -60,12 +55,12 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot reply the login for:" << ip;
     return;
   } 
-  string len = stringPrintf("%010d",indentify_code.length());
+//  string len = stringPrintf("%010d",indentify_code.length());
 //  if (socket_write(socket_fd, len.c_str(), 10) != 0){
 //    LOG(ERROR) << "Send data failed to:" << ip;
 //    return;
 //  }
- // if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length()) != 0) {
+ // if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length())) {
  //   LOG(ERROR) << "Cannot return data to:" << ip;
  //   return;
  // }

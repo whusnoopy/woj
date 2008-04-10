@@ -9,8 +9,8 @@
 #include "processimp.h"
 #include "clientprocessimp.h"
 #include "clientstatusprocessimp.h"
-#include "loginprocessimp.h"
-#include "submitprocessimp.h"
+#include "clientloginprocessimp.h"
+#include "clientsubmitprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -48,7 +48,7 @@ void ClientThread::running(){
     bool unknown = false;
     switch (type) {
       case 294:
-        m_process_imp = new LoginProcessImp();
+        m_process_imp = new ClientLoginProcessImp();
         break;
       case 487:
         m_process_imp = new ClientStatusProcessImp();
@@ -57,7 +57,7 @@ void ClientThread::running(){
         m_process_imp = new ClientProcessImp();
         break;
       case 480:  //sm
-        m_process_imp = new SubmitProcessImp();
+        m_process_imp = new ClientSubmitProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

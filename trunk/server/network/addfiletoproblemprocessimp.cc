@@ -83,23 +83,21 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
   if (type == IMG)
     path = FLAGS_root_dir + "/file/" + suffix + "/p" + 
            stringPrintf("%d", problem.getProblemId()) +
-           "/" + time + "_" +
-           filename; 
+           "/" + filename; 
   else 
     path = getProblemDataPath(problem.getProblemId()) + string("spj.cc");
   DataInterface::getInstance().addFile(path, buf.getBuf(), len);
   File file;
   file.setPath(path);
   file.setType(type);
-  DataInterface::getInstance().addFilePathtoProblem(file,problem);
-  string url = path;
-  string url_len = stringPrintf("%010d", url.length());
-  if (socket_write(socket_fd, url_len.c_str(), 10)) {
-    LOG(ERROR) << "Cannot write url_len to:" << ip;
+  int ret = DataInterface::getInstance().addFilePathtoProblem(file,problem);
+  if (ret) {
+    sendReply(socket_fd, 'N');
+    LOG(INFO) << "Add File Error:" << ip;
     return;
   }
-  if (socket_write(socket_fd, url.c_str(), url.length())) {
-    LOG(ERROR) << "Cannot write url to:" << ip;
+  if (sendReply(socket_fd, 'Y') != 0) {
+    LOG(ERROR) << "Cannot send reply to:" << ip;
     return;
   }
   LOG(INFO) << "Process add file to problem completed for:" << ip;

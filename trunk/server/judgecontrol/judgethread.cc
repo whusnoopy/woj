@@ -363,6 +363,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   status.setTime(ntohl(*(unsigned int*)(ret + 1)));
   status.setMemory(ntohl(*(unsigned int*)(ret + 5)));
   DataInterface::getInstance().updateStatus(status);
+  DataInterface::getInstance().updateUserSolved(status, 1);
   return 0;
 }
 

@@ -7,6 +7,7 @@
 #include "util/calulate.h"
 #include "data/datainterface.h"
 #include "judgecontrol/judgecontrol.h"
+#include "base/judge_result.h"
 using namespace std;
 
 void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
@@ -33,6 +34,11 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
   status_id = atoi(iter->c_str());
   iter++;
   status = DataInterface::getInstance().getStatus(status_id);
+  if (status.getResult() == ACCEPTED) {
+    status.setResult(0);
+    DataInterface::getInstance().updateStatus(status);
+    DataInterface::getInstance().updateUserSolved(status, -1);
+  }
   status.setErrorId(0);
   Problem problem = DataInterface::getInstance().getProblem(status.getProblemId());
   string source = DataInterface::getInstance().getCode(status.getCodeId()).getCodeContent();
