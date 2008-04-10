@@ -27,6 +27,7 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   string data(buf);
   delete[] buf;
   vector<string> datalist;
+  LOG(DEBUG) << data;
   spriteString(data, 1, datalist);
   ProblemInfo problem_info;
   vector<string>::iterator iter = datalist.begin();
@@ -67,18 +68,19 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   }
   string user_id = *iter;
   iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find indentify code from:" << ip;
-    return;
-  }
-  string indentify_code = *iter;
-  iter++;
+  LOG(DEBUG) << user_id;
+  //if (iter == datalist.end()) {
+  //  LOG(ERROR) << "Cannot find indentify code from:" << ip;
+  //  return;
+  //}
+  //string indentify_code = *iter;
+  //iter++;
   ProblemList list;
   ProblemList::iterator list_iter;
   if (user_id != "?") {
      User user;
      user = DataInterface::getInstance().getUserInfo(user_id);
-     if (indentify_code == user.getIndentifyCode()) {
+    // if (indentify_code == user.getIndentifyCode()) {
        problem_info.page_id = user.getVolume();
        list = DataInterface::getInstance().getProblemList(problem_info);
        ProblemSet ac_set; 
@@ -95,13 +97,13 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
          }
          list_iter++;
        }
-     }else {
-       list = DataInterface::getInstance().getProblemList(problem_info);
-     }
+    // }else {
+      // list = DataInterface::getInstance().getProblemList(problem_info);
+     //}
   }else {
     list = DataInterface::getInstance().getProblemList(problem_info);
   }
-
+  LOG(DEBUG) << list.size();
 
   string databuf;
   list_iter = list.begin();

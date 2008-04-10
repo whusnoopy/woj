@@ -91,7 +91,7 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
   file.setPath(path);
   file.setType(type);
   int ret = DataInterface::getInstance().addFilePathtoProblem(file,problem);
-  if (ret) {
+  if (ret < 0) {
     sendReply(socket_fd, 'N');
     LOG(INFO) << "Add File Error:" << ip;
     return;

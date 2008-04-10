@@ -41,6 +41,7 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
       return;
     }
     int input_len = atoi(len);
+    LOG(DEBUG) << stringPrintf("input_len:%d", input_len);
     buf.alloc(input_len);
     if (socket_read(socket_fd, buf.getBuf(), input_len) != input_len) {
       LOG(ERROR) << "Cannot read input from:" << ip;
@@ -55,7 +56,8 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
       LOG(ERROR) << "Cannot read output length from:" << ip;
       return;
     }
-    int output_len = atoi(len);
+    int output_len = atoi(len); 
+    LOG(DEBUG) << stringPrintf("output_len:%d", output_len);
     buf.alloc(output_len);
     if (socket_read(socket_fd, buf.getBuf(), output_len) != output_len) {
       LOG(ERROR) << "Cannot read output from:" << ip;
@@ -68,7 +70,10 @@ void AddInputAndOutputProcessImp::process(int socket_fd, const string& ip, int l
     DataInterface::getInstance().addFile(path, buf.getBuf(), output_len);
     DataInterface::getInstance().addInputtoOutput(input_id, output_id);
   }
-  sendReply(socket_fd, 'Y');
-  LOG(ERROR) << "Process add input and output file completed for:" << ip;
+  if (sendReply(socket_fd, 'Y') != 0) {
+    LOG(ERROR) << "Send Reply failed.";
+    return;
+  }
+  LOG(INFO) << "Process add input and output file completed for:" << ip;
 }
 

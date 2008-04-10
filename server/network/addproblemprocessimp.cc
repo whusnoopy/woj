@@ -119,6 +119,6 @@ void AddProblemProcessImp::process(int socket_fd, const string& ip, int length){
     return;
   }
 
-  LOG(ERROR) << "Process add problem completed for:" << ip;
+  LOG(INFO) << "Process add problem completed for:" << ip;
 }
 

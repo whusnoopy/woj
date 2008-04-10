@@ -93,11 +93,13 @@ int FileInterface::addFile(const string& filename, void * bufi, size_t filelengt
       return -1;
     }
   }
+  LOG(DEBUG) << directory;
 	int filefd = open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	ssize_t file_size = write(filefd, bufi, filelength);
 	if ( file_size != filelength)
 	  cout << "write failed." << endl;
 	close(filefd);
+  LOG(DEBUG) << filename;
   return 1;
 }
 FileData FileInterface::getFile(const string& filename){
