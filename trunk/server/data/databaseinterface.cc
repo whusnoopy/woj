@@ -37,11 +37,11 @@ int DatabaseInterface::addContest(const Contest& contest_){
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
   connection->excuteUpdate(query);
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as contest_id";
   int contest_id = 0;
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-    contest_id = result_set.getInt(1);
+    contest_id = result_set.getInt("contest_id");
   }
   result_set.close();
   connection->close();
@@ -65,8 +65,10 @@ int DatabaseInterface::disableContest(const Contest& contest) {
 
 int DatabaseInterface::addInputtoOutput(int input_id, int output_id) {
   Connection* connection = createConnection();
-  string query = "insert into outfiles(in_id, out_id) values ";
+  string query = "insert into intooutfiles(in_id, out_id) values ";
   query += "(" + stringPrintf("\'%d\',\'%d\'", input_id, output_id) + ")";
+  LOG(INFO) << query;
+  connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -173,15 +175,19 @@ int DatabaseInterface::addProblem(const Problem& problem){
            stringPrintf("%d",problem.getVersion()) + "','" +
            changeSymbol(problem.getSpj()?"Y":"N") + 
            "')";
+  
+  //query += "select LAST_INSERT_ID()";
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
   connection->excuteUpdate(query);
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as problem_id";
   int problem_id = 0;
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-    problem_id = result_set.getInt(1);
+    problem_id = result_set.getInt("problem_id");
+    LOG(DEBUG) << stringPrintf("problem_id:%d", problem_id);
   }
+  LOG(INFO) << stringPrintf("problem:%d", problem_id);
   result_set.close();
   connection->close();
   delete connection; 
@@ -318,11 +324,11 @@ int DatabaseInterface::addStatus(const Status& status){
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
   connection->excuteUpdate(query);
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as status_id";
   int status_id = 0;
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-    status_id = result_set.getInt(1);
+    status_id = result_set.getInt("status_id");
   }
   result_set.close();
   connection->close();
@@ -407,11 +413,11 @@ int DatabaseInterface::addCode(const Code& code){
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
   connection->excuteUpdate(query);
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as code_id";
   int code_id = 0;
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-    code_id = result_set.getInt(1);
+    code_id = result_set.getInt("code_id");
   }
   result_set.close();
   connection->close();
@@ -428,11 +434,11 @@ int DatabaseInterface::addError(const Error& error){
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
   connection->excuteUpdate(query);
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as error_id";
   int error_id = 0;
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-    error_id = result_set.getInt(1);
+    error_id = result_set.getInt("error_id");
   }
   result_set.close();
   connection->close();
@@ -733,12 +739,12 @@ int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& pro
           stringPrintf("%d", file.getType()) + "' and disable = 'N" +  
           "'";
   Result result_set = connection->excuteQuery(query);*/
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as file_id";
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
     query = "insert into filestoproblems values('";
-    file_id = result_set.getInt(1);
-    query += stringPrintf("%d", result_set.getInt("file_id")) + "','" + 
+    file_id = result_set.getInt("file_id");
+    query += stringPrintf("%d", file_id) + "','" + 
              stringPrintf("%d", problem.getProblemId()) + "','" +
              stringPrintf("%d", problem.getVersion()) + 
              "')";
@@ -767,12 +773,12 @@ int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& con
           stringPrintf("%d", file.getType()) + "' and disable ='N" + 
           "'";
   Result result_set = connection->excuteQuery(query);*/
-  query = "select LAST_INSERT_ID()";
+  query = "select LAST_INSERT_ID() as file_id ";
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
     query = "insert into filestocontests values('"; 
-    file_id = result_set.getInt(1);
-    query += stringPrintf("%d", result_set.getInt("file_id")) + "','" + 
+    file_id = result_set.getInt("file_id");
+    query += stringPrintf("%d", file_id) + "','" + 
              stringPrintf("%d", contest.getContestId()) + "','" +
              stringPrintf("%d", contest.getVersion()) + 
              "')";
@@ -2107,7 +2113,7 @@ ProblemSet DatabaseInterface::getUserACProblem(const string& user_id, bool ac) {
   ProblemSet problem_set;
   connection->connect();
   string query = "select * from statuses where user_id = '";
-  query += changeSymbol(query) + "' and result ";
+  query += changeSymbol(user_id) + "' and result ";
   if (ac) 
     query += " = '" + stringPrintf("%d", ACCEPTED) + "'";
   else

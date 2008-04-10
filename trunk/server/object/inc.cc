@@ -10,8 +10,8 @@ string changeSymbol(const string& str){
   while(( pos = strbuf.find_first_of("_'\\\"%",pos)) != string::npos){
   	strbuf.insert(pos, 1, '\\');
   	pos += 2;
-  	cout << "pos:" << pos << endl;
-  	cout << "strbuf: " << strbuf <<endl;
+  	LOG(DEBUG) << "pos:" << pos;
+  	LOG(DEBUG) << "strbuf: " << strbuf;
   } 
   return strbuf;
 }
