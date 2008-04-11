@@ -14,7 +14,7 @@ public:
   }
 
   int addContest(const Contest& contest);
-  int addProblemListtoContest(const Contest& contest,const ProblemSet& problem_set);
+  int addProblemListtoContest(const Contest& contest,const ProblemIdList& problem_list);
   int addUserListtoContest(const Contest& contest,const UserSet& user_set);
   int addNews(const News& news);
   //int addNotice(const Notice& notice);
@@ -78,6 +78,7 @@ public:
   int disableContestUsers(const Contest& contest);
   bool checkPermission(int contest_id, const string& user_id);
   ContestProblemList getContestProblemList(int contest_id);
+  ProblemIdList getContestProblems(int contest_id);
   int getContestProblemNum(int contest_id);
   int disableMail(const string& user_id, int mail_id);
   int setMailRead(const Mail& mail);

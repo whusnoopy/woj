@@ -36,7 +36,7 @@ string Result::getString(const string& name){
 		return str;
 	}else{
 	  int l = m_name_map[name];
-	  if (m_row[1] != NULL){
+	  if (m_row[l] != NULL){
 		  string str(m_row[l]);
 		  return str;
 	  }else {
@@ -51,7 +51,10 @@ int Result::getInt(const string& name){
 		return 0;
 	}else{
 	  int l = m_name_map[name],ret;
-		string str(m_row[l]);
+		string str = "0";
+    if (m_row[l] != NULL) {
+      str = string(m_row[l]);
+    }
 	  ret = atoi(str.c_str());
 		return ret;
 	} 

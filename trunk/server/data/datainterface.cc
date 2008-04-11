@@ -7,8 +7,8 @@ int DataInterface::addContest(const Contest& contest) {
 }
 
 int DataInterface::addProblemListtoContest(const Contest& contest,
-                                           const ProblemSet& problem_set) {
-  return DatabaseInterface::getInstance().addProblemListtoContest(contest, problem_set);
+                                           const ProblemIdList& problem_list) {
+  return DatabaseInterface::getInstance().addProblemListtoContest(contest, problem_list);
 }
 
 int DataInterface::addUserListtoContest(const Contest& contest,
@@ -135,6 +135,10 @@ bool DataInterface::checkPermission(int contest_id, const string& user_id) {
 
 ContestProblemList DataInterface::getContestProblemList(int contest_id) {
   return DatabaseInterface::getInstance().getContestProblemList(contest_id);
+}
+
+ProblemIdList DataInterface::getContestProblems(int contest_id) {
+  return DatabaseInterface::getInstance().getContestProblems(contest_id);
 }
 
 int DataInterface::getContestProblemNum(int contest_id) {

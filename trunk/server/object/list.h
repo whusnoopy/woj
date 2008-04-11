@@ -155,6 +155,7 @@ typedef struct _JUDGE_MISSION_{
 
 typedef struct _CONTEST_INFO_ITEM_ {
   int contest_id;
+  string title;
   vector<int> problem_list;
 }ContestInfoItem;
 

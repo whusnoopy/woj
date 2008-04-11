@@ -35,13 +35,14 @@ void AddProblemToContestProcessImp::process(int socket_fd, const string& ip, int
   }
   Contest contest(atoi(iter->c_str()));
   iter++;
-  ProblemSet set;
+  ProblemIdList problem_list;
   while (iter != datalist.end()) {
-    set.insert(atoi(iter->c_str()));
+    problem_list.push_back(atoi(iter->c_str()));
+    iter++;
   }
   DataInterface::getInstance().disableContestProblems(contest);
   int ret = 0;
-  ret = DataInterface::getInstance().addProblemListtoContest(contest, set);
+  ret = DataInterface::getInstance().addProblemListtoContest(contest, problem_list);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;
@@ -50,6 +51,6 @@ void AddProblemToContestProcessImp::process(int socket_fd, const string& ip, int
     LOG(ERROR) << "Cannot reply to:" << ip;
     return;
   }
-  LOG(ERROR) << "Process add problem to contest completed for:" << ip;
+  LOG(INFO) << "Process add problem to contest completed for:" << ip;
 }
 

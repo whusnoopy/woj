@@ -29,7 +29,10 @@ void ClientProcessImp::process(int socket_fd, const string& ip, int length) {
   databuf += stringPrintf("\001%d", contest_list.size());
   ContestInfoList::iterator contest_iter = contest_list.begin();
   while (contest_iter != contest_list.end()) {
-    databuf += stringPrintf("\001%d\001%d", contest_iter->contest_id, contest_iter->problem_list.size());
+    databuf += stringPrintf("\001%d\001%s\001%d", 
+                            contest_iter->contest_id,
+                            contest_iter->title.c_str(),
+                            contest_iter->problem_list.size());
     ProblemIdList::iterator contest_problem_iter = contest_iter->problem_list.begin();
     while (contest_problem_iter != contest_iter->problem_list.end()) {
       stringPrintf("\001%d", *contest_problem_iter);
