@@ -10,20 +10,23 @@ using namespace std;
 DatabaseInterface* DatabaseInterface::instance = NULL;
 
 int DatabaseInterface::addContest(const Contest& contest_){
-  Connection* connection = createConnection();
+  Connection* connection = createConnection(); 
+  LOG(INFO) << "Connection:" << connection->connect();
   Contest contest = contest_;
   if (contest.getType() == "N" || contest.getType() == "Y") {
-    string select_query = "select max(public_id) from contests";
+    string select_query = "select max(public_id) as post_id from contests";
+    LOG(INFO) << select_query;
     Result ret = connection->excuteQuery(select_query);
     if (ret.next()) {
-      contest.setPublicId(ret.getInt(1) + 1);
+      contest.setPublicId(ret.getInt("post_id") + 1);
     } else {
       contest.setPublicId(1);
     }
+    ret.close();
   }
   string query;
   query += "insert into contests(public_id, title, description,"; 
-  query += "start_time, end_time, contest_type, version, available)" + 
+  query += "start_time, end_time, contest_type, version, available)"; 
   query += " values('";
   query += stringPrintf("%d",contest.getPublicId()) + "','" +
            changeSymbol(contest.getTitle()) + "','" +
@@ -35,7 +38,6 @@ int DatabaseInterface::addContest(const Contest& contest_){
            changeSymbol(contest.getAvailable()?"Y":"N") + 
            "')";
   LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
   connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID() as contest_id";
   int contest_id = 0;
@@ -43,6 +45,7 @@ int DatabaseInterface::addContest(const Contest& contest_){
   if (result_set.next()) {
     contest_id = result_set.getInt("contest_id");
   }
+  LOG(DEBUG) << "Before return contest_id";
   result_set.close();
   connection->close();
   delete connection;
@@ -76,13 +79,13 @@ int DatabaseInterface::addInputtoOutput(int input_id, int output_id) {
 }
 
 int DatabaseInterface::addProblemListtoContest(const Contest& contest,
-                            const ProblemSet& problem_set){
+                            const ProblemIdList& problem_list){
   Connection* connection = createConnection();
   int in_contest_id = 1;
-  ProblemSet::const_iterator problem_iter = problem_set.begin();
+  ProblemIdList::const_iterator problem_iter = problem_list.begin();
   int ret = 0;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
-  while(problem_iter != problem_set.end()){
+  while(problem_iter != problem_list.end()){
     string query;
     query += "insert into problemtocontests(problem_id, contest_id, "; 
     query += "in_contest_id) values('";
@@ -1234,7 +1237,22 @@ ContestProblemList DatabaseInterface::getContestProblemList(int contest_id) {
   connection->close();
   delete connection;
   return problem_list;
+}
 
+ProblemIdList DatabaseInterface::getContestProblems(int contest_id) {
+  ProblemIdList problem_list;
+  string query = "select problem_id from problemtocontests where contest_id = '";
+  query += stringPrintf("%d", contest_id) = "' order by in_contest_id";
+  Connection* connection = createConnection();
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    problem_list.push_back(result_set.getInt("problem_id"));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return problem_list;
 }
 
 int DatabaseInterface::getContestProblemNum(int contest_id){
@@ -1671,13 +1689,14 @@ ContestInfoList DatabaseInterface::getClientContestList() {
   Connection* connection = createConnection();
   connection->connect();
   string now_time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
-  string query = "select contest_id from contests where available = 'Y' ";
+  string query = "select contest_id,title from contests where available = 'Y' ";
   query += " and contest_type != 'C' and start_time <= '" + changeSymbol(now_time) +
            "' and end_time >= '" + changeSymbol(now_time) + "' ";
   query += " order by contest_id ";
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()) {
     item.contest_id = result_set.getInt("contest_id");
+    item.title = result_set.getString("title");
     contest_list.push_back(item);
   }
   result_set.close();

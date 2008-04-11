@@ -67,11 +67,12 @@ void AddContestProcessImp::process(int socket_fd, const string& ip, int length){
   contest_id = DataInterface::getInstance().addContest(contest);
   string databuf = stringPrintf("%010d", contest_id);
   
-  if (socket_write(socket_fd, databuf.c_str(), 10)) {
-    LOG(ERROR) << "Cannot return problem_id to:" << ip;
+  LOG(DEBUG) << "Before Send contest_id";
+  if (socket_write(socket_fd, databuf.c_str(), 10) != 0) {
+    LOG(ERROR) << "Cannot return contest_id to:" << ip;
     return;
   }
 
-  LOG(ERROR) << "Process add Contest completed for:" << ip;
+  LOG(INFO) << "Process add Contest completed for:" << ip;
 }
 
