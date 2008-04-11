@@ -194,15 +194,63 @@ int DatabaseInterface::addProblem(const Problem& problem){
   return problem_id;
 }
 
-int DatabaseInterface::getProblemListNum() {
+int DatabaseInterface::getProblemListNum(const ProblemInfo& problem_info) {
   Connection* connection = createConnection();
+  bool first = true;
+  bool search = false;
+  string query = "select count(*) as num from problems ";
+  if (problem_info.problem_id){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    search = true;
+    query += "problem_id = '" + stringPrintf("%d", problem_info.problem_id) + 
+             "' ";
+  }
+  if (problem_info.title != string("NULL")){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    search = true;
+    query += "title like '%" + changeSymbol(problem_info.title) + "%' ";
+  }
+  if (problem_info.source != string("NULL")){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    search = true;
+    query += "source like '%" + changeSymbol(problem_info.source) + "%' ";
+  } 
+  
+  if (problem_info.related_contest){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += "problem_id in (select * from problemtocontests where contest_id = '" 
+             + stringPrintf("%d", problem_info.related_contest) + "') ";
+  }
+
   connection->connect();
   int ret = 0;
-  string query = "select problem_id from problems where problem_id";
-  query += " >= all (select problem_id from problems)";
+  if (!search) {
+    string query = "select problem_id as num from problems where problem_id";
+    query += " >= all (select problem_id from problems)";
+  }
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-    ret = result_set.getInt("problem_id")/100 + 1;
+      ret = result_set.getInt("problem_id")/100 + 1;
   }
   result_set.close();
   connection->close();
@@ -1622,7 +1670,11 @@ ContestInfoList DatabaseInterface::getClientContestList() {
   ContestInfoItem item;
   Connection* connection = createConnection();
   connection->connect();
-  string query = "select contest_id from contests where available = 'Y' and contest_type != 'C' order by contest_id";
+  string now_time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
+  string query = "select contest_id from contests where available = 'Y' ";
+  query += " and contest_type != 'C' and start_time <= '" + changeSymbol(now_time) +
+           "' and end_time >= '" + changeSymbol(now_time) + "' ";
+  query += " order by contest_id ";
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()) {
     item.contest_id = result_set.getInt("contest_id");
