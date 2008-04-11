@@ -88,7 +88,7 @@ public:
   map<string, string> getProblemInAndOutFile(const Problem& problem);
   string getProblemSpjFile(const Problem& problem);
   Status getStatus(int status_id);
-  int getProblemListNum();
+  int getProblemListNum(const ProblemInfo& problem_list);
   int getContestListNum(bool normal);
   StatusList getClientStatusList(const string& user_id);
   ProblemIdList getClientProblemList();

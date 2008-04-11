@@ -75,6 +75,7 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   //}
   //string indentify_code = *iter;
   //iter++;
+  int num = DataInterface::getInstance().getProblemListNum(problem_info);
   ProblemList list;
   ProblemList::iterator list_iter;
   if (user_id != "?") {
@@ -114,7 +115,8 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
       continue;
     }
     if (first) {
-      databuf += stringPrintf("%d\001%s\001%d\001%d\001%d", 
+      databuf += stringPrintf("%d\001%d\001%s\001%d\001%d\001%d", 
+                              num,
                               list_iter->problem_id,
                               list_iter->title.c_str(),
                               list_iter->accepted,

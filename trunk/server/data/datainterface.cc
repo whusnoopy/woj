@@ -327,8 +327,8 @@ FileData DataInterface::getFile(const string& filename) {
   return CacheManager::getInstance().getFileData(filename);
 }
 
-int DataInterface::getProblemListNum() {
-  return DatabaseInterface::getInstance().getProblemListNum();
+int DataInterface::getProblemListNum(const ProblemInfo& problem_info) {
+  return DatabaseInterface::getInstance().getProblemListNum(problem_info);
 }
 int DataInterface::getContestListNum(bool normal) {
   return DatabaseInterface::getInstance().getContestListNum(normal);

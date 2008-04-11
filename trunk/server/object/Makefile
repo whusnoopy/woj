@@ -1,9 +1,22 @@
-CXXFLAGS=-I../ -I../../ -I/usr/include/libxml2 -L/usr/lib/libxml2
-default : all
+CC=$(CXX)
+CXXFLAGS=-I../../ \
+				 -I../ \
+				 -I/usr/include/libxml2 \
+				 -L/usr/lib/libxml2  \
+				 -I/usr/include/mysql \
+				 -L/usr/lib/mysql \
+				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
 
-all :
-	$(CXX) $(CXXFLAGS) -c *.cc
+SOURCES:=$(wildcard *.cc)
 
-clean :
-	@rm -f *.o *.d
+OBJS:=$(patsubst %.cc,%.o,$(SOURCES))
+
+.PHONY: all clean rebuild 
+
+all: $(OBJS)
+
+clean:
+	@rm -f $(OBJS) *.d 
+
+rebuild: clean all
 
