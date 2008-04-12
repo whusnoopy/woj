@@ -20,7 +20,7 @@ void ClientSubmitProcessImp::process(int socket_fd, const string& ip, int length
     delete[] buf;
     return;
   }
-  string data(buf);
+  string data(buf, buf + length);
   delete[] buf;
   vector<string> datalist;
   spriteString(data, 1, datalist);

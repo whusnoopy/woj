@@ -23,7 +23,7 @@ void DisableMailProcessImp::process(int socket_fd, const string& ip, int length)
     delete[] buf;
     return;
   }
-  string read_data(buf);
+  string read_data(buf, buf + length);
   delete[] buf;
   vector<string> datalist;
   spriteString(read_data, 1, datalist);

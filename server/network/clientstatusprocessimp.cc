@@ -23,7 +23,7 @@ void ClientStatusProcessImp::process(int socket_fd, const string& ip, int length
     delete[] buf;
     return ;
   }
-  string read_data(buf);
+  string read_data(buf, buf + length);
   delete[] buf;
   string user_id = read_data;
 
@@ -31,6 +31,7 @@ void ClientStatusProcessImp::process(int socket_fd, const string& ip, int length
      
   string databuf;
   databuf = stringPrintf("%d", status_list.size());
+  LOG(DEBUG) << "status list size: " << databuf;
   StatusList::iterator iter = status_list.begin();
   while (iter != status_list.end()) {
     databuf += stringPrintf("\001%d\001%d\001%d\001%d\001%d\001%d\001%d\001%d\001%s", 

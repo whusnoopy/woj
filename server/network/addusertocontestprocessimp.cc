@@ -24,7 +24,7 @@ void AddUserToContestProcessImp::process(int socket_fd, const string& ip, int le
     delete[] buf;
     return;
   }
-  string read_data(buf);
+  string read_data(buf, buf + length);
   delete[] buf;
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
