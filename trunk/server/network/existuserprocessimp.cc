@@ -19,7 +19,7 @@ void ExistUserProcessImp::process(int socket_fd, const string& ip, int length) {
     LOG(ERROR) << "Cannot read data from:" << ip;
     return;
   }
-  string user_id(buf);
+  string user_id(buf, buf + length);
   delete[] buf;
   User user;
   char ret = 'Y';

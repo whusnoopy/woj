@@ -15,14 +15,17 @@ void ClientLoginProcessImp::process(int socket_fd, const string& ip, int length)
   LOG(INFO) << "Process the Login for:" << ip;
   char* buf;
   buf = new char[length+1];
+  LOG(DEBUG) << "length: " << stringPrintf("%d", length);
   memset(buf,0,sizeof(buf));
   if (socket_read(socket_fd, buf, length) != length) {
     LOG(ERROR) << "Cannot read data from:" << ip;
     delete[] buf;
     return;
   }
-  string data(buf);
+  LOG(DEBUG) << "buf : " << stringPrintf("%s", buf);
+  string data(buf, buf + length);
   delete[] buf;
+  LOG(DEBUG) << data;
   vector<string> datalist;
   string user_id, password, connect_ip;
   spriteString(data, 1, datalist);
@@ -44,6 +47,7 @@ void ClientLoginProcessImp::process(int socket_fd, const string& ip, int length)
   user = DataInterface::getInstance().getUserInfo(user_id);
   if (password != user.getPassword()) {
     sendReply(socket_fd, 'N');
+    LOG(ERROR) << password + " : " << user.getPassword();
     return ;
   }
   user.setLastLoginIp(connect_ip);
