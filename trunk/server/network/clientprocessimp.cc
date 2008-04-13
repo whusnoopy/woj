@@ -34,8 +34,9 @@ void ClientProcessImp::process(int socket_fd, const string& ip, int length) {
                             contest_iter->title.c_str(),
                             contest_iter->problem_list.size());
     ProblemIdList::iterator contest_problem_iter = contest_iter->problem_list.begin();
+    LOG(DEBUG) << stringPrintf("problem_list size : %d", contest_iter->problem_list.size());
     while (contest_problem_iter != contest_iter->problem_list.end()) {
-      stringPrintf("\001%d", *contest_problem_iter);
+      databuf += stringPrintf("\001%d", *contest_problem_iter);
       contest_problem_iter++;
     }
     contest_iter++;
@@ -43,7 +44,7 @@ void ClientProcessImp::process(int socket_fd, const string& ip, int length) {
 
 
   databuf += "\n";
-
+  LOG(DEBUG) << databuf;
 
   string len = stringPrintf("%010d\n", databuf.length());
   if (socket_write(socket_fd, len.c_str(), 11)) {
