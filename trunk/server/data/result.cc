@@ -1,5 +1,8 @@
 #include "result.h"
 
+#include "object/inc.h"
+using namespace std;
+
 Result::Result(MYSQL_RES* result){
 	m_result = result;
 	int num_fields = mysql_num_fields(result);
@@ -9,9 +12,7 @@ Result::Result(MYSQL_RES* result){
 	}
 }
 
-Result::~Result(){
-	if (m_result != NULL)
-	  mysql_free_result(m_result);
+Result::~Result(){  	
 }
 
 bool Result::next(){
@@ -65,7 +66,12 @@ int Result::getInt(int n) {
 }
 
 void Result::close(){
-  mysql_free_result(m_result);
-	m_result = NULL;
+  if (m_result != NULL) {
+    LOG(DEBUG) << "m_result is empty?" << (m_result == NULL);
+    mysql_free_result(m_result);
+	  m_result = NULL;
+  }
+  LOG(DEBUG) << "m_result is empty?" << (m_result == NULL);
+  LOG(DEBUG) << "free the result";
 }
 

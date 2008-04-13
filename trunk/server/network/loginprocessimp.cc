@@ -21,7 +21,10 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
     delete[] buf;
     return;
   }
+  LOG(DEBUG) << "length: " << stringPrintf("%d", length);
   string data(buf, buf + length);
+  LOG(DEBUG) << buf;
+  LOG(DEBUG) << data;
   delete[] buf;
   vector<string> datalist;
   string user_id, password, connect_ip;
@@ -42,6 +45,7 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
   LOG(DEBUG) << password;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find ip from data for:" << ip;
+    return;
   }
   connect_ip = *iter;
   LOG(DEBUG) << connect_ip;
