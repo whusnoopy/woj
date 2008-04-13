@@ -45,7 +45,7 @@ void AdminContestListProcessImp::process(int socket_fd, const string& ip, int le
   while (contest_iter != contest_list.end()) {
     if (first) {
       first = false;
-      databuf += stringPrintf("%d\001%s\001%d\001%d\001%s\001%d\001%s",
+      databuf += stringPrintf("%d\001%s\001%s\001%s\001%s\001%d\001%s",
                               contest_iter->contest_id,
                               contest_iter->title.c_str(),
                               contest_iter->start_time.c_str(),
@@ -54,7 +54,7 @@ void AdminContestListProcessImp::process(int socket_fd, const string& ip, int le
                               contest_iter->public_id,
                               contest_iter->available?"Y":"N");
     }else {
-      databuf += stringPrintf("\001%d\001%s\001%d\001%d\001%s\001%d\001%s",
+      databuf += stringPrintf("\001%d\001%s\001%s\001%s\001%s\001%d\001%s",
                               contest_iter->contest_id,
                               contest_iter->title.c_str(),
                               contest_iter->start_time.c_str(),
@@ -65,7 +65,7 @@ void AdminContestListProcessImp::process(int socket_fd, const string& ip, int le
     }
     contest_iter++;
   }
-  
+  LOG(DEBUG) << databuf; 
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;

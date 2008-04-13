@@ -1243,6 +1243,7 @@ ProblemIdList DatabaseInterface::getContestProblems(int contest_id) {
   ProblemIdList problem_list;
   string query = "select problem_id from problemtocontests where contest_id = '";
   query += stringPrintf("%d", contest_id) = "' order by in_contest_id";
+  LOG(DEBUG) << query;
   Connection* connection = createConnection();
   connection->connect();
   Result result_set = connection->excuteQuery(query);
@@ -1484,6 +1485,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
+    item.contest_id = result_set.getInt("contest_id");
   	item.title = result_set.getString("title");
   	item.type = result_set.getString("contest_type");
   	item.start_time = result_set.getString("start_time");
@@ -1704,6 +1706,7 @@ ContestInfoList DatabaseInterface::getClientContestList() {
   while (iter != contest_list.end()) {
     query = "select problem_id from problemtocontests where contest_id = '" +
             stringPrintf("%d' ", iter->contest_id) + " order by in_contest_id";
+    LOG(DEBUG) << query;
     result_set = connection->excuteQuery(query);
     while (result_set.next()) {
       iter->problem_list.push_back(result_set.getInt("problem_id"));

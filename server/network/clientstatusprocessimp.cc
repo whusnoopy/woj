@@ -14,7 +14,7 @@
 using namespace std;
 
 void ClientStatusProcessImp::process(int socket_fd, const string& ip, int length) {
-  LOG(INFO) << "Process the Client for:" << ip;
+  LOG(INFO) << "Process the Client Status for:" << ip;
   char* buf;
   buf =  new char[length + 1];
   memset(buf, 0, length + 1);
@@ -56,6 +56,6 @@ void ClientStatusProcessImp::process(int socket_fd, const string& ip, int length
     LOG(ERROR) << "Cannot write source to:" << ip;
     return;
   }
-  LOG(INFO) << "Process Client completed for:" << ip;
+  LOG(INFO) << "Process Client Status completed for:" << ip;
 }
 

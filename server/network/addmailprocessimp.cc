@@ -56,6 +56,7 @@ void AddMailProcessImp::process(int socket_fd, const string& ip, int length){
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find from_user from:" << ip;
+    return;
   }
   mail.setFromUser(*iter);
   mail.setRead(false);
