@@ -30,7 +30,7 @@ void spriteString(const string& buf, char separator, vector<string>& output) {
       k = i+1;
     }
   }
-  if (k < buf.size()) {
+  if (k <= buf.size()) {
     output.push_back(buf.substr(k, buf.size() - k));
   }
 }

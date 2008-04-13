@@ -88,6 +88,7 @@ void ProcessThread::running(){
       close(connect_fd);
       continue;
     }
+    LOG(DEBUG) << buf;
     int type = (buf[0] - 'a') * 26 + buf[1] - 'a';
     bool unknown = false;
     switch (type) {

@@ -2320,13 +2320,16 @@ int DatabaseInterface::getUserRank(const string& user_id) {
     submit = result_set.getInt("submits");
   }
   result_set.close();
-  query = "select count(*) from users where solveds > '";
+  query = "select count(*) as rank from users where solveds > '";
   query += stringPrintf("%d' or (solveds = '%d' and ", accepted, accepted);
   query += stringPrintf(" submits < '%d')", submit);
+  LOG(DEBUG) << query;
   result_set = connection->excuteQuery(query);
   int ret = -1;
-  if (result_set.next())
-    ret = result_set.getInt(1);
+  if (result_set.next()) {
+    ret = result_set.getInt("rank") + 1;
+  }
+  result_set.close();
   connection->close();
   delete connection;
   return ret;

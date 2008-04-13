@@ -35,9 +35,12 @@ void UserInfoProcessImp::process(int socket_fd, const string& ip, int length){
   }
   string user_id = *iter;
   User user;
+  LOG(DEBUG) << "here is ok";
   user = DataInterface::getInstance().getUserInfo(user_id);
+  LOG(DEBUG) << "here is ok";
   ProblemSet ac;
   ac = DataInterface::getInstance().getUserACProblem(user_id, true);
+  LOG(DEBUG) << "here is ok";
   int rank = 0;
   rank = DataInterface::getInstance().getUserRank(user_id);
   string databuf;
@@ -47,7 +50,7 @@ void UserInfoProcessImp::process(int socket_fd, const string& ip, int length){
                           user.getSubmit(),
                           user.getSchool().c_str(),
                           user.getEmail().c_str());
-
+  
   ProblemSet::iterator problem_iter = ac.begin();
   while (problem_iter != ac.end()) {
     databuf += stringPrintf("\001%d", *problem_iter);
@@ -63,6 +66,6 @@ void UserInfoProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot return data to:" << ip;
     return;
   }
-  LOG(INFO) << "Process MailList completed for" << ip;
+  LOG(INFO) << "Process User Info completed for" << ip;
 }
 
