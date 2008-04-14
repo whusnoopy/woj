@@ -24,6 +24,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   delete[] buf;
   vector<string> datalist;
   spriteString(data, 1, datalist);
+  LOG(DEBUG) << data;
   vector<string>::iterator iter = datalist.begin();
   Status status;
   string user_id, password, submit_ip;
@@ -45,6 +46,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
     LOG(ERROR) << "Cannot find problem_id from data for:" << ip;
     return;
   }
+  LOG(DEBUG) << *iter;
   problem_id = atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
@@ -69,7 +71,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
     LOG(ERROR) << "Cannot find share_code from data for:" << ip;
     return;
   }
-  problem_id = (*iter == "Y");
+  share_code = (*iter == "Y");
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find ip from data for:" << ip;
@@ -115,6 +117,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   int status_id = DataInterface::getInstance().addStatus(status);
   status.setStatusId(status_id);
   Problem problem = DataInterface::getInstance().getProblem(problem_id);
+  LOG(DEBUG) << stringPrintf("version : %d", problem.getVersion());
   JudgeMission mission;
   mission.status = status;
   mission.source = source;

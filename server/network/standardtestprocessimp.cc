@@ -70,8 +70,8 @@ void StandardTestProcessImp::process(int socket_fd, const string& ip, int length
   status.setUserId(user_id);
   status.setProblemId(problem_id);
   status.setContestId(0);
-  status.setTime(0);
-  status.setMemory(0);
+  status.setTime(-1);
+  status.setMemory(-1);
   status.setSubmitTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
   status.setResult(0);
   status.setLanguage(language);
@@ -80,7 +80,7 @@ void StandardTestProcessImp::process(int socket_fd, const string& ip, int length
   status.setSubmitIp("root");
   status.setErrorId(0);
   status.setType("S");
-  status = DataInterface::getInstance().addStatus(status);
+  status.setStatusId(DataInterface::getInstance().addStatus(status));
 
   JudgeMission mission;
   mission.status = status;
@@ -96,8 +96,13 @@ void StandardTestProcessImp::process(int socket_fd, const string& ip, int length
     mission.spj_source_path = DataInterface::getInstance().getProblemSpjFile(problem_id);
 
   JudgeControl::getInstance().addMission(mission);
+  string status_id_str = stringPrintf("%010d", status.getStatusId());
   if (sendReply(socket_fd, 'Y') != 0) {
     LOG(ERROR) << "Send reply error:" << ip;
+    return;
+  }
+  if (socket_write(socket_fd, status_id_str.c_str(), 10) != 0) {
+    LOG(ERROR) << "Send status_id error";
     return;
   }
   LOG(INFO) << "Submit Standard Test completed." << ip;

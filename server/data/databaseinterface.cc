@@ -323,7 +323,8 @@ map<string, string> DatabaseInterface::getProblemInAndOutFile(const Problem& pro
   query = "select t1.path as in_path, t2.path as out_path from files as t1, files as t2, ";
   query += "intooutfiles where in_id = t1.file_id and out_id = t2.file_id and t1.file_id in";
   query += " (select file_id from filestoproblems where problem_id = ";
-  query == stringPrintf("'%d' and version = '%d')", problem.getProblemId(), problem.getVersion());
+  query += stringPrintf("'%d' and version = '%d')", problem.getProblemId(), problem.getVersion());
+  LOG(INFO) << query;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()) {
@@ -341,7 +342,8 @@ string DatabaseInterface::getProblemSpjFile(const Problem& problem) {
   string query;
   query = "select path from files where style = " + stringPrintf("'%d' and ", SPJ);
   query += "file_id in (select file_id from filestoproblems where problem_id = ";
-  query == stringPrintf("'%d' and version = '%d')", problem.getProblemId(), problem.getVersion());
+  query += stringPrintf("'%d' and version = '%d')", problem.getProblemId(), problem.getVersion());
+  LOG(INFO) << query;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
@@ -1127,6 +1129,7 @@ Problem DatabaseInterface::getProblem(int problem_id){
   Problem problem(problem_id);
   string query = "select * from problems where problem_id = '" + 
                  stringPrintf("%d",problem_id) + "'";
+  LOG(INFO) <<  query;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()){
@@ -1619,8 +1622,8 @@ StatusList DatabaseInterface::getNoSearchStatus(){
   string query = "select * from statuses ";
   query += " where type = 'N' and ";
   string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
-  query += " not exist (select * from contests where statuses.contest_id = contests.contest_id and start_time < '";
-  query += changeSymbol(time) + "' and end_time > '" + changeSymbol(time) + "') ";
+  query += " not exists (select * from contests where statuses.contest_id = contests.contest_id and start_time <= '";
+  query += changeSymbol(time) + "' and end_time >= '" + changeSymbol(time) + "') ";
   query += " order by submit_time desc ";
   query += " limit 0, 25";
   LOG(INFO) << query << endl;
@@ -1806,8 +1809,8 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
     	query += "and ";
     }  
     string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
-    query += " not exist (select * from contests where statuses.contest_id = contests.contest_id and start_time < '";
-    query += changeSymbol(time) + "' and end_time > '" + changeSymbol(time) + "') ";
+    query += " not exists (select * from contests where statuses.contest_id = contests.contest_id and start_time <= '";
+    query += changeSymbol(time) + "' and end_time >= '" + changeSymbol(time) + "') ";
   }
   if (status_info.language != -1){
     if (first){
