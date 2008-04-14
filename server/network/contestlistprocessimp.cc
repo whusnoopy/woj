@@ -54,7 +54,7 @@ void ContestListProcessImp::process(int socket_fd, const string& ip, int length)
     }
     if (first) {
       first = false;
-      databuf += stringPrintf("%d\001%s\001%d\001%d\001%s\001%d",
+      databuf += stringPrintf("%d\001%s\001%s\001%s\001%s\001%d",
                               contest_iter->contest_id,
                               contest_iter->title.c_str(),
                               contest_iter->start_time.c_str(),
@@ -62,7 +62,7 @@ void ContestListProcessImp::process(int socket_fd, const string& ip, int length)
                               contest_iter->type.c_str(),
                               contest_iter->public_id);
     }else {
-      databuf += stringPrintf("\001%d\001%s\001%d\001%d\001%s\001%d",
+      databuf += stringPrintf("\001%d\001%s\001%s\001%s\001%s\001%d",
                               contest_iter->contest_id,
                               contest_iter->title.c_str(),
                               contest_iter->start_time.c_str(),

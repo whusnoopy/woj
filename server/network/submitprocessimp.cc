@@ -77,6 +77,12 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   }
   submit_ip = *iter;
   iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find type from data for:" << ip;
+    return;
+  }
+  string type = *iter;
+  iter++;
   BufSize source_buf;
   source_buf.alloc(code_length);
   if (socket_read(socket_fd, source_buf.getBuf(), code_length) != code_length) {
@@ -93,7 +99,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   user.setSubmit(user.getSubmit() + 1);
   DataInterface::getInstance().updateUser(user);
   int code_id = DataInterface::getInstance().addCode(Code(0, share_code, source));
-  status.setUseId(user_id);
+  status.setUserId(user_id);
   status.setProblemId(problem_id);
   status.setContestId(contest_id);
   status.setLanguage(language);
@@ -105,6 +111,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   status.setTime(-1);
   status.setCodeId(code_id);
   status.setErrorId(0);
+  status.setType(type.substr(0,1));
   int status_id = DataInterface::getInstance().addStatus(status);
   status.setStatusId(status_id);
   Problem problem = DataInterface::getInstance().getProblem(problem_id);

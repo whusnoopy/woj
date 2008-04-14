@@ -94,6 +94,7 @@ public:
   StatusList getClientStatusList(const string& user_id);
   ProblemIdList getClientProblemList();
   ContestInfoList getClientContestList();
+  string getProblemStandardSource(int problem_id, int& language);
 
   Connection* createConnection(const string& host,
                               const string& user,

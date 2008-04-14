@@ -94,6 +94,7 @@ public:
   StatusList getClientStatusList(const string& user_id);
   ProblemIdList getClientProblemList();
   ContestInfoList getClientContestList();
+  string getProblemStandardSource(int problem_id, int& language);
 
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);

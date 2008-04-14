@@ -20,7 +20,8 @@ public:
 	       int code_id,
 	       int code_length,
 	       const string& submit_ip,
-	       int error_id);
+	       int error_id,
+         const string& type);
 	       
 	int getStatusId() const;
 	string getUserId() const;
@@ -35,9 +36,10 @@ public:
 	int getCodeLength() const;
 	string getSubmitIp() const;
 	int getErrorId() const;
+  string getType() const;
 	
 	void setStatusId(int status_id);
-	void setUseId(const string& user_id);
+	void setUserId(const string& user_id);
 	void setProblemId(int problem_id);
 	void setContestId(int contest_id);
 	void setTime(int time);
@@ -49,7 +51,7 @@ public:
 	void setCodeLength(int code_length);
 	void setSubmitIp(const string& submit_ip);
 	void setErrorId(int error_id);
-	
+	void setType(const string& type);
 	
   
 private:
@@ -66,6 +68,7 @@ private:
 	int code_length_;
 	string submit_ip_;
 	int error_id_;
+  string type_;
 };
 
 bool operator<(const Status& a, const Status& b);
