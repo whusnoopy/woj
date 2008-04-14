@@ -54,6 +54,7 @@
 #include "addusertocontestprocessimp.h"
 #include "submitprocessimp.h"
 #include "rejudgeprocessimp.h"
+#include "standardtestprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -232,6 +233,9 @@ void ProcessThread::running(){
         break;
       case 451:  //rj
         m_process_imp = new RejudgeProcessImp();
+        break;
+      case 210:  //ic
+        m_process_imp = new StandardTestProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

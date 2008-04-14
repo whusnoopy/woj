@@ -12,7 +12,8 @@ Status::Status(int status_id,
                int code_id,
                int code_length,
                const string& submit_ip,
-               int error_id)
+               int error_id,
+               const string& type)
 : status_id_(status_id),
   user_id_(user_id),
   problem_id_(problem_id),
@@ -25,7 +26,8 @@ Status::Status(int status_id,
   code_id_(code_id),
   code_length_(code_length),
   submit_ip_(submit_ip),
-  error_id_(error_id){
+  error_id_(error_id),
+  type_(type){
  }
   
          
@@ -81,12 +83,16 @@ int Status::getErrorId() const{
   return error_id_;
 }
 
+string Status::getType() const {
+  return type_;
+}
+
   
 void Status::setStatusId(int status_id){
   status_id_ = status_id;
 }
 
-void Status::setUseId(const string& user_id){
+void Status::setUserId(const string& user_id){
   user_id_ = user_id;
 }
 
@@ -132,6 +138,10 @@ void Status::setSubmitIp(const string& submit_ip){
 
 void Status::setErrorId(int error_id){
   error_id_ = error_id;
+}
+
+void Status::setType(const string& type) {
+  type_ = type;
 }
 
 bool operator<(const Status& a, const Status& b) {

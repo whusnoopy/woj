@@ -88,7 +88,7 @@ void ClientSubmitProcessImp::process(int socket_fd, const string& ip, int length
   user.setSubmit(user.getSubmit() + 1);
   DataInterface::getInstance().updateUser(user);
   int code_id = DataInterface::getInstance().addCode(Code(0, share_code, source));
-  status.setUseId(user_id);
+  status.setUserId(user_id);
   status.setProblemId(problem_id);
   status.setContestId(contest_id);
   status.setLanguage(language);

@@ -49,6 +49,10 @@ int DataInterface::addDiscuss(const Discuss& discuss) {
   return DatabaseInterface::getInstance().addDiscuss(discuss);
 }
 
+string DataInterface::getProblemStandardSource(int problem_id, int& language) {
+  return DatabaseInterface::getInstance().getProblemStandardSource(problem_id, language);
+}
+
 int DataInterface::deleteDiscuss(const Discuss& discuss) {
   return DatabaseInterface::getInstance().deleteDiscuss(discuss);
 }

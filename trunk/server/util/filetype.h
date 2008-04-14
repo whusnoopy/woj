@@ -7,6 +7,7 @@ enum FILE_TYPE {
   OUTFILE,
   IMG,
   SPJ,
+  STANDARD_SOURCE,
 };
 
 #endif

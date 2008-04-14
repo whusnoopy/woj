@@ -15,6 +15,7 @@
   <judgecontrol>
     <maxclient>20</maxclient>
     <port>3241</port>
+    <ip>127.0.0.1</ip>
   </judgecontrol>
   <network>
     <maxclient>100</maxclient>

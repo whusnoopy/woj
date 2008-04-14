@@ -31,10 +31,12 @@ int findSuffix(string& suffix) {
       suffix == "BMP" || suffix == "PNG") {
     suffix = "imp";
     return IMG;
-  } else if (suffix == "cc" || suffix == "c" || suffix == "cpp") {
+  } else if (suffix == "SPJ") {
     suffix = "spj";
     return SPJ;
-  } 
+  } else if (suffix == "CC" || suffix == "C" || suffix == "PAS" || suffix == "JAVA") {
+    return STANDARD_SOURCE;
+  }
   return 0;
 }
 
@@ -84,8 +86,10 @@ void AddFileToProblemProcessImp::process(int socket_fd, const string& ip, int le
     path = FLAGS_root_dir + "/file/" + suffix + "/p" + 
            stringPrintf("%d", problem.getProblemId()) +
            "/" + filename; 
-  else 
+  else if (type == SPJ) 
     path = getProblemDataPath(problem.getProblemId()) + string("spj.cc");
+  else if (type == STANDARD_SOURCE) 
+    path = getProblemDataPath(problem.getProblemId()) + string("stc.cc");
   DataInterface::getInstance().addFile(path, buf.getBuf(), len);
   File file;
   file.setPath(path);

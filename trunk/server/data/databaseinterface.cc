@@ -358,7 +358,7 @@ int DatabaseInterface::addStatus(const Status& status){
   string query;
   query += "insert into statuses(user_id, problem_id, contest_id, time, ";
   query += "memory, submit_time, result, language, code_id, code_length, ";
-  query += "submit_ip, error_id) values('";
+  query += "submit_ip, error_id, type) values('";
   query += changeSymbol(status.getUserId()) + "','" +
            stringPrintf("%d", status.getProblemId()) + "','" +
            stringPrintf("%d", status.getContestId()) + "','" +
@@ -370,7 +370,8 @@ int DatabaseInterface::addStatus(const Status& status){
            stringPrintf("%d", status.getCodeId()) + "','" +
            stringPrintf("%d", status.getCodeLength()) + "','" +
            changeSymbol(status.getSubmitIp()) + "','" +
-           stringPrintf("%d", status.getErrorId()) + 
+           stringPrintf("%d", status.getErrorId()) + "','" +
+           changeSymbol(status.getType()) + 
            "')";
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
@@ -385,6 +386,38 @@ int DatabaseInterface::addStatus(const Status& status){
   connection->close();
   delete connection; 
   return status_id;
+}
+
+string DatabaseInterface::getProblemStandardSource(int problem_id, int& language) {
+  string ret = "no";
+  Connection* connection = createConnection();
+  string query;
+  query += "select path from files where style = '" + stringPrintf("%d", STANDARD_SOURCE);
+  query += "' and file_id in (select file_id from filestoproblems where problem_id = '";
+  query += stringPrintf("%d", problem_id) + "')";
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  if (result_set.next()) {
+    ret = result_set.getString("path");
+  }
+  connection->close();
+  delete connection;
+  string::size_type pos = ret.find_last_of(".");
+  string suffix("NULL");
+  language = -1;
+  if (pos != string::npos) {
+    suffix = ret.substr(pos+1);
+  }
+  if (suffix == "c") {
+    language = GCC;
+  } else if (suffix == "cc") {
+    language = GPP;
+  } else if (suffix == "pas") {
+    language = PASCAL;
+  } else if (suffix == "java") {
+    language = JAVA;
+  }
+  return ret;
 }
 
 int DatabaseInterface::addMail(const Mail& mail){
@@ -1468,7 +1501,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
     if (contest_info.type == 'C')
       query += "(contest_type = 'N' or contest_type = 'P') ";
     else
-      query += "contest_tyoe = '" + stringPrintf("%c",contest_info.type) + "' ";
+      query += "contest_type = '" + stringPrintf("%c",contest_info.type) + "' ";
   }
   if (contest_info.description != string("NULL")){
     if (first){
@@ -1584,6 +1617,10 @@ StatusList DatabaseInterface::getNoSearchStatus(){
   Status item;
   Connection* connection = createConnection();
   string query = "select * from statuses ";
+  query += " where type = 'N' and ";
+  string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
+  query += " not exist (select * from contests where statuses.contest_id = contests.contest_id and start_time < '";
+  query += changeSymbol(time) + "' and end_time > '" + changeSymbol(time) + "') ";
   query += " order by submit_time desc ";
   query += " limit 0, 25";
   LOG(INFO) << query << endl;
@@ -1591,7 +1628,7 @@ StatusList DatabaseInterface::getNoSearchStatus(){
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
   	item.setStatusId(result_set.getInt("status_id"));
-	  item.setUseId(result_set.getString("user_id"));
+	  item.setUserId(result_set.getString("user_id"));
 	  item.setProblemId(result_set.getInt("problem_id"));
 	  item.setContestId(result_set.getInt("contest_id"));
 	  item.setTime(result_set.getInt("time"));
@@ -1621,7 +1658,7 @@ Status DatabaseInterface::getStatus(int status_id){
   Result result_set= connection->excuteQuery(query);
   if(result_set.next()){
   	item.setStatusId(result_set.getInt("status_id"));
-	  item.setUseId(result_set.getString("user_id"));
+	  item.setUserId(result_set.getString("user_id"));
 	  item.setProblemId(result_set.getInt("problem_id"));
 	  item.setContestId(result_set.getInt("contest_id"));
 	  item.setTime(result_set.getInt("time"));
@@ -1643,14 +1680,14 @@ Status DatabaseInterface::getStatus(int status_id){
 StatusList DatabaseInterface::getClientStatusList(const string& user_id) {
   StatusList status_list;
   Status item;
-  string query = "select * from statuses where user_id = '";
+  string query = "select * from statuses where type = 'N' and user_id = '";
   query += changeSymbol(user_id) + "' order by submit_time desc limit 0, 200";
   Connection* connection =  createConnection();
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()) {
     item.setStatusId(result_set.getInt("status_id"));
-	  item.setUseId(result_set.getString("user_id"));
+	  item.setUserId(result_set.getString("user_id"));
 	  item.setProblemId(result_set.getInt("problem_id"));
 	  item.setContestId(result_set.getInt("contest_id"));
 	  item.setTime(result_set.getInt("time"));
@@ -1724,7 +1761,8 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   Status item;
   bool first = true;
   Connection* connection = createConnection();
-  string query = "select * from statuses ";
+  string query = "select * from statuses where type = 'N' ";
+  first = false;
   if (status_info.user_id != string("NULL")){
     if (first){
       query += "where ";
@@ -1760,6 +1798,16 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
     	query += "and ";
     }
     query += "contest_id = '" + stringPrintf("%d", status_info.contest_id) + "' ";
+  }else {        
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }  
+    string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
+    query += " not exist (select * from contests where statuses.contest_id = contests.contest_id and start_time < '";
+    query += changeSymbol(time) + "' and end_time > '" + changeSymbol(time) + "') ";
   }
   if (status_info.language != -1){
     if (first){
@@ -1788,7 +1836,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
   	item.setStatusId(result_set.getInt("status_id"));
-	  item.setUseId(result_set.getString("user_id"));
+	  item.setUserId(result_set.getString("user_id"));
 	  item.setProblemId(result_set.getInt("problem_id"));
 	  item.setContestId(result_set.getInt("contest_id"));
 	  item.setTime(result_set.getInt("time"));
@@ -2271,7 +2319,7 @@ StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
   	item.setStatusId(result_set.getInt("status_id"));
-	  item.setUseId(result_set.getString("user_id"));
+	  item.setUserId(result_set.getString("user_id"));
 	  item.setProblemId(result_set.getInt("problem_id"));
 	  item.setContestId(result_set.getInt("contest_id"));
 	  item.setTime(result_set.getInt("time"));

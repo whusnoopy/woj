@@ -14,7 +14,7 @@
 using namespace std;
 
 void ContestProblemProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process the ContestList for:" << ip;
+  LOG(INFO) << "Process the Contest Problem List for:" << ip;
   char* buf;
   buf = new char[length+1];
   memset(buf,0,sizeof(buf));
@@ -72,6 +72,7 @@ void ContestProblemProcessImp::process(int socket_fd, const string& ip, int leng
     }
     problem_iter++;
   }
+  LOG(DEBUG) << databuf;
   sendReply(socket_fd, 'Y');
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
@@ -82,6 +83,6 @@ void ContestProblemProcessImp::process(int socket_fd, const string& ip, int leng
     LOG(ERROR) << "Cannot return data to:" << ip;
     return;
   }
-  LOG(INFO) << "Process ContestList completed for" << ip;
+  LOG(INFO) << "Process Contest Problem List completed for" << ip;
 }
 
