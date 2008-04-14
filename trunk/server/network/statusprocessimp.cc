@@ -59,7 +59,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find language for:" << ip;
     return ;
   }
-  status_info.result = (*iter == "?")?-1:atoi(iter->c_str());
+  status_info.language = (*iter == "?")?-1:atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find contest_id for:" << ip;
