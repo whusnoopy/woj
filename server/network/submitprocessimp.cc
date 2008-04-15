@@ -92,6 +92,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
     return;
   }
   string source(source_buf.getBuf(), source_buf.getBuf() + code_length);
+  LOG(DEBUG) << "source" << source;
   //check user;
   User user = DataInterface::getInstance().getUserInfo(user_id);
   if (user.getPassword() != password) {

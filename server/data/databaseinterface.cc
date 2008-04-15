@@ -164,7 +164,7 @@ int DatabaseInterface::addProblem(const Problem& problem){
            changeSymbol(problem.getSampleOutput()) + "','" +
            changeSymbol(problem.getHint()) + "','" +
            changeSymbol(problem.getSource()) + "','" +
-           changeSymbol(problem.getAddinTime()) + "','" +
+           changeSymbol(getLocalTimeAsString("%Y-%m-%d %H:%M:%S")) + "','" +
            stringPrintf("%d",problem.getTimeLimit()) + "','" +
            stringPrintf("%d",problem.getCaseTimeLimit()) + "','" +
            stringPrintf("%d",problem.getMemoryLimit()) + "','" +
@@ -1673,6 +1673,7 @@ Status DatabaseInterface::getStatus(int status_id){
 	  item.setCodeLength(result_set.getInt("code_length"));
 	  item.setSubmitIp(result_set.getString("submit_ip"));
 	  item.setErrorId(result_set.getInt("error_id"));
+    item.setType(result_set.getString("type"));
   }
   result_set.close();
   connection->close();

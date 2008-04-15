@@ -125,7 +125,8 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
       if (hasuser) {
         Code code;
         code = DataInterface::getInstance().getCode(status_iter->getCodeId());
-        if (user.getPermission() & 0x01 || (code.getShare() && acset.count(status_iter->getProblemId()))){
+        if (user.getPermission() & 0x01 || user.getId() == status_iter->getUserId() 
+            || (code.getShare() && acset.count(status_iter->getProblemId()))) {
           databuf += "\001Y";
         }else 
           databuf += "\001N";
@@ -147,7 +148,8 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
       if (hasuser) {
         Code code;
         code = DataInterface::getInstance().getCode(status_iter->getCodeId());
-        if (user.getPermission() & 0x01 || (code.getShare() && acset.count(status_iter->getProblemId()))){
+        if (user.getPermission() & 0x01 || user.getId() == status_iter->getUserId() 
+            || (code.getShare() && acset.count(status_iter->getProblemId()))){
           databuf += "\001Y";
         }else 
           databuf += "\001N";

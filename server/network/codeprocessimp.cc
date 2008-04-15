@@ -26,8 +26,9 @@ void CodeProcessImp::process(int socket_fd, const string& ip, int length) {
   delete[] buf;
   vector<string> datalist;
   spriteString(data, 1, datalist);
+  LOG(DEBUG) << "code :" << data;
   vector<string>::iterator iter = datalist.begin();
-  if (iter != datalist.end()) {
+  if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find code_id from data for:" << ip;
     return;
   }

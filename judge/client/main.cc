@@ -65,6 +65,10 @@ int getHeader(int communicate_socket,
               string& source_suffix,
               int& problem_id,
               int& version) {
+  // Wait for 5s, if there is no header recieved, return to wait for terminaled
+  // and socket_broken
+  
+
   unsigned char header[9];
   int num = socket_read(communicate_socket, header, sizeof(header));
   if (num < sizeof(header))
@@ -95,6 +99,8 @@ int saveFile(int communicate_socket,
     sendReply(communicate_socket, INVALID_FILE_SIZE);
     return -1;
   }
+  length = ntohl(length);
+  LOG(DEBUG) << "Get file length = " << length;
   sendReply(communicate_socket, READY);
   
   int file = open(filename.c_str(), O_RDWR | O_CREAT | O_TRUNC, 0644);
@@ -117,6 +123,10 @@ int saveFile(int communicate_socket,
       return -1;
     }
     length -= count;
+    LOG(DEBUG) << "Success get " << count << " Bytes already, "
+               << length << " Bytes left";
+    LOG(DEBUG) << "Write " << buffer <<  " to "
+               << file << " (" << filename << ")";
   }
   close(file);
   return 0;
@@ -124,7 +134,7 @@ int saveFile(int communicate_socket,
 
 int saveData(int communicate_socket, int problem_id, int version) {
   string problem_dir = FLAGS_root_dir +
-                       stringPrintf("/%d/%d", problem_id, version);
+                       stringPrintf("/prob/%d/%d", problem_id, version);
   string temp_file = problem_dir + "/data.tar.gz";
   mkdirRecursive(problem_dir, 0755);
   if (saveFile(communicate_socket, temp_file) == -1) {
@@ -393,7 +403,7 @@ int main(int argc, char* argv[]) {
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);
-    system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
+//    system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
   }
   system(stringPrintf("rm -rf %s", working_root.c_str()).c_str());
 

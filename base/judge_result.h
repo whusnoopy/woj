@@ -4,6 +4,10 @@
 #ifndef _BASE_JUDGE_RESULT_H__
 #define _BASE_JUDGE_RESULT_H__
 
+#include <string>
+
+using namespace std;
+
 enum COMMUNICATION_STATUS {
   FIRST_STATUS = 1,
   ACCEPTED = 1,           // 1. Correct answer
