@@ -40,7 +40,7 @@ function dirline($url)
 	}
 }
 
-$dir = 'E:/WWW/Web';
+$dir = 'E:\www\web';
 dirline($dir);
 echo "\nsumary:\n";
 echo "there are total $filenum files\n";

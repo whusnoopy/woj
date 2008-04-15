@@ -62,6 +62,7 @@
   </tr>
 
 <?php
+	$language_type = array('GCC','G++','JAVA','PASCAL');
 	for ($i=0; $i<$rows; $i++){
 		if($i%2==0)
 		    echo '<tr class=tro>';
@@ -82,9 +83,9 @@
 		echo "<td>$mem</td>";
 		echo "<td>$tm</td>";
 		if ($st->getPermission($i) == 'Y')
-			echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$rst&lan=$lan&tm=$tm&mem=$mem\" tatget=_blank>$lan</a></td>";
+			echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$rst&lan=$lan&tm=$tm&mem=$mem\" tatget=_blank>".$language_type[$lan]."</a></td>";
 		else
-			echo "<td>$lan</td>";
+			echo "<td>".$language_type[$lan]."</td>";
 		echo '<td>'.$st->getCode_length($i).'</td>';
 		echo '<td>'.$st->getIn_date($i).'</td>';
 		echo '</tr>';

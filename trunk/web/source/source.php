@@ -5,6 +5,7 @@
 
 <?php
     include('../include/header.php');
+	include('../common/tcpclient.php');
 	include('classes/format_code_t.php');
 
 	if(isset($_GET['cid']))
@@ -13,14 +14,18 @@
 //		echo 'solution does not exist';
 //		exit;
 	}
+	$language_type = array('GCC','G++','JAVA','PASCAL');
 	$problem["sid"] = $_GET['sid'];
 	$problem["pid"] = $_GET['pid'];
 	$problem["uid"] = $_GET['uid'];
 	$problem["limit_time"] = $_GET['tm'];
 	$problem["memory"] = $_GET['mem'];
-	$problem["language"] = $_GET['lan'];
+	$problem["language"] = $language_type[$_GET['lan']];
 	$problem["result"] = $_GET['rst'];
+	echo $code_id;
 	$problem["source"] = getSource($code_id, $user_id);
+	echo $problem["source"];
+	exit;
 ?>
 
 <?php
@@ -58,13 +63,6 @@
 <?php
 function getSource($code_id, $user_id)
 {
-	return
-"#include<stdio.h>
-int main()
-{
-	return 0;  //hello, magiii
-}";
-
 	$message = $code_id."\001".$user_id;
 	$header = sprintf("%s%08d", "sc", strlen($message));
 	$tc = new TCPClient();
@@ -73,7 +71,8 @@ int main()
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($message);
 	$recv = $tc->recvstr(10);
-	$len = sscanf($recv, "%d");
+	echo $recv;
+	sscanf($recv, "%d", $len);
 	if($len > 0)
 		$recv = $tc->recvstr($len);
 	else

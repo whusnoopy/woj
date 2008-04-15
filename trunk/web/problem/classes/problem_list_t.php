@@ -63,7 +63,7 @@ class problem_list_t
 
 	function getRow()
 	{
-		return count($this->result) / 5;
+		return (count($this->result)-1) / 5;
 	}
 
 	function getResult()
