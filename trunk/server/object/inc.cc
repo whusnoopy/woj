@@ -6,8 +6,10 @@ DECLARE_FLAGS(string, root_dir);
 
 string changeSymbol(const string& str){
   string strbuf(str);
+  string seq = "'\\\"";
+  LOG(DEBUG) << str;
   string::size_type pos = 0;
-  while(( pos = strbuf.find_first_of("_'\\\"%",pos)) != string::npos){
+  while(( pos = strbuf.find_first_of(seq,pos)) != string::npos){
   	strbuf.insert(pos, 1, '\\');
   	pos += 2;
   	LOG(DEBUG) << "pos:" << pos;

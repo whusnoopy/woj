@@ -51,6 +51,7 @@ int doCompile(int communicate_socket,
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
+  LOG(DEBUG) << "Create process " << pid << " to compile";
 
   static signed char error_message[16384];
   int message_length = socket_read(file_pipe[0],

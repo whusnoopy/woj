@@ -26,6 +26,6 @@ if [ "`which gcj`" != "" ]; then
 fi
 
 ids=`cat /etc/passwd | grep flood | awk -F ':' '{print "--uid=" $3, "--gid=" $4}'`
-cmd="./judge_client --support_lang=\"$support_lang\" --daemon --root_dir=\"/tmp\" --server_address=\"$address\" --server_port=$port $ids"
+cmd="./judge_client --support_lang=\"$support_lang\" --daemon --root_dir=\"/home/flood/worktemp\" --server_address=\"$address\" --server_port=$port $ids --log_level=5 --logtostderr"
 echo $cmd
 eval $cmd

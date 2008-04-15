@@ -1,1 +1,1 @@
- ./main --root_dir="/tmp" --logtostderr --log_level=5
+ ./main --root_dir="/home/flood/worktemp" --logtostderr --log_level=5

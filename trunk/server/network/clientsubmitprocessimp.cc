@@ -100,6 +100,7 @@ void ClientSubmitProcessImp::process(int socket_fd, const string& ip, int length
   status.setTime(-1);
   status.setCodeId(code_id);
   status.setErrorId(0);
+  status.setType("N");
   int status_id = DataInterface::getInstance().addStatus(status);
   status.setStatusId(status_id);
   Problem problem = DataInterface::getInstance().getProblem(problem_id);
