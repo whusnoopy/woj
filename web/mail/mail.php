@@ -1,7 +1,6 @@
 <?php
 	include('../include/header.php');
 	include('../common/tcpclient.php');
-	include('classes/mail_t.php');
 	if (isset($_GET['mail_id']))
 		$mail_id = $_GET['mail_id'];
 	else

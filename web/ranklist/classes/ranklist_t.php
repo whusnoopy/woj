@@ -69,7 +69,7 @@ class ranklist_t
 		}
 		else
 			$this->result = null;
-		$tc->close;
+		$tc->close();
 	}
 
 }

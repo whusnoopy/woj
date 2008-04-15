@@ -13,13 +13,8 @@
 		$start = '0';
 	if(isset($_GET['of1']))
 		$of1 = $_GET['of1'];
-
-	if($of1 == 'submit')
-	    $of1 = '1';
-	else if($of1 == 'ratio')
-		$of1 = '2';
 	else
-	    $of1 = '0';
+		$of1 = '0';
 
 	$rk = new ranklist_t($start, $of1);
 	$rk->getResult();
@@ -34,8 +29,8 @@
     <th width="120">User ID</th>
     <th width="450">Nick Name</th>
     <th width="100"><a href="ranklist.php">Solved</a></th>
-    <th width="100"><a href="ranklist.php?of1=submit">Submit</a></th>
-    <th width="100"><a href="ranklist.php?of1=ratio">Ratio</a></th>
+    <th width="100"><a href="ranklist.php?of1=1">Submit</a></th>
+    <th width="100"><a href="ranklist.php?of1=2">Ratio</a></th>
   </tr>
 
  <?php
@@ -50,7 +45,10 @@
 		 $nick = $rk->getNick($i);
 		 $solved = $rk->getSolveds($i);
 		 $submits = $rk->getSubmits($i);
-		 $ratio = sprintf("%.2f%s",$solved * 100 / $submits, '%');
+		 if ($submits>0)
+			 $ratio = sprintf("%.2f%s",$solved * 100 / $submits, '%');
+		 else
+			 $ratio = '0.00';
 		 echo "<td><a href=../status/userStatus.php?user_id=$user_id>$user_id</a></td>";
          echo "<td>$nick</td>";
 		 echo "<td>$solved</td>";
