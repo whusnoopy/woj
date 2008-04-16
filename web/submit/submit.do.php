@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	include('../common/tcpclient.php');
 	include('../common/get_ip.php');
 	$errorMsg = '';
@@ -41,8 +42,11 @@
 				get_ip().$d.
 				'N';
 
-	if (submit($submit_pack, $_POST['source']))
+	if (submit($submit_pack, $_POST['source'])){
 		header('Location: ../status/status.php');
+		$_SESSION['user_id'] = $_POST['user_id'];
+		$_SESSION['password'] = $_POST['pass'];
+	}
 	else
 		header("Location: submiterror.php?error=system is busy");
 ?>

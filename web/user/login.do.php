@@ -32,6 +32,7 @@
 
 		if(login($user_id, $password)){
 			$_SESSION['user_id'] = $user_id;
+			$_SESSION['password'] = $password;
 			header("Location: $origURL");
 			exit;
 		}

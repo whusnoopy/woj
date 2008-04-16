@@ -20,4 +20,5 @@ while(!feof($fp)){
 		echo $line;
 }
 echo '</pre></body></html>';
+fclose($fp);
 ?>

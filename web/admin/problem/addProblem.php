@@ -60,67 +60,67 @@ function spjtest(form)
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Title:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input name=title size=75 /></td>
+      <td align=left>&nbsp;&nbsp;<input name="title" size=75 /></td>
       <td></td>
     </tr>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>Time Limit:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input name=time_limit value=1000 size=15 />MS</td>
+      <td align=left>&nbsp;&nbsp;<input name="time_limit" value=1000 size=15 />MS</td>
       <td></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Case Time Limit:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input name=case_time_limit value=30000 size=15 />MS</td>
+      <td align=left>&nbsp;&nbsp;<input name="case_time_limit" value=30000 size=15 />MS</td>
       <td></td>
     </tr>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>Memory Limit:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input name=memory_limit value=65536 size=15 />KB</td>
+      <td align=left>&nbsp;&nbsp;<input name="memory_limit" value=65536 size=15 />KB</td>
       <td></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Description:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=description rows=10 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name="description" rows=10 cols=80></textarea></td>
       <td></td>
     </tr>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>Input:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=input rows=5 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name="input" rows=5 cols=80></textarea></td>
       <td></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Output:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=output rows=5 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name="output" rows=5 cols=80></textarea></td>
       <td></td>
     </tr>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>Sample Input:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=sample_input rows=5 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name="sample_input" rows=5 cols=80></textarea></td>
       <td></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Sample Output:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=sample_output rows=5 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name="sample_output" rows=5 cols=80></textarea></td>
       <td></td>
     </tr>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>Hint:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=hint rows=5 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name="hint" rows=5 cols=80></textarea></td>
       <td></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Source:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input name=source size=75 /></td>
+      <td align=left>&nbsp;&nbsp;<input name="source" size=75 /></td>
       <td></td>
     </tr>
     <tr class=tro>
