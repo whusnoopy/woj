@@ -32,8 +32,10 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   BufSize buf;
   memset(header, 0, sizeof(header));
   header[0] = mission.status.getLanguage();
+  LOG(DEBUG) << "language :" << mission.status.getLanguage();
   *(unsigned int*) (header + 1) = htonl((unsigned int)(mission.status.getProblemId()));
   *(unsigned int*) (header + 5) = htonl((unsigned int)(mission.version));
+  LOG(DEBUG) << stringPrintf("%018X", header);
   if (socket_write(connect_fd, header, 9) != 0) {
     LOG(SYS_ERROR) << "Cannot send header to :" << ip;
     JudgeControl::getInstance().addMission(mission);
@@ -50,21 +52,23 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     return -1;
   }
   if (reply != READY) {
-    LOG(ERROR) << ip <<" Judge Cannot process the mission";
+    LOG(ERROR) << " Judge[" << ip << "]Cannot process the mission";
     if (reply == SYSTEM_ERROR) {
       status.setResult(static_cast<int>(reply));
       DataInterface::getInstance().updateStatus(status);
     }
-    else if (reply ==UNSUPPORTED_SOURCE_FILE_TYPE);
+    else if (reply == UNSUPPORTED_SOURCE_FILE_TYPE) {
       JudgeControl::getInstance().addMission(mission);
+    }
     return -2;
   }
 
   //3.send source length
   LOG(DEBUG) << "send source length";
   char len[4];
+  LOG(DEBUG) << "code length" << status.getCodeLength();
   *(unsigned int*)(len) = htonl((unsigned int)status.getCodeLength());
-  LOG(DEBUG) << stringPrintf("code length: %d", status.getCodeLength());
+  LOG(DEBUG) << stringPrintf("code length: %d(%04X)", status.getCodeLength(), *(unsigned int*)(len));
   if (socket_write(connect_fd, len, 4) != 0) {
     LOG(SYS_ERROR) << "Cannot send source length to :" << ip;
     JudgeControl::getInstance().addMission(mission);
@@ -255,6 +259,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     close(connect_fd);
     return -1;
   }
+  LOG(DEBUG) << (int) reply;
   if (reply == COMPILE_ERROR) {
     LOG(INFO) << "Misson compile error:" << ip;
     status.setResult(COMPILE_ERROR);
@@ -279,8 +284,8 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       return -1;
     }
     string ce_info(buf.getBuf(), buf.getBuf() + ce_length);
-    int error_id = DataInterface::getInstance().addError(Error(0, ce_info));
-    status.setErrorId(error_id);
+    int ce_error_id = DataInterface::getInstance().addError(Error(0, ce_info));
+    status.setErrorId(ce_error_id);
     DataInterface::getInstance().updateStatus(status);
     return -2;
   }
@@ -299,6 +304,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       close(connect_fd);
       return -1;
     }
+    LOG(DEBUG) << (int)reply;
     if (reply != RUNNING) {
       LOG(ERROR) << "Process sequent error, should run now:" << ip;
       status.setResult(SYSTEM_ERROR) ;
@@ -314,7 +320,11 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       close(connect_fd);
       return -1;
     }
+    bool is_break = true;
     switch(static_cast<int>(reply)) {
+      case READY:
+        is_break = false;
+        break;
       case RUNTIME_ERROR_SIGSEGV:
       case RUNTIME_ERROR_SIGFPE:
       case RUNTIME_ERROR_SIGBUS:
@@ -347,11 +357,13 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
           return -1;
         }
         string re_info(buf.getBuf(), buf.getBuf() + re_length);
-        int error_id = DataInterface::getInstance().addError(Error(0, re_info));
-        status.setErrorId(error_id);
+        int re_error_id = DataInterface::getInstance().addError(Error(0, re_info));
+        status.setErrorId(re_error_id);
         DataInterface::getInstance().updateStatus(status);
         return -2;
     }
+    if (is_break)
+      break;
     //21.JUDGING
     LOG(DEBUG) << "judging";
     if (socket_read(connect_fd, &reply, 1) != 1) {
@@ -360,6 +372,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       close(connect_fd);
       return -1;
     }
+    LOG(DEBUG) << (int)reply;
     if (reply != JUDGING) {
       LOG(ERROR) << "Process sequent error, should run now:" << ip;
       status.setResult(SYSTEM_ERROR) ;
@@ -416,6 +429,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
   DataInterface::getInstance().updateStatus(status);
   DataInterface::getInstance().updateUserSolved(status, 1);
+  LOG(DEBUG) << "Judge compelete.";
   return 0;
 }
 
@@ -446,6 +460,7 @@ void JudgeThread::running() {
       int ret = sendFile(connect_fd, mission, ip);
       if (ret == -1) 
         break;
+      LOG(DEBUG) << "ret:" << ret;
     }
   }
 }

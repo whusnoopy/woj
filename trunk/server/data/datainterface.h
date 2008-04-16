@@ -95,6 +95,7 @@ public:
   ProblemIdList getClientProblemList();
   ContestInfoList getClientContestList();
   string getProblemStandardSource(int problem_id, int& language);
+  bool canReadCode(const string& user_id, int code_id);
 
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);
