@@ -16,6 +16,8 @@
 		if($share_email) $share_email = 'Y'; else $share_email = 'N';
 		$language = '0';
 	}
+	else
+		exit;
 
 	$errorMsg = '';
 	if (empty($user_id))
@@ -30,7 +32,7 @@
 				break;
 			}
 		if($i != strlen($user_id))
-			$errorMsg = "User ID can only contain number,letter and \'_\'";
+			$errorMsg = 'User ID can only contain number,letter and "_"';
 		else if (empty($password))
 			$errorMsg = 'Password can not be NULL';
 		else if(strlen($password) <6)

@@ -3,6 +3,7 @@
     echo '<div id=tt>Status</div>';
 	include('../include/notice.php');
 	include('../common/tcpclient.php');
+	include('../common/config.php');
 	include('classes/status_t.php');
 ?>
 
@@ -62,7 +63,6 @@
   </tr>
 
 <?php
-	$language_type = array('GCC','G++','JAVA','PASCAL');
 	for ($i=0; $i<$rows; $i++){
 		if($i%2==0)
 		    echo '<tr class=tro>';
@@ -72,20 +72,20 @@
 		$uid = $st->getUser_id($i);
 		$pid = $st->getProblem_id($i);
 		$cid = $st->getCode_id($i);
-		$rst = $st->getRst($i);
+		$result = $st->getRst($i);
 		$mem = $st->getMemory($i);
 		$tm = $st->getTime($i);
 		$lan = $st->getLanguage($i);
-		echo "<td>$sid'</td>";
+		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
 		echo "<td><a href=\"../problem/problem.php?problem_id=$pid}\">$pid</a></td>";
-		echo "<td>$rst</td>";
+		echo '<td>'.$JUDGE_STATUS[$result].'</td>';
 		echo "<td>$mem</td>";
 		echo "<td>$tm</td>";
 		if ($st->getPermission($i) == 'Y')
-			echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$rst&lan=$lan&tm=$tm&mem=$mem\" tatget=_blank>".$language_type[$lan]."</a></td>";
+			echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$rst&lan=$lan&tm=$tm&mem=$mem&sid=$sid\" target=_blank>".$LANGUAGE[$lan]."</a></td>";
 		else
-			echo "<td>".$language_type[$lan]."</td>";
+			echo "<td>".$LANGUAGE[$lan]."</td>";
 		echo '<td>'.$st->getCode_length($i).'</td>';
 		echo '<td>'.$st->getIn_date($i).'</td>';
 		echo '</tr>';
@@ -133,11 +133,11 @@
 	if($start > 0){
 		echo "<span class=bt><a href=\"status.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
        $pre = $start - 1;
-	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Previous</a></span>&nbsp";
 	}
-    if ($rows == 20){
+    if ($rows == 25){
        $next = $start + 1;
-	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Next</a></span>&nbsp";
 	}
 ?>
 </div>

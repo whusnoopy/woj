@@ -1,5 +1,4 @@
 
-<%--  cannot be copy  --%>
 <body onmouseup=document.selection.empty() oncontextmenu="return false" onselectstart="return false" ondragstart="return false" onbeforecopy="return false" oncopy=document.selection.empty() leftMargin=0 topMargin=0 onselect=document.selection.empty() >
 <center>
 
@@ -22,10 +21,8 @@
 	$problem["memory"] = $_GET['mem'];
 	$problem["language"] = $language_type[$_GET['lan']];
 	$problem["result"] = $_GET['rst'];
-	echo $code_id;
 	$problem["source"] = getSource($code_id, $user_id);
-	echo $problem["source"];
-	exit;
+
 ?>
 
 <?php
@@ -71,7 +68,6 @@ function getSource($code_id, $user_id)
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($message);
 	$recv = $tc->recvstr(10);
-	echo $recv;
 	sscanf($recv, "%d", $len);
 	if($len > 0)
 		$recv = $tc->recvstr($len);
