@@ -95,6 +95,7 @@ public:
   ProblemIdList getClientProblemList();
   ContestInfoList getClientContestList();
   string getProblemStandardSource(int problem_id, int& language);
+  bool canReadCode(const string& user_id, int code_id);
 
   Connection* createConnection(const string& host,
                               const string& user,

@@ -323,6 +323,10 @@ ContestInfoList DataInterface::getClientContestList() {
   return DatabaseInterface::getInstance().getClientContestList();
 }
 
+bool DataInterface::canReadCode(const string& user_id, int code_id) {
+  return DatabaseInterface::getInstance().canReadCode(user_id, code_id);
+}
+
 int DataInterface::addLink(const LinkList& link_list) {
   return FileInterface::getInstance().addLink(link_list);
 }

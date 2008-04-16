@@ -55,6 +55,9 @@
 #include "submitprocessimp.h"
 #include "rejudgeprocessimp.h"
 #include "standardtestprocessimp.h"
+#include "errorprocessimp.h"
+#include "userlistprocessimp.h"
+#include "checkpermissionprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -236,6 +239,15 @@ void ProcessThread::running(){
         break;
       case 210:  //ic
         m_process_imp = new StandardTestProcessImp();
+        break;
+      case 106:  //ec
+        m_process_imp = new ErrorProcessImp();
+        break;
+      case 531:  //ul
+        m_process_imp = new UserListProcessImp();
+        break;
+      case 461:  //rt
+        m_process_imp = new CheckPermissionProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

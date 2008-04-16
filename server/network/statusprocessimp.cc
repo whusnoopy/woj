@@ -97,6 +97,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     user = DataInterface::getInstance().getUserInfo(user_id);
     acset = DataInterface::getInstance().getUserACProblem(user_id, true);
   }
+  LOG(DEBUG) << "user_id" << user_id;
   StatusList status_list;
   if (type == 0){
     status_list = DataInterface::getInstance().getSearchStatus(status_info);
@@ -111,7 +112,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
   bool first = true;
   while (status_iter != status_list.end()) {
     if (first) {
-      databuf += stringPrintf("%d\001%s\001%d\001%d\001%d\001%d\001%d\001%d\001%s\001%d", 
+      databuf += stringPrintf("%d\001%s\001%d\001%d\001%d\001%d\001%d\001%d\001%s\001%d\001%d", 
                              status_iter->getStatusId(),
                              status_iter->getUserId().c_str(),
                              status_iter->getProblemId(),
@@ -121,7 +122,8 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
                              status_iter->getLanguage(),
                              status_iter->getCodeLength(),
                              status_iter->getSubmitTime().c_str(),
-                             status_iter->getCodeId());
+                             status_iter->getCodeId(),
+                             status_iter->getErrorId());
       if (hasuser) {
         Code code;
         code = DataInterface::getInstance().getCode(status_iter->getCodeId());
@@ -134,7 +136,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
         databuf += "\001N";
       first = false;
     } else {
-      databuf += stringPrintf("\001%d\001%s\001%d\001%d\001%d\001%d\001%d\001%d\001%s\001%d", 
+      databuf += stringPrintf("\001%d\001%s\001%d\001%d\001%d\001%d\001%d\001%d\001%s\001%d\001%d", 
                              status_iter->getStatusId(),
                              status_iter->getUserId().c_str(),
                              status_iter->getProblemId(),
@@ -144,10 +146,11 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
                              status_iter->getLanguage(),
                              status_iter->getCodeLength(),
                              status_iter->getSubmitTime().c_str(),
-                             status_iter->getCodeId());
+                             status_iter->getCodeId(),
+                             status_iter->getErrorId());
       if (hasuser) {
         Code code;
-        code = DataInterface::getInstance().getCode(status_iter->getCodeId());
+        code = DataInterface::getInstance().getCode(status_iter->getCodeId());  
         if (user.getPermission() & 0x01 || user.getId() == status_iter->getUserId() 
             || (code.getShare() && acset.count(status_iter->getProblemId()))){
           databuf += "\001Y";
@@ -158,7 +161,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     }
     status_iter++;
   }
-  
+ 
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
