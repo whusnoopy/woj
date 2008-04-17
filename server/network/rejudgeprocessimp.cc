@@ -33,11 +33,17 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
   }
   status_id = atoi(iter->c_str());
   iter++;
+  if (status_id <= 0) {
+    sendReply(socket_fd, 'N');
+    LOG(ERROR) << "status_id can not be nagative";
+    return ;
+  }
   status = DataInterface::getInstance().getStatus(status_id);
   if (status.getResult() == ACCEPTED) {
     status.setResult(0);
     DataInterface::getInstance().updateStatus(status);
     DataInterface::getInstance().updateUserSolved(status, -1);
+    DataInterface::getInstance().addProblemSolved(status.getProblemId(), -1);
   }
   status.setErrorId(0);
   Problem problem = DataInterface::getInstance().getProblem(status.getProblemId());

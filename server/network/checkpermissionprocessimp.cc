@@ -62,18 +62,10 @@ void CheckPermissionProcessImp::process(int socket_fd, const string& ip, int len
         if (user.getPermission() & 0x01 || can_read)
           reply = 'Y';
       }
-      if (sendReply(socket_fd, reply) != 1) {
-        LOG(ERROR) << "Cannot reply to : " << ip;
-        return;
-      }
       break;
     case 'A':      //Admin
       if (user.getPermission() & 0x02)
         reply = 'Y';
-      if (sendReply(socket_fd, reply) != 1) {
-        LOG(ERROR) << "Cannot reply to : " << ip;
-        return;
-      }
       break;
     case 'C':      //Join Contest
       if (iter == datalist.end()) {
@@ -84,15 +76,15 @@ void CheckPermissionProcessImp::process(int socket_fd, const string& ip, int len
       iter++;
       if (DataInterface::getInstance().checkPermission(contest_id, user_id))
         reply = 'Y';
-      if (sendReply(socket_fd, reply) != 1) {
-        LOG(ERROR) << "Cannot reply to : " << ip;
-        return;
-      } 
       break;
     default:
       LOG(ERROR) << "Unknown right test : " << type;
       return;
       break;
+  }
+  if (sendReply(socket_fd, reply) != 1) {
+    LOG(ERROR) << "Cannot reply to : " << ip;
+    return;
   }
   LOG(INFO) << "Process Check Permission completed for:" << ip;
 }

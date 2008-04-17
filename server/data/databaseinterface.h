@@ -62,6 +62,7 @@ public:
   int updateDiscuss(const Discuss& discuss);
   int updateStatus(const Status& status);
   int updateUser(const User& user);
+  int updateUserPassword(const User& user);
   int updateNews(const News& news);
   int updateError(const Error& error);
   //int updateCode(const Code& code);
@@ -96,6 +97,8 @@ public:
   ContestInfoList getClientContestList();
   string getProblemStandardSource(int problem_id, int& language);
   bool canReadCode(const string& user_id, int code_id);
+  int addProblemSubmit(int problem_id, int op);
+  int addProblemSolved(int problem_id, int op);
 
   Connection* createConnection(const string& host,
                               const string& user,

@@ -23,6 +23,7 @@
     <ip>192.168.5.182</ip>
     <ip>127.0.0.1</ip>
     <ip>192.168.5.187</ip>
+    <ip>192.168.5.185</ip>
   </network>
   <client>
     <maxclient>50</maxclient>

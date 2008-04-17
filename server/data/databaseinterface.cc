@@ -145,9 +145,31 @@ int DatabaseInterface::addNews(const News& news){
   return ret;
 }
 
-/*
-int addNotice(const Notice& notice);
-*/
+
+int DatabaseInterface::addProblemSubmit(int problem_id, int op) {
+	Connection* connection = createConnection();
+  connection->connect();
+  string query = "update problems set submit = submit + '";
+  query += stringPrintf("%d", op) + "' where problem_id = '";
+  query += stringPrintf("%d", problem_id) + "'"; 
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection; 
+  return ret;
+}
+
+int DatabaseInterface::addProblemSolved(int problem_id, int op) {
+	Connection* connection = createConnection();
+  connection->connect();
+  string query = "update problems set accepted = accepted + '";
+  query += stringPrintf("%d", op) + "' where problem_id = '";
+  query += stringPrintf("%d", problem_id) + "'"; 
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection; 
+  return ret;
+}
+
 int DatabaseInterface::addProblem(const Problem& problem){
 	Connection* connection = createConnection();
   string query;
@@ -253,7 +275,7 @@ int DatabaseInterface::getProblemListNum(const ProblemInfo& problem_info) {
   }
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-      ret = result_set.getInt("problem_id")/100 + 1;
+      ret = result_set.getInt("num")/100 + 1;
   }
   result_set.close();
   connection->close();
@@ -676,29 +698,30 @@ int DatabaseInterface::updateUser(const User& user){
   query += "update users set "; 
   query += "email = '" + changeSymbol(user.getEmail()) + "'," +
            "show_email = '" + changeSymbol(user.getShowEmail()?"Y":"N") + "'," +
-           "submits = '" + stringPrintf("%d",user.getSubmit()) + "'," +
-           "solveds = '" + stringPrintf("%d",user.getSolved()) + "'," +
            "available = '" + changeSymbol(user.getAvailable()?"Y":"N") + "'," +
            "last_login_ip = '" + changeSymbol(user.getLastLoginIp()) + "'," +
            "last_login_time = '" + changeSymbol(user.getLastLoginTime()) + "'," +
            "volume = '" + stringPrintf("%d",user.getVolume()) + "'," +
            "language = '" + stringPrintf("%d",user.getLanguage()) + "'," +
-           "password = '" + changeSymbol(user.getPassword()) + "'," +
-           "reg_time = '" + changeSymbol(user.getRegTime()) + "'," +
            "nickname = '" + changeSymbol(user.getNickname()) + "'," +
            "school = '" + changeSymbol(user.getSchool()) + "',";
-  string str="----";
-  if (user.getPermission() & 0x02 )
-    str += "A";
-  else
-    str += "-";
-  if (user.getPermission() & 0x01 )
-    str += "V";
-  else
-    str += "-";
-  query += "permission = '" + changeSymbol(str) + "',";
   query += "share_code = '" + changeSymbol(user.getShareCode()?"Y":"N") + "'," +
            "indentify_code = '" + changeSymbol(user.getIndentifyCode()) +
+           "' where user_id = '" + changeSymbol(user.getId()) +
+           "'";
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::updateUserPassword(const User& user) { 
+  Connection* connection = createConnection();
+  string query;
+  query += "update users set "; 
+  query += "password = '" + changeSymbol(user.getPassword()) +
            "' where user_id = '" + changeSymbol(user.getId()) +
            "'";
   LOG(INFO) << query << endl;
@@ -2385,11 +2408,11 @@ int DatabaseInterface::updateFileVersion(int problem_id, int contest_id) {
   if (problem_id != -1) {
     query = "update filestoproblems set version = version + 1 where problem_id = '";
     query += stringPrintf("%d", problem_id) + "' and file_id in (select file_id from ";
-    query += " files where style in (" + stringPrintf("'%d','%d','%d'))", INFILE, OUTFILE, SPJ);
+    query += " files where style in (" + stringPrintf("'%d','%d','%d','%d'))", INFILE, OUTFILE, SPJ, IMG);
   } else {
     query = "update filestocontests set version = version + 1 where contest_id = '";
     query += stringPrintf("%d", contest_id) + "' and file_id in (select file_id from ";
-    query += " files where style in (" + stringPrintf("'%d','%d','%d'))", INFILE, OUTFILE, SPJ);
+    query += " files where style in (" + stringPrintf("'%d','%d','%d','%d'))", INFILE, OUTFILE, SPJ, IMG);
   }
   int ret = connection->excuteUpdate(query);
   connection->close();

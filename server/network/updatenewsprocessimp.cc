@@ -1,4 +1,4 @@
-#include "addnewsprocessimp.h"
+#include "updatenewsprocessimp.h"
 
 #include <vector>
 #include <string>
@@ -14,8 +14,8 @@
 #include "../object/user.h"
 using namespace std;
 
-void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process add news for:" << ip;
+void UpdateNewsProcessImp::process(int socket_fd, const string& ip, int length){
+  LOG(INFO) << "Process update news for:" << ip;
   char* buf;
   buf = new char[length + 1];
   memset(buf, 0, length + 1);
@@ -31,6 +31,12 @@ void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
   vector<string>::iterator iter = datalist.begin();
   News news;
   if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find news_id from data for:" << ip;
+    return;
+  }
+  news.setNewId(atoi(iter->c_str()));
+  iter++;
+  if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find title from data for:" << ip;
     return;
   }
@@ -41,8 +47,9 @@ void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
     return;
   }
   news.setContent(*iter);
+  iter++;
   int ret = 0;
-  ret = DataInterface::getInstance().addNews(news);
+  ret = DataInterface::getInstance().updateNews(news);
   if (ret) {
     sendReply(socket_fd, 'N');
     return;
@@ -51,6 +58,6 @@ void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot reply to:" << ip;
     return;
   }
-  LOG(ERROR) << "Process addnews completed for:" << ip;
+  LOG(ERROR) << "Process update news completed for:" << ip;
 }
 

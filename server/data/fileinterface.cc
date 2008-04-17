@@ -137,22 +137,37 @@ int FileInterface::updateFile(const string& filename, void * buf, size_t filelen
   }
   int filefd = open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	ssize_t file_size = write(filefd, buf, filelength);
-	if ( file_size != filelength)
-	  cout << "write failed." << endl;
+	if ( file_size != filelength) {
+	  LOG(ERROR) << "write failed." << endl;
+    return -1;
+  }
 	close(filefd);
   return 1;
 }
 
 int FileInterface::updateNotice(const string& notice, const string& time){
 	string notice_file = Configure::getInstance().getNoticePath();
-	int noticefd = open(notice_file.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	string directory = notice_file.substr(0,notice_file.find_last_of("/"));
+  if (access (directory.c_str(), F_OK) < 0) {
+    if (errno == ENOENT) {
+      if (mkdirRecursive(directory.c_str(), 0755) < 0) {
+        LOG(SYS_ERROR) << "Cannot make the directory";
+        return -1;
+      }
+      LOG(INFO) << "Create directory :" << directory;
+    } else {
+      LOG(SYS_ERROR) << "Cannot access the dir"; 
+      return -1;
+    }
+  }
+  int noticefd = open(notice_file.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	string buf;
 	buf = time + "\n" + notice;
 	ssize_t file_size = write(noticefd, buf.c_str(), buf.length());
 	if ( file_size != buf.length())
 	  cout << "write failed." << endl;
 	close(noticefd);
-  return 1;
+  return 0;
 }
 string FileInterface::getNotice(){
 	string notice_file = Configure::getInstance().getNoticePath();
