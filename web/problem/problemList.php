@@ -1,25 +1,27 @@
 <?php
-	include('../include/header.php');
-	include('../common/tcpclient.php');
+	include('flood/include/header.php');
+	include('flood/common/tcpclient.php');
 	include('classes/problem_list_t.php');
-	$pl = new problem_list_t($start, $user_id, '?', '?');
-	$pl->getResult();
 
-
-	if (isset($_GET['start']))
+  if (isset($_GET['start']))
 		$start = $_GET['start'];
 	else
 		$start = '0';
 	if (empty($user_id))
 		$user_id = '?';
-
+	$pl = new problem_list_t($start, $user_id, '?', '?');
+	$pl->getResult();
 
 	echo "<div id=tt>Problems Volume $start</div>";
-	include('../include/notice.php');
+	include('flood/include/notice.php');
 ?>
-
   <div id="main">
-
+<?php
+	$pages = $pl->getPages();
+	for ($i=0; $i<$pages; $i++)
+		echo "<a href=\"problemList.php?start=$i\"><b>[$i]</b></a>&nbsp;";
+?>
+  <br />
   <table><tbody align=center>
     <tr>
       <th width="80">&nbsp;</th>
@@ -28,11 +30,7 @@
       <th width="180"><a href="problemList.php?type=0&start=<?php echo $start; ?>">Ratio</a>&nbsp;(<a href="problemList.php?type=2&start=<?php echo $start; ?>">AC</a>/<a href="problemList.php?type=3&start=<?php echo $start; ?>">Total</a>)</th>
     </tr>
 <?php
-	$pages = $pl->getPages();
 	$rows = $pl->getRow();
-	for ($i=0; $i<$pages; $i++)
-		echo "<a href=\"problemList.php?start=$i\"><b>[$i] </b></a>";
-	echo '<br>';
 	for ($i=0; $i<$rows; $i++){
 		if ($i%2 == 0)
 			echo '<tr class=tro>';
@@ -62,6 +60,7 @@
 </tbody></table>
   <br>
   <br />
+<!--
   <div>
     <form method=post action="searchList.php?start=0" >
 	<strong>Search:</strong>&nbsp;<input name=key type=text value='' size=50 maxlength="255" />&nbsp;
@@ -69,6 +68,7 @@
     <input type=submit value=GO />
     </form>
   </div>
+-->
   <br>
   </div>
 
