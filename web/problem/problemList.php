@@ -1,9 +1,9 @@
 <?php
+	include('../include/header.php');
 	include('../common/tcpclient.php');
 	include('classes/problem_list_t.php');
 	$pl = new problem_list_t($start, $user_id, '?', '?');
 	$pl->getResult();
-	include('../include/header.php');
 
 
 	if (isset($_GET['start']))
