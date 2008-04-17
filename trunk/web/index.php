@@ -1,5 +1,5 @@
 <?php
-	include('../include/header.php');
+	include('include/header.php');
 ?>
   <div id="tt">
     Welcome to Flood
@@ -83,14 +83,4 @@
 
 <?php
 	include("include/tailer.php");
-?>
-
-<?php
-function check_new_mail($user_id)
-{
-	if($user_id)
-	    return true;
-	else
-		return false;
-}
 ?>

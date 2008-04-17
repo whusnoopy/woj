@@ -28,10 +28,13 @@
     <a href="/flood/discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
     <a href="/flood/user/user.php">User</a>&nbsp;|&nbsp;
     <a href="/flood/mail/mailList.php">
-<?php if ($hasNewMail==true) ?>
-    <font color="red">Mail</font>";
-<?php else ?>
-    "Mail";</a>&nbsp;|&nbsp;
+<?php
+  if ($hasNewMail==true)
+    echo "<font color=\"red\">Mail</font>";
+  else
+    echo "Mail";
+?>
+    </a>&nbsp;|&nbsp;
     <a href="/flood/faq.html" target="_blank">FAQ</a>
   </div>
 <?php
