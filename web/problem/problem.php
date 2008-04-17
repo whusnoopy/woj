@@ -59,7 +59,7 @@
     <br />
     <div>
       <span class="bt"><a href="../submit/submit.php?problem_id=<?php echo $problem_id;?>">Submit</a></span>&nbsp;&nbsp;
-	  <span class="bt"><a href="../discuss/discussList.php?problem_id=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="../discuss/discussList.php?pid=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
       <span class="bt"><a href="../status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
     </div>
     <br />

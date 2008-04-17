@@ -5,6 +5,7 @@
 <?php
     include('../include/header.php');
 	include('../common/tcpclient.php');
+	include('../common/config.php');
 	include('classes/format_code_t.php');
 
 	if(isset($_GET['cid']))
@@ -40,7 +41,7 @@
    <strong>Memory</strong>: <?php echo $problem["memory"];?>KB&nbsp;&nbsp;
    <strong>Time</strong>: <?php echo $problem["limit_time"];?>ms<br>
    <strong>Language</strong>: <?php echo $problem["language"];?>&nbsp;&nbsp;
-   <strong>Result</strong>: <?php echo $problem["result"];?><br>
+   <strong>Result</strong>: <?php echo $JUDGE_STATUS[$problem["result"]];?><br>
   </div>
 
   <div id="main">

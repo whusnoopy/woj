@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	include('../common/tcpclient.php');
 	if (!empty($_POST['origURL']))
 		$origURL = $_POST['origURL'];
 	else
@@ -31,9 +32,9 @@
 <?php
 	function login($user_id, $password)
 	{
-		if($user_id == 'magiii' && $password == 'mcje2004')
-			return true;
-		return false;
+//		if($user_id == 'magiii' && $password == 'mcje2004')
+//			return true;
+//		return false;
 
 		$ip=$_SERVER['HTTP_CLIENT_IP'];
 		$d = "\001";

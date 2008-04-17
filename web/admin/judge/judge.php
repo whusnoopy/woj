@@ -5,28 +5,10 @@
 		exit;
 	}
 ?>
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Flood Admin</title>
-  <link href="../../style/noah.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<center>
-  <div id="bar">
-    <a href="../index.php">Home</a>&nbsp;|&nbsp;
-    <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
-    <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
-    <a href="judge.php">Judge</a>&nbsp;|&nbsp;
-    <a href="../user/userList.php">User</a>&nbsp;|&nbsp;
-	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
-    <a href="../logout.do.php">Logout</a>
-  </div>
-
-<div id=tt>Judge</div>
-
 <?php
+	include('../common/tcpclient.php');
 	include('classes/status_t.php');
+	include('config.php');
 
 	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
 		$cur_user_id = $_SESSION['user_id'];
@@ -66,27 +48,26 @@
 	$rows = $st->getRow();
 
 ?>
-<script language="javascript">
-<!--
-function makesure(msg)
-{
-	return confirm(msg);
-}
 
-function allChoose(row)
-{
-	for (i=1; i<=row; i++)
-		document.form0.elements[i].checked = true;
-}
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Flood Admin</title>
+  <link href="../../style/noah.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<center>
+  <div id="bar">
+    <a href="../index.php">Home</a>&nbsp;|&nbsp;
+    <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
+    <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
+    <a href="judge.php">Judge</a>&nbsp;|&nbsp;
+    <a href="../user/userList.php">User</a>&nbsp;|&nbsp;
+	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="../logout.do.php">Logout</a>
+  </div>
 
-function allCancel(row)
-{
-	for (i=1; i<=row; i++)
-		document.form0.elements[i].checked = false;
-}
-//-->
-</script>
-
+<div id=tt>Judge</div>
   <div id="main">
   <table><tbody>
 
@@ -120,19 +101,19 @@ function allCancel(row)
 		$uid = $st->getUser_id($i);
 		$pid = $st->getProblem_id($i);
 		$cid = $st->getCode_id($i);
-		$rst = $st->getRst($i);
+		$result = $st->getRst($i);
 		$mem = $st->getMemory($i);
 		$tm = $st->getTime($i);
 		$lan = $st->getLanguage($i);
 
 		echo "<td><input type=checkbox name=\"s${i}\" value=\"$sid\"></td>";
 		echo "<td>$sid</td>";
-		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
-		echo "<td><a href=\"../problem/problem.php?problem_id=$pid}\">$pid</a></td>";
-		echo "<td>$rst</td>";
+		echo "<td>$uid</td>";
+		echo "<td>$pid</td>";
+		echo '<td>'.$JUDGE_STATUS[$result].'</td>';
 		echo "<td>$mem</td>";
 		echo "<td>$tm</td>";
-		echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$rst&lan=$lan&tm=$tm&mem=$mem\"tatget=_blank> $lan</a></td>";
+		echo '<td>'.$LANGUAGE[$lan].'</td>';
 		echo '<td>'.$st->getCode_length($i).'</td>';
 		echo '<td>'.$st->getIn_date($i).'</td>';
 		echo '</tr>';
@@ -184,7 +165,7 @@ function allCancel(row)
        $pre = $start - 1;
 	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
 	}
-    if ($rows == 20){
+    if ($rows == 25){
        $next = $start + 1;
 	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
 	}
@@ -206,3 +187,24 @@ function allCancel(row)
 </center>
 </body>
 </html>
+
+<script language="javascript">
+<!--
+function makesure(msg)
+{
+	return confirm(msg);
+}
+
+function allChoose(row)
+{
+	for (i=1; i<=row; i++)
+		document.form0.elements[i].checked = true;
+}
+
+function allCancel(row)
+{
+	for (i=1; i<=row; i++)
+		document.form0.elements[i].checked = false;
+}
+//-->
+</script>

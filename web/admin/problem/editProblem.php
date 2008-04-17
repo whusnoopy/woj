@@ -40,17 +40,87 @@ function makesure(msg)
 
 function spjtest(form)
 {
-	if (form.spj.checked)
+	if (form.spj.checked && form.updatefiles.checked)
 	    form.spj_file.disabled=false;
 	else
 		form.spj_file.disabled=true;
 }
+
+function upfile(form)
+{
+	if (form.updatefiles.checked){
+		form.pic1.disabled = false;
+		form.pic2.disabled = false;
+		form.pic3.disabled = false;
+		form.pic4.disabled = false;
+		form.pic5.disabled = false;
+		form.common1.disabled = false;
+		form.common2.disabled = false;
+		form.common3.disabled = false;
+		form.common4.disabled = false;
+		form.common5.disabled = false;
+		form.in1.disabled = false;
+		form.in2.disabled = false;
+		form.in3.disabled = false;
+		form.in4.disabled = false;
+		form.in5.disabled = false;
+		form.in6.disabled = false;
+		form.in7.disabled = false;
+		form.in8.disabled = false;
+		form.in9.disabled = false;
+		form.in10.disabled = false;
+		form.out1.disabled = false;
+		form.out2.disabled = false;
+		form.out3.disabled = false;
+		form.out4.disabled = false;
+		form.out5.disabled = false;
+		form.out6.disabled = false;
+		form.out7.disabled = false;
+		form.out8.disabled = false;
+		form.out9.disabled = false;
+		form.out10.disabled = false;
+	}
+	else{
+		form.pic1.disabled = true;
+		form.pic2.disabled = true;
+		form.pic3.disabled = true;
+		form.pic4.disabled = true;
+		form.pic5.disabled = true;
+		form.common1.disabled = true;
+		form.common2.disabled = true;
+		form.common3.disabled = true;
+		form.common4.disabled = true;
+		form.common5.disabled = true;
+		form.in1.disabled = true;
+		form.in2.disabled = true;
+		form.in3.disabled = true;
+		form.in4.disabled = true;
+		form.in5.disabled = true;
+		form.in6.disabled = true;
+		form.in7.disabled = true;
+		form.in8.disabled = true;
+		form.in9.disabled = true;
+		form.in10.disabled = true;
+		form.out1.disabled = true;
+		form.out2.disabled = true;
+		form.out3.disabled = true;
+		form.out4.disabled = true;
+		form.out5.disabled = true;
+		form.out6.disabled = true;
+		form.out7.disabled = true;
+		form.out8.disabled = true;
+		form.out9.disabled = true;
+		form.out10.disabled = true;
+	}
+}
+
 //-->
 </script>
 
 <div id="main">
-<form action="editProblemAction.do.php" name="form" method=post enctype="multipart/form-data" onSubmit="return makesure('Submit it now?');" >
+<form name="form" method=post enctype="multipart/form-data" onReset="return makesure('Drop it?');">
   <input type="hidden" name="type" value="edit">
+  <input type="hidden" name="problem_id" value="<?php echo $problem_id?>">
   <table><tbody>
     <tr>
       <th colspan=4 align=center>Fill the Informations</th>
@@ -133,34 +203,93 @@ function spjtest(form)
       <td align=left>&nbsp;&nbsp;gen by system</td>
       <td></td>
     </tr>
-	<tr class=tro>
+	<tr class=tre>
 	  <td></td>
 	  <td align=right><strong>Special judge:</strong>&nbsp;&nbsp;</td>
 	  <td align=left>&nbsp;&nbsp;
-	  <input type="checkbox" name="spj" class="radio" tabIndex=3 value="Y" onclick="spjtest(this.form)"/>
+	  <?php
+	  if ($problem[15] == 'Y')
+	    echo '<input type="checkbox" name="spj" class="radio" tabIndex=3 value="Y" cheched onclick="spjtest(this.form)"/>';
+	  else
+	    echo '<input type="checkbox" name="spj" class="radio" tabIndex=3 value="N" onclick="spjtest(this.form)"/>';
+	  ?>
 	  </td>
 	  <td></td>
 	</tr>
-	<tr class=tre>
-	  <td></td>
-	  <td align=right><strong>Picture:</strong>&nbsp;&nbsp;</td>
-	  <td align=left>&nbsp;&nbsp; <input type="file" name="pic"/></td>
-	  <td></td>
-	</tr>
-<?php
-	for ($i=1; $i<=5; $i++)
-	{
-		echo '<tr class=tro>';
-	    echo '<td></td>';
-	    echo "<td align=right><strong>File$i:</strong>&nbsp;&nbsp;</td>";
-	    echo "<td align=left>&nbsp;&nbsp; input$i: <input type=\"file\" name=\"in$i\"/>";
-		echo "&nbsp;&nbsp; output$i:<input type=\"file\" name=\"out$i\"/></td>";
-	    echo '<td></td>';
-	    echo '</tr>';
-	}
 
-?>
+    <tr class=tro>
+	   <td></td>
+	   <td align=right><b>Update Files:</b>&nbsp;&nbsp;</td>
+	   <td align=left>&nbsp;&nbsp;<input type="checkbox" name="updatefiles" class="ratio" tabIndex=3 value ="Y" onclick="upfile(this.form)"/></td>
+	   <td></td>
+	</tr>
+
+    <tr class=tro><td colspan=4></td></tr>
+	<tr class=tro>
+      <td colspan=4 align=center><b>Picture list:</b></td>
+    </tr>
+
+<script language="javascript">
+	for (i=1; i<=5; i++)
+	{
+		if (i<=1)
+		    document.writeln('<tr class=tre id="pic'+i+'"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 disabled/></td><td></td></tr>');
+		else
+			document.writeln('<tr class=tre id="pic'+i+'" style="display:none"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 disabled/></td><td></td></tr>');
+	}
+</script>
+
+	<tr class=tro id="add_more_pic_file">
+	  <td colspan=4 align="center">
+	  <a href="javascript:addFile('pic')">add more picture files</a>
+	  </td>
+    </tr>
+
+
+
+
+	<tr class=tre><td colspan=4></td></tr>
 	<tr class=tre>
+      <td colspan=4 align=center><b>Common files list:</b></td>
+    </tr>
+<script language="javascript">
+	for (i=1; i<=5; i++)
+	{
+		if (i<=1)
+		    document.writeln('<tr class=tro id="commonfile'+i+'"><td></td><td align=right><strong>File'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="common'+i+'" size=60 disabled/></td><td></td></tr>');
+		else
+			document.writeln('<tr class=tro id="commonfile'+i+'" style="display:none"><td></td><td align=right><strong>File'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="common'+i+'" size=60 disabled/></td><td></td></tr>');
+	}
+</script>
+
+	<tr class=tre id="add_more_common_file">
+	  <td colspan=4 align="center">
+	  <a href="javascript:addFile('common')">add more common files</a>
+	  </td>
+    </tr>
+
+
+
+	<tr class=tro><td colspan=4> </td></tr>
+	<tr class=tro>
+      <td colspan=4 align=center><b>Input/output files list:</b></td>
+    </tr>
+<script language="javascript">
+	for (i=1; i<=10; i++)
+	{
+		if (i<=3)
+		    document.writeln('<tr class=tre id="file'+i+'"><td></td><td align=right><strong>File'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; input'+i+': <input type="file" name="in'+i+'" size=30 disabled/>&nbsp;&nbsp; output'+i+':<input type="file" name="out'+i+'" size=30 disabled/></td><td></td></tr>');
+		else
+			document.writeln('<tr class=tre id="file'+i+'" style="display:none"><td></td><td align=right><strong>File'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; input'+i+': <input type="file" name="in'+i+'" size=30 disabled/>&nbsp;&nbsp; output'+i+':<input type="file" name="out'+i+'" size=30 disabled/></td><td></td></tr>');
+	}
+</script>
+
+	<tr class=tro id="add_more_inout_file">
+	  <td colspan=4 align="center">
+	  <a href="javascript:addFile('file')">add more input/output files</a>
+	  </td>
+    </tr>
+	<tr class=tro>
 	  <td></td>
 	  <td align=right><strong>Special judge file:</strong>&nbsp;&nbsp;</td>
 	  <td align=left>&nbsp;&nbsp; <input type="file" name="spj_file" disabled/>&nbsp;<font color=red>if not special judge just leave it out</font></td>
@@ -170,15 +299,15 @@ function spjtest(form)
 
     <tr class=tre>
       <td colspan=4 align=center>
-		<input type="submit" name="submit" value="Submit" />&nbsp;
-        <input name="reset" type="reset" value="Reset" />
+		<input type="button" value="Preview" onclick="onShow(this.form)"/>&nbsp
+		<input type="button" value="Submit"  onclick="onSubmit(this.form)"/>&nbsp;
+        <input type="reset" value="Reset" />
       </td>
     </tr>
 
-
   </tbody></table>
 </form>
-  </div>
+</div>
 
   <div id="ft">
     <hr width="900" size=0 />
@@ -190,6 +319,49 @@ function spjtest(form)
 </center>
 </body>
 </html>
+
+<script language="javascript">
+var fileid=4;
+var picid=2;
+var commonid=2;
+function addFile(bz)
+{
+	if (bz=='file'){
+		document.getElementById('file'+fileid).style.display = document.all ? "block" : "table-row";
+		fileid++;
+		if (fileid>10)
+			document.getElementById('add_more_inout_file').style.display = "none";
+	}
+	else if (bz=='pic'){
+		document.getElementById('pic'+picid).style.display = document.all ? "block" : "table-row";
+		picid++;
+		if (picid>5)
+			document.getElementById('add_more_pic_file').style.display = "none";
+	}
+	else if (bz=='common'){
+		document.getElementById('commonfile'+commonid).style.display = document.all ? "block" : "table-row";
+		commonid++;
+		if (commonid>5)
+			document.getElementById('add_more_common_file').style.display = "none";
+	}
+}
+
+function onShow(form)
+{
+	form.action="preview.php";
+	form.target="_blank";
+	form.submit();
+}
+
+function onSubmit(form)
+{
+	if (confirm('Submit it now?')){
+		form.action="editProblemAction.do.php";
+		form.target="_self";
+		form.submit();
+	}
+}
+</script>
 
 <?php
 function getProblemDetails($problem_id, &$problem)

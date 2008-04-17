@@ -1,7 +1,10 @@
 <?php
-	include('../include/header.php');
 	include('../common/tcpclient.php');
 	include('classes/problem_list_t.php');
+	$pl = new problem_list_t($start, $user_id, '?', '?');
+	$pl->getResult();
+	include('../include/header.php');
+
 
 	if (isset($_GET['start']))
 		$start = $_GET['start'];
@@ -25,8 +28,6 @@
       <th width="180"><a href="problemList.php?type=0&start=<?php echo $start; ?>">Ratio</a>&nbsp;(<a href="problemList.php?type=2&start=<?php echo $start; ?>">AC</a>/<a href="problemList.php?type=3&start=<?php echo $start; ?>">Total</a>)</th>
     </tr>
 <?php
-	$pl = new problem_list_t($start, $user_id, '?', '?');
-	$pl->getResult();
 	$pages = $pl->getPages();
 	$rows = $pl->getRow();
 	for ($i=0; $i<$pages; $i++)
