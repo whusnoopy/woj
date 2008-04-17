@@ -67,52 +67,56 @@ class status_t
 
 	function getSolution_id($i)
 	{
-		return $this->result[$i*11];
+		return $this->result[$i*12];
 	}
 	function getUser_id($i)
 	{
-		return $this->result[$i*11 + 1];
+		return $this->result[$i*12 + 1];
 	}
 	function getProblem_id($i)
 	{
-		return $this->result[$i*11 + 2];
+		return $this->result[$i*12 + 2];
 	}
 	function getRst($i)
 	{
-		return $this->result[$i*11 + 3];
+		return $this->result[$i*12 + 3];
 	}
 	function getMemory($i)
 	{
-		return $this->result[$i*11 + 4];
+		return $this->result[$i*12 + 4];
 	}
 	function getTime($i)
 	{
-		return $this->result[$i*11 + 5];
+		return $this->result[$i*12 + 5];
 	}
 	function getLanguage($i)
 	{
-		return $this->result[$i*11 + 6];
+		return $this->result[$i*12 + 6];
 	}
 	function getCode_length($i)
 	{
-		return $this->result[$i*11 + 7];
+		return $this->result[$i*12 + 7];
 	}
 	function getIn_date($i)
 	{
-		return $this->result[$i*11 + 8];
+		return $this->result[$i*12 + 8];
 	}
 	function getCode_id($i)
 	{
-		return $this->result[$i*11 + 9];
+		return $this->result[$i*12 + 9];
+	}
+	function getError_id($i)
+	{
+		return $this->result[$i*12 + 10];
 	}
 	function getPermission($i)
 	{
-		return $this->result[$i*11 + 10];
+		return $this->result[$i*12 + 11];
 	}
 
 	function getRow()
 	{
-		return count($this->result) / 11;
+		return count($this->result) / 12;
 	}
 
 	function getResult()

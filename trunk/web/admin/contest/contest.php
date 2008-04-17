@@ -7,7 +7,7 @@
 ?>
 
 <?php
-
+	include('../common/tcpclient.php');
 	include('classes/contest_problem_list_t.php');
 	if (isset($_GET['contest_id']) && !empty($_GET['contest_id']))
 		$contest_id = $_GET['contest_id'];
@@ -76,8 +76,8 @@
   </tr>
 
 <?php
-  if ($current >= $start){
-	  $cp = new contest_problem_list_t($contest_id, $user_id);
+//  if ($current >= $start){
+	  $cp = new contest_problem_list_t($contest_id, $_SESSION['user_id']);
 	  $cp->getResult();
 	  $rows = $cp->getRow();
 	  for ($i=0; $i<$rows; $i++){
@@ -93,7 +93,7 @@
 		  if($total > 0) $ratio = sprintf("%.2f", $ac*100/$total ); else $ratio = '0.00';
 		  echo "<td>$ratio%($ac/$total)</td>";
 	  }
-}
+// }
 ?>
 
 </tbody></table>
@@ -119,11 +119,11 @@
 function get_contest_info($contest_id, &$contest)
 {
 	///////////////////////////////
-	$d = "\001";
+/*	$d = "\001";
 	$recv = "2008 Warmup contest 1".$d."hello, flood".$d."2008-03-12 17:00:00".$d."2008-03-15 09:00:00".$d."1";
 	$contest = explode("\001", $recv);
 	return;
-	////////////////////////////////
+*/	////////////////////////////////
 
 	if(empty($contest_id)){
 		$contest = null;
@@ -138,7 +138,7 @@ function get_contest_info($contest_id, &$contest)
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($contest_id)or die("send message failed");
 	$recv= $tc->recvstr(10);
-	$len = sscanf($recv, "%d");
+	sscanf($recv, "%d", $len);
 	if($len > 0){
 		$recv = $tc->recvstr($len);
 		$contest =  explode("\001", $recv);

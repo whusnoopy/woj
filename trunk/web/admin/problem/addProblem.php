@@ -45,7 +45,7 @@ function spjtest(form)
 </script>
 
 <div id="main">
-<form  name="form" method=post enctype="multipart/form-data" onSubmit="return makesure('Submit it now?');"  onReset="return makesure('drop it?');">
+<form  name="form" method=post enctype="multipart/form-data"  onReset="return makesure('drop it?');">
   <input type="hidden" name="type" value="add">
   <table><tbody>
     <tr>

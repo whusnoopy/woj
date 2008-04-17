@@ -76,14 +76,18 @@
 		$mem = $st->getMemory($i);
 		$tm = $st->getTime($i);
 		$lan = $st->getLanguage($i);
+		$eid = $st->getError_id($i);
 		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
 		echo "<td><a href=\"../problem/problem.php?problem_id=$pid}\">$pid</a></td>";
-		echo '<td>'.$JUDGE_STATUS[$result].'</td>';
+		if (empty($eid))
+			echo '<td>'.$JUDGE_STATUS[$result].'</td>';
+		else
+			echo "<td><a href=\"compileerror.php?ce_id=$eid\" target=\"_balnk\">".$JUDGE_STATUS[$result].'</a></td>';
 		echo "<td>$mem</td>";
 		echo "<td>$tm</td>";
 		if ($st->getPermission($i) == 'Y')
-			echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$rst&lan=$lan&tm=$tm&mem=$mem&sid=$sid\" target=_blank>".$LANGUAGE[$lan]."</a></td>";
+			echo "<td><a href=\"../source/source.php?cid=$cid&uid=$uid&pid=$pid&rst=$result&lan=$lan&tm=$tm&mem=$mem&sid=$sid\" target=_blank>".$LANGUAGE[$lan]."</a></td>";
 		else
 			echo "<td>".$LANGUAGE[$lan]."</td>";
 		echo '<td>'.$st->getCode_length($i).'</td>';

@@ -118,7 +118,9 @@
 	</div>
 </div>
 
-<?php include("include/tailer.php"); ?>
+<?php
+	include("include/tailer.php");
+?>
 
 <?php
 function check_new_mail($user_id)

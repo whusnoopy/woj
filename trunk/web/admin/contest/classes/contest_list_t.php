@@ -92,7 +92,7 @@ class contest_list_t
 		}
 		else
 			$this->result = null;
-		$tc->close;
+		$tc->close();
 	}
 }
 

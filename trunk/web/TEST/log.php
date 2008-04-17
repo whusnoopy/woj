@@ -5,7 +5,7 @@ $log_file = 'E:\WWW\SERVER\Apache\logs\error.log';
 $fp = fopen($log_file, 'r');
 $fs = fstat($fp);
 $flen = $fs['size'];
-fseek($fp, -4096, SEEK_END);
+fseek($fp, -8192, SEEK_END);
 echo '<html><body><pre>';
 while(!feof($fp)){
 	$line = fgets($fp);

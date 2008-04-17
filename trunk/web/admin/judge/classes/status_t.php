@@ -67,64 +67,68 @@ class status_t
 
 	function getSolution_id($i)
 	{
-		return $this->result[$i*11];
+		return $this->result[$i*12];
 	}
 	function getUser_id($i)
 	{
-		return $this->result[$i*11 + 1];
+		return $this->result[$i*12 + 1];
 	}
 	function getProblem_id($i)
 	{
-		return $this->result[$i*11 + 2];
+		return $this->result[$i*12 + 2];
 	}
 	function getRst($i)
 	{
-		return $this->result[$i*11 + 3];
+		return $this->result[$i*12 + 3];
 	}
 	function getMemory($i)
 	{
-		return $this->result[$i*11 + 4];
+		return $this->result[$i*12 + 4];
 	}
 	function getTime($i)
 	{
-		return $this->result[$i*11 + 5];
+		return $this->result[$i*12 + 5];
 	}
 	function getLanguage($i)
 	{
-		return $this->result[$i*11 + 6];
+		return $this->result[$i*12 + 6];
 	}
 	function getCode_length($i)
 	{
-		return $this->result[$i*11 + 7];
+		return $this->result[$i*12 + 7];
 	}
 	function getIn_date($i)
 	{
-		return $this->result[$i*11 + 8];
+		return $this->result[$i*12 + 8];
 	}
 	function getCode_id($i)
 	{
-		return $this->result[$i*11 + 9];
+		return $this->result[$i*12 + 9];
+	}
+	function getError_id($i)
+	{
+		return $this->result[$i*12 + 10];
 	}
 	function getPermission($i)
 	{
-		return $this->result[$i*11 + 10];
+		return $this->result[$i*12 + 11];
 	}
 
 	function getRow()
 	{
-		return count($this->result) / 11;
+		return count($this->result) / 12;
 	}
 
 	function getResult()
 	{
 
 		///////////////////////////////
-		$d = "\001";
+/*		$d = "\001";
 		$recv = '10634'.$d.'magiii'.$d.'1002'.$d.'AC'.$d.'72'.$d.'0'.$d.'GCC'.$d.'122'.$d.'2006-05-04 05:41:19.0'.$d.'1024'.$d.'Y'.$d.
-				'10635'.$d.'kittyshow'.$d.'1002'.$d.'AC'.$d.'75'.$d.'0'.$d.'GCC'.$d.'160'.$d.'2006-05-05 05:41:19.0'.$d.'1024'.$d.'N';
+				'10634'.$d.'kittyshow'.$d.'1002'.$d.'AC'.$d.'75'.$d.'0'.$d.'GCC'.$d.'160'.$d.'2006-05-05 05:41:19.0'.$d.'1024'.$d.'N';
 		$this->result = explode("\001", $recv);
 		return;
-		////////////////////////////////
+*/		////////////////////////////////
 
 		$d = "\001";
 		$message = $this->pagenum
@@ -145,7 +149,7 @@ class status_t
 		$tc->sendstr($header) or die("send header failed");
 		$tc->sendstr($message)or die("send message failed");
 		$recv= $tc->recvstr(10);
-		$len = sscanf($recv, "%d");
+		sscanf($recv, "%d", $len);
 		if($len > 0){
 			$recv = $tc->recvstr($len);
 			$this->result = explode($d, $recv);

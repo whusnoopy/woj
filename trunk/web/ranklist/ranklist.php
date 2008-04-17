@@ -18,7 +18,7 @@
 
 	$rk = new ranklist_t($start, $of1);
 	$rk->getResult();
-	$rows = 20;
+	$rows = $rk->getRow();
 ?>
 
 <div id="main">
@@ -35,7 +35,7 @@
 
  <?php
 
-	 for ($i=0, $rank = $start * $rows + 1; $i<$rk->getRow(); $i++, $rank++){
+	 for ($i=0, $rank = $start * 25 + 1; $i<$rows; $i++, $rank++){
 		 if($i%2==0)
 			 echo '<tr class=tro>';
 		 else
@@ -72,12 +72,14 @@
 	}
 	echo '&nbsp;';
 	echo '<span class=bt>';
-	$next = $start+1;
-	if(empty($_GET['of1']))
-		echo "<a href=ranklist.php?start=$next>";
-	else
-		echo "<a href=ranklist.php?start=$next&of1=$_GET[of1]>";
-	echo '&nbsp;Next Page&nbsp;</a></span>';
+	if ($rows == 25){
+		$next = $start+1;
+		if(empty($_GET['of1']))
+			echo "<a href=ranklist.php?start=$next>";
+		else
+			echo "<a href=ranklist.php?start=$next&of1=$_GET[of1]>";
+		echo '&nbsp;Next Page&nbsp;</a></span>';
+	}
 ?>
  </div><br>
  </div>
