@@ -17,12 +17,12 @@ input{border:#333 1px solid;color:#333;font-size:12px;font-family:Verdana}
 input.radio{border:0}
 select{border:#333 1px solid;color:#333;font-size:12px;font-family:Courier New}
 
-#bar{height:35px;line-height:35px;background-color:#0f9fbf;width:979px;font-size:14px;font-family:Verdana;color:#fff;text-align:center;font-weight:bold}
+#bar{height:35px;line-height:35px;background-color:#0f9fbf;width:100%;font-size:14px;font-family:Verdana;color:#fff;text-align:center;font-weight:bold}
 #bar a{color:#fff}
 #bar a:hover{color:#ff0;text-decoration:underline}
 
-#tt {width:950px;padding:15px 0px 15px 0px;background-color:#e7f0ff;border-left:#9fcfef 1px solid;border-right:#9fcfef 1px solid;border-bottom:#9fcfef 1px solid;font-family:Verdana;font-size:16px;font-weight:bold}
-#move {width:950px;padding:5px 0px 5px 0px;background-color:#e7f0ff;border-left:#9fcfef 1px solid;border-right:#9fcfef 1px solid;border-bottom:#9fcfef 1px solid;font-family:Verdana;font-size:14px;font-weight:bold}
+#tt {width:95%;padding:15px 0px 15px 0px;margin:0px 10px 0px 10px;background-color:#e7f0ff;border-left:#9fcfef 1px solid;border-right:#9fcfef 1px solid;border-bottom:#9fcfef 1px solid;font-family:Verdana;font-size:16px;font-weight:bold}
+#move {width:100%;padding:5px 0px 5px 0px;margin:0px 0px 5px 0px;background-color:#ffe7f3;font-family:Verdana;font-size:14px;font-weight:bold}
 
 #ft{clear:both;color:#666;font-size:12px;font-family:Verdana;text-align:center;width:979px}
 #ft a{color:#66c}
