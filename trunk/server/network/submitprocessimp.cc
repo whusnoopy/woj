@@ -117,6 +117,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   status.setType(type.substr(0,1));
   int status_id = DataInterface::getInstance().addStatus(status);
   status.setStatusId(status_id);
+  DataInterface::getInstance().addProblemSubmit(problem_id, 1);
   Problem problem = DataInterface::getInstance().getProblem(problem_id);
   LOG(DEBUG) << stringPrintf("version : %d", problem.getVersion());
   JudgeMission mission;

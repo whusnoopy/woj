@@ -429,6 +429,8 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
   DataInterface::getInstance().updateStatus(status);
   DataInterface::getInstance().updateUserSolved(status, 1);
+  if (static_cast<int>(ret[0]) == ACCEPTED) 
+    DataInterface::getInstance().addProblemSolved(status.getProblemId(), 1);
   LOG(DEBUG) << "Judge compelete.";
   return 0;
 }

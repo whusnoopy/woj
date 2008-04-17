@@ -257,6 +257,10 @@ int DataInterface::updateUser(const User& user) {
   return DatabaseInterface::getInstance().updateUser(user);
 }
 
+int DataInterface::updateUserPassword(const User& user) {
+  return DatabaseInterface::getInstance().updateUserPassword(user);
+}
+
 int DataInterface::updateNews(const News& news) {
   return DatabaseInterface::getInstance().updateNews(news);
 }
@@ -325,6 +329,14 @@ ContestInfoList DataInterface::getClientContestList() {
 
 bool DataInterface::canReadCode(const string& user_id, int code_id) {
   return DatabaseInterface::getInstance().canReadCode(user_id, code_id);
+}
+
+int DataInterface::addProblemSubmit(int problem_id, int op) {
+  return DatabaseInterface::getInstance().addProblemSubmit(problem_id, op);
+}
+
+int DataInterface::addProblemSolved(int problem_id, int op) {
+  return DatabaseInterface::getInstance().addProblemSubmit(problem_id, op);
 }
 
 int DataInterface::addLink(const LinkList& link_list) {

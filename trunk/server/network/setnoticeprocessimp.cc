@@ -1,4 +1,4 @@
-#include "addnewsprocessimp.h"
+#include "setnoticeprocessimp.h"
 
 #include <vector>
 #include <string>
@@ -14,8 +14,8 @@
 #include "../object/user.h"
 using namespace std;
 
-void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process add news for:" << ip;
+void SetNoticeProcessImp::process(int socket_fd, const string& ip, int length){
+  LOG(INFO) << "Process set Notice for:" << ip;
   char* buf;
   buf = new char[length + 1];
   memset(buf, 0, length + 1);
@@ -26,24 +26,10 @@ void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
   }
   string read_data(buf, buf + length);
   delete[] buf;
-  vector<string> datalist;
-  spriteString(read_data, 1, datalist);
-  vector<string>::iterator iter = datalist.begin();
-  News news;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find title from data for:" << ip;
-    return;
-  }
-  news.setTitle(*iter);
-  iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find content from data for:" << ip;
-    return;
-  }
-  news.setContent(*iter);
+  string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
   int ret = 0;
-  ret = DataInterface::getInstance().addNews(news);
-  if (ret) {
+  ret = DataInterface::getInstance().updateNotice(read_data, time);
+  if (ret < 0) {
     sendReply(socket_fd, 'N');
     return;
   }
@@ -51,6 +37,6 @@ void AddNewsProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot reply to:" << ip;
     return;
   }
-  LOG(ERROR) << "Process addnews completed for:" << ip;
+  LOG(ERROR) << "Process set Notice completed for:" << ip;
 }
 

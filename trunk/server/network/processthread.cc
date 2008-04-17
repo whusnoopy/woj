@@ -58,6 +58,11 @@
 #include "errorprocessimp.h"
 #include "userlistprocessimp.h"
 #include "checkpermissionprocessimp.h"
+#include "updatenewsprocessimp.h"
+#include "setnoticeprocessimp.h"
+#include "noticeprocessimp.h"
+#include "addseriesuserprocessimp.h"
+#include "setuserinfoprocessimp.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -248,6 +253,21 @@ void ProcessThread::running(){
         break;
       case 461:  //rt
         m_process_imp = new CheckPermissionProcessImp();
+        break;
+      case 533:  //un
+        m_process_imp = new UpdateNewsProcessImp();
+        break;
+      case 481:  //sn
+        m_process_imp = new SetNoticeProcessImp();
+        break;
+      case 353:  //np
+        m_process_imp = new NoticeProcessImp();
+        break;
+      case 488:  //su
+        m_process_imp = new AddSeriesUserProcessImp();
+        break;
+      case 476:  //si
+        m_process_imp = new SetUserInfoProcessImp();
         break;
       default:
         LOG(ERROR) << "Unknown type data.";

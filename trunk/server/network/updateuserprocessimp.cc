@@ -96,8 +96,12 @@ void UpdateUserProcessImp::process(int socket_fd, const string& ip, int length){
   if (ret) {
     sendReply(socket_fd, 'N');
     return;
+  }  
+  ret = DatabaseInterface::getInstance().updateUserPassword(user);
+  if (ret) {
+    sendReply(socket_fd, 'N');
+    return;
   }
-
   if (sendReply(socket_fd, 'Y')){
     LOG(ERROR) << "Cannot reply the update user for:" << ip;
     return;
