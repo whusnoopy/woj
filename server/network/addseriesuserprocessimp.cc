@@ -65,10 +65,11 @@ void AddSeriesUserProcessImp::process(int socket_fd, const string& ip, int lengt
     if (ret != 0)
       c = 'N';
     if (databuf.empty()) 
-      databuf += c;
-    else
-      databuf += "\001" + c;
+      databuf += stringPrintf("%c", c);
+    else      
+      databuf += stringPrintf("\001%c", c);
   }
+  LOG(DEBUG) << databuf;
   string len = stringPrintf("%010d", databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)) {
     LOG(ERROR) << "Cannot return datalength to:" << ip;

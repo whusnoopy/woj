@@ -99,8 +99,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
     sendReply(socket_fd, 'N');
     return;
   }
-  user.setSubmit(user.getSubmit() + 1);
-  DataInterface::getInstance().updateUser(user);
+  DataInterface::getInstance().updateUserSubmit(user.getId(), 1);
   int code_id = DataInterface::getInstance().addCode(Code(0, share_code, source));
   status.setUserId(user_id);
   status.setProblemId(problem_id);
@@ -118,6 +117,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   int status_id = DataInterface::getInstance().addStatus(status);
   status.setStatusId(status_id);
   DataInterface::getInstance().addProblemSubmit(problem_id, 1);
+  DataInterface::getInstance().addProblemUserSubmit(status, 1);
   Problem problem = DataInterface::getInstance().getProblem(problem_id);
   LOG(DEBUG) << stringPrintf("version : %d", problem.getVersion());
   JudgeMission mission;
