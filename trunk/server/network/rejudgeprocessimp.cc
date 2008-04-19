@@ -44,6 +44,7 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
     DataInterface::getInstance().updateStatus(status);
     DataInterface::getInstance().updateUserSolved(status, -1);
     DataInterface::getInstance().addProblemSolved(status.getProblemId(), -1);
+    DataInterface::getInstance().addProblemUserSolved(status, -1);
   }
   status.setErrorId(0);
   Problem problem = DataInterface::getInstance().getProblem(status.getProblemId());

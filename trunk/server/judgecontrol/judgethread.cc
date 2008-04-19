@@ -425,12 +425,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     Problem problem = DataInterface::getInstance().getProblem(status.getProblemId());
     problem.setStandardTimeLimit(status.getTime());
     problem.setStandardMemoryLimit(status.getMemory());
-    DataInterface::getInstance().updateProblem(problem);
+    DataInterface::getInstance().updateProblemStandardLimit(problem);
   }
   DataInterface::getInstance().updateStatus(status);
-  DataInterface::getInstance().updateUserSolved(status, 1);
-  if (static_cast<int>(ret[0]) == ACCEPTED) 
+  if (static_cast<int>(ret[0]) == ACCEPTED) {
+    DataInterface::getInstance().updateUserSolved(status, 1);
     DataInterface::getInstance().addProblemSolved(status.getProblemId(), 1);
+    DataInterface::getInstance().addProblemUserSolved(status, 1);
+  }
   LOG(DEBUG) << "Judge compelete.";
   return 0;
 }

@@ -230,6 +230,10 @@ int DataInterface::updateProblem(const Problem& problem) {
   return DatabaseInterface::getInstance().updateProblem(problem);
 }
 
+int DataInterface::updateProblemStandardLimit(const Problem& problem) {
+  return DatabaseInterface::getInstance().updateProblemStandardLimit(problem);
+}
+
 int DataInterface::updateContest(const Contest& contest) {
   return DatabaseInterface::getInstance().updateContest(contest);
 }
@@ -311,6 +315,10 @@ int DataInterface::updateUserSolved(const Status& status, int op) {
   return DatabaseInterface::getInstance().updateUserSolved(status, op);
 }
 
+int DataInterface::updateUserSubmit(const User& user, int op) {
+  return DatabaseInterface::getInstance().updateUserSubmit(user, op);
+}
+
 int DataInterface::getInContestId(int contest_id, int problem_id) {
   return DatabaseInterface::getInstance().getInContestId(contest_id, problem_id);
 }
@@ -336,7 +344,15 @@ int DataInterface::addProblemSubmit(int problem_id, int op) {
 }
 
 int DataInterface::addProblemSolved(int problem_id, int op) {
-  return DatabaseInterface::getInstance().addProblemSubmit(problem_id, op);
+  return DatabaseInterface::getInstance().addProblemSolved(problem_id, op);
+}
+
+int DataInterface::addProblemUserSolved(const Status& status, int op) {
+  return DatabaseInterface::getInstance().addProblemUserSolved(status, op);
+}
+
+int DataInterface::addProblemUserSubmit(const Status& status, int op) {
+  return DatabaseInterface::getInstance().addProblemUserSubmit(status, op);
 }
 
 int DataInterface::addLink(const LinkList& link_list) {

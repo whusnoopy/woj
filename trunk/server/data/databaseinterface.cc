@@ -170,6 +170,47 @@ int DatabaseInterface::addProblemSolved(int problem_id, int op) {
   return ret;
 }
 
+int DatabaseInterface::addProblemUserSolved(const Status& status , int op) { 
+  Connection* connection = createConnection();
+  string query;
+  if (op == -1)
+    query = "update problems set solved_users = solved_users - 1 where ";  
+  else 
+    query = "update problems set solved_users = solved_users + 1 where ";
+  query += "problem_id = '" + stringPrintf("%d", status.getProblemId()) + "' and ";
+  query += " not exist (select * from statuses where status_id != '";
+  query += stringPrintf("%d", status.getStatusId()) + "' and user_id ";
+  query += " = '" + changeSymbol(status.getUserId()) + "' and ";
+  query += " result = '" + stringPrintf("%d", ACCEPTED) + "' and ";
+  query += " problem_id = problems.problem_id and type = 'N')";
+  LOG(INFO) << query;
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int DatabaseInterface::addProblemUserSubmit(const Status& status , int op) { 
+  Connection* connection = createConnection();
+  string query;
+  if (op == -1)
+    query = "update problems set submit_users = submit_users - 1 where ";  
+  else 
+    query = "update problems set submit_users = submit_users + 1 where ";
+  query += "problem_id = '" + stringPrintf("%d", status.getProblemId()) + "' and ";
+  query += " not exist (select * from statuses where status_id != '";
+  query += stringPrintf("%d", status.getStatusId()) + "' and user_id ";
+  query += " = '" + changeSymbol(status.getUserId()) + "' and ";
+  query += " problem_id = problems.problem_id and type = 'N')";
+  LOG(INFO) << query;
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 int DatabaseInterface::addProblem(const Problem& problem){
 	Connection* connection = createConnection();
   string query;
@@ -320,15 +361,23 @@ int DatabaseInterface::updateProblem(const Problem& problem) {
            "time_limit = '" + stringPrintf("%d",problem.getTimeLimit()) + "'," +
            "case_time_limit = '" + stringPrintf("%d",problem.getCaseTimeLimit()) + "'," +
            "memory_limit = '" + stringPrintf("%d",problem.getMemoryLimit()) + "'," +
-           "available = '" + changeSymbol(problem.getAvailable()?"Y":"N") + "'," +
-           "accepted = '" + stringPrintf("%d",problem.getAccepted()) + "'," +
-           "submit = '" + stringPrintf("%d",problem.getSubmit()) + "'," +
-           "solved_users = '" + stringPrintf("%d",problem.getSolvedUsers()) + "'," +
-           "submit_users = '" + stringPrintf("%d",problem.getSubmitUsers()) + "'," +
-           "standard_time_limit = '" + stringPrintf("%d",problem.getStandardTimeLimit()) + "'," +
-           "standard_memory_limit = '" + stringPrintf("%d",problem.getStandardMemoryLimit()) + "'," +
            "version = version + 1, " + 
            "spj = '" + changeSymbol(problem.getSpj()?"Y":"N") + 
+           "' where problem_id = '" + stringPrintf("%d",problem.getProblemId())+ "'";
+  LOG(INFO) << query << endl;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection; 
+  return ret;
+}
+
+int DatabaseInterface::updateProblemStandardLimit(const Problem& problem){
+  Connection* connection = createConnection();
+  string query;
+  query += "update problems set ";
+  query += "standard_time_limit = '" + stringPrintf("%d",problem.getTimeLimit()) + "'," +
+           "standard_memory_limit = '" + stringPrintf("%d",problem.getMemoryLimit()) + "'," +
            "' where problem_id = '" + stringPrintf("%d",problem.getProblemId())+ "'";
   LOG(INFO) << query << endl;
   LOG(INFO) << "Connection:" << connection->connect() << endl;
@@ -2061,6 +2110,23 @@ int DatabaseInterface::updateUserSolved(const Status& status, int op) {
   query += " = '" + stringPrintf("%d", status.getProblemId()) + "' and ";
   query += " result = '" + stringPrintf("%d", ACCEPTED) + "' and ";
   query += " user_id = users.user_id and type = 'N')";
+  LOG(INFO) << query;
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+
+int DatabaseInterface::updateUserSubmit(const User& user, int op) {
+  Connection* connection = createConnection();
+  string query;
+  if (op == -1)
+    query = "update users set submit = submit - 1 where ";  
+  else 
+    query = "update users set submit = submit + 1 where ";
+  query += "user_id = '" + changeSymbol(user.getId()) + "'";
   LOG(INFO) << query;
   connection->connect();
   int ret = connection->excuteUpdate(query);

@@ -57,6 +57,7 @@ public:
   DiscussList getReplyDiscussList(int message_id);
   TopicSet getDiscussTopicSet(const DiscussInfo& discuss_info);
   int updateProblem(const Problem& problem);
+  int updateProblemStandardLimit(const Problem& problem);
   int updateContest(const Contest& contest);
   //int updateProblemListtoContest(const Contest& constest,const ProblemList& problem_list);
   //int updateUserListtoContest(const Contest& contest,const UserList& user_list);
@@ -75,6 +76,7 @@ public:
   int disableContest(const Contest& contest);
   bool checkContestAcBefore(const ContestAcBefore&);
   int updateUserSolved(const Status& status, int op);
+  int updateUserSubmit(const User& user, int  op);
   int getInContestId(int contest_id, int problem_id);
   int disableContestProblems(const Contest& contest);
   int disableContestUsers(const Contest& contest);
@@ -99,6 +101,8 @@ public:
   bool canReadCode(const string& user_id, int code_id);
   int addProblemSubmit(int problem_id, int op);
   int addProblemSolved(int problem_id, int op);
+  int addProblemUserSolved(const Status& status, int op);
+  int addProblemUserSubmit(const Status& status, int op);
 
   int addLink(const LinkList& link_list);
   int addFile(const string& filename, void* bufi, size_t filelength);
