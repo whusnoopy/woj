@@ -120,6 +120,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
   }
   for (int i = 3; i < 100; i++)
     close(i);
+  LOG(DEBUG) << "close fds successful";
   if (run_info.time_limit) {
     if (setLimit(RLIMIT_CPU, run_info.time_limit) == -1) {
       LOG(SYS_ERROR) << "Fail to set cpu limit to "
@@ -197,7 +198,6 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
 
 int createShellProcess(const char* command, const RunInfo& run_info) {
   const char* commands[] = {"/bin/bash", "bash", "-c", command, NULL};
-//  const char* commands[] = {"/bin/bash", "bash", command, NULL};
   return createProcess(commands, run_info);
 }
 

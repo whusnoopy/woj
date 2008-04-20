@@ -38,11 +38,6 @@ int doCompile(int communicate_socket,
   run_info.file_stderr = file_pipe[1];
   run_info.time_limit = COMPILE_TIME_LIMIT;
 
-  class Callback : public TraceCallback {
-    public :
-      virtual void onSigchld(pid_t) {}
-  } callback;
-
   pid_t pid = createShellProcess(command.c_str(), run_info);
   close(file_pipe[1]);
   if (pid < 0) {
@@ -64,6 +59,7 @@ int doCompile(int communicate_socket,
     return -1;
   }
 
+  errno = ENOENT;
   int status;
   while (waitpid(pid, &status, 0) < 0) {
     if (errno != EINTR) {

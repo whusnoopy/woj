@@ -766,6 +766,30 @@ int DatabaseInterface::updateUser(const User& user){
   return ret;
 }
 
+int DatabaseInterface::updateUserPermission(const User& user){
+  Connection* connection = createConnection();
+  string query;
+  query += "update users set "; 
+  string str = "----";
+  if (user.getPermission() & 0x02)
+    str += "A";
+  else
+    str += "-";
+  if (user.getPermission() & 0x01)
+    str += "V";
+  else 
+    str += "-";
+  query += "permission = '" + changeSymbol(str) + "' " +
+           " where user_id = '" + changeSymbol(user.getId()) +
+           "'";
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 int DatabaseInterface::updateUserPassword(const User& user) { 
   Connection* connection = createConnection();
   string query;
