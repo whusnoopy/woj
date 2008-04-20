@@ -7,10 +7,10 @@
     <name>onlinejudgetest</name>
   </database>
   <link>
-    <path>./link.ln</path>
+    <path>/link.ln</path>
   </link>
   <notice>
-    <path>./notice.note</path>
+    <path>/notice.note</path>
   </notice>
   <judgecontrol>
     <maxclient>20</maxclient>
