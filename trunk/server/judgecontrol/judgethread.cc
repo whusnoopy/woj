@@ -15,6 +15,7 @@
 #include "base/judge_result.h"
 #include "object/configure.h"
 #include "base/logging.h"
+#include "exception/pipeexception.h"
 
 using namespace std;
 
@@ -388,6 +389,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       close(connect_fd);
       return -1;
     }
+    bool done = false;
     switch(static_cast<int>(reply)) {
       case ACCEPTED:
         LOG(INFO) << "AC:" << ip;
@@ -401,13 +403,11 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       case COMPILE_ERROR:
       case SYSTEM_ERROR:
         LOG(INFO) << "Not Ac :" << ip;
-        status.setResult(static_cast<int>(reply));
-        status.setTime(0);
-        status.setMemory(0);
-        DataInterface::getInstance().updateStatus(status);
-        return -2;
+        done = true;
         break;
     }
+    if (done) 
+      break;
   }
   //23.end
   LOG(DEBUG) << "end";
@@ -450,21 +450,25 @@ void JudgeThread::running() {
     connect_fd = accept(JudgeControl::getInstance().listen_fd_,
                         (struct sockaddr *)&child_addr, &len);
     pthread_mutex_unlock(&JudgeControl::getInstance().socket_lock);
-    string ip = getIp(ntohl(child_addr.sin_addr.s_addr));
-    if (!check(ip)) {
-      LOG(ERROR) << "Unknown connection from:" << ip;
+    try {
+      string ip = getIp(ntohl(child_addr.sin_addr.s_addr));
+      if (!check(ip)) {
+        LOG(ERROR) << "Unknown connection from:" << ip;
+        close(connect_fd);
+        continue;
+      }
+      LOG(INFO) << "Judge Control Connection from:" << ip;
+      
+      while (!flag) {
+        JudgeControl::getInstance().semaphore.p();
+        JudgeMission mission = JudgeControl::getInstance().getMission();
+        int ret = sendFile(connect_fd, mission, ip);
+        if (ret == -1) 
+          break;
+        LOG(DEBUG) << "ret:" << ret;
+      }
+    } catch (PipeException e) {
       close(connect_fd);
-      continue;
-    }
-    LOG(INFO) << "Judge Control Connection from:" << ip;
-    
-    while (!flag) {
-      JudgeControl::getInstance().semaphore.p();
-      JudgeMission mission = JudgeControl::getInstance().getMission();
-      int ret = sendFile(connect_fd, mission, ip);
-      if (ret == -1) 
-        break;
-      LOG(DEBUG) << "ret:" << ret;
     }
   }
 }

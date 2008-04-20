@@ -6,7 +6,6 @@ CXXFLAGS=-I./../ \
 				 -I/usr/include/mysql \
 				 -L/usr/lib/mysql \
 				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
-VPATH=../util ../object ../../base
 EXEFLAGS=-lxml2 \
 				 -lpthread \
 				 -lmysqlclient
@@ -18,6 +17,7 @@ OBJECT_SOURCES:=$(wildcard ./object/*.cc)
 DATA_SOURCES:=$(wildcard ./data/*.cc)
 NETWORK_SOURCE:=$(wildcard ./network/*.cc)
 JUDGECONTROL_SOURCES:=$(filter-out $(wildcard ./judgecontrol/test_*.cc),$(wildcard ./judgecontrol/*.cc))
+EXCEPTION_SOURCES:=$(wildcard ./exception/*.cc)
 
 # All objects will auto build by "$(CXX) $(CXXFLAGS) -c" if there is no rule
 # to make it
@@ -26,8 +26,9 @@ DEPS:=$(patsubst %.cc,%.o,$(DEPS_SOURCES))
 UTIL:=$(patsubst %.cc,%.o,$(UTIL_SOURCES))
 OBJECT:=$(patsubst %.cc,%.o,$(OBJECT_SOURCES))
 DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
-NETWORK:=$(patsubst %.cc,%.o,$(NETWORK_SOURCE));
+NETWORK:=$(patsubst %.cc,%.o,$(NETWORK_SOURCE))
 JUDGECONTROL:=$(patsubst %.cc,%.o,$(JUDGECONTROL_SOURCES))
+EXCEPTION:=$(patsubst %.cc,%.o,$(EXCEPTION_SOURCES))
 
 .PHONY: all clean rebuild 
 
@@ -40,9 +41,10 @@ clean:
 	@make -C object clean
 	@make -C util clean
 	@make -C judgecontrol clean
+	@make -C exception clean
 
 rebuild: clean all
 
-main: $(OBJS) $(DEPS) $(UTIL) $(OBJECT) $(DATA) $(JUDGECONTROL) $(NETWORK)
+main: $(OBJS) $(DEPS) $(UTIL) $(OBJECT) $(DATA) $(JUDGECONTROL) $(NETWORK) $(EXCEPTION)
 	$(CXX) $(CXXFLAGS) -o ./bin/$@ $^ $(EXEFLAGS)
 

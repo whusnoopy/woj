@@ -12,6 +12,8 @@
 #include "data/databaseinterface.h"
 #include "data/fileinterface.h"
 #include "data/cachemanager.h"
+#include "exception/signaltranslator.h"
+#include "exception/pipeexception.h"
 
 using namespace std;
 
@@ -23,6 +25,7 @@ void init() {
   DatabaseInterface::getInstance();
   CacheManager::getInstance();
   JudgeControl::getInstance().initJudge();
+  SignalTranslator<PipeException>::getInstance();
 }
 
 
