@@ -63,6 +63,7 @@ public:
   int updateDiscuss(const Discuss& discuss);
   int updateStatus(const Status& status);
   int updateUser(const User& user);
+  int updateUserPermission(const User& user);
   int updateUserPassword(const User& user);
   int updateNews(const News& news);
   int updateError(const Error& error);

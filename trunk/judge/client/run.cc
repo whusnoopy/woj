@@ -56,7 +56,6 @@ int monitor(int communicate_socket,
     }
 
     int syscall = ptrace(PTRACE_PEEKUSER, pid, 4 * ORIG_EAX, NULL);
-    LOG(DEBUG) << "Syscall " << syscall << " from " << pid;
     if (syscall_filter_table[syscall]) {
       callback->processSyscall(pid, syscall);
     } else {
@@ -121,6 +120,7 @@ int runExe(int communicate_socket,
            int memory_limit,
            int output_limit) {
   LOG(INFO) << "Running";
+  sendReply(communicate_socket, RUNNING);
   const char* commands[] = {exe_filename.c_str(), exe_filename.c_str(), NULL};
   RunInfo run_info;
   run_info.stdin_filename = input_filename.c_str();

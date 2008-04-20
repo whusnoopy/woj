@@ -67,13 +67,31 @@ int getHeader(int communicate_socket,
               int& version) {
   // Wait for 5s, if there is no header recieved, return to wait for terminaled
   // and socket_broken
+  fd_set rset;
+  FD_ZERO(&rset);
+  FD_SET(communicate_socket, &rset);
+  struct timespec timeout;
+  timeout.tv_sec = 5;
+  timeout.tv_nsec = 0;
+  sigset_t sigmask;
+  sigemptyset(&sigmask);
+  sigaddset(&sigmask, SIGTERM);
+  sigaddset(&sigmask, SIGPIPE);
   
+  LOG(DEBUG) << "Test socket ready or not";
+  pselect(communicate_socket + 1, &rset, NULL, NULL, &timeout, &sigmask);
+  if (!FD_ISSET(communicate_socket, &rset)) {
+    LOG(DEBUG) << "No job now, return";
+    return -1;
+  }
 
   unsigned char header[9];
   int num = socket_read(communicate_socket, header, sizeof(header));
+  LOG(DEBUG) << "Recieved " << num << " KiB header already, "
+             << stringPrintf("%09X", header);
   if (num < sizeof(header))
     return -1;
-  if (header[0] > sizeof(SOURCE_FILE_SUFFIX) / sizeof(SOURCE_FILE_SUFFIX)) {
+  if (header[0] > sizeof(SOURCE_FILE_SUFFIX) / sizeof(SOURCE_FILE_SUFFIX[0])) {
     LOG(ERROR) << "Invalid source file type";
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
@@ -100,7 +118,7 @@ int saveFile(int communicate_socket,
     return -1;
   }
   length = ntohl(length);
-  LOG(DEBUG) << "Get file length = " << length;
+  LOG(DEBUG) << "Get file length = " << length << stringPrintf("/%04X", length);
   sendReply(communicate_socket, READY);
   
   int file = open(filename.c_str(), O_RDWR | O_CREAT | O_TRUNC, 0644);
@@ -271,26 +289,30 @@ void process(int communicate_socket) {
   if (doCompile(communicate_socket, source_filename) == -1)
     return;
 
+  // Run and Judge process
+  sendReply(communicate_socket, READY);
   JudgeResult judge_result;
-  for (int i = 1; i <= test_case; ++i) {
+  for (int i = 0; i < test_case; ++i) {
     string standard_input_filename = problem_dir + stringPrintf("/%d.in", i);
     string standard_output_filename = problem_dir + stringPrintf("/%d.out", i);
 
     judge_result.updateResult(doRun(communicate_socket,
-                              binary_filename,
-                              source_suffix,
-                              standard_input_filename,
-                              program_output_filename,
-                              case_time_limit,
-                              memory_limit,
-                              MAX_OUTPUT_LIMIT));
+                                    binary_filename,
+                                    source_suffix,
+                                    standard_input_filename,
+                                    program_output_filename,
+                                    case_time_limit,
+                                    memory_limit,
+                                    MAX_OUTPUT_LIMIT));
     if (judge_result.getResult() != 0) {
       break;
     }
     if (judge_result.getTime() > time_limit) {
       judge_result.onTimeLimitExceeded(time_limit);
+      sendReply(communicate_socket, TIME_LIMIT_EXCEEDED);
       break;
     }
+    sendReply(communicate_socket, READY);
 
     judge_result.updateResult(doJudge(communicate_socket,
                                       standard_input_filename,
@@ -302,6 +324,8 @@ void process(int communicate_socket) {
     }
   }
 
+  LOG(DEBUG) << "Result : " << judge_result.getResult() << " with time/memory("
+             << judge_result.getTime() << "/" << judge_result.getMemory() << ")";
   sendResultMessage(communicate_socket,
                     judge_result.getResult(),
                     judge_result.getTime(),
@@ -337,10 +361,12 @@ int terminated = 0;
 int socket_broken = 0;
 
 void sigterm_handler(int signal) {
+  LOG(INFO) << "Catch SIGTERM";
   terminated = 1;
 }
 
 void sigpipe_handler(int signal) {
+  LOG(INFO) << "Catch SIGPIPE";
   socket_broken = 1;
 }
 
@@ -388,8 +414,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  // sigaction SIGCHLD, SIGTERM, SIGPIPE
-  installSignalHandler(SIGCHLD, sigchld_handler);
+  // sigaction SIGTERM, SIGPIPE
   installSignalHandler(SIGTERM, sigterm_handler);
   installSignalHandler(SIGPIPE, sigpipe_handler);
 
@@ -403,8 +428,10 @@ int main(int argc, char* argv[]) {
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);
-//    system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
+    LOG(DEBUG) << "Terminated : " << terminated << ", Socket_Broken : " << socket_broken;
+    system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
   }
+  LOG(DEBUG) << "Terminated";
   system(stringPrintf("rm -rf %s", working_root.c_str()).c_str());
 
   close(communicate_socket);
