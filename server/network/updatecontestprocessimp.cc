@@ -69,7 +69,7 @@ void UpdateContestProcessImp::process(int socket_fd, const string& ip, int lengt
   iter++;
   int ret = 0;
   ret = DataInterface::getInstance().updateContest(contest);
-  if (ret) {
+  if (ret != 0) {
     sendReply(socket_fd, 'N');
     return;
   }

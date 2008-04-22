@@ -4,6 +4,7 @@
 
 #include "data/databaseinterface.h"
 #include "data/fileinterface.h"
+#include "base/logging.h"
 using namespace std;
 
 CacheManager* CacheManager::instance = NULL;
@@ -47,7 +48,9 @@ ContestRankList CacheManager::getContestRankList(int contest_id) {
                                DatabaseInterface::getInstance().getContestRankList(contest_id));
   }
   ContestRankList contest_ranklist = contest_ranklist_cache.getValue(contest_id);
+  LOG(DEBUG) << "locking";
   pthread_mutex_unlock(&contest_ranklist_lock);
+  LOG(DEBUG) << "unlock";
   return contest_ranklist;
 }
 
@@ -79,20 +82,31 @@ int CacheManager::addStatus(const Status& status) {
 int CacheManager::updateStatus(const Status& status) {
   pthread_mutex_lock(&status_lock);
   if (status_cache.has(status.getStatusId()))
-    status_cache.put(status.getStatusId(), status); 
+    status_cache.put(status.getStatusId(), status);
+  LOG(DEBUG) << "here is ok";
   if (status.getContestId() > 0) {
     updateContestStatistics(status, false);
+    LOG(DEBUG) << "here is ok";
     updateContestStatistics(status, false);
   }
+  LOG(DEBUG) << "here is ok";
   DatabaseInterface::getInstance().updateStatus(status);
   pthread_mutex_unlock(&status_lock);
+  LOG(DEBUG) << "here is ok";
   return 1;
 }
 
 int CacheManager::updateContestStatistics(const Status& status, bool add) {
   pthread_mutex_lock(&contest_statistics_lock);
   int contest_id = status.getContestId();
-  ContestStatistics contest_statistics = getContestStatistics(contest_id);
+  LOG(DEBUG) << "here is ok";
+  if (!contest_statistics_cache.has(contest_id)) {
+    LOG(DEBUG) << "here is ok";
+    contest_statistics_cache.put(contest_id, 
+                                 DatabaseInterface::getInstance().getContestStatistics(contest_id));
+  }
+  ContestStatistics contest_statistics = contest_statistics_cache.getValue(contest_id);
+  LOG(DEBUG) << "here is ok";
   if (!add) {
     ContestAcBefore contest_acbefore = {status.getUserId(), 
                                         status.getSubmitTime(),
@@ -102,6 +116,7 @@ int CacheManager::updateContestStatistics(const Status& status, bool add) {
     if (!ac) {
       ContestStatistics::iterator iter = contest_statistics.begin();
       while (iter != contest_statistics.end()) {
+        LOG(DEBUG) << "here is ok";
         if (iter->problem_id == status.getProblemId()) {
           break;
         }
@@ -162,7 +177,11 @@ int CacheManager::updateContestStatistics(const Status& status, bool add) {
 int CacheManager::updateContestRankList(const Status& status, bool add) {
   pthread_mutex_lock(&contest_ranklist_lock);
   int contest_id = status.getContestId();
-  ContestRankList contest_ranklist = getContestRankList(contest_id);
+  if (!contest_ranklist_cache.has(contest_id)) {
+    contest_ranklist_cache.put(contest_id,
+                               DatabaseInterface::getInstance().getContestRankList(contest_id));
+  }
+  ContestRankList contest_ranklist = contest_ranklist_cache.getValue(contest_id);
   if (!add) {
     ContestAcBefore contest_acbefore = {status.getUserId(), 
                                         status.getSubmitTime(),

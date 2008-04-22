@@ -46,6 +46,7 @@ typedef struct _STATUS_INFO_{
   int language;
   bool share_code_enable;
   bool share_code;
+  string type;
   int page_id;
 }StatusInfo;
 

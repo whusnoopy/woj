@@ -253,7 +253,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   DataInterface::getInstance().updateStatus(status);
 
   //14.compile result
-  LOG(DEBUG) << "get Complie reuslt";
+  LOG(DEBUG) << "get Complie reuslt from:" << connect_fd;
   if (socket_read(connect_fd, &reply, 1) != 1) {
     LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
     JudgeControl::getInstance().addMission(mission);

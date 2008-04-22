@@ -39,12 +39,6 @@ void ContestStatisticsProcessImp::process(int socket_fd, const string& ip, int l
   int contest_id = atoi(iter->c_str());
   ContestStatistics contest_statistics;
   contest_statistics = DataInterface::getInstance().getContestStatistics(contest_id);
-  int problem_num = DataInterface::getInstance().getContestProblemNum(contest_id);
-  string problem_num_str = stringPrintf("%010d", problem_num);
-  if (socket_write(socket_fd, problem_num_str.c_str(), 10)) {
-    LOG(ERROR) << "Cannot send problem number to" << ip;
-    return ;
-  }
   stable_sort(contest_statistics.begin(), contest_statistics.end(), isShorter);
   string databuf;
   ContestStatistics::iterator statistics_iter = contest_statistics.begin();
@@ -84,7 +78,9 @@ void ContestStatisticsProcessImp::process(int socket_fd, const string& ip, int l
     }
     statistics_iter++;
   }
-  string len = stringPrintf("%010d",databuf.length());
+  LOG(DEBUG) << databuf << " length:" << databuf.length();
+  string len = stringPrintf("%010d", databuf.length());
+  LOG(DEBUG) << len;
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
     return;
