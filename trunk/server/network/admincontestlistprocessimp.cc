@@ -29,14 +29,20 @@ void AdminContestListProcessImp::process(int socket_fd, const string& ip, int le
   spriteString(data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find page_id from data for:" << ip;
+    LOG(ERROR) << "Cannot find type from data for:" << ip;
     return;
   }
   ContestInfo contest_info;
   contest_info.title = "NULL";
   contest_info.description = "NULL";
-  contest_info.type = 'C';
+  contest_info.type = (*iter)[0];
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find page_id from data for:" << ip;
+    return;
+  }
   contest_info.page_id = atoi(iter->c_str());
+  iter++;
   ContestList contest_list;
   contest_list = DataInterface::getInstance().getContestList(contest_info);
   string databuf;

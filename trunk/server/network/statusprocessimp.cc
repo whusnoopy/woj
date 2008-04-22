@@ -81,13 +81,15 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find type for:" << ip;
     return;
   }
-  int type = atoi(iter->c_str());
+  string type = *iter;
   iter++;
+  LOG(DEBUG) << "type:" << type;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find user_id for:" << ip;
     return;
   }
   string user_id = *iter;
+  iter++;
   bool hasuser = false;
   if (user_id != "?")
     hasuser = true;
@@ -99,10 +101,12 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
   }
   LOG(DEBUG) << "user_id" << user_id;
   StatusList status_list;
-  if (type == 0){
+  status_info.type = "NULL";
+  if (type != "P"){
+    status_info.type = type;
     status_list = DataInterface::getInstance().getSearchStatus(status_info);
     LOG(INFO) << "process st for:" << ip;
-  }else if (type == 1) {
+  }else {
     status_list = DataInterface::getInstance().getProblemStatus(status_info);
     LOG(INFO) << "process ps for:" << ip;
   }

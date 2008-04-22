@@ -638,7 +638,7 @@ int DatabaseInterface::updateContest(const Contest& contest){
            "start_time = '" + changeSymbol(contest.getStartTime()) + "', " +
            "end_time = '" + changeSymbol(contest.getEndTime()) + "', " +
            "contest_type = '" + changeSymbol(contest.getType()) +
-           "', version = version + 1, ";
+           "', version = version + 1 ";
   query += " where contest_id = '" + stringPrintf("%d", contest.getContestId()) + 
            "'";
   LOG(INFO) << query << endl;
@@ -1329,6 +1329,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
 
 ContestProblemList DatabaseInterface::getContestProblemList(int contest_id) {
   ContestProblemList problem_list;
+  Contest contest = getContest(contest_id);
   Connection* connection = createConnection();
   map<int, int> problem_accepted;
   map<int, int> problem_submit;
@@ -1352,6 +1353,9 @@ ContestProblemList DatabaseInterface::getContestProblemList(int contest_id) {
   result_set.close();
   query = "select * from statuses where contest_id = '" + stringPrintf("%d'", contest_id);
   query += "and type = 'N'";
+  query += " and submit_time >= '" + contest.getStartTime();
+  query += "' and submit_time <= '" + contest.getEndTime();
+  query += "' order by submit_time";
   result_set =connection->excuteQuery(query);
   while (result_set.next()) {
     problem_submit[result_set.getInt("problem_id")]++;
@@ -1392,12 +1396,12 @@ ProblemIdList DatabaseInterface::getContestProblems(int contest_id) {
 int DatabaseInterface::getContestProblemNum(int contest_id){
   Connection* connection = createConnection();
   connection->connect();
-  string query = "select count(*) from problemtocontests where contest_id = '";
+  string query = "select count(*) as num from problemtocontests where contest_id = '";
   query += stringPrintf("%d", contest_id) + "'";
   Result result_set = connection->excuteQuery(query);
   int ret = 0;
   if (result_set.next()) {
-    ret = result_set.getInt(1);
+    ret = result_set.getInt("num");
   }
   result_set.close();
   connection->close();
@@ -1881,8 +1885,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   Status item;
   bool first = true;
   Connection* connection = createConnection();
-  string query = "select * from statuses where type = 'N' ";
-  first = false;
+  string query = "select * from statuses ";
   if (status_info.user_id != string("NULL")){
     if (first){
       query += "where ";
@@ -1918,7 +1921,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
     	query += "and ";
     }
     query += "contest_id = '" + stringPrintf("%d", status_info.contest_id) + "' ";
-  }else {        
+  }else if (status_info.type != "A"){        
     if (first){
       query += "where ";
       first = false;
@@ -1948,6 +1951,18 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
     query += "code_id in (select code_id from codes where ";
     query += "share = '";
     query += changeSymbol((status_info.share_code)?"Y":"N") + "') ";
+  }
+  if (status_info.type != string("NULL")){
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    if (status_info.type == "A")
+      query += "type = 'N' ";
+    else
+      query += "type = '" + changeSymbol(status_info.type) + "' ";
   }
   query += "order by submit_time desc limit " + 
            stringPrintf("%d, 25", status_info.page_id*25);
@@ -2058,7 +2073,8 @@ ContestRankList DatabaseInterface::getContestRankList(int contest_id){
   query = "select * from statuses where contest_id = '";
   //query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
   query += stringPrintf("%d", contest_id);
-  query += "' and type = 'N' order by submit_time ";
+  query += "' and type = 'N' and submit_time >= '" + contest.getStartTime();
+  query += "' and submit_time <= '" + contest.getEndTime() + "' order by submit_time ";
   result_set = connection->excuteQuery(query);
   while (result_set.next()){   
     string user_id = result_set.getString("user_id");
@@ -2125,9 +2141,9 @@ int DatabaseInterface::updateUserSolved(const Status& status, int op) {
   Connection* connection = createConnection();
   string query;
   if (op == -1)
-    query = "update users set solved = solved - 1 where ";  
+    query = "update users set solveds = solveds - 1 where ";  
   else 
-    query = "update users set solved = solved + 1 where ";
+    query = "update users set solveds = solveds + 1 where ";
   query += "user_id = '" + changeSymbol(status.getUserId()) + "' and ";
   query += " not exist (select * from statuses where status_id != '";
   query += stringPrintf("%d", status.getStatusId()) + "' and problem_id ";
@@ -2147,9 +2163,9 @@ int DatabaseInterface::updateUserSubmit(const User& user, int op) {
   Connection* connection = createConnection();
   string query;
   if (op == -1)
-    query = "update users set submit = submit - 1 where ";  
+    query = "update users set submits = submits - 1 where ";  
   else 
-    query = "update users set submit = submit + 1 where ";
+    query = "update users set submits = submits + 1 where ";
   query += "user_id = '" + changeSymbol(user.getId()) + "'";
   LOG(INFO) << query;
   connection->connect();
@@ -2180,6 +2196,7 @@ ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   ContestStatistics contest_statistics;
   ContestStatisticsItem item;
   map<int, ContestStatisticsItem> statistics_buf;
+  Contest contest = getContest(contestId);
   Connection* connection = createConnection();
   connection->connect();
   string query = "select problem_id, in_contest_id from problemtocontests ";
@@ -2188,13 +2205,16 @@ ContestStatistics DatabaseInterface::getContestStatistics(int contestId){
   while (result_set.next()){
   	memset(&item, 0, sizeof(item));
     item.problem_id = result_set.getInt("problem_id");
-    item.problem_id = result_set.getInt("in_contest_id");
+    item.incontest_id = result_set.getInt("in_contest_id");
     statistics_buf[item.problem_id] = item;
   }
   result_set.close();
   UserACSet set;
   query = "select * from statuses where contest_id =' " + 
           stringPrintf("%d", contestId) + "' and type = 'N'";
+  query += " and submit_time >= '" + contest.getStartTime();
+  query += "' and submit_time <= '" + contest.getEndTime();
+  query += "' order by submit_time";
   result_set= connection->excuteQuery(query);
   ProblemUserAC problem_user_ac;
   while (result_set.next()){
