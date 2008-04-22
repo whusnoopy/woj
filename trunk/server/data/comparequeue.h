@@ -38,6 +38,10 @@ public:
   		queue.erase(iter);
   	}
   }
+
+  typename list<Key>::iterator erase(typename list<Key>::iterator iter) {
+    return queue.erase(iter);
+  }
   
   int size() {
   	return queue.size();
