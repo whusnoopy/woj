@@ -30,34 +30,6 @@ public:
 
 	void running(){
 		while (!quitflag){
-      pthread_mutex_lock(&father_->lock);
-      LOG(DEBUG) << "cleaner lock:" << pthread_self();
-  		int now = time(NULL);
-      bool done = false;
-      LOG(INFO) << "Begin cleaner the cache....";
-      while (!done) {
-        done = true;
-        typename list<CacheKeyType>::iterator iter = father_->access_queue.begin();
-        while (iter != father_->access_queue.end()){
-          if (iter->getLastAccessTime() + iter->getTimeOut() > now){
-            typename list<CacheKeyType>::iterator buf = iter;
-            iter++;
-            Key key_buf = buf->getKey();
-            LOG(INFO) << "Cleaner clean the cache:" << key_buf;
-            if (father_->cache_map.count(key_buf) != 0) {
-              father_->access_queue.remove(father_->cache_map[key_buf].getKey());
-              father_->cache_map.erase(key_buf);
-            }
-            LOG(INFO) << "Cleaner clean up the cache:" << key_buf;
-            done = false;
-            break;
-          } else
-            iter++;
-        }
-      }
-      LOG(INFO) << "End cleaner the cache.....";
-      pthread_mutex_unlock(&father_->lock);
-      LOG(DEBUG) << "cleaner unlock:" << pthread_self();
       struct timespec ts;
       struct timespec tr;
       ts.tv_sec = 30;
@@ -76,6 +48,27 @@ public:
           break;
         }
       }
+      pthread_mutex_lock(&father_->lock);
+      LOG(DEBUG) << "cleaner lock:" << pthread_self();
+  		int now = time(NULL);
+      LOG(INFO) << "Begin cleaner the cache....";
+      typename list<CacheKeyType>::iterator iter = father_->access_queue.begin();
+      while (iter != father_->access_queue.end()){
+        if (iter->getLastAccessTime() + iter->getTimeOut() > now){
+          Key key_buf = iter->getKey();
+          iter = father_->access_queue.erase(iter);
+          LOG(INFO) << "Cleaner clean the cache:" << key_buf;
+          if (father_->cache_map.count(key_buf) != 0) {
+            father_->cache_map.erase(key_buf);
+          }
+          LOG(INFO) << "Cleaner clean up the cache:" << key_buf;
+          continue;
+        } else
+          iter++;
+      }
+      LOG(INFO) << "End cleaner the cache.....";
+      pthread_mutex_unlock(&father_->lock);
+      LOG(DEBUG) << "cleaner unlock:" << pthread_self();
   	}
   }
   void quit() {
@@ -118,6 +111,7 @@ public:
     typename map<Key, CacheEntryType>::iterator iter = cache_map.begin(); 
     while (iter != cache_map.end()) {
       value_list.push_back(iter->second.getValue());
+      iter++;
     }
     pthread_mutex_unlock(&lock);
     LOG(DEBUG) << "get values unlock";

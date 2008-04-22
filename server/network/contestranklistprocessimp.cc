@@ -37,22 +37,16 @@ vector<ContestProblemTime> changMapToVector(const map<int, ContestProblemTime>& 
   ContestProblemTime item;
   item.penalty = 0;
   item.submit = 0;
-  bool done = false;
-  while (!done) { 
-    done = true;
-    in_id = 0;
-    iter = problem_time_list.begin();
-    while (iter != problem_time_list.end()) {
-      in_id++;
-      LOG(DEBUG) << "in_id" << in_id << " " << iter->in_contest_id;
-      if (iter->in_contest_id != in_id) {
-        item.in_contest_id = in_id;
-        problem_time_list.insert(iter,item);
-        done = false;
-        break;
-      }
-      iter++;
+  in_id = 0;
+  iter = problem_time_list.begin();
+  while (iter != problem_time_list.end()) {
+    in_id++;
+    LOG(DEBUG) << "in_id" << in_id << " " << iter->in_contest_id;
+    if (iter->in_contest_id != in_id) {
+      item.in_contest_id = in_id;
+      iter = problem_time_list.insert(iter,item);
     }
+    iter++;
   }
   LOG(DEBUG) << "here is ok";
   for (int i = in_id + 1; i <= num; i++){

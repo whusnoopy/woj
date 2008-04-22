@@ -61,6 +61,7 @@ StatusList CacheManager::getStatus() {
     StatusList::iterator iter = status_list.begin();
     while (iter != status_list.end()) {
       status_cache.put(iter->getStatusId(), *iter);
+      iter++;
     }
   }
   StatusList status_ret = status_cache.getValues();
@@ -121,6 +122,10 @@ int CacheManager::updateContestStatistics(const Status& status, bool add) {
           break;
         }
         iter++;
+      }
+      if (iter == contest_statistics.end()) {
+        LOG(ERROR) << "Cannot find the problem[" << status.getProblemId() << "] from contest statistics.";
+        return -1;
       }
       iter->Total++;
   	  switch (status.getLanguage()) {
