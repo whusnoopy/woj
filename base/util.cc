@@ -54,7 +54,7 @@ string stringPrintf(const char* format, ...) {
   va_list args;
   char buffer[1024];
   va_start(args, format);
-  vsnprintf(buffer, sizeof(buffer), format, args);
+  vsnprintf(buffer, sizeof(buffer) - 1, format, args);
   va_end(args);
   return buffer;
 }

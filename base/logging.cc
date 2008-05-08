@@ -4,11 +4,18 @@
 #include <errno.h>
 #include <syslog.h>
 #include <sys/stat.h>
+#include <pthread.h>
 
 #include "base/flags.h"
 #include "base/util.h"
 
 #include "base/logging.h"
+
+#define _DEBUG_LOG_
+#ifdef _DEBUG_LOG_
+#include <iostream>
+using namespace std;
+#endif
 
 DECLARE_FLAGS(string, root_dir);
 
@@ -28,9 +35,19 @@ const string LOG_LEVEL_NAME[] = {
 
 class LogFile {
   public :
+
+    LogFile() {
+      pthread_mutex_init(&lock_, NULL);
+    }
+
     ~LogFile() {
+#ifdef _THIS_IS_SERVER_LOG_    
+      this->closeFile();
+#else
       if (file_)
         fclose(file_);
+#endif
+      pthread_mutex_destroy(&lock_);
     }
 
     void create() {
@@ -62,7 +79,14 @@ class LogFile {
         if (file_) {
           filesize_ += log_message.size();
           if (filesize_ > MAX_LOG_FILE_SIZE) {
-            fclose(file_);
+#ifdef _THIS_IS_SERVER_LOG_
+            this->closeFile();
+#else
+            if (file_) {
+              fclose(file_);
+              file_ = NULL;
+            }
+#endif
             this->create();
             filesize_ += log_message.size();
           }
@@ -79,6 +103,20 @@ class LogFile {
   private :
     FILE* file_;
     int filesize_;
+    pthread_mutex_t lock_;
+    
+    void closeFile() {
+      pthread_mutex_lock(&lock_);
+      if (file_) {
+#ifdef _DEBUG_LOG_
+        cout << "this is used!" << endl;
+#endif      
+        fclose(file_);
+        file_ = NULL;
+      }
+      pthread_mutex_unlock(&lock_);
+    }
+
 } logFile;
 
 Log::Log(const char* filename, int line_number, int level) :
