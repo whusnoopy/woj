@@ -1,8 +1,4 @@
 <?php
-	include('config.php');
-?>
-
-<?php
 
 class TCPClient{
 	var $m_host;
@@ -57,5 +53,4 @@ class TCPClient{
 	}
 
 }
-
 ?>

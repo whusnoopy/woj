@@ -18,13 +18,15 @@
 		echo "<span class=cl>Please Login First!</span>";
 		$origURL = $_GET['origURL'];
 	}
+	else
+	    $origURL = '';
 	if (isset($_GET['errorMsg']))
 		echo "<span class=cl>$_GET[errorMsg] </span>";
 ?>
 	<br>
 
     <form name=loginform action="login.do.php?origURL=<?php echo $origURL; ?>" method=post>
-      <input type=hidden name=origURL value=<?php echo $_GET['origURL'];?>/>
+      <input type=hidden name=origURL value="<?php echo $origURL;?>"/>
       <table width=950><tbody>
         <tr class=tro>
           <td width=400 align=right><strong>Username:&nbsp;&nbsp;</strong></td>

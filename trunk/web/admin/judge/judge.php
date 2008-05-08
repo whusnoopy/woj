@@ -8,7 +8,7 @@
 <?php
 	include('../common/tcpclient.php');
 	include('classes/status_t.php');
-	include('config.php');
+	include('../common/config.php');
 
 	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
 		$cur_user_id = $_SESSION['user_id'];
@@ -43,7 +43,7 @@
 	else
 		$share_code = 'N';
 
-    $st = new status_t($start, $problem_id, $user_id, $rst, $language, $contest_id, $share_code, '0' , $cur_user_id);
+    $st = new status_t($start, $problem_id, $user_id, $rst, $language, $contest_id, $share_code, 'A' , $cur_user_id);
 	$st->getResult();
 	$rows = $st->getRow();
 
@@ -161,13 +161,13 @@
 
 <?php
 	if($start > 0){
-		echo "<span class=bt><a href=\"status.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+		echo "<span class=bt><a href=\"judge.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
        $pre = $start - 1;
-	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"judge.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Previous</a></span>&nbsp";
 	}
     if ($rows == 25){
        $next = $start + 1;
-	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"judge.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Next</a></span>&nbsp";
 	}
 ?>
 </div>

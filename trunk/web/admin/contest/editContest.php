@@ -4,7 +4,11 @@
 		header('Location:login.php?errorMsg=please login first!');
 		exit;
 	}
-	$contest_id = $_GET[contest_id];
+	$contest_id = $_GET['contest_id'];
+
+	include('../common/tcpclient.php');
+	$contest = array();
+	get_contest_info($contest_id, $contest);
 ?>
 <html>
 <head>
@@ -38,7 +42,8 @@ function makesure()
 </script>
 
   <div id="main">
-<form action="addContestAction.do" method=post onSubmit="return makesure();">
+<form action="updateContestAction.do.php" method=post onSubmit="return makesure();">
+<input type="hidden" name="contest_id" value="<?php echo $contest_id; ?>">
   <table><tbody>
     <tr>
       <th colspan=4 align=center>Fill the Informations</th>
@@ -46,36 +51,41 @@ function makesure()
     <tr class=tro>
       <td width=100></td>
 	  <td width=150 align=right><strong>Title:</strong>&nbsp;&nbsp;</td>
-      <td width=600 align=left>&nbsp;&nbsp;<input size=75 name=title /></td>
+      <td width=600 align=left>&nbsp;&nbsp;<input size=75 name=title value="<?php echo $contest[0]; ?>"/></td>
       <td width=100></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Type:</strong>&nbsp;&nbsp;</td>
       <td align=left>&nbsp;&nbsp;
-        <select name="type">
-          <option value="public" selected>Public</option>
-		  <option value="public">Private</option>
-		  <option value="award" >Award</option>
+        <?php
+		if ($_GET['tp'] == 'V') {?>
+		  V
+		<?php } else {?>
+		<select name="type">
+          <option value="N" selected>Public</option>
+		  <option value="P">Private</option>
+		  <option value="A" >Award</option>
         </select>
-      </td>
-      <td></td>
+		<?php } ?>
+	  </td>
+	  <td></td>
     </tr>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>Description:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=description rows=5 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<textarea name=description rows=5 cols=80><?php echo $contest[1]; ?></textarea></td>
       <td></td>
     </tr>
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Start Time:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input size=21 name="start">( yyyy-mm-dd hh:mm:ss, [utc+8] )</td>
+      <td align=left>&nbsp;&nbsp;<input size=21 name="start" value="<?php echo $contest[2]; ?>">( yyyy-mm-dd hh:mm:ss, [utc+8] )</td>
       <td></td>
     <tr class=tro>
       <td></td>
 	  <td align=right><strong>End Time:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<input size=21 name="end"> </td>
+      <td align=left>&nbsp;&nbsp;<input size=21 name="end" value="<?php echo $contest[3]; ?>"> </td>
       <td></td>
     </tr>
 	<tr class=tre>
@@ -84,20 +94,6 @@ function makesure()
 	  </td>
     </tr>
 
-<script language="javascript">
-	var ch = new String("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-	for (i=0; i<26; i++)
-	if (i<3)
-		document.writeln('<tr class=tro id="p'+i+'"><td></td><td align=right><strong>Problem '+ch.charAt(i)+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp;<input size=21 name="p'+i+'"></td><td></td></tr>');
-	else
-	    document.writeln('<tr class=tro id="p'+i+'"style="display:none"><td></td><td align=right><strong>Problem '+ch.charAt(i)+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp;<input size=21 name="p'+i+'"></td><td></td></tr>');
-</script>
-
-	<tr class=tre id="addmore">
-	  <td colspan=4 align="center">
-	  <a href="javascript:addProblem()">add more problems</a>
-	  </td>
-    </tr>
     <tr class=tro>
       <td colspan=4 align=center>
         <input type="submit" name="submit" value="Submit" />&nbsp;
@@ -119,13 +115,37 @@ function makesure()
 </body>
 </html>
 
-<script language="javascript">
-var id=3;
-function addProblem()
+
+<?php
+
+function get_contest_info($contest_id, &$contest)
 {
-	document.getElementById('p'+id).style.display = document.all ? "block" : "table-row";
-	id++;
-	if (id>25)
-		document.getElementById('addmore').style.display = "none";
+	///////////////////////////////
+/*	$d = "\001";
+	$recv = "2008 Warmup contest 1".$d."hello, flood".$d."2008-03-12 17:00:00".$d."2008-03-15 09:00:00".$d."1";
+	$contest = explode("\001", $recv);
+	return;
+*/	////////////////////////////////
+
+	if(empty($contest_id)){
+		$contest = null;
+		return;
+	}
+
+	$header = sprintf("%s%08d", "cc", strlen($contest_id));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($contest_id)or die("send message failed");
+	$recv= $tc->recvstr(10);
+	sscanf($recv, "%d", $len);
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$contest =  explode("\001", $recv);
+	}
+	else $contest = null;
+	$tc->close();
+	return;
 }
-</script>

@@ -51,7 +51,7 @@
 
 //////////////////Upload files//////////////////////////////////////////
 
-	$dir = "../../files/$problem_id/";
+	$dir = "../../files/";
 	mkdir($dir, 0775);
 	$time = time();
 
@@ -62,8 +62,10 @@
 	for ($i=1; $i<=5; $i++){
 		$pic = 'pic'.$i;
 		if ($_FILES[$pic]['size'] > 0){
-			if (move_uploaded_file($_FILES[$pic]['tmp_name'], $dir.$time."_".$_FILES[$pic]['name']))
-				$picture_file_names[] = $dir.$time."_".$_FILES[$pic]['name'];
+			if (move_uploaded_file($_FILES[$pic]['tmp_name'], $dir.$problem_id."_".$time."_".$_FILES[$pic]['name'])){
+				$picture_file_names[] = $dir.$problem_id."_".$time."_".$_FILES[$pic]['name'];
+			    $_POST['description'] = str_replace($_FILES[$pic]['name'], $dir.$problem_id."_".$time."_".$_FILES[$pic]['name'], $_POST['description']);
+			}
 			else{
 				echo 'failed uploaded'.$_FILES[$pic]['name'];
 				exit;
@@ -120,6 +122,8 @@
 
 	echo 'successfully uploaded files<br>';
 
+
+
 //////////////////Send files///////////////////////////////////////////////
 
 
@@ -151,7 +155,8 @@
 		}
 	}
 	echo 'send i/o files<br>';
-	echo 'done all<br>';
+	echo 'done all<br><br>';
+	echo '<a href="problemList.php">Back</a>';
 
 ?>
 

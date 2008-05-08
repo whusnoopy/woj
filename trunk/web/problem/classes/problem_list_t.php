@@ -83,10 +83,10 @@ class problem_list_t
 
 		$tc = new TCPClient();
 		$tc->create() or die("unable to create socket!");
-		if (!$tc->connect()) {
-			//header('HTTP/1.1 404 Not Found');
-      exit;
-		} //die("unable to connect to server!");
+		if (!$tc->connect()){// or die("unable to connect to server!");
+			header('HTTP/1.1 404 Not Found');
+			exit;
+		}
 		$tc->sendstr($header) or die("send header failed");
 		$tc->sendstr($message)or die("send message failed");
 		$recv= $tc->recvstr(10);

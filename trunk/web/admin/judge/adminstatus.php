@@ -1,8 +1,14 @@
 <?php
 	session_start();
+	if (empty($_SESSION['user_id'])){
+		header('Location:../login.php?errorMsg=please login first!');
+		exit;
+	}
+?>
+<?php
 	include('../common/tcpclient.php');
-	include('../common/config.php');
 	include('classes/status_t.php');
+	include('../common/config.php');
 
 	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
 		$cur_user_id = $_SESSION['user_id'];
@@ -37,24 +43,41 @@
 	else
 		$share_code = 'N';
 
-    $st = new status_t($start, $problem_id, $user_id, $rst, $language, $contest_id, $share_code, 'N' , $cur_user_id);
+    $st = new status_t($start, $problem_id, $user_id, $rst, $language, $contest_id, $share_code, 'R' , $cur_user_id);
 	$st->getResult();
 	$rows = $st->getRow();
 
 ?>
-<?php
-	include('../include/header.php');
-    echo '<div id=tt>Status</div>';
-	include('../include/notice.php');
-?>
+
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Flood Admin</title>
+  <link href="../../style/noah.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<center>
+  <div id="bar">
+    <a href="../index.php">Home</a>&nbsp;|&nbsp;
+    <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
+    <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
+    <a href="judge.php">Judge</a>&nbsp;|&nbsp;
+    <a href="../user/userList.php">User</a>&nbsp;|&nbsp;
+	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="../logout.do.php">Logout</a>
+  </div>
+
+<div id=tt>Judge</div>
   <div id="main">
   <table><tbody>
 
+  <input type="submit" value="Rejudge">
   <tr>
+    <th width="20"></th>
     <th width="70">Run ID</th>
     <th width="155">User</th>
     <th width="75">Problem</th>
-    <th width="200">Result</th>
+    <th width="180">Result</th>
     <th width="70">Memory</th>
     <th width="60">Time</th>
     <th width="85">Language</th>
@@ -73,9 +96,10 @@
 		$pid = $st->getProblem_id($i);
 		$cid = $st->getCode_id($i);
 		$result = $st->getRst($i);
-		$mem = $st->getMemory($i); $mem = $mem<0 ? '' : $mem;
-		$tm = $st->getTime($i);  $tm = $tm<0 ? '' : $tm;
+		$mem = $st->getMemory($i);
+		$tm = $st->getTime($i);
 		$lan = $st->getLanguage($i);
+
 		$eid = $st->getError_id($i);
 		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
@@ -95,10 +119,12 @@
 		echo '</tr>';
 	}
 ?>
+  </form>
+
   </tbody></table>
 
   <br />
-  <form action="status.php" method="get">
+  <form action="judge.php" method="get">
    <strong>Select status by</strong>&nbsp;
    <strong>Problem ID:</strong> <input size=6 name="problem_id" />&nbsp;
    <strong>User ID:</strong> <input size=14 name="user_id" />&nbsp;
@@ -135,20 +161,29 @@
 
 <?php
 	if($start > 0){
-		echo "<span class=bt><a href=\"status.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+		echo "<span class=bt><a href=\"judge.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
        $pre = $start - 1;
-	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Previous</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"judge.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Previous</a></span>&nbsp";
 	}
     if ($rows == 25){
        $next = $start + 1;
-	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Next</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"judge.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Next</a></span>&nbsp";
 	}
 ?>
 </div>
   <br />
   </div>
 
+</div><br>
 
-<?php
-	include('../include/tailer.php');
-?>
+
+	<div id="ft">
+    <hr width="900" size=0 />
+	Online Judge System of Wuhan Univ. Version 1.0<br />
+    Copyright &copy; 2006 ACM/ICPC Team of Wuhan University. All rights reserved.<br />
+    Please <a href="mailto:acm@whu.edu.cn?Subject=Suggestion of the OnlineJudge" >contact us</a> if you have any suggestion or problem.<br /><br />
+  </div>
+
+</center>
+</body>
+</html>

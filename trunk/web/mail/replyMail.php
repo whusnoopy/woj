@@ -1,12 +1,15 @@
 <?php
-	include('../include/header.php');
-	include('../common/tcpclient.php');
+	session_start();
+	if (isset($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else
+		$user_id = '';
 
 	if(!$user_id){
 		header("Location: ../user/login.php?origURL=../mail/mailList.php");
 		exit;
 	}
-
+	include('../common/tcpclient.php');
 	if (isset($_GET['mail_id']))
 		$mail_id = $_GET['mail_id'];
 	else
@@ -16,9 +19,11 @@
 
 ?>
 
-  <div id="tt">Reply Mail</div>
+
 
 <?php
+	include('../include/header.php');
+	echo '<div id="tt">Reply Mail</div>';
 	include('../include/notice.php');
 ?>
 

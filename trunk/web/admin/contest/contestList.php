@@ -30,8 +30,15 @@
 		$start = $_GET['start'];
 	else
 		$start = '0';
+	if(isset($_GET['type']))
+		$type = $_GET['type'];
+	else
+		$type = 'N';
 
-	echo "<div id=tt>Concest Volume $start</div>";
+	if ($type == 'V')
+		echo "<div id=tt>Virtual Concest Volume $start</div>";
+	else
+		echo "<div id=tt>Concest Volume $start</div>";
 ?>
 
 <div id="main">
@@ -49,7 +56,7 @@
 
 <?php
 
-	$cl = new contest_list_t($start);
+	$cl = new contest_list_t($start, $type);
 	$cl->getResult();
 	$rows = $cl->getRow();
 
@@ -65,11 +72,11 @@
 		echo "<td>".$cl->getEnd_time($i)."</td>";
 		echo "<td>".$cl->getState($i)."</td>";
 		echo "<td>".$cl->get_type($i)."</td>";
-		echo "<td><a href=\"editContest.php?contest_id=$contestID\">Edit</td>";
-		if ($cl->isAvailable($i))
-			echo "<td><a href=\"delresAction.do.php?contest_id=$contestID&type=d\">Delete</a></td>";
+		echo "<td><a href=\"editContest.php?contest_id=$contestID&tp=$type\">Edit</td>";
+		if ($cl->getAvailable($i) == 'Y')
+			echo "<td><a href=\"delresAction.do.php?contest_id=$contestID&type=N\">Delete</a></td>";
 		else
-			echo "<td><a href=\"delresAction.do.php?problem_id=$contestID&type=r\">Resume</a></td>";
+			echo "<td><a href=\"delresAction.do.php?contest_id=$contestID&type=Y\">Resume</a></td>";
 		echo "</tr>";
 	}
 ?>

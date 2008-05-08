@@ -1,7 +1,5 @@
 <?php
-	include('../include/header.php');
-    echo "<div id=tt>Contest Statistics - $_GET[title]</div>";
-	include('../include/notice.php');
+	include('../common/tcpclient.php');
 	include('classes/contest_statistics_t.php');
 
 	if(isset($_GET['contest_id']))
@@ -10,6 +8,12 @@
 //		echo 'contest not exist';
 //		exit;
 	}
+	$cs = new contest_statistics_t($contest_id);
+	$cs->getResult();
+
+	include('../include/header.php');
+    echo "<div id=tt>Contest Statistics - $_GET[title]</div>";
+	include('../include/notice.php');
 
 ?>
   <div id="main">
@@ -32,8 +36,7 @@
   </tr>
 
 <?php
-	$cs = new contest_statistics_t($contest_id);
-	$cs->getResult();
+
 	$rows = $cs->getRow();
 
 	$character = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

@@ -4,16 +4,22 @@
 class contest_list_t
 {
 	var $pagenum;
+	var $type;
 	var $result = array();
 
-	function contest_list_t($pagenum)
+	function contest_list_t($pagenum, $type)
 	{
 		$this->pagenum = $pagenum;
+		$this->type = $type;
 	}
 
 	function setPagenum($pagenum)
 	{
 		$this->pagenum = $pagenum;
+	}
+	function setCtype($type)
+	{
+		$this->type = $type;
 	}
 
 	function getID($i)
@@ -34,8 +40,8 @@ class contest_list_t
 	}
 	function getState($i)
 	{
-		$start = strtotime($this->result[$i*6+2]);
-		$end = strtotime($this->result[$i*6+3]);
+		$start = strtotime($this->result[$i*7+2]);
+		$end = strtotime($this->result[$i*7+3]);
 		$current = time()+8*3600;
 
 		if($current > $end)
@@ -53,11 +59,9 @@ class contest_list_t
 	{
 		return $this->result[$i*7+5];
 	}
-	function isAvailable($i)
+	function getAvailable($i)
 	{
-		if ($this->result[$i*7+6] =='Y')
-			return true;
-		return false;
+		return $this->result[$i*7+6];
 	}
 
 	function getRow()
@@ -76,7 +80,7 @@ class contest_list_t
 */		//////////////////////////////////
 
 		$d = "\001";
-		$message = $this->pagenum;
+		$message = $this->type.$d.$this->pagenum;
 		$header = sprintf("%s%08d", "rc", strlen($message));
 
 		$tc = new TCPClient();

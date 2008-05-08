@@ -13,13 +13,10 @@
 	else if(empty($_POST['language'])){
 		$errorMsg = 'please type your language';
 	}
-	else if(strlen($_POST['source']) > 10000){
-		$errorMsg = 'Source is too short';
-	}
 
 	if($errorMsg)
 	{
-		header("Location: submiterror.php?error=$errorMsg");
+		echo $errorMsg;
 	    //确保重定向后，后续代码不会被执行
 		exit;
 	}
@@ -27,10 +24,6 @@
 		$share = 'Y';
 	else
 		$share = 'N';
-	if (isset($_POST['contest_id']) && !empty($_POST['contest_id']))
-		$contest_id = $_POST['contest_id'];
-	else
-	    $contest_id = '0';
 	$source_len = strlen($_POST['source']);
 
 /************************************************/
@@ -39,18 +32,15 @@
 	$submit_pack = $_POST['user_id'].$d.
 				$_POST['pass'].$d.
 				$_POST['problem_id'].$d.
-				$contest_id.$d.
+				(isset($_POST['contest_id']) ? $_POST['contest_id'] : '0').$d.
 				$_POST['language'].$d.
 				$source_len.$d.
 				$share.$d.
 				get_ip().$d.
-				'N';
+				'R';
 
 	if (submit($submit_pack, $_POST['source'])){
-		if (empty($contest_id))
-			header('Location: ../status/status.php');
-		else
-			header("Location: ../status/status.php?contest_id=$contest_id");
+		header('Location: ../status/status.php');
 		$_SESSION['user_id'] = $_POST['user_id'];
 		$_SESSION['password'] = $_POST['pass'];
 	}
@@ -66,10 +56,7 @@ function submit(&$submit_pack, &$source)
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
-	if (!$tc->connect()){// or die("unable to connect to server!");
-		header('HTTP/1.1 404 Not Found');
-		exit;
-	}
+	$tc->connect() or die("unable to connect to server!");
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($submit_pack)or die("send message failed");
 	$tc->sendstr($source) or die ("send message failed");

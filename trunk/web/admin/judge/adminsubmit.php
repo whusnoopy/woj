@@ -1,29 +1,42 @@
 <?php
-  session_start();
-  include ('../include/header.php');
-
-  if(isset($_GET['problem_id']))
+	session_start();
+	if (empty($_SESSION['user_id'])){
+		header('Location:../login.php?errorMsg=please login first!');
+		exit;
+	}
+?>
+<?php
+  if(isset($_GET['problem_id'])){
     $problem_id = $_GET['problem_id'];
-  else
+ }
+ else{
     $problem_id = '';
-
-  if(isset($_GET['contest_id']))
-    $contest_id = $_GET['contest_id'];
-  else
-    $contest_id = '0';
-
+  }
   $user_id = $_SESSION['user_id'];
   $pass = $_SESSION['password'];
 ?>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Flood Admin</title>
+  <link href="../../style/noah.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<center>
+  <div id="bar">
+    <a href="../index.php">Home</a>&nbsp;|&nbsp;
+    <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
+    <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
+    <a href="judge.php">Judge</a>&nbsp;|&nbsp;
+    <a href="../user/userList.php">User</a>&nbsp;|&nbsp;
+	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="../logout.do.php">Logout</a>
+  </div>
 
   <div id="tt">Submit</div>
-<?php
-    include ('../include/notice.php');
-?>
 
   <div id="main">
     <form action="submit.do.php" method=post>
-	<input type="hidden" name="contest_id" value="<?php echo $contest_id;?>"/>
     <table><tbody>
       <tr>
         <th width=80></th>
@@ -77,7 +90,13 @@
     </form>
   </div>
 
-<?php
-    include ('../include/tailer.php');
-?>
+	<div id="ft">
+    <hr width="900" size=0 />
+	Online Judge System of Wuhan Univ. Version 1.0<br />
+    Copyright &copy; 2006 ACM/ICPC Team of Wuhan University. All rights reserved.<br />
+    Please <a href="mailto:acm@whu.edu.cn?Subject=Suggestion of the OnlineJudge" >contact us</a> if you have any suggestion or problem.<br /><br />
+  </div>
 
+</center>
+</body>
+</html>

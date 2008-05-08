@@ -1,5 +1,9 @@
 <?php
-	include('../include/header.php');
+	session_start();
+	if (isset($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else
+		$user_id = '';
 
 	if($user_id == ''){
 		header("Location: ../user/login.php?origURL=../mail/sendMail.php");
@@ -11,9 +15,11 @@
 		$to_user = '';
 ?>
 
-  <div id="tt">Write Mail</div>
+
 
 <?php
+	include('../include/header.php');
+	echo '<div id="tt">Write Mail</div>';
 	include('../include/notice.php');
 ?>
 
