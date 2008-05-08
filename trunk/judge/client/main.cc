@@ -425,6 +425,7 @@ int main(int argc, char* argv[]) {
     system(stringPrintf("rm -rf %s", working_root.c_str()).c_str());
     return -1;
   }
+  LOG(DEBUG) << "Connect to server during socket " << communicate_socket;
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);
