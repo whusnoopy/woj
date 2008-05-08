@@ -29,7 +29,13 @@
   </div>
 
   <div id="main">
-  to be filled!
+  <form action="setNotice.php" method="post">
+   <b>Last Notice:</b><br>
+   <div id="last_notice"><?php echo get_notice(); ?></div>
+   <br><br><br>
+   <b>Set New Notice:</b><br>
+   <input name="notice" size=120 maxlength=200/><br><br>
+   <input type="submit", value="Submit" name="submit"/>&nbsp;&nbsp;<input type="reset" value="Reset">&nbsp;&nbsp;<input type="submit" value="Refresh">
   </div>
 
   <br />
@@ -45,3 +51,48 @@
 </center>
 </body>
 </html>
+
+<?php
+	if (isset($_POST['submit'])){
+		set_notice($_POST['notice']);
+	}
+?>
+
+<?php
+function get_notice()
+{
+	$header = "np00000000";
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+//	$tc->sendstr($problem_id)or die("send message failed");
+	$recv = $tc->recvstr(10);
+	sscanf($recv, "%d", $len);
+	if($len > 0)
+		$recv = $tc->recvstr($len);
+	else
+		$recv = null;
+	$tc->close();
+	return $recv;
+}
+
+function set_notice($notice)
+{
+	if (empty($notice)) return;
+	$header = sprintf("%s%08d", "sn", strlen($notice));
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($notice)or die("send message failed");
+	if ($tc->recvstr(1) == 'Y'){
+		$tc->close();
+		return true;
+	}
+	$tc->close();
+	return false;
+}
+?>

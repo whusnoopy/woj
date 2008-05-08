@@ -1,21 +1,19 @@
 <?php
 	session_start();
-	include('../common/tcpclient.php');
+	include('common/tcpclient.php');
+	include('common/get_ip.php');
 	if (!empty($_POST['origURL']))
 		$origURL = $_POST['origURL'];
 	else
 		$origURL = 'index.php';
-
 
 	if(!isset($_POST['user_id']) || !isset($_POST['password'])){
 		header("Location: login.php?errorMsg=The User ID or password do not exist");
 		exit;
 	}
 
-
 	$user_id = $_POST['user_id'];
 	$password = $_POST['password'];
-
 
 	if(login($user_id, $password)){
 		$_SESSION['user_id'] = $user_id;
@@ -28,7 +26,6 @@
 	}
 
 ?>
-
 <?php
 	function login($user_id, $password)
 	{
@@ -36,7 +33,7 @@
 //			return true;
 //		return false;
 
-		$ip=$_SERVER['HTTP_CLIENT_IP'];
+		$ip=get_ip();
 		$d = "\001";
 		$message=$user_id.$d.$password.$d.$ip;
 		$header = sprintf("%s%08d", "li", strlen($message));

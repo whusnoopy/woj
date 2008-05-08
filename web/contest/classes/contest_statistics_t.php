@@ -76,12 +76,12 @@ class contest_statistics_t
 	function getResult()
 	{
 		/////////////////////////////
-		$d="\001";
+/*		$d="\001";
 		$recv = '1011'.$d.'2'.$d.'0'.$d.'12'.$d.'13'.$d.'11'.$d.'13'.$d.'4'.$d.'0'.$d.'55'.$d.'47'.$d.'3'.$d.'5';
 		$recv .= $d.'1013'.$d.'3'.$d.'2'.$d.'2'.$d.'34'.$d.'11'.$d.'23'.$d.'6'.$d.'7'.$d.'6'.$d.'34'.$d.'34'.$d.'2';
 		$this->result = explode($d, $recv);
 		return;
-		//////////////////////////////////
+*/		//////////////////////////////////
 
 		$d = "\001";
 		$message = $this->contest_id;
@@ -89,18 +89,22 @@ class contest_statistics_t
 
 		$tc = new TCPClient();
 		$tc->create() or die("unable to create socket!");
-		$tc->connect() or die("unable to connect to server!");
+		if (!$tc->connect()){ // or die("unable to connect to server!");
+			header('HTTP/1.1 404 Not Found');
+			exit;
+		}
 		$tc->sendstr($header) or die("send header failed");
 		$tc->sendstr($message)or die("send message failed");
-		$recv= $tc->recvstr(10);
-		$len = sscanf($recv, "%d");
+		$recv = $tc->recvstr(10);
+
+		sscanf($recv, "%d", $len);
 		if($len > 0){
 			$recv = $tc->recvstr($len);
 			$this->result = explode($d, $recv);
 		}
 		else
 			$this->result = null;
-		$tc->close;
+		$tc->close();
 
 	}
 

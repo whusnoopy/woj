@@ -84,7 +84,10 @@ function spjtest(form)
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Description:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name="description" rows=10 cols=80></textarea></td>
+      <td align=left>&nbsp;&nbsp;<div id="text"><textarea name="description" id="description" rows=10 cols=80></textarea></div>
+	  <div id="html" style=display:none></div>
+	  <input type="button"  id="change" value="View" onclick="changemodel();">
+	  </td>
       <td></td>
     </tr>
     <tr class=tro>
@@ -148,9 +151,9 @@ function spjtest(form)
 	for (i=1; i<=5; i++)
 	{
 		if (i<=1)
-		    document.writeln('<tr class=tre id="pic'+i+'"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60/></td><td></td></tr>');
+		    document.writeln('<tr class=tre id="pic'+i+'"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 onchange="add_img_bz(this.form, this.value)"/> </td><td></td></tr>');
 		else
-			document.writeln('<tr class=tre id="pic'+i+'" style="display:none"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60/></td><td></td></tr>');
+			document.writeln('<tr class=tre id="pic'+i+'" style="display:none"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 onchange="add_img_bz(this.form, this.value)"/></td><td></td></tr>');
 	}
 </script>
 
@@ -237,28 +240,53 @@ function spjtest(form)
 </html>
 
 <script language="javascript">
+
+var src='';
+
+function changemodel()
+{
+	if (em("text").style.display == "none")
+	{
+		em("html").style.display = "none";
+		em("text").style.display = "block";
+		em("change").value = "View";
+	}
+	else
+	{
+		em("text").style.display = "none";
+		em("html").style.display = "block";
+		em("html").innerHTML = em("description").value;
+		em("change").value = "Edit";
+	}
+}
+
+function em(element)
+{
+	return document.getElementById(element);
+}
+
 var fileid=4;
 var picid=2;
 var commonid=2;
 function addFile(bz)
 {
 	if (bz=='file'){
-		document.getElementById('file'+fileid).style.display = document.all ? "block" : "table-row";
+		em('file'+fileid).style.display = document.all ? "block" : "table-row";
 		fileid++;
 		if (fileid>10)
-			document.getElementById('add_more_inout_file').style.display = "none";
+			em('add_more_inout_file').style.display = "none";
 	}
 	else if (bz=='pic'){
-		document.getElementById('pic'+picid).style.display = document.all ? "block" : "table-row";
+		em('pic'+picid).style.display = document.all ? "block" : "table-row";
 		picid++;
 		if (picid>5)
-			document.getElementById('add_more_pic_file').style.display = "none";
+			em('add_more_pic_file').style.display = "none";
 	}
 	else if (bz=='common'){
-		document.getElementById('commonfile'+commonid).style.display = document.all ? "block" : "table-row";
+		em('commonfile'+commonid).style.display = document.all ? "block" : "table-row";
 		commonid++;
 		if (commonid>5)
-			document.getElementById('add_more_common_file').style.display = "none";
+			em('add_more_common_file').style.display = "none";
 	}
 }
 
@@ -275,6 +303,17 @@ function onSubmit(form)
 		form.action="addProblemAction.do.php";
 		form.target="_self";
 		form.submit();
+	}
+}
+
+function add_img_bz(form, value)
+{
+	if (value.length){
+		var pos = value.lastIndexOf('\\');
+		if (pos < 0)
+			pos = value.lastIndexOf('/');
+		value = value.substr(pos + 1);
+		form.description.value += ('  <img src="' + value + '">');
 	}
 }
 </script>

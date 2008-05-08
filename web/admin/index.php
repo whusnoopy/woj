@@ -34,11 +34,12 @@
     <tr class=tre><td><a href="problem/addProblem.php">Add a new problem</a></td></tr>
     <tr class=tro><td><a href="problem/problemList.php">See the problem list</a></td></tr>
     <tr class=tre><td><a href="contest/addContest.php">Add a new contest</a></td></tr>
-    <tr class=tro><td><a href="contest/contestList.php">See the contest list</a></td></tr>
-    <tr class=tre><td><a href="judge/adminsubmit.php">Submit in Admin's Home</a></td></tr>
-    <tr class=tro><td><a href="adminstatus.php">See the status in Admin's Home</a></td></tr>
-    <tr class=tre><td><a href="user/addusers.php">Add Series Users</a></td></tr>
-    <tr class=tro><td><a href="logout.do.php">Logout</a></td></tr>
+    <tr class=tro><td><a href="contest/contestList.php?type=C">See the contest list</a></td></tr>
+	<tr class=tre><td><a href="contest/contestList.php?type=V">See the virtual contest list</a></td></tr>
+    <tr class=tro><td><a href="judge/adminsubmit.php">Submit in Admin's Home</a></td></tr>
+    <tr class=tre><td><a href="judge/adminstatus.php">See the status in Admin's Home</a></td></tr>
+    <tr class=tro><td><a href="user/addusers.php">Add Series Users</a></td></tr>
+    <tr class=tre><td><a href="logout.do.php">Logout</a></td></tr>
     </tbody></table>
   </div>
 

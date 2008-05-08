@@ -1,13 +1,13 @@
 <?php
-	include('../include/header.php');
 	include('../common/tcpclient.php');
-?>
-
-<?php
 	if (isset($_GET['problem_id']))
 		$problem_id = intval( $_GET['problem_id'] );
 	else
 		$problem_id = 0;
+	if (isset($_GET['contest_id']))
+		$contest_id = intval( $_GET['contest_id'] );
+	else
+		$contest_id = '0';
 
 	$problem = array();
 	get_problem_info($problem_id, $problem);
@@ -17,8 +17,9 @@
 	}
 ?>
 
-
-
+<?php
+	include('../include/header.php');
+?>
   <div id="tt">
     <?php echo "Problem ".$problem_id.' - '.$problem[0];?>
   </div>
@@ -58,7 +59,7 @@
     </div>
     <br />
     <div>
-      <span class="bt"><a href="../submit/submit.php?problem_id=<?php echo $problem_id;?>">Submit</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="../submit/submit.php?contest_id=<?php echo $contest_id?>&problem_id=<?php echo $problem_id;?>"> Submit</a></span>&nbsp;&nbsp;
 	  <span class="bt"><a href="../discuss/discussList.php?pid=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
       <span class="bt"><a href="../status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
     </div>
@@ -88,7 +89,10 @@ function get_problem_info($problem_id, &$problem)
 	$header = sprintf("%s%08d", "pb", strlen($problem_id));
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
-	$tc->connect() or die("unable to connect to server!");
+	if (!$tc->connect()){// or die("unable to connect to server!");
+//0		header('HTTP/1.1 404 Not Found');
+		exit;
+	}
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($problem_id)or die("send message failed");
 	$recv= $tc->recvstr(10);

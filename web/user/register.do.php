@@ -1,9 +1,7 @@
 <?php
 	include('../common/tcpclient.php');
 
-    echo "we are dealing with you request now, please wait...";
-
-	if (isset($_POST['submit'])){
+   	if (isset($_POST['submit'])){
 		$user_id = $_POST['user_id'];
 		$password = $_POST['password'];
 		$repeatpassword = $_POST['repeatpassword'];
@@ -70,7 +68,10 @@
 
 		$tc = new TCPClient();
 		$tc->create() or die("unable to create socket!");
-		$tc->connect() or die("unable to connect to server!");
+		if (!$tc->connect()){// or die("unable to connect to server!");
+			header('HTTP/1.1 404 Not Found');
+			exit;
+		}
 		$tc->sendstr($header) or die("send header failed");
 		$tc->sendstr($user_id) or die("send header failed");
 		if($tc->recvstr(1) == 'Y'){
@@ -91,7 +92,10 @@
 
 		$tc = new TCPClient();
 		$tc->create() or die("unable to create socket!");
-		$tc->connect() or die("unable to connect to server!");
+		if (!$tc->connect()){// or die("unable to connect to server!");
+			header('HTTP/1.1 404 Not Found');
+			exit;
+		}
 		$tc->sendstr($header) or die("send header failed");
 		$tc->sendstr($message)or die("send message failed");
 		if ($tc->recvstr(1) != 's'){

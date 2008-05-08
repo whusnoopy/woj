@@ -1,5 +1,5 @@
 <?php
-	include('../include/header.php');
+	include('../common/tcpclient.php');
 	include('classes/contest_standing_t.php');
 
 	if(isset($_GET['contest_id']))
@@ -8,11 +8,18 @@
 	//	echo 'contest does not exit';
 	//	exit;
 	}
-	$start = $_GET['start'];
+	if (isset($_GET['start']))
+		$start = $_GET['start'];
+	else
+		$start = '0';
 	$title = $_GET['title'];
+
+	$cs = new contest_standing_t($contest_id, $start);
+	$cs->getResult();
 ?>
 
 <?php
+	include('../include/header.php');
 	echo "<div id=tt>Contests - $title</div>";
 	include('../include/notice.php');
 ?>
@@ -26,11 +33,8 @@
     <th width="75">Penalty</th>
 <?php
 
-	$cs = new contest_standing_t($contest_id, $start);
-	$cs->getResult();
 	$problem_num = $cs->getProblem_num();
 	$rows = $cs->getRow();
-
 	$character = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	for($i=0; $i<$problem_num; $i++)
 		echo '<th>'.$character{$i}.'</th>';
@@ -46,10 +50,14 @@
 		echo '<td>'.$cs->getAC($i).'</td>';
 		echo '<td>'.$cs->getPenalty($i).'</td>';
 		for($j=0; $j<$problem_num; $j++)
-			if (($submit = $cs->getProblem_submit($i, $j)) != '0')
-				echo '<td>'.$cs->getProblem_Penalty($i, $j)."<br/>$submit</td>";
+			if (($submit = $cs->getProblem_submit($i, $j)) != '0'){
+				if (($penalty = $cs->getProblem_Penalty($i, $j)) != '00:00:00')
+					echo '<td>'.$penalty.'<br>('.$submit.')</td>';
+				else
+					echo '<td>('.$submit.')</td>';
+			}
 			else
-				echo '<td>'.$cs->getProblem_Penalty($i, $j).'</td>';
+				echo '<td></td>';
 	}
 
 ?>

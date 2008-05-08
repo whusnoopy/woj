@@ -21,7 +21,7 @@
  }
 
  $no_of_row = 25;
- $ps = new status_t($start, $problem_id, '?', '1', '?', '?', 'N', '1' , $user_id?$user_id:'?');
+ $ps = new status_t($start, $problem_id, '?', '1', '?', '?', 'N', 'P' , $user_id?$user_id:'?');
  $ps->getResult();
  $rows = $ps->getRow();
 

@@ -1,12 +1,7 @@
 <?php
-  include('../include/header.php');
-  echo '<div id=tt>User Ranklist</div>';
-  include('../include/notice.php');
-  include('../common/tcpclient.php');
-  include('classes/ranklist_t.php');
-?>
+    include('../common/tcpclient.php');
+    include('classes/ranklist_t.php');
 
-<?php
     if(isset($_GET['start']))
 		$start = $_GET['start'];
 	else
@@ -19,6 +14,11 @@
 	$rk = new ranklist_t($start, $of1);
 	$rk->getResult();
 	$rows = $rk->getRow();
+?>
+<?php
+  include('../include/header.php');
+  echo '<div id=tt>User Ranklist</div>';
+  include('../include/notice.php');
 ?>
 
 <div id="main">
@@ -48,7 +48,7 @@
 		 if ($submits>0)
 			 $ratio = sprintf("%.2f%s",$solved * 100 / $submits, '%');
 		 else
-			 $ratio = '0.00';
+			 $ratio = '0.00%';
 		 echo "<td><a href=../status/userStatus.php?user_id=$user_id>$user_id</a></td>";
          echo "<td>$nick</td>";
 		 echo "<td>$solved</td>";
@@ -70,9 +70,10 @@
 			echo "<a href=ranklist.php?start=$pre&of1=$_GET[of1]>";
 	    echo '&nbsp;Prev Page&nbsp;</a></span>';
 	}
-	echo '&nbsp;';
-	echo '<span class=bt>';
+
 	if ($rows == 25){
+		echo '&nbsp;';
+	    echo '<span class=bt>';
 		$next = $start+1;
 		if(empty($_GET['of1']))
 			echo "<a href=ranklist.php?start=$next>";

@@ -1,13 +1,9 @@
 <?php
-
-	include('../include/header.php');
 	include('../common/tcpclient.php');
-	echo '<div id="tt">Discuss </div>';
-	include('../include/notice.php');
 	include('classes/discuss_list_t.php');
 
 	if (isset($_GET['pid']) && !empty($_GET['pid']))
-		$problem_id = $_GET['problem_id'];
+		$problem_id = $_GET['pid'];
 	else
 		$problem_id = '0';
 	if (isset($_GET['cid']) && !empty($_GET['cid']))
@@ -31,7 +27,11 @@
 	$dl->getResult();
 	$rows = $dl->getRow();
 ?>
-
+<?php
+	include('../include/header.php');
+	echo '<div id="tt">Discuss </div>';
+	include('../include/notice.php');
+?>
 </center>
 <br>
 <script language="javascript">
@@ -112,7 +112,6 @@ span.def{
 		else
 			echo '<span class="def">&nbsp;</span>';
 
-		echo $cur_level;
 		echo '<a href="discuss.php?message_id='.($dl->getDiscuss_id($i)).'">'.($dl->getTitle($i)).'</a>&nbsp';
 		echo '<strong>'.$dl->getUser_id($i).'</strong>&nbsp;';
 		echo $dl->getIn_date($i).'&nbsp;';

@@ -1,5 +1,4 @@
 <?php
-	include('../include/header.php');
 	include('../common/tcpclient.php');
 	include('classes/contest_problem_list_t.php');
 	if (empty($user_id))
@@ -17,7 +16,7 @@
 ?>
 
 <?php
-
+	include('../include/header.php');
 	echo "<div id=tt>Contest - ".$contest[0]."</div>";
 	include('../include/notice.php');
 ?>
@@ -70,7 +69,10 @@
 			  echo '<tr class=tre>';
 		  echo '<td></td>';
 		  echo '<td>'.$ch{$i}.'</td>';
-		  echo '<td><a href=../problem/problem.php?problem_id='.$cp->getProblem_id($i).'>'.$cp->getTitle($i).'</a></td>';
+		  if ($current >= $start && $current <= $end)
+		      echo '<td><a href="../problem/problem.php?contest_id='.$contest_id.'&problem_id='.$cp->getProblem_id($i).'">'.$cp->getTitle($i).'</a></td>';
+		  else
+			  echo '<td><a href="../problem/problem.php?problem_id='.$cp->getProblem_id($i).'">'.$cp->getTitle($i).'</a></td>';
 		  $ac = $cp->getAC($i);
 		  $total = $cp->getTotal($i);
 		  if($total > 0) $ratio = sprintf("%.2f", $ac*100/$total ); else $ratio = '0.00';

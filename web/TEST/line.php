@@ -1,6 +1,6 @@
 <?php
 //检测目录内的所有文件的行数和字节数
-
+echo '<pre>';
 $line = 0;
 $filenum = 0;
 $byte = 0;
@@ -14,6 +14,7 @@ function fileline($filename)
 		$byte += strlen(fgets($fp));
 		$l++;
 	}
+	fclose($fp);
 	global $line;
 	$line += $l;
 	return $l;
@@ -46,4 +47,5 @@ echo "\nsumary:\n";
 echo "there are total $filenum files\n";
 echo "there are tolal $line lines\n";
 echo "there are total $byte bytes\n";
+echo '</pre>';
 ?>

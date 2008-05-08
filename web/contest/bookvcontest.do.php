@@ -37,6 +37,8 @@
 		echo 'successfully to add contest !';
 	else
 		echo 'failed to add contest !';
+
+	echo '<br><br><a href="vcontestList.php">Back</a>';
 ?>
 
 <?php
@@ -46,7 +48,10 @@ function add_contest($contest)
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
-	$tc->connect() or die("unable to connect to server!");
+	if (!$tc->connect()){// or die("unable to connect to server!");
+		header('HTTP/1.1 404 Not Found');
+		exit;
+	}
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($contest)or die("send message failed");
 	$recv = $tc->recvstr(10);
@@ -61,7 +66,10 @@ function add_problems_to_contest($problemlist)
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
-	$tc->connect() or die("unable to connect to server!");
+	if (!$tc->connect()){// or die("unable to connect to server!");
+		header('HTTP/1.1 404 Not Found');
+		exit;
+	}
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($problemlist)or die("send message failed");
 	if ($tc->recvstr(1) == 'Y'){

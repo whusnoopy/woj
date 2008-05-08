@@ -1,9 +1,9 @@
-
-<body onmouseup=document.selection.empty() oncontextmenu="return false" onselectstart="return false" ondragstart="return false" onbeforecopy="return false" oncopy=document.selection.empty() leftMargin=0 topMargin=0 onselect=document.selection.empty() >
-<center>
-
 <?php
-    include('../include/header.php');
+	session_start();
+	if (isset($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else
+		$user_id = '';
 	include('../common/tcpclient.php');
 	include('../common/config.php');
 	include('classes/format_code_t.php');
@@ -27,12 +27,13 @@
 ?>
 
 <?php
-
+ include('../include/header.php');
  if (empty($problem["source"]))
    echo ' <div><br /><span class="cl">You have no access to view this code</span></div><br /> ';
  else{
 	 $fc = new format_code_t($problem["source"], "G++");
 ?>
+ <body onmouseup=document.selection.empty() oncontextmenu="return false" onselectstart="return false" ondragstart="return false" onbeforecopy="return false" oncopy=document.selection.empty() leftMargin=0 topMargin=0 onselect=document.selection.empty() >
   <div id="tt">Source - <?php echo $problem["sid"];?></div>
   <?php include('..\include\notice.php'); ?>
    <div class="ifm">
@@ -65,7 +66,9 @@ function getSource($code_id, $user_id)
 	$header = sprintf("%s%08d", "sc", strlen($message));
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
-	$tc->connect() or die("unable to connect to server!");
+	if (!$tc->connect()){// or die("unable to connect to server!");
+		header('HTTP/1.1 404 Not Found');
+	}
 	$tc->sendstr($header) or die("send header failed");
 	$tc->sendstr($message);
 	$recv = $tc->recvstr(10);

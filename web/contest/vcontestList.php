@@ -1,9 +1,21 @@
 <?php
+    include('../common/tcpclient.php');
+	include('classes/contest_list_t.php');
+
+	if(isset($_GET['start']))
+		$start = $_GET['start'];
+	else
+		$start = '0';
+
+	$cl = new contest_list_t($start, 'V');
+	$cl->getResult();
+	$rows = $cl->getRow();
+?>
+
+<?php
 	include('../include/header.php');
     echo '<div id=tt>Virtual Contests</div>';
 	include('../include/notice.php');
-	include('../common/tcpclient.php');
-	include('classes/contest_list_t.php');
 ?>
 
 <div id="main">
@@ -17,15 +29,6 @@
   </tr>
 
 <?php
-
-	if(isset($_GET['start']))
-		$start = $_GET['start'];
-	else
-		$start = '0';
-
-	$cl = new contest_list_t($start, 'V');
-	$cl->getResult();
-	$rows = $cl->getRow();
 
 	for($i=0; $i<$rows; $i++){
 		if($i%2==0)

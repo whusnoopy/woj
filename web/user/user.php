@@ -1,13 +1,14 @@
 <?php
 	session_start();
-	include('../include/header.php');
+	if (isset($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else
+		$user_id = '';
 ?>
 
-  <div id="tt">
-    User
-  </div>
-
 <?php
+    include('../include/header.php');
+	echo '<div id="tt">User</div>';
 	include('../include/notice.php');
 ?>
 

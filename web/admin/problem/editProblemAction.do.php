@@ -57,6 +57,7 @@
 		exit;
 	}
 	echo 'successfully to update problem<br>';
+	echo '<br><br><a href="problemList.php">Back</a>';
 
 //////////////////Upload files//////////////////////////////////////////
 
