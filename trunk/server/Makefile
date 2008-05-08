@@ -5,7 +5,7 @@ CXXFLAGS=-I./../ \
 				 -L/usr/lib/libxml2  \
 				 -I/usr/include/mysql \
 				 -L/usr/lib/mysql \
-				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
+				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD -D_THIS_IS_SERVER_LOG_
 EXEFLAGS=-lxml2 \
 				 -lpthread \
 				 -lmysqlclient

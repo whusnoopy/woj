@@ -32,7 +32,7 @@ public:
 		while (!quitflag){
       struct timespec ts;
       struct timespec tr;
-      ts.tv_sec = 30;
+      ts.tv_sec = 1;
       ts.tv_nsec = 0;
       while (1) {
         int nano_ret = nanosleep(&ts, &tr);
@@ -51,7 +51,7 @@ public:
       pthread_mutex_lock(&father_->lock);
       LOG(DEBUG) << "cleaner lock:" << pthread_self();
   		int now = time(NULL);
-      LOG(INFO) << "Begin cleaner the cache....";
+      LOG(DEBUG) << "Begin cleaner the cache....";
       typename list<CacheKeyType>::iterator iter = father_->access_queue.begin();
       while (iter != father_->access_queue.end()){
         if (iter->getLastAccessTime() + iter->getTimeOut() > now){
@@ -61,12 +61,12 @@ public:
           if (father_->cache_map.count(key_buf) != 0) {
             father_->cache_map.erase(key_buf);
           }
-          LOG(INFO) << "Cleaner clean up the cache:" << key_buf;
+          LOG(DEBUG) << "Cleaner clean up the cache:" << key_buf;
           continue;
         } else
           iter++;
       }
-      LOG(INFO) << "End cleaner the cache.....";
+      LOG(DEBUG) << "End cleaner the cache.....";
       pthread_mutex_unlock(&father_->lock);
       LOG(DEBUG) << "cleaner unlock:" << pthread_self();
   	}
@@ -97,6 +97,7 @@ public:
 	}
 
   ~Cache() {
+    LOG(INFO) << "Should not be seen";
     pthread_mutex_destroy(&lock);
   }
 /*	
