@@ -165,7 +165,7 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     }
     status_iter++;
   }
- 
+  LOG(DEBUG) << databuf; 
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;

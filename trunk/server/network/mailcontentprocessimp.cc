@@ -28,9 +28,20 @@ void MailContentProcessImp::process(int socket_fd, const string& ip, int length)
     return;
   }
   int mail_id = atoi(iter->c_str());
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find user_id from data for:" << ip;
+    return;
+  }
+  string user_id = *iter;
+  iter++;
   Mail mail;
   mail = DataInterface::getInstance().getMail(mail_id);
-  if (!mail.getRead()){
+  if ((mail.getToUser() != user_id) && (mail.getFromUser() != user_id)) {
+    LOG(ERROR) << user_id  <<" cannot read the mail ";
+    return;
+  }
+  if (!mail.getRead() && user_id == mail.getToUser()){
     mail.setRead(true);
     DataInterface::getInstance().setMailRead(mail);
   }
