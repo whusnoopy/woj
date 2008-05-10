@@ -32,7 +32,7 @@ public:
 		while (!quitflag){
       struct timespec ts;
       struct timespec tr;
-      ts.tv_sec = 1;
+      ts.tv_sec = 300;
       ts.tv_nsec = 0;
       while (1) {
         int nano_ret = nanosleep(&ts, &tr);
