@@ -308,12 +308,6 @@ function onSubmit(form)
 
 function add_img_bz(form, value)
 {
-	if (value.length){
-		var pos = value.lastIndexOf('\\');
-		if (pos < 0)
-			pos = value.lastIndexOf('/');
-		value = value.substr(pos + 1);
-		form.description.value += ('  <img src="' + value + '">');
-	}
+	form.description.value += ('  <img src="' + value + '"/>');
 }
 </script>

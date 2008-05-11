@@ -35,7 +35,7 @@
 ?>
  <body onmouseup=document.selection.empty() oncontextmenu="return false" onselectstart="return false" ondragstart="return false" onbeforecopy="return false" oncopy=document.selection.empty() leftMargin=0 topMargin=0 onselect=document.selection.empty() >
   <div id="tt">Source - <?php echo $problem["sid"];?></div>
-  <?php include('..\include\notice.php'); ?>
+  <?php include('../include/notice.php'); ?>
    <div class="ifm">
    <strong>Problem id</strong>: <?php echo $problem["pid"];?>&nbsp;&nbsp;
    <strong>User id</strong>: <?php echo $problem["uid"];?><br>

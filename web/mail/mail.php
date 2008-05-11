@@ -1,4 +1,11 @@
 <?php
+	session_start();
+	if (isset($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else{
+		header("Location: ../user/login.php?origURL=../mail/mailList.php");
+		exit;
+	}
 	include('../include/header.php');
 	include('../common/tcpclient.php');
 	if (isset($_GET['mail_id']))
@@ -7,7 +14,7 @@
 		$mail_id = '0';
 
 	$mail = array();
-	get_mail_content($mail_id, $mail);
+	get_mail_content($mail_id."\001".$user_id, $mail);
 
 ?>
 
@@ -71,7 +78,6 @@ function get_mail_content($mail_id, &$mail)
 		$mail = null;
 		return;
 	}
-
 	$header = sprintf("%s%08d", "mc", strlen($mail_id));
 
 	$tc = new TCPClient();

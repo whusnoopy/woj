@@ -44,7 +44,7 @@
         <tr class=tre>
           <td colspan=2 align=center>
           <input tabIndex=4 type=submit value=Login name=doLogin />&nbsp;
-		  <input tabIndex=5 type=submit value=Cancel name=doCancel />
+		  <input tabIndex=5 type=reset value=Cancel name=doCancel />
           </td>
         </tr>
       </tbody></table>

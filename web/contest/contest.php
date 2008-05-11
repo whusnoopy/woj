@@ -58,7 +58,8 @@
 	  $cp->getResult();
 	  $rows = $cp->getRow();
 	  if (empty($rows)){
-		  echo "It is a private contest";
+		  echo 'It is a private contest<br>';
+		  echo '<a href="javascript:history.back()">Back</a>';
 		  exit;
 	  }
 	  $ch = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -69,8 +70,12 @@
 			  echo '<tr class=tre>';
 		  echo '<td></td>';
 		  echo '<td>'.$ch{$i}.'</td>';
-		  if ($current >= $start && $current <= $end)
-		      echo '<td><a href="../problem/problem.php?contest_id='.$contest_id.'&problem_id='.$cp->getProblem_id($i).'">'.$cp->getTitle($i).'</a></td>';
+		  if ($current >= $start && $current <= $end){
+			  $problem_html = 'problems/c'.$contest_id.'_'.$ch{$i}.'.html';
+			  if (!exist($problem_html))
+				  gen_problem_html($problem_html, $contest_id, $cp->getProblem_id($i), $ch{$i});
+			  echo '<td><a href="'.$problem_html.'">'.$cp->getTitle($i).'</a></td>';
+		  }
 		  else
 			  echo '<td><a href="../problem/problem.php?problem_id='.$cp->getProblem_id($i).'">'.$cp->getTitle($i).'</a></td>';
 		  $ac = $cp->getAC($i);
@@ -135,3 +140,150 @@ function get_contest_info($contest_id, &$contest)
 	$tc->close();
 	return;
 }
+
+function exist($problem_html)
+{
+	if (!file_exists($problem_html))
+		return false;
+	if (time() - filemtime($problem_html) > 60 * 5)
+		return false;
+	return true;
+}
+
+function gen_problem_html($filename, $contest_id, $problem_id, $no)
+{
+	ob_start();
+
+	$problem = array();
+	get_problem_info($problem_id, $problem);
+echo '
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>HomePage of Wuhan Univ. Online Judge</title>
+  <link href="../../style/noah.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<center>
+	<div id="bar">
+    <a href="../../index.php">Home</a>&nbsp;|&nbsp;
+    <a href="../../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
+    <a href="../../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
+	<a href="../../contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
+    <a href="../../submit/submit.php">Submit</a>&nbsp;|&nbsp;
+    <a href="../../status/status.php">Status</a>&nbsp;|&nbsp;
+    <a href="../../ranklist/ranklist.php">Ranklist</a>&nbsp;|&nbsp;
+    <a href="../../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="../../user/user.php">User</a>&nbsp;|&nbsp;
+    <a href="../../mail/mailList.php">Mail</a>&nbsp;|&nbsp;
+    <a href="../../faq.html" target="_blank">FAQ</a>
+	</div>
+';
+echo  '<div id="tt">';
+echo "Problem ".$problem_id.' - '.$problem[0];
+echo  '</div>
+  <div id="move">
+  </div>';
+
+echo
+	'<div class="ifm">
+    <strong>Time Limit</strong>:';
+echo $problem[8];
+echo 'MS&nbsp;<strong>Memory Limit</strong>:';
+echo $problem[9];
+echo 'KB<br>';
+echo '<strong>Total Submit</strong>:';
+echo $problem[10];
+echo '&nbsp;<strong>Accepted</strong>:';
+echo $problem[11];
+echo '<br>
+  </div>
+
+  <div id="main">
+    <div class="ptt">Description</div>
+    <div class="ptx">';
+echo $problem[1];
+echo '		</div>
+
+    <div class="ptt">Input</div>
+    <div class="ptx">';
+echo $problem[2];
+echo '	</div>
+
+    <div class="ptt">Output</div>
+    <div class="ptx">';
+echo $problem[3];
+echo '	</div>
+
+    <div class="ptt">Sample Input</div>
+    <div class="code">';
+echo $problem[4];
+echo '	</div>
+
+    <div class="ptt">Sample Output</div>
+    <div class="code">';
+echo $problem[5];
+echo '	</div>
+
+    <div class="ptt">Hint</div>
+    <div class="ptx">';
+echo $problem[6];
+echo '	</div>
+
+    <div class="ptt">Source</div>
+
+    <div class="ptx">
+		<div>';
+echo $problem[7];
+echo '		</div>
+    </div>
+    <br />
+    <div>
+	  <span class="bt"><a href="../../submit/submit.php?contest_id='.$contest_id.'&problem_id='.$problem_id.'"> Submit</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="../../discuss/discussList.php?pid='.$problem_id.'">Discuss</a></span>&nbsp;&nbsp;
+    </div>
+    <br />
+  </div>';
+
+	include('../include/tailer.php');
+	$buf = ob_get_clean();
+	$fp = fopen($filename, 'w') or die("open file $filename failed!");
+	fwrite($fp, $buf);
+	fclose($fp);
+}
+
+
+function get_problem_info($problem_id, &$problem)
+{
+	/////////////////////////////
+/*	$d="\001";
+	$recv = "a + b".$d."we begin".$d."a, b".$d."a+b".$d."1, 2".$d."3".$d."".$d."woj".$d."1000".$d."1024".$d."120".$d."100";
+	$problem = explode("\001", $recv);
+	return;
+*/	//////////////////////////////
+
+	if(empty($problem_id)){
+		$problem = null;
+		return;
+	}
+
+	$header = sprintf("%s%08d", "pb", strlen($problem_id));
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	if (!$tc->connect()){// or die("unable to connect to server!");
+//0		header('HTTP/1.1 404 Not Found');
+		exit;
+	}
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($problem_id)or die("send message failed");
+	$recv= $tc->recvstr(10);
+	sscanf($recv, "%d", $len);
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$problem =  explode("\001", $recv);
+	}
+	else $problem = null;
+	$tc->close();
+	return;
+}
+?>
