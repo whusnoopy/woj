@@ -158,7 +158,10 @@ function upfile(form)
     <tr class=tre>
       <td></td>
 	  <td align=right><strong>Description:</strong>&nbsp;&nbsp;</td>
-      <td align=left>&nbsp;&nbsp;<textarea name=description rows=10 cols=80 ><?php echo $problem[1]; ?></textarea></td>
+      <td align=left>&nbsp;&nbsp;<div id="text"><textarea name="description" id="description" rows=10 cols=80><?php echo  $problem[1]; ?></textarea></div>
+	  <div id="html" style=display:none></div>
+	  <input type="button"  id="change" value="View" onclick="changemodel();">
+	  </td>
       <td></td>
     </tr>
     <tr class=tro>
@@ -233,9 +236,9 @@ function upfile(form)
 	for (i=1; i<=5; i++)
 	{
 		if (i<=1)
-		    document.writeln('<tr class=tre id="pic'+i+'"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 disabled/></td><td></td></tr>');
+		    document.writeln('<tr class=tre id="pic'+i+'"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 disabled onchange="add_img_bz(this.form, this.value)" /></td><td></td></tr>');
 		else
-			document.writeln('<tr class=tre id="pic'+i+'" style="display:none"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 disabled/></td><td></td></tr>');
+			document.writeln('<tr class=tre id="pic'+i+'" style="display:none"><td></td><td align=right><strong>Picture'+i+':</strong>&nbsp;&nbsp;</td><td align=left>&nbsp;&nbsp; <input type="file" name="pic'+i+'" size=60 disabled onchange="add_img_bz(this.form, this.value)" /></td><td></td></tr>');
 	}
 </script>
 
@@ -321,6 +324,32 @@ function upfile(form)
 </html>
 
 <script language="javascript">
+
+var src='';
+
+function changemodel()
+{
+	if (em("text").style.display == "none")
+	{
+		em("html").style.display = "none";
+		em("text").style.display = "block";
+		em("change").value = "View";
+	}
+	else
+	{
+		em("text").style.display = "none";
+		em("html").style.display = "block";
+		em("html").innerHTML = em("description").value;
+		em("change").value = "Edit";
+	}
+}
+
+function em(element)
+{
+	return document.getElementById(element);
+}
+
+
 var fileid=4;
 var picid=2;
 var commonid=2;
@@ -361,6 +390,12 @@ function onSubmit(form)
 		form.submit();
 	}
 }
+
+function add_img_bz(form, value)
+{
+	form.description.value += ('  <img src="' + value + '"/>');
+}
+
 </script>
 
 <?php

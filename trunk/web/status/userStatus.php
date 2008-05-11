@@ -1,5 +1,4 @@
 <?php
-	include('../include/header.php');
 	include('../common/tcpclient.php');
 	if(isset($_GET['user_id'])){
 		$user_id = $_GET['user_id'];
@@ -11,7 +10,7 @@
 		header("Location: error.php?errorMsg='The user doesn't exist!'");
 		exit;
 	}
-
+	include('../include/header.php');
 ?>
 
   <div id="tt">

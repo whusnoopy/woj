@@ -1,6 +1,6 @@
 <?php
-
 	include('../common/tcpclient.php');
+	include('../common/config.php');
 
 	$errorMsg = '';
 	if (empty($_POST['title']))
@@ -31,8 +31,11 @@
 		$spj = 'N';
 
 	$d = "\001";
+
+	$time = time();
+
 	$problem_message  =   $_POST['title'].$d.
-						  $_POST['description'].$d.
+						  analyze($_POST['description']).$d.
 						  $_POST['input'].$d.
 						  $_POST['output'].$d.
 						  $_POST['sample_input'].$d.
@@ -52,8 +55,8 @@
 //////////////////Upload files//////////////////////////////////////////
 
 	$dir = "../../files/";
-	mkdir($dir, 0775);
-	$time = time();
+	if (!file_exists($dir))
+		mkdir($dir, 0555);
 
 	echo 'upload files now...<br>';
 
@@ -62,9 +65,8 @@
 	for ($i=1; $i<=5; $i++){
 		$pic = 'pic'.$i;
 		if ($_FILES[$pic]['size'] > 0){
-			if (move_uploaded_file($_FILES[$pic]['tmp_name'], $dir.$problem_id."_".$time."_".$_FILES[$pic]['name'])){
-				$picture_file_names[] = $dir.$problem_id."_".$time."_".$_FILES[$pic]['name'];
-			    $_POST['description'] = str_replace($_FILES[$pic]['name'], $dir.$problem_id."_".$time."_".$_FILES[$pic]['name'], $_POST['description']);
+			if (move_uploaded_file($_FILES[$pic]['tmp_name'], $dir.$time."_".$_FILES[$pic]['name'])){
+				$picture_file_names[] = $dir.$time."_".$_FILES[$pic]['name'];
 			}
 			else{
 				echo 'failed uploaded'.$_FILES[$pic]['name'];
@@ -197,7 +199,7 @@ function send_file($filename, $problem_id)
 	$tc->sendstr($header) or die("send problem_id: [$header] failed");
 	$header = sprintf("%010d", strlen($content));
 	$tc->sendstr($header) or die("send content length: [$header] failed");;
-	$tc->sendstr($content) or die("send content failed");
+	$tc->sendstr($content) or die("send file [$filename]content failed");
 	if ($tc->recvstr(1) == 'Y'){
 		$tc->close();
 		return true;
@@ -236,6 +238,19 @@ function send_in_out_files(&$input_file_names, &$output_file_names, $problem_id)
 	}
 	$tc->close();
 	return false;
+}
+
+function change($matches)
+{
+//	echo basename($matches[1]);
+	global $IMGDIR;
+	global $time;
+	return '<img src="http://'.$IMGDIR.$time.'_'.basename($matches[1]).'" />';
+}
+
+function analyze($desc)
+{
+	return preg_replace_callback("/<img src=\"(.*)\"\/>/U", 'change',  $desc);
 }
 
 ?>

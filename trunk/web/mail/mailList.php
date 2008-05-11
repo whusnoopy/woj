@@ -54,7 +54,7 @@
 		$to = $ml->getTo_user($i);
 		if ($from == $user_id)
 		    echo '<td><font color=green>Been Sent</font></td>';
-		else if($ml->getRead($i) == 'Y')
+		else if($ml->getRead($i) == 'N')
 			echo '<td><b><font color=red>New</font></b></td>';
 		else
 			echo '<td>Been Read</td>';

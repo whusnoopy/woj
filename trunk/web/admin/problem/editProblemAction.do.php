@@ -37,9 +37,12 @@
 		$update_file_flag = 'N';
 
 	$d = "\001";
+
+	$time = time();
+
 	$problem_message  =   $_POST['problem_id'].$d.
 						  $_POST['title'].$d.
-						  $_POST['description'].$d.
+						  analyze($_POST['description']).$d.
 						  $_POST['input'].$d.
 						  $_POST['output'].$d.
 						  $_POST['sample_input'].$d.
@@ -245,5 +248,19 @@ function send_in_out_files(&$input_file_names, &$output_file_names, $problem_id)
 	$tc->close();
 	return false;
 }
+
+function change($matches)
+{
+//	echo basename($matches[1]);
+	global $IMGDIR;
+	global $time;
+	return '<img src="http://'.$IMGDIR.$time.'_'.basename($matches[1]).'" />';
+}
+
+function analyze($desc)
+{
+	return preg_replace_callback("/<img src=\"(.*)\"\/>/U", 'change',  $desc);
+}
+
 
 ?>
