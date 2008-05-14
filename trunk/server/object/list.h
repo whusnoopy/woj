@@ -9,6 +9,7 @@
 
 #include "file.h"
 #include "status.h"
+#include "class.h"
 using namespace std;
 
 typedef struct _USER_LIST_ITEM_{
@@ -179,6 +180,7 @@ typedef vector<ContestProblemItem> ContestProblemList;
 typedef set<ProblemUserAC> UserACSet;
 typedef vector<int> TopicSet;
 typedef deque<JudgeMission> JudgeQueue;
+typedef vector<Class> ClassList;
 
 bool operator<(const ProblemUserAC& a, const ProblemUserAC& b);
 bool operator<(const ContestRankListItem& a, const ContestRankListItem& b);
