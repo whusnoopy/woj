@@ -17,7 +17,7 @@ public:
 
   int addStudent(const Student&);
   int updateStudent(const Student&);
-  int disableStudent(const string& user_id);
+  int disableStudent(const string& user_id, bool available);
   Student getStudent(const string& user_id);
 
   static StudentInterface& getInstance(){
