@@ -296,7 +296,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     DataInterface::getInstance().updateStatus(status);
     return -2;
   }
-  for (int i =0; i < mission.in_and_out_path.size(); i++) {
+  for (int i = 0; i < mission.in_and_out_path.size(); i++) {
     //17.running
     LOG(DEBUG) << "running";
     if (socket_read(connect_fd, &reply, 1) != 1) {
@@ -331,9 +331,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       case RUNTIME_ERROR_SIGBUS:
       case RUNTIME_ERROR_SIGABRT:
         LOG(INFO) << "RE happened." << ip;
-        status.setResult(static_cast<int>(reply));
-        DataInterface::getInstance().updateStatus(status);
-        return -2;
+        break;
       case RUNTIME_ERROR_JAVA:
         LOG(INFO) << "RE JAVA/PAS happened." << ip;
         status.setResult(static_cast<int>(reply));
