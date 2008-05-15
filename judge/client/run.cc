@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <sys/ptrace.h>
 #include <sys/reg.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
@@ -39,9 +40,15 @@ int monitor(int communicate_socket,
   int status;
   int ts;
   int ms;
-  time_t last_time = time(NULL) - 1;
-  time_t current_time = 0;
-
+/*
+  static int clktck = 0;
+  if (clktck == 0) {
+    clktck = sysconf(_SC_CLK_TCK);
+  }
+      
+  clock_t last_clock = clock() - clktck;
+  clock_t current_clock = 0;
+*/
   while (result < 0 && !callback->hasExited()) {
     waitpid(pid, &status, 0);
     LOG(DEBUG) << "Get status from pid : " << stringPrintf("%04x", status);
@@ -58,33 +65,56 @@ int monitor(int communicate_socket,
     int syscall = ptrace(PTRACE_PEEKUSER, pid, 4 * ORIG_EAX, NULL);
     if (syscall_filter_table[syscall]) {
       callback->processSyscall(pid, syscall);
+      /*
+      if (syscall == SYS_brk) {
+        ms = readMemory(pid);
+        if (ms > memory_)
+          memory_ = ms;
+        if (memory_ > memory_limit)
+          result = MEMORY_LIMIT_EXCEEDED;
+      }
+      */
     } else {
       ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
     }
+/*
+    current_clock = clock();
+    LOG(DEBUG) << current_clock << " equal to " 
+               << current_clock * 1.0 / clktck << "s";
+    if ((current_clock - last_clock) * 100 / clktck > 0) {
+      last_clock = current_clock;
 
-    current_time = time(NULL);
-    if (current_time - last_time > 0) {
-      last_time = current_time;
-
-      ts = readTime(pid);
+//      ts = readTime(pid);
       ms = readMemory(pid);
-      if (ts > time_)
-        time_ = ts;
+//      if (ts > time_)
+//        time_ = ts;
       if (ms > memory_)
         memory_ = ms;
 
-      if (time_ > time_limit)
-        result = TIME_LIMIT_EXCEEDED;
+//      if (time_ > time_limit)
+//        result = TIME_LIMIT_EXCEEDED;
       if (memory_ > memory_limit)
         result = MEMORY_LIMIT_EXCEEDED;
     
       LOG(DEBUG) << "Monitor process " << pid << " with time/memory("
                  << time_ << "/" << memory_ << ")";
     }
+*/
   }
 
   if (callback->hasExited()) {
-    waitpid(pid, &status, 0);
+    struct rusage current_rusage;
+    wait4(pid, &status, 0, &current_rusage);
+
+    ts = current_rusage.ru_utime.tv_sec * 1000 +
+         current_rusage.ru_utime.tv_usec / 1000;
+    if (ts > time_)
+      time_ = ts;
+
+    ms = current_rusage.ru_minflt * 4;
+    if (ms > memory_)
+      memory_ = ms;
+
     LOG(DEBUG) << "Exited " << pid << " normally";
     result = 0;
   } else if (result < 0) {
