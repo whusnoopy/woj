@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	include('../common/tcpclient.php');
 	include('classes/discuss_list_t.php');
 

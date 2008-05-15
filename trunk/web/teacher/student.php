@@ -6,7 +6,8 @@
 </head>
 <body>
 	<div id="main">
-	<b>Student:<?php echo $_GET['sid']?></b><br><br>
+	<b>Student:<?php echo $_GET['sid']?></b><br>
+	<hr><br>
 	<table border=1 cols=2>
 		<th width="30%"></th><th width="70%"></th>
 		<tr><td>Name:</td><td><?php echo $_GET['name']?></td></tr>

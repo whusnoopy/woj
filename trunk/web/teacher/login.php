@@ -27,13 +27,15 @@
 </head>
 <body>
 	<div id="main">
-	<b>Programming Management</b><br><br>
+	<b>Programming Management</b><br>
+	<b>Teacher</b><br>
+	<hr><br>
 	<?php
 		echo $_GET['error'].'<br>';
 	?>
 	<form action="login.php" method=post>
-		User id:<input name="user_id" size=50 maxlength=20 /><br>
-		Password:<input type="password" name="password" size=50 maxlength=20 /><br>
+		User id:<input name="user_id"  maxlength=20 /><br>
+		Password:<input type="password" name="password" maxlength=20 /><br>
 		<input type="submit" name="submit" value="Submit" />
 		<input type="reset" value="Reset" />
 	</form>

@@ -6,7 +6,8 @@
 </head>
 <body>
 	<div id="main">
-	<b>Task List</b><br><br>
+	<b>Task List</b><br>
+	<hr><br>
 		<table border=1 width="80%"><tbody>
 		<th>ID</th>
 		<th>Description</th>

@@ -1,5 +1,6 @@
 <?php
-    include('../common/tcpclient.php');
+    session_start();
+	include('../common/tcpclient.php');
     include('classes/ranklist_t.php');
 
     if(isset($_GET['start']))

@@ -14,7 +14,8 @@
 		$errorMsg = 'problem cannot be NULL';
 
 	if (!empty($errorMsg)){
-		echo $errorMsg;
+		echo $errorMsg.'<br>';
+		echo '<a href="javascript:history.back()">Back</a>';
 		exit;
 	}
 
@@ -25,10 +26,10 @@
 			."\001".$_POST['type'];
 	$contest_id = add_contest($contest);
 	if (empty($contest_id)){
-		echo 'add contest failed!';
+		echo 'add contest failed!<br>';
+		echo '<a href="javascript:history.back()">Back</a>';
 		exit;
 	}
-	echo "add contest successfully! contest_id: [$contest_id]";
 	for ($i=0; $i<26; $i++){
 		if (empty($_POST['p'.$i])) break;
 		$contest_id .= "\001".$_POST['p'.$i];
@@ -38,7 +39,7 @@
 	else
 		echo 'failed to add contest !';
 
-	echo '<br><br><a href="vcontestList.php">Back</a>';
+	echo '<br><br><a href="javascript:history.back()">Back</a>';
 ?>
 
 <?php

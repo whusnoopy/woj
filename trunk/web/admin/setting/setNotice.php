@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (empty($_SESSION['user_id'])){
+	if (empty($_SESSION['user_id']) || $_SESSION['access'] != 'root'){
 		header('Location:login.php?errorMsg=please login first!');
 		exit;
 	}
@@ -16,7 +16,7 @@
 <center>
   <div id="bar">
     <a href="../index.php">Home</a>&nbsp;|&nbsp;
-    <a href="../problemList.php">Problems</a>&nbsp;|&nbsp;
+    <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
     <a href="../judge/judge.php">Judge</a>&nbsp;|&nbsp;
     <a href="../user/userList.php">User</a>&nbsp;|&nbsp;

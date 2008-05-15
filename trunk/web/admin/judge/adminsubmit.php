@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (empty($_SESSION['user_id'])){
+	if (empty($_SESSION['user_id']) || $_SESSION['access'] != 'root'){
 		header('Location:../login.php?errorMsg=please login first!');
 		exit;
 	}

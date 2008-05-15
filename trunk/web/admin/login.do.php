@@ -17,6 +17,7 @@
 
 	if(login($user_id, $password)){
 		$_SESSION['user_id'] = $user_id;
+		$_SESSION['access'] = 'root';
 		header("Location: $origURL");
 		exit;
 	}

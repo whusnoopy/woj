@@ -6,7 +6,7 @@
 		}
 		else{
 			echo 'add task failed!<br>';
-			echo '<a href=tasks.php>Back</a>';
+			echo '<a href="javascript:history.back()">Back</a>';
 			exit;
 		}
 	}
@@ -20,8 +20,9 @@
 </head>
 <body>
 	<div id="main">
-	<b>Arrange a task</b><br><br>
-	<form action="arrange.php" method=post>
+	<b>Arrange a task</b><br>
+	<hr><br>
+	<form name="form" action="arrange.php" method=post>
 		Class: <input name='class'/><br>
 		Description: <input name="description" size=100/><br>
 		Year: <input name='year' value="2008"/><br>
@@ -30,7 +31,9 @@
 			  <option value="X">下学期</option>
 			  </select><br>
 		Required Problems:<br>
+		<textarea name="rp" cols=60 rows=10>Input required problems' ID, separate by ",",           like: 1001,1002,1003</textarea><br>
 		Optional Problems:<br>
+		<textarea name="op" cols=60 rows=10>Input required problems' ID, separate by ",",           like: 1001,1002,1003</textarea><br>
 		<input type="submit" name="submit" value="Submit">
 		<input type="reset" value="Reset">
 	</form>
@@ -43,3 +46,5 @@ function addTask()
 {
 	return 0;
 }
+?>
+

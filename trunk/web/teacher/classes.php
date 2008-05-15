@@ -6,7 +6,8 @@
 </head>
 <body>
 	<div id="main">
-	<b>Class List</b><br><br>
+	<b>Class List</b><br>
+	<hr><br>
 		<table border=1 width="80%"><tbody>
 		<th>ID</th>
 		<th>Class</th>

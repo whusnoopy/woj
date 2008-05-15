@@ -37,11 +37,11 @@
 </center>
   <div id="mainp">
 	<div id="rightp">
-     <table width=730><tbody>
+     <table width=720><tbody>
       <tr>
        <th width="60">Rank</th>
        <th width="70">Run ID</th>
-       <th width="130">User</th>
+       <th width="120">User</th>
        <th width="70">Memory</th>
        <th width="60">Time</th>
        <th width="90">Language</th>
@@ -91,26 +91,29 @@
       <tr class=tre><td><strong>Wrong Answer</strong></td><td><?php echo $solution_status[8]; ?></td></tr>
       <tr class=tro><td><strong>Runtime Error</strong></td><td><?php echo $solution_status[9]; ?></td></tr>
       <tr class=tre><td><strong>Output Limit Exceed</strong></td><td><?php echo $solution_status[7]; ?></td></tr>
-      <tr class=tro><td><strong>Compile Error</strong></td><td><?php echo $solution_status[10]; ?></td></tr>
+	  <tr class=tro><td><strong>Compile Error</strong></td><td><?php echo $solution_status[10]; ?></td></tr>
+	  <tr class=tre><td colspan=2><img src="img.php?parm=<?php echo  base64_encode(    $solution_status[0].','.$solution_status[4].','.$solution_status[5].','.$solution_status[6].','.$solution_status[8].','.$solution_status[9].','.$solution_status[7].','.$solution_status[10]);?>" /></td></tr>
     </tbody></table>
+	<br>
    </div>
+</div>
+<br>
 
-  <br />
-
-
+<center>
+<div id="main">
 <?php
 	if($start > 0){
 		$pre = $start - 1;
-	    echo "<span class=bt><a href=problemstatus.php?start=$pre&problem_id=$problem_id>Prev Page</a></span>&nbsp";
+	    echo "<span class=bt><a href=\"problemstatus.php?start=$pre&problem_id=$problem_id\">Prev Page</a></span>&nbsp";
     }
 
     if($rows == 25){
 		$next = $start + 1;
-      echo "<span class=bt><a href=problemstatus.php?start=$next&problem_id=$problem_id>Next Page</a></span>";
+      echo "<span class=bt><a href=\"problemstatus.php?start=$next&problem_id=$problem_id\">Next Page</a></span>";
 	}
 ?>
 	<br><br>
-  </div>
+</div>
 
 <?php
 	include('../include/tailer.php');

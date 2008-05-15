@@ -24,7 +24,7 @@ class TCPClient{
 		if(!($this->m_socket = socket_create(AF_INET, SOCK_STREAM, 0)) ){
 			return false;
 		}
-	//	socket_set_nonblock($this->m_socket);
+	    socket_set_option($this->m_socket, SOL_SOCKET, SO_SNDTIMEO, array('sec'=>1, 'usec'=>0));
 		return true;
 	}
 	function connect()

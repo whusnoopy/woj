@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	include('../common/tcpclient.php');
 	include('classes/problem_list_t.php');
 	if (isset($_GET['start']))
