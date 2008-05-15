@@ -13,10 +13,13 @@
 </head>
 <body>
 	<div id="main">
-	<b>Programming Management</b><br><br>
+	<b>Programming Management</b><br>
+	<b>Teacher</b><br>
+	<hr><br>
 	1.<a href="arrange.php">Arrange Task</a><br>
 	2.<a href="classes.php">Class List</a><br>
 	3.<a href="tasks.php">Task List</a><br>
+	4.<a href="logout.php">Logout</a><br>
 	</div>
 </body>
 </html>

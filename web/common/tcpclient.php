@@ -24,7 +24,7 @@ class TCPClient{
 		if(!($this->m_socket = socket_create(AF_INET, SOCK_STREAM, 0)) ){
 			return false;
 		}
-	//	socket_set_nonblock($this->m_socket);
+	    socket_set_option($this->m_socket, SOL_SOCKET, SO_SNDTIMEO, array('sec'=>1, 'usec'=>0));
 		return true;
 	}
 	function connect()
@@ -53,61 +53,4 @@ class TCPClient{
 	}
 }
 
-
-/*
-  $client = new TCPClient("127.0.0.1", 1234);
-  $client->create();
- // echo "created";
-  $client->connect();
-//  echo "connected";
-
-  $fp = fopen("logo.gif", "r");
-
-  do {
-       $data = fread($fp, 128);
-       if (strlen($data) == 0) {
-         break;
-       }
-//	   echo $data;
-       $client->writesock($data);
-       } while (true);
-  fclose($fp);
-
-//  echo "sent";
-  $receive = $client->readsock(1000);
-  $client->close();
-  echo $receive;
-*/
-/*
-function get_problem_info($problem_id, &$problem)
-{
-	if(empty($problem_id)){
-		$problem = null;
-		return;
-	}
-
-	$header = sprintf("%s%08d", "pb", strlen($problem_id));
-
-	$tc = new TCPClient();
-	$tc->create() or die("unable to create socket!");
-	$tc->connect() or die("unable to connect to server!");
-	$tc->sendstr($header) or die("send header failed");
-	$tc->sendstr($problem_id)or die("send message failed");
-	$recv= $tc->recvstr(10);
-	$len = sscanf($recv, "%d");
-	if($len > 0){
-		$recv = $tc->recvstr($len);
-		$problem =  explode("\001", $recv);
-	}
-	else $problem = null;
-	$tc->close();
-	return;
-}
-*/
-/*
-$tc = new TCPClient();
-$tc->create();
-$tc->connect();
-$tc->sendstr("sfsafasd");
-*/
 ?>

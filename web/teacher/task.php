@@ -5,7 +5,8 @@
 </head>
 <body>
 	<div id="main">
-	<b>Arrange a task</b><br><br>
+	<b>Arrange a task</b><br>
+	<hr><br>
 	<form action="arrange.php" method=post>
 		Class: <input name='class'/><br>
 		Description: <input name="description" size=100/><br>
