@@ -18,7 +18,7 @@
     <ip>127.0.0.1</ip>
   </judgecontrol>
   <network>
-    <maxclient>20</maxclient>
+    <maxclient>50</maxclient>
     <port>3030</port>
     <ip>192.168.5.182</ip>
     <ip>127.0.0.1</ip>
@@ -26,7 +26,7 @@
     <ip>192.168.5.185</ip>
   </network>
   <client>
-    <maxclient>15</maxclient>
+    <maxclient>20</maxclient>
     <port>3764</port>
   </client>
 </server>

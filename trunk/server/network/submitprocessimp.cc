@@ -115,6 +115,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   status.setErrorId(0);
   status.setType(type.substr(0,1));
   int status_id = DataInterface::getInstance().addStatus(status);
+  LOG(DEBUG) << "Here is ok";
   status.setStatusId(status_id);
   DataInterface::getInstance().addProblemSubmit(problem_id, 1);
   DataInterface::getInstance().addProblemUserSubmit(status, 1);
