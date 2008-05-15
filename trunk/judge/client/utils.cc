@@ -70,6 +70,14 @@ int readMemory(int pid) {
   return vm_size - vm_exe - vm_lib;
 }
 
+/*
+static unsigned int alarm(int m_seconds) {
+  struct itimerval old_alarm_time, new_alarm_time;
+  new_alarm_time.it_interval.tv_usec = 0;
+  new_alarm_time.it_interval.tv_sec = 0;
+}
+*/
+
 int createProcess(const char* commands[], const RunInfo& run_info) {
   string command_line = commands[1];
   for (int i = 2; commands[i]; ++i)
@@ -101,6 +109,8 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
   LOG(DEBUG) << "Success Opened stdin/stdout/stderr to "
              << file[0] << "/" << file[1] << "/" << file[2];
 
+  LOG(DEBUG) << "Time limit is " << run_info.time_limit << "ms";
+
   int pid = fork();
   if (pid < 0) {
     LOG(SYS_ERROR) << "Unable to fork";
@@ -122,10 +132,14 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
     close(i);
   LOG(DEBUG) << "close fds successful";
   if (run_info.time_limit) {
-    if (setLimit(RLIMIT_CPU, run_info.time_limit) == -1) {
+    if (setLimit(RLIMIT_CPU, run_info.time_limit / 1000 ) == -1) {
       LOG(SYS_ERROR) << "Fail to set cpu limit to "
-                     << run_info.time_limit << "s";
+                     << run_info.time_limit << "ms";
       raise(SIGKILL);
+    }
+    if (ualarm(run_info.time_limit * 2000, 0) == -1) {
+      LOG(SYS_ERROR) << "Fail to set clock limit to "
+                     << run_info.time_limit << "ms";
     }
     LOG(DEBUG) << "set time limit successful";
   }
