@@ -16,6 +16,18 @@ public:
   ~JobInterface() {
   }
 
+  int addJob(const Job&);
+  int addJobToClass(int job_id, const Class& mclass);
+  int addProblemToJob(int job_id, const vector<int>& problem_list);
+  int addSet(const vector<int>& problem_list, int num);
+  int addSetToJob(int job_id, int set_id);
+  int disableJob(int job_id, bool available);
+  JobList getJobList(const string& teacher);
+  Job getJob(int job_id);
+  int deleteSetForJob(int job_id, int set_id);
+  int updateJob(const Job&);
+  int updateSet(const SetItem&);
+
   static JobInterface& getInstance(){
     if(instance == NULL)
       instance = new JobInterface;

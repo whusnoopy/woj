@@ -7,6 +7,7 @@ using namespace std;
 typedef struct _SET_ITEM_ {
   vector<int> problem_list;
   int number;
+  int set_id;
 }SetItem;
 
 class Job{

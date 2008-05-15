@@ -13,7 +13,7 @@ int StudentInterface::addStudent(const Student& student) {
            "'" + stringPrintf("%d", student.getClass.getClass()) + "'," +
            "'" + changeSymbol(student.getAvailable() ? "Y" : "N") + "')";
   connection->connect();
-  int ret = connection->executeUpdate(query);
+  int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
@@ -29,7 +29,7 @@ int StudentInterface::updateStudent(const Student& student) {
            "class = '" + stringPrintf("%d", student.getClass.getClass()) + "' " +
            "where user_id = '" + changeSymbol(student.getUserId()) + "'"; 
   connection->connect();
-  int ret = connection->executeUpdate(query);
+  int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
@@ -41,7 +41,7 @@ int StudentInterface::disableStudent(const string& user_id, bool available) {
   query += "available = '" + available ? "Y" : "N" + "' " + 
            "where user_id = '" + changeSymbol(student.getUserId()) + "'"; 
   connection->connect();
-  int ret = connection->executeUpdate(query);
+  int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
@@ -55,7 +55,7 @@ Student StudentInterface::getStudent(const string& user_id) {
   student.setUserId("NULL");
   Class mclass;
   connection->connect();
-  Result result_set = connection->executeQuery(query);
+  Result result_set = connection->excuteQuery(query);
   if (reault_set.next()) {
     student.setUserId(result_set.getString("user_id"));
     student.setStudentId(result_set.getString("student_id"));
@@ -66,6 +66,7 @@ Student StudentInterface::getStudent(const string& user_id) {
     student.setClass(mclass);
     student.setAvailable(result_set.getString("available") == "Y");
   }
+  result_set.close();
   connection->close();
   delete connection;
   return student;
