@@ -45,17 +45,17 @@ void JobProcessImp::process(int socket_fd, const string& ip, int length){
                           job.getTeacher().c_str(),
                           job.getYear(),
                           job.getTerm());
-  int must_do_number = TeachInterface::getInstance().getJobMustDoNum(job_id);
+  vector<int> problem_list = job.getProblemList();
+  int must_do_number = problem_list.size();
   databuf += stringPrintf("\001%d", must_do_number);
-  vector<int> problem_list = TeachInterface::getInstance().getJobMustDoList(job_id);
   vector<int>::iterator must_do_problem = problem_list.begin();
   while (must_do_problem != problem_list.end()) {
     databuf += stringPrintf("\001%d", *must_do_problem);
     must_do_problem++;
   }
-  int should_do_number = TeachInterface::getInstance().getJobShouldDoNum(job_id);
+  vector<SetItem> set_list = job.getSetList();
+  int should_do_number = set_list.size();
   databuf += stringPrintf("\001%d", should_do_number);
-  vector<SetItem> set_list = TeachInterface::getInstance().getJobShouldDoList(job_id);
   vector<SetItem>::iterator should_do_set = set_list.begin();
   while (should_do_set != set_list.end()) {
     databuf += stringPrintf("\001%d\001%d", should_do_set->number, should_do_set->problem_list.size());
