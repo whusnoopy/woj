@@ -41,7 +41,7 @@ void UpdateTeacherProcessImp::process(int socket_fd, const string& ip, int lengt
   }
   teacher.setRealName(*iter);
   iter++;
-  student.setAvailable(true);
+  teacher.setAvailable(true);
   int ret = TeachInterface::getInstance().updateTeacher(teacher);
   if (ret) {
     sendReply(socket_fd, 'N');

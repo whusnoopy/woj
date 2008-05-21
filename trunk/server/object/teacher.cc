@@ -17,7 +17,7 @@ string Teacher::getRealName() const {
 }
 
 bool Teacher::getAvailable() const {
-  return available;
+  return available_;
 }
   
 void Teacher::setUserId(const string& user_id) {

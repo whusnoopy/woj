@@ -8,7 +8,7 @@
 #include "base/flags.h"
 #include "data/teachinterface.h"
 #include "util/calulate.h"
-#include "object/jobr.h"
+#include "object/job.h"
 #include "object/list.h"
 #include "object/info.h"
 using namespace std;
@@ -32,7 +32,7 @@ void DisableJobProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find job_id from data for:" << ip;
     return;
   }
-  int job_id = aoti(iter->c_str());
+  int job_id = atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find available from data for:" << ip;

@@ -52,10 +52,10 @@ void AddJobProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find term from data for:" << ip;
     return;
   }
-  job.setTerm(*iter->c_str());
+  job.setTerm(*(iter->c_str()));
   iter++;   
   job.setAvailable(true);
-  int job_id = TeachInterface::getInstance().addJob(Job);
+  int job_id = TeachInterface::getInstance().addJob(job);
   string databuf = stringPrintf("%010d", job_id);
   if (socket_write(socket_fd, databuf.c_str(), 10)) {
     LOG(ERROR) << "Cannot return job id to " << ip;

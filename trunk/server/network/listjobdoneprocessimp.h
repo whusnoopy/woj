@@ -15,7 +15,7 @@ public:
   virtual ~ListJobDoneProcessImp() {}
 
   void process(int socket_fd, const string& ip, int length);
-  void checkJobDone(const string&, const Job&);
+  bool checkJobDone(const string&, const Job&);
 private:
 };
 

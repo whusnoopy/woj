@@ -2,6 +2,7 @@
 #define _FLOOD_SERVER_DATA_JOB_H__
 
 #include <string>
+#include <vector>
 using namespace std;
 
 typedef struct _SET_ITEM_ {
@@ -15,7 +16,7 @@ public:
   Job(const string& description = "NULL");
   
   vector<int> getProblemList() const;
-  vecotr<SetItem> getSetList() const;
+  vector<SetItem> getSetList() const;
   int getJobId() const;
   string getDescription() const;
   string getPublishTime() const;

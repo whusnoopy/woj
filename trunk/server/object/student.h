@@ -2,13 +2,14 @@
 #define _FLOOD_SERVER_DATA_STUDENT_H__
 
 #include <string>
+#include <vector>
 
 #include "object/class.h"
 using namespace std;
 
 class Student{
 public:
-  Student() [
+  Student() {
   }
   
   Student(const string& user_id,
@@ -31,10 +32,21 @@ public:
    
 private:
   string user_id_;
-  string realname_;
   string student_id_;
-  bool avaiable_;
+  string realname_;
   Class mclass_;
+  bool available_;
 };
+
+typedef struct _STUDENT_ITEM_ {
+  string user_id;
+  string realname;
+  string student_id;
+  bool available;
+  Class mclass;
+  bool is_done;
+}StudentItem;
+
+typedef vector<StudentItem> StudentList;
 
 #endif /*_STUDENT_H_*/

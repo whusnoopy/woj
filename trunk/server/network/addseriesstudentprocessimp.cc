@@ -1,11 +1,15 @@
 #include "addseriesstudentprocessimp.h"
+
+
 #include "base/logging.h"
 #include "base/flags.h"
 #include "base/util.h"
 #include "util/calulate.h"
 #include "object/user.h"
 #include "object/student.h"
+#include "object/class.h"
 #include "data/teachinterface.h"
+#include "data/datainterface.h"
 
 using namespace std;
 
@@ -14,6 +18,7 @@ void AddSeriesStudentProcessImp::process(int socket_fd, const string& ip, int le
   char* buf;
   User user;
   Student student;
+  Class mclass;
   buf =  new char[length + 1];
   memset(buf, 0, length + 1);
   if (socket_read(socket_fd, buf, length) != length) {
@@ -63,13 +68,14 @@ void AddSeriesStudentProcessImp::process(int socket_fd, const string& ip, int le
       LOG(ERROR) << "Cannot find grade in data";
       return;
     }
-    student.setGrade(atoi(iter->c_str()));
+    mclass.setGrade(atoi(iter->c_str()));
     iter++;
     if (iter == datalist.end()) {
       LOG(ERROR) << "Cannot find class_no in data";
       return;
     }
-    student.setGrade(atoi(iter->c_str()));
+    mclass.setClass(atoi(iter->c_str()));
+    student.setClass(mclass);
     iter++;
     user.setEmail("system");
     user.setShowEmail(true);

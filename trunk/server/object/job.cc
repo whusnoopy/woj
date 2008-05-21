@@ -8,7 +8,7 @@ vector<int> Job::getProblemList() const {
   return problem_list_;
 }
 
-vecotr<SetItem> Job::getSetList() const {
+vector<SetItem> Job::getSetList() const {
   return set_list_;
 }
 

@@ -1,6 +1,6 @@
 #include "class.h"
 
-Class::Class(const string& college, int grade, class_number) 
+Class::Class(const string& college, int grade, int class_number) 
   : college_(college), grade_(grade), class_number_(class_number){
 }
 

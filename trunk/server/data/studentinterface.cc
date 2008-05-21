@@ -9,8 +9,8 @@ int StudentInterface::addStudent(const Student& student) {
            "'" + changeSymbol(student.getStudentId()) + "'," +
            "'" + changeSymbol(student.getRealName()) + "'," + 
        //    "'" + changeSymbol(student.getClass.getCollege()) + "'," +
-           "'" + stringPrintf("%d", student.getClass.getGrade()) + "'," +
-           "'" + stringPrintf("%d", student.getClass.getClass()) + "'," +
+           "'" + stringPrintf("%d", student.getClass().getGrade()) + "'," +
+           "'" + stringPrintf("%d", student.getClass().getClass()) + "'," +
            "'" + changeSymbol(student.getAvailable() ? "Y" : "N") + "')";
   connection->connect();
   int ret = connection->excuteUpdate(query);
@@ -25,8 +25,8 @@ int StudentInterface::updateStudent(const Student& student) {
   query += "student_id = '" + changeSymbol(student.getStudentId()) + "'," +
            "realname = '" + changeSymbol(student.getRealName()) + "'," + 
       //     "college = '" + changeSymbol(student.getClass.getCollege()) + "'," +
-           "grade = '" + stringPrintf("%d", student.getClass.getGrade()) + "'," +
-           "class = '" + stringPrintf("%d", student.getClass.getClass()) + "' " +
+           "grade = '" + stringPrintf("%d", student.getClass().getGrade()) + "'," +
+           "class = '" + stringPrintf("%d", student.getClass().getClass()) + "' " +
            "where user_id = '" + changeSymbol(student.getUserId()) + "'"; 
   connection->connect();
   int ret = connection->excuteUpdate(query);
@@ -38,13 +38,36 @@ int StudentInterface::updateStudent(const Student& student) {
 int StudentInterface::disableStudent(const string& user_id, bool available) {
   Connection* connection = createConnection();  
   string query = "update students set ";
-  query += "available = '" + available ? "Y" : "N" + "' " + 
-           "where user_id = '" + changeSymbol(student.getUserId()) + "'"; 
+  query += "available = '" + changeSymbol(available ? "Y" : "N") + "' where user_id = '" + 
+           changeSymbol(user_id) + "'"; 
   connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;
+}
+
+StudentList StudentInterface::getStudentList(int grade) {
+  Connection* connection = createConnection();
+  string query = "select * from students where grade = '";
+  query += stringPrintf("%d'", grade);
+  StudentList student_list;
+  StudentItem item;
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.user_id = result_set.getString("user_id");
+    item.realname = result_set.getString("realname");
+    item.student_id = result_set.getString("student_id");
+    item.available = (result_set.getString("available") == "Y");
+    item.mclass.setGrade(result_set.getInt("grade"));
+    item.mclass.setClass(result_set.getInt("class"));
+    item.is_done = false;
+    student_list.push_back(item);
+  }
+  connection->close();
+  delete connection;
+  return student_list;
 }
 
 Student StudentInterface::getStudent(const string& user_id) {
@@ -56,7 +79,7 @@ Student StudentInterface::getStudent(const string& user_id) {
   Class mclass;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
-  if (reault_set.next()) {
+  if (result_set.next()) {
     student.setUserId(result_set.getString("user_id"));
     student.setStudentId(result_set.getString("student_id"));
     student.setRealName(result_set.getString("realname"));
