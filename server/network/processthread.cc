@@ -300,6 +300,14 @@ bool ProcessThread::processTeach(int type) {
     case 122:  //es
       m_process_imp = new AddSeriesStudentProcessImp();
       return false;
+    case 512:  //ts
+      m_process_imp = new CheckStudentOrTeacherProcessImp();
+      return false;
+    case 479:  //sl
+      m_process_imp = new StudentListProcessImp();
+      return false;
+    case 505:  //tl
+      m_process_imp = new TeacherListProcessImp();
     default:
       return true;
   }

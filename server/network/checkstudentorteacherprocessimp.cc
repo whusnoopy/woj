@@ -43,9 +43,9 @@ void CheckStudentOrTeacherProcessImp::process(int socket_fd, const string& ip, i
   iter++;
   bool ret = false;
   if (type == "S")
-    ret = TeachInterface::getIntance().isStudent();
+    ret = TeachInterface::getInstance().isStudent(user_id);
   else 
-    ret = TeachInterface::getIntance().isTeacher();
+    ret = TeachInterface::getInstance().isTeacher(user_id);
 
   if (!ret) {
     sendReply(socket_fd, 'N');

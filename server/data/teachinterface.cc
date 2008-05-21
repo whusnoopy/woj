@@ -22,11 +22,11 @@ int TeachInterface::deleteControlClass(const string& user_id, const Class& mclas
   return TeacherInterface::getInstance().deleteControlClass(user_id, mclass);
 }
 
-int TeachInterface::getTeacherList() {
+TeacherList TeachInterface::getTeacherList() {
   return TeacherInterface::getInstance().getTeacherList();
 }
 
-int TeachInterface::isTeacher(const string& user_id) {
+bool TeachInterface::isTeacher(const string& user_id) {
   return TeacherInterface::getInstance().isTeacher(user_id);
 }
 
@@ -54,7 +54,7 @@ Student TeachInterface::getStudent(const string& user_id) {
   return StudentInterface::getInstance().getStudent(user_id);
 }
 
-Student TeachInterface::isStudent(const string& user_id) {
+bool TeachInterface::isStudent(const string& user_id) {
   return StudentInterface::getInstance().isStudent(user_id);
 }
 

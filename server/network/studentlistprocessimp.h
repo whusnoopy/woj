@@ -7,7 +7,7 @@
 #include "processimp.h"
 using namespace std;
 
-class StudnetListProcessImp : public ProcessImp{
+class StudentListProcessImp : public ProcessImp{
 public:
   StudentListProcessImp() {}
   virtual ~StudentListProcessImp() {}
