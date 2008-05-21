@@ -14,7 +14,7 @@
 #include "object/info.h"
 using namespace std;
 
-void DeleteTeacherProcessImp::process(int socket_fd, const string& ip, int length){
+void DeleteControlClassProcessImp::process(int socket_fd, const string& ip, int length){
   LOG(INFO) << "Process delete Control Class for:" << ip;
   char* buf;
   buf = new char[length + 1];

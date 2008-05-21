@@ -13,7 +13,7 @@
 #include "object/info.h"
 using namespace std;
 
-void AddStudentProcessImp::process(int socket_fd, const string& ip, int length){
+void UpdateStudentProcessImp::process(int socket_fd, const string& ip, int length){
   LOG(INFO) << "Process update Student for:" << ip;
   char* buf;
   buf = new char[length + 1];

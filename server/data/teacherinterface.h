@@ -17,10 +17,9 @@ public:
 
   int addTeacher(const Teacher&);
   int updateTeacher(const Teacher&);
-  int disableTeacher(const string& user_id);
+  int disableTeacher(const string& user_id, bool available);
   int addControlClass(const string& user_id, const Class& mclass);
-  int deleteControlClass(const string& user_id, const Class& m_class);
-  int addControlClassList(const string& user_id, const ClassList& class_list);
+  int deleteControlClass(const string& user_id, const Class& mclass);
 
   static TeacherInterface& getInstance(){
     if(instance == NULL)

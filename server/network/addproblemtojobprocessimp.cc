@@ -48,14 +48,14 @@ void AddProblemToJobProcessImp::process(int socket_fd, const string& ip, int len
   iter++;
   vector<int> problem_list;
   while (iter != datalist.end()) {
-    problem_list.push_back(aoti(iter->c_str()));
+    problem_list.push_back(atoi(iter->c_str()));
   }
   int ret;
   if (type == "M") {
-    ret = TeacherInterface::getInstance().addProblemtoJob(job_id, problem_list);
+    ret = TeachInterface::getInstance().addProblemToJob(job_id, problem_list);
   } else {
-    int set_id = TeacherInterface::getInstance().addSet(problem_list, number);
-    ret = TeacherInterface::getInstance().addSettoJob(job_id, set_id);
+    int set_id = TeachInterface::getInstance().addSet(problem_list, should_do_number);
+    ret = TeachInterface::getInstance().addSetToJob(job_id, set_id);
   }
   if (ret) {
     sendReply(socket_fd, 'N');

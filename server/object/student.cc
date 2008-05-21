@@ -29,7 +29,7 @@ Class Student::getClass() const {
 }
 
 bool Student::getAvailable() const {
-  return available;
+  return available_;
 }
 
 void Student::setUserId(const string& user_id) {
@@ -45,7 +45,7 @@ void Student::setRealName(const string& realname) {
 }
 
 void Student::setClass(const Class& m_class) {
-  m_class_ = m_class;
+  mclass_ = m_class;
 }
 
 void Student::setAvailable(bool available) {

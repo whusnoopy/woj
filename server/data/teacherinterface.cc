@@ -65,5 +65,5 @@ int TeacherInterface::deleteControlClass(const string& user_id, const Class& mcl
   return ret;
 }
 
-int TeacherInterface::addControlClassList(const string& user_id, const ClassList& class_list);
+//int TeacherInterface::addControlClassList(const string& user_id, const ClassList& class_list);
 

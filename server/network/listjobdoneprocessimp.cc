@@ -9,6 +9,7 @@
 #include "object/list.h"
 #include "util/calulate.h"
 #include "data/teachinterface.h"
+#include "data/datainterface.h"
 #include "object/job.h"
 #include "object/student.h"
 #include "object/list.h"
@@ -52,6 +53,23 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
     student_iter->is_done = checkJobDone(student_iter->user_id, job);
     student_iter++;
   }
+  student_iter = student_list.begin();
+  bool first = true;
+  while (student_iter != student_list.end()) {
+    if (!first) 
+      databuf += "\001";
+    else
+      first = false;
+    databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d\001%s",
+                            student_iter->user_id.c_str(),
+                            student_iter->realname.c_str(),
+                            student_iter->student_id.c_str(),
+                            student_iter->available ? "Y" : "N",
+                            student_iter->mclass.getGrade(),
+                            student_iter->mclass.getClass(),
+                            student_iter->is_done? "Y" : "N");
+    student_iter++;
+  }
   string len = stringPrintf("%010d", databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
@@ -64,7 +82,7 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
   LOG(INFO) << "Process list Job done Info completed for" << ip;
 }
 
-void ListJobDoneProcessImp::checkJobDone(const string& user_id, const Job& job) {
+bool ListJobDoneProcessImp::checkJobDone(const string& user_id, const Job& job) {
   ProblemSet ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
   vector<int> problem_list = job.getProblemList();
   vector<int>::iterator must_do_problem = problem_list.begin();

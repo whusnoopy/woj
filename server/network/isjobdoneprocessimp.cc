@@ -9,6 +9,7 @@
 #include "object/list.h"
 #include "util/calulate.h"
 #include "data/teachinterface.h"
+#include "data/datainterface.h"
 #include "object/job.h"
 #include "object/list.h"
 #include "base/util.h"
@@ -61,7 +62,7 @@ void IsJobDoneProcessImp::process(int socket_fd, const string& ip, int length){
       databuf += "\001N";
     must_do_problem++;
   }
-  databuf += stringPrintf("\001%d", done_must_number);
+  databuf += stringPrintf("\001%d", done_must_problem);
   vector<SetItem> set_list = job.getSetList();
   int should_do_number = set_list.size();
   databuf += stringPrintf("\001%d", should_do_number);

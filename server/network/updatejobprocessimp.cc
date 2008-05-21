@@ -33,7 +33,7 @@ void UpdateJobProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot find job_id from data for:" << ip;
     return;
   }
-  job.setJobId(aoti(iter->c_str()));
+  job.setJobId(atoi(iter->c_str()));
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find description from data for:" << ip;
@@ -60,7 +60,7 @@ void UpdateJobProcessImp::process(int socket_fd, const string& ip, int length){
   }
   job.setTerm(*iter->c_str());
   iter++;
-  int ret = TeachInterface::getInstance().updateJob(Job);
+  int ret = TeachInterface::getInstance().updateJob(job);
   if (ret) {
     sendReply(socket_fd, 'N');
     LOG(ERROR) << "Update Job Error";

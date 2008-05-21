@@ -6,7 +6,7 @@ using namespace std;
 
 class Class{
 public:
-  Class(const string& college = "NULL", int grade = 2000, class_number = 0);
+  Class(const string& college = "NULL", int grade = 2000, int class_number = 0);
   string getCollege() const;
   int getGrade() const;
   int getClass() const;

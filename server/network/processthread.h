@@ -10,17 +10,18 @@ class ProcessThread : public Thread {
 public:
   ProcessThread(){}
   ProcessThread(int listen_fd,  pthread_mutex_t* lock) : m_socket(listen_fd), m_lock(lock){
-	  flag = false;
+    flag = false;
   }
   virtual ~ProcessThread() {}
 
   void quit();
 
-	void running();
+  void running();
+  bool processTeach(int type);
   bool check(const string& ip);
 private:
-	int m_socket;
-	ProcessImp* m_process_imp;
+  int m_socket;
+  ProcessImp* m_process_imp;
   pthread_mutex_t* m_lock;
   bool flag;
 };

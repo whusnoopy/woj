@@ -6,63 +6,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#include "processimp.h"
-#include "ranklistprocessimp.h"
-#include "contestlistprocessimp.h"
-#include "contestcontentprocessimp.h"
-#include "problemstatisticsprocessimp.h"
-#include "statusprocessimp.h"
-#include "problemprocessimp.h"
-#include "mailcontentprocessimp.h"
-#include "maillistprocessimp.h"
-#include "addmailprocessimp.h"
-#include "contestproblemprocessimp.h"
-#include "registerprocessimp.h"
-#include "homepageprocessimp.h"
-#include "loginprocessimp.h"
-#include "problemlistprocessimp.h"
-#include "discusscontentprocessimp.h"
-#include "existuserprocessimp.h"
-#include "codeprocessimp.h"
-#include "disablemailprocessimp.h"
-#include "userinfoprocessimp.h"
-#include "contestranklistprocessimp.h"
-#include "conteststatisticsprocessimp.h"
-#include "discusslistprocessimp.h"
-#include "adddiscussprocessimp.h"
-#include "disablediscussprocessimp.h"
-#include "updateuserprocessimp.h"
-#include "disableuserprocessimp.h"
-#include "addnewsprocessimp.h"
-#include "addproblemprocessimp.h"
-#include "addinputandoutputfileprocessimp.h"
-#include "addfiletoproblemprocessimp.h"
-#include "updateproblemprocessimp.h"
-#include "mostproblemprocessimp.h"
-#include "problemversionprocessimp.h"
-#include "ableproblemprocessimp.h"
-#include "getproblemfileprocessimp.h"
-#include "adminproblemlistprocessimp.h"
-#include "addcontestprocessimp.h"
-#include "admincontestlistprocessimp.h"
-#include "ablecontestprocessimp.h"
-#include "contestversionprocessimp.h"
-#include "updatecontestprocessimp.h"
-#include "addfiletocontestprocessimp.h"
-#include "getcontestfileprocessimp.h"
-#include "addproblemtocontestprocessimp.h"
-#include "addusertocontestprocessimp.h"
-#include "submitprocessimp.h"
-#include "rejudgeprocessimp.h"
-#include "standardtestprocessimp.h"
-#include "errorprocessimp.h"
-#include "userlistprocessimp.h"
-#include "checkpermissionprocessimp.h"
-#include "updatenewsprocessimp.h"
-#include "setnoticeprocessimp.h"
-#include "noticeprocessimp.h"
-#include "addseriesuserprocessimp.h"
-#include "setuserinfoprocessimp.h"
+#include "processheader.h"
 #include "base/logging.h"
 #include "base/util.h"
 #include "base/flags.h"
@@ -269,10 +213,11 @@ void ProcessThread::running(){
       case 476:  //si
         m_process_imp = new SetUserInfoProcessImp();
         break;
-      default:
+      default: 
+        unknown = processTeach(type);
+        if (unknown) 
         LOG(ERROR) << "Unknown type data.";
         close(connect_fd);
-        unknown = true;
         break;
     }
     if (unknown) 
@@ -288,5 +233,76 @@ void ProcessThread::running(){
 
 void ProcessThread::quit(){
   flag = true;
+}
+
+bool ProcessThread::processTeach(int type) {
+  switch (type) {
+    case 18:   //as
+      m_process_imp = new AddStudentProcessImp();
+      return false;
+    case 538:  //us
+      m_process_imp = new UpdateStudentProcessImp();
+      return false;
+    case 96:   //ds
+      m_process_imp = new DisableStudentProcessImp();
+      return false;
+    case 483:  //sp
+      m_process_imp = new StudentProcessImp();
+      return false;
+    case 19:   //at
+      m_process_imp = new AddTeacherProcessImp();
+      return false;
+    case 539:  //ut
+      m_process_imp = new UpdateTeacherProcessImp();
+      return false;
+    case 97:   //dt
+      m_process_imp = new DisableTeacherProcessImp();
+      return false;
+    case 0:    //aa
+      m_process_imp = new AddControlClassProcessImp();
+      return false;
+    case 78:   //da
+      m_process_imp = new DeleteControlClassProcessImp();
+      return false;
+    case 9:    //aj
+      m_process_imp = new AddJobProcessImp();
+      return false;
+    case 399:  //pj
+      m_process_imp = new AddProblemToJobProcessImp();
+      return false;
+    case 87:   //dj
+      m_process_imp = new DisableJobProcessImp();
+      return false;
+    case 236:  //jc
+      m_process_imp = new AddJobToClassProcessImp();
+      return false;
+    case 524:  //ue
+      m_process_imp = new UpdateSetProcessImp();
+      return false;
+    case 477:  //sj
+      m_process_imp = new DeleteSetForJobProcessImp();
+      return false;
+    case 217:  //ij
+      m_process_imp = new IsJobDoneProcessImp();
+      return false;
+    case 245:  //jl
+      m_process_imp = new JobListProcessImp();
+      return false;
+    case 249:  //jp
+      m_process_imp = new JobProcessImp();
+      return false;
+    case 295:  //lj
+      m_process_imp = new ListJobDoneProcessImp();
+      return false;
+    case 529:  //uj
+      m_process_imp = new UpdateJobProcessImp();
+      return false;
+    case 122:  //es
+      m_process_imp = new AddSeriesStudentProcessImp();
+      return false;
+    default:
+      return true;
+  }
+  return true;
 }
 

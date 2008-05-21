@@ -58,7 +58,7 @@ void JobProcessImp::process(int socket_fd, const string& ip, int length){
   databuf += stringPrintf("\001%d", should_do_number);
   vector<SetItem>::iterator should_do_set = set_list.begin();
   while (should_do_set != set_list.end()) {
-    databuf += stringPrintf("\001%d\001%d", should_do_set->number, should_do_set->problem_list.size());
+    databuf += stringPrintf("\001%d\001%d\001%d", should_do_set->set_id, should_do_set->number, should_do_set->problem_list.size());
     vector<int>::iterator should_do_problem = should_do_set->problem_list.begin();
     while (should_do_problem != should_do_set->problem_list.end()) {
       databuf += stringPrintf("\001%d", *should_do_problem);

@@ -32,7 +32,7 @@ void DeleteSetForJobProcessImp::process(int socket_fd, const string& ip, int len
     LOG(ERROR) << "Cannot find job_id from data for:" << ip;
     return;
   }
-  int set_id  = atoi(iter->c_str());
+  int job_id  = atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find set_id from data for:" << ip;

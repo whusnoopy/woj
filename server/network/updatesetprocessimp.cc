@@ -42,9 +42,9 @@ void UpdateSetProcessImp::process(int socket_fd, const string& ip, int length){
   set_item.number = atoi(iter->c_str());
   iter++;
   while (iter != datalist.end()) {
-    set_item.problem_list.push_back(aoti(iter->c_str()));
+    set_item.problem_list.push_back(atoi(iter->c_str()));
   }
-  int ret = TeacherInterface::getInstance().updateSet(set_item);
+  int ret = TeachInterface::getInstance().updateSet(set_item);
   if (ret) {
     sendReply(socket_fd, 'N');
     LOG(ERROR) << "Update Set error";
