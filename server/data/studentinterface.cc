@@ -70,6 +70,30 @@ StudentList StudentInterface::getStudentList(int grade) {
   return student_list;
 }
 
+StudentList StudentInterface::getStudentList(int grade, int class_no) {
+  Connection* connection = createConnection();
+  string query = "select * from students where grade = '";
+  query += stringPrintf("%d'", grade);
+  query += " and class = '" + stringPrintf("%d'", class_no);
+  StudentList student_list;
+  StudentItem item;
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.user_id = result_set.getString("user_id");
+    item.realname = result_set.getString("realname");
+    item.student_id = result_set.getString("student_id");
+    item.available = (result_set.getString("available") == "Y");
+    item.mclass.setGrade(result_set.getInt("grade"));
+    item.mclass.setClass(result_set.getInt("class"));
+    item.is_done = false;
+    student_list.push_back(item);
+  }
+  connection->close();
+  delete connection;
+  return student_list;
+}
+
 Student StudentInterface::getStudent(const string& user_id) {
   Connection* connection = createConnection();  
   string query = "select * from students where user_id = '";
@@ -94,4 +118,18 @@ Student StudentInterface::getStudent(const string& user_id) {
   delete connection;
   return student;
 }
+
+Student StudentInterface::isStudent(const string& user_id) {
+  Connection* connection = createConnection();  
+  string query = "select * from students where user_id = '";
+  query += changeSymbol(user_id) + "'"; 
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  bool ret = result_set.next();
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 

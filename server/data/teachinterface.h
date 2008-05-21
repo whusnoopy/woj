@@ -24,12 +24,16 @@ public:
   int disableTeacher(const string& user_id, bool available);
   int addControlClass(const string& user_id, const Class& mclass);
   int deleteControlClass(const string& user_id, const Class& m_class);
+  TeacherList getTeacherList();
+  bool isTeacher(const string& user_id);
 
   int addStudent(const Student&);
   int updateStudent(const Student&);
   int disableStudent(const string& user_id, bool available);
   Student getStudent(const string& user_id);
   StudentList getStudentList(int grade);
+  StudentList getStudentList(int grade, int class_no);
+  bool isStudent(const string& user_id);
 
   int addJob(const Job&);
   int addJobToClass(int job_id, const Class& mclass);

@@ -20,6 +20,8 @@ public:
   int disableTeacher(const string& user_id, bool available);
   int addControlClass(const string& user_id, const Class& mclass);
   int deleteControlClass(const string& user_id, const Class& mclass);
+  TeacherList getTeacherList();
+  bool isTeacher(const string& user_id);
 
   static TeacherInterface& getInstance(){
     if(instance == NULL)
