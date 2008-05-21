@@ -2,6 +2,7 @@
 #define _FLOOD_SERVER_DATA_TEACHER_H__
 
 #include <string>
+#include <vector>
 using namespace std;
 
 class Teacher{
@@ -23,5 +24,7 @@ private:
   string realname_;
   bool available_;
 };
+
+typedef vector<Teacher> TeacherList;
 
 #endif /*TEACHER_H_*/

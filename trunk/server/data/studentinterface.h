@@ -19,7 +19,9 @@ public:
   int updateStudent(const Student&);
   int disableStudent(const string& user_id, bool available);
   StudentList getStudentList(int grade);
+  StudentList getStudentList(int grade, int class_no);
   Student getStudent(const string& user_id);
+  bool isStudent(const string& user_id);
 
   static StudentInterface& getInstance(){
     if(instance == NULL)

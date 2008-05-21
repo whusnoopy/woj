@@ -65,5 +65,37 @@ int TeacherInterface::deleteControlClass(const string& user_id, const Class& mcl
   return ret;
 }
 
+TeacherList TeacherInterface::getTeacherList() {
+  Connection* connection = createConnection(); 
+  TeacherList teacher_list;
+  string query = "select * from teachers";
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    string user_id = result_set.getString("user_id");
+    string realname = result_set.getString("realname");
+    bool available = (result_set.getString("available") == "Y");
+    teacher_list.push_back(string(user_id, realname, available));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return teacher_list;
+}
+
+bool TeacherInterface::isTeacher(const string& user_id) {
+  Connection* connection = createConnection(); 
+  TeacherList teacher_list;
+  string query = "select * from teachers where user_id = '";
+  query += changeSymbol(user_id) + "'";
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  bool ret = result_set.next();
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 //int TeacherInterface::addControlClassList(const string& user_id, const ClassList& class_list);
 

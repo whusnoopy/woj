@@ -22,6 +22,14 @@ int TeachInterface::deleteControlClass(const string& user_id, const Class& mclas
   return TeacherInterface::getInstance().deleteControlClass(user_id, mclass);
 }
 
+int TeachInterface::getTeacherList() {
+  return TeacherInterface::getInstance().getTeacherList();
+}
+
+int TeachInterface::isTeacher(const string& user_id) {
+  return TeacherInterface::getInstance().isTeacher(user_id);
+}
+
 int TeachInterface::addStudent(const Student& student) {
   return StudentInterface::getInstance().addStudent(student);
 }
@@ -38,8 +46,16 @@ StudentList TeachInterface::getStudentList(int grade) {
   return StudentInterface::getInstance().getStudentList(grade);
 }
 
+StudentList TeachInterface::getStudentList(int grade, int class_no) {
+  return StudentInterface::getInstance().getStudentList(grade, class_no);
+}
+
 Student TeachInterface::getStudent(const string& user_id) {
   return StudentInterface::getInstance().getStudent(user_id);
+}
+
+Student TeachInterface::isStudent(const string& user_id) {
+  return StudentInterface::getInstance().isStudent(user_id);
 }
 
 
