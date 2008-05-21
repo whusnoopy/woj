@@ -75,7 +75,7 @@ TeacherList TeacherInterface::getTeacherList() {
     string user_id = result_set.getString("user_id");
     string realname = result_set.getString("realname");
     bool available = (result_set.getString("available") == "Y");
-    teacher_list.push_back(string(user_id, realname, available));
+    teacher_list.push_back(Teacher(user_id, realname, available));
   }
   result_set.close();
   connection->close();

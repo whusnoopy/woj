@@ -77,5 +77,7 @@
 #include "deletecontrolclassprocessimp.h"
 #include "jobprocessimp.h"
 #include "listjobdoneprocessimp.h"
-
+#include "checkstudentorteacherprocessimp.h"
+#include "studentlistprocessimp.h"
+#include "teacherlistprocessimp.h"
 

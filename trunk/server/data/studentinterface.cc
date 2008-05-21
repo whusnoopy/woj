@@ -119,7 +119,7 @@ Student StudentInterface::getStudent(const string& user_id) {
   return student;
 }
 
-Student StudentInterface::isStudent(const string& user_id) {
+bool StudentInterface::isStudent(const string& user_id) {
   Connection* connection = createConnection();  
   string query = "select * from students where user_id = '";
   query += changeSymbol(user_id) + "'"; 
