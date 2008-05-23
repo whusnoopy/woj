@@ -58,9 +58,8 @@ class LogFile {
         return;
       }
       string filename = 
-               stringPrintf("%s/%s.%s.%s.%d.log",
+               stringPrintf("%s/%s.%s.%d.log",
                             dir.c_str(),
-                            getlogin(),
                             FLAGS_process_name.c_str(),
                             getLocalTimeAsString("%Y%m%d-%H%M%S").c_str(),
                             getpid());
