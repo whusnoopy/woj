@@ -2127,7 +2127,8 @@ bool DatabaseInterface::checkContestAcBefore(const ContestAcBefore& contest_acbe
   query += "' and time < '" + changeSymbol(contest_acbefore.time);
   query += "' and contest_id = '" + stringPrintf("%d", contest_acbefore.contest_id);
   query += "' and problem_id = '" + stringPrintf("%d", contest_acbefore.problem_id);
-  query += "' and type = 'N'";
+  query += "' and result = '" + stringPrintf("%d", ACCEPTED) + "' and type = 'N'";
+  LOG(INFO) << query;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   ret = result_set.next();
@@ -2140,19 +2141,25 @@ bool DatabaseInterface::checkContestAcBefore(const ContestAcBefore& contest_acbe
 int DatabaseInterface::updateUserSolved(const Status& status, int op) {
   Connection* connection = createConnection();
   string query;
-  if (op == -1)
-    query = "update users set solveds = solveds - 1 where ";  
-  else 
-    query = "update users set solveds = solveds + 1 where ";
-  query += "user_id = '" + changeSymbol(status.getUserId()) + "' and ";
-  query += " not exist (select * from statuses where status_id != '";
-  query += stringPrintf("%d", status.getStatusId()) + "' and problem_id ";
-  query += " = '" + stringPrintf("%d", status.getProblemId()) + "' and ";
-  query += " result = '" + stringPrintf("%d", ACCEPTED) + "' and ";
-  query += " user_id = users.user_id and type = 'N')";
-  LOG(INFO) << query;
   connection->connect();
-  int ret = connection->excuteUpdate(query);
+  query = "select * from statuses where status_id != '";
+  query += stringPrintf("%d' and ", status.getStatusId()); 
+  query += stringPrintf("problem_id = '%d' and ", status.getProblemId()); 
+  query += stringPrintf("result = '%d' and ", ACCEPTED);
+  query += "user_id = '" + changeSymbol(status.getUserId()) + "' and type = 'N'";
+  Result result_set = connection->excuteQuery(query);
+  int canAdd = !result_set.next();
+  result_set.close();
+  int ret = 0;
+  if (canAdd) {
+    if (op == -1)
+      query = "update users set solveds = solveds - 1 where ";  
+    else 
+      query = "update users set solveds = solveds + 1 where ";
+    query += "user_id = '" + changeSymbol(status.getUserId()) + "'";
+    LOG(INFO) << query;
+    ret = connection->excuteUpdate(query);
+  }
   connection->close();
   delete connection;
   return ret;
