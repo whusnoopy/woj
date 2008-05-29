@@ -24,11 +24,11 @@ if [ "`which fpc`" != "" ]; then
   support_lang=$support_lang,pas
 fi
 
-if [ "`which java`" != "" ]; then
+if [ "`which gcj`" != "" ]; then
   support_lang=$support_lang,java
 fi
 
 ids=`cat /etc/passwd | grep flood | awk -F ':' '{print "--uid=" $3, "--gid=" $4}'`
-cmd="nohup /home/flood/flood/judge/bin/judge_client --support_lang=\"$support_lang\" --daemon --root_dir=\"/home/flood/worktemp\" --server_address=\"$address\" --server_port=$port $ids --log_level=4 --logtostderr=false &"
+cmd="./judge_client --support_lang=\"$support_lang\" --daemon --root_dir=\"/home/flood/worktemp\" --server_address=\"$address\" --server_port=$port $ids --log_level=5 --logtostderr=true"
 echo $cmd
 eval $cmd

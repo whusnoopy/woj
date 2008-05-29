@@ -231,7 +231,7 @@ void process(int communicate_socket) {
             << source_suffix;
 
   string working_dir = FLAGS_root_dir + stringPrintf("/working/%d", getpid());
-  string binary_filename = working_dir + "/prog";
+  string binary_filename = working_dir + "/Main";
   string source_filename = binary_filename + "." + source_suffix;
   string program_output_filename = working_dir + "/prog.out";
 
