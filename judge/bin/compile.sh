@@ -12,7 +12,10 @@ case ${src##*.} in
         g++ -o $bin -ansi -fno-asm -O2 -Wall -lm -static -s -DONLINE_JUDGE $src >/dev/null
         ;;
     pas)
-        fpc -o$bin -Fe"/proc/self/fd/2" -Sd -dONLINE_JUDGE -O2 $src >/dev/null
+        fpc -o$bin -Co -Cr -Ct -Ci -Fe"/proc/self/fd/2" -Sd -dONLINE_JUDGE -O2 $src >/dev/null
+        ;;
+    java)
+        javac $src >/dev/null
         ;;
     *) exit -1;;
 esac

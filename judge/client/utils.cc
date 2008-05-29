@@ -88,7 +88,7 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
   const char* filename[] = {run_info.stdin_filename,
                             run_info.stdout_filename,
                             run_info.stderr_filename};
-  int mode[] = {O_RDONLY, O_RDWR | O_CREAT | O_TRUNC, O_RDWR};
+  int mode[] = {O_RDONLY, O_RDWR | O_CREAT | O_TRUNC, O_RDWR | O_CREAT | O_TRUNC};
   int file[] = {run_info.file_stdin,
                 run_info.file_stdout,
                 run_info.file_stderr};

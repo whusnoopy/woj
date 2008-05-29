@@ -25,7 +25,7 @@ int doCompile(int communicate_socket,
   LOG(INFO) << "Compiling " << source_filename;
   sendReply(communicate_socket, COMPILING);
   string command = FLAGS_root_dir + "/bin/compile.sh " + source_filename;
-  LOG(INFO) << "Compile command: " << command;
+  LOG(DEBUG) << "Compile command: " << command;
 
   int file_pipe[2];
   if (pipe(file_pipe) < 0) {

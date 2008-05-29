@@ -21,6 +21,7 @@
 TraceCallback* TraceCallback::instance_;
 
 bool TraceCallback::onExecve() {
+  LOG(DEBUG) << "Start to execve";
   if (result_ < 0) {
     result_ = RUNNING;
     return true;
@@ -30,18 +31,22 @@ bool TraceCallback::onExecve() {
 }
 
 void TraceCallback::onExit() {
+  LOG(DEBUG) << "On Exit Status";
   exited_ = true;
 }
 
 void TraceCallback::onMemoryLimitExceeded() {
+  LOG(DEBUG) << "On Memory Limit Exceeded Status";
   result_ = MEMORY_LIMIT_EXCEEDED;
 }
 
 void TraceCallback::onError() {
+  LOG(DEBUG) << "On Unknown Error Status";
   result_ = SYSTEM_ERROR;
 }
 
 void TraceCallback::onRestrictedFunction() {
+  LOG(INFO) << "Restricted Function";
   result_ = RESTRICTED_FUNCTION;
 }
 
