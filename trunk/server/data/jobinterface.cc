@@ -4,9 +4,10 @@ JobInterface* JobInterface::instance = NULL;
 
 int JobInterface::addJob(const Job& job) {
   Connection* connection = createConnection();  
-  string query = "insert into jobs(description, publish_time, year, term, available) values (";
+  string query = "insert into jobs(description, publish_time, course_id, year, term, available) values (";
   query += "'" + changeSymbol(job.getDescription()) + "'," +
-           "'" + changeSymbol(job.getPublishTime()) + "'," + 
+           "'" + changeSymbol(job.getPublishTime()) + "'," +
+           "'" + stringPrintf("%d", job.getCourseId()) + "'," +
            "'" + stringPrintf("%d", job.getYear()) + "'," +
            "'" + stringPrintf("%c", job.getTerm()) + "'," +
            "'" + changeSymbol(job.getAvailable() ? "Y" : "N") + "')";
@@ -102,10 +103,10 @@ int JobInterface::disableJob(int job_id, bool available) {
   return ret;
 }
 
-JobList JobInterface::getJobList(const string& teacher) {
+JobList JobInterface::getJobList(int course_id) {
   Connection* connection = createConnection();  
-  string query = "select * from jobs where user_id = '";
-  query += changeSymbol(teacher) + "'";
+  string query = "select * from jobs where course_id = '";
+  query += stringPrintf("%d", course_id) + "'";
   JobItem item;
   JobList job_list;
   connection->connect();
@@ -114,7 +115,31 @@ JobList JobInterface::getJobList(const string& teacher) {
     item.job_id = result_set.getInt("job_id");
     item.description = result_set.getString("description");
     item.publish_time = result_set.getString("publish_time");
-    item.teacher = result_set.getString("user_id");
+    item.course_id = result_set.getInt("course_id");
+    item.year = result_set.getInt("year");
+    item.term = *(result_set.getString("term").c_str());
+    item.available = (result_set.getString("available") == "Y");
+    job_list.push_back(item);
+  }
+  connection->close();
+  delete connection;
+  return job_list;
+}
+
+JobList JobInterface::getJobList(const string& student) {
+  Connection* connection = createConnection();  
+  string query = "select * from jobs where course_id in (";
+  query += " select course_id from studentstocourses where user_id = '";
+  query += changeSymbol(student) + "')";
+  JobItem item;
+  JobList job_list;
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    item.job_id = result_set.getInt("job_id");
+    item.description = result_set.getString("description");
+    item.publish_time = result_set.getString("publish_time");
+    item.course_id = result_set.getInt("course_id");
     item.year = result_set.getInt("year");
     item.term = *(result_set.getString("term").c_str());
     item.available = (result_set.getString("available") == "Y");
@@ -137,7 +162,7 @@ Job JobInterface::getJob(int job_id) {
     job.setJobId(result_set.getInt("job_id"));
     job.setDescription(result_set.getString("description"));
     job.setPublishTime(result_set.getString("publish_time"));
-    job.setTeacher(result_set.getString("user_id"));
+    job.setCourseId(result_set.getInt("course_id"));
     job.setYear(result_set.getInt("year"));
     job.setTerm(*(result_set.getString("term").c_str()));
     job.setAvailable((result_set.getString("available") == "Y"));
@@ -200,6 +225,7 @@ int JobInterface::updateJob(const Job& job) {
   string query = "update jobs set";
   query += "description = '" + changeSymbol(job.getDescription()) + "'," +
            "publish_time = '" + changeSymbol(job.getPublishTime()) + "'," + 
+           "course_id = '" + stringPrintf("%d", job.getCourseId()) + "'," +
            "year = '" + stringPrintf("%d", job.getYear()) + "'," +
            "term = '" + stringPrintf("%c", job.getTerm()) + "' " +
            " where job_id = '" + stringPrintf("%d'", job.getJobId());

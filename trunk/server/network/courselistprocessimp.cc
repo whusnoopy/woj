@@ -1,23 +1,23 @@
-#include "studentlistprocessimp.h"
+#include "courselistprocessimp.h"
 
 #include <string>
 #include <set>
 #include <vector>
 
-#include "object/student.h"
+#include "object/course.h"
 #include "object/info.h"
 #include "object/list.h"
 #include "util/calulate.h"
 #include "data/teachinterface.h"
-#include "object/student.h"
-#include "object/list.h"
+#include "data/datainterface.h"
+#include "object/job.h"
 #include "base/util.h"
 #include "base/logging.h"
 #include "base/flags.h"
 using namespace std;
 
-void StudentListProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process Student list Information for:" << ip;
+void CourseListProcessImp::process(int socket_fd, const string& ip, int length){
+  LOG(INFO) << "Process course list Information for:" << ip;
   char* buf;
   buf = new char[length+1];
   memset(buf,0,sizeof(buf));
@@ -31,29 +31,26 @@ void StudentListProcessImp::process(int socket_fd, const string& ip, int length)
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
+  iter++;
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find course_id from data for:" << ip;
+    LOG(ERROR) << "Cannot find teacher from data for:" << ip;
     return;
   }
-  int course_id = atoi(iter->c_str());
+  string teacher = *iter;
   iter++;
+  CourseList course_list = TeachInterface::getInstance().getCourseList(teacher);
   string databuf;
-  StudentList student_list = TeachInterface::getInstance().getStudentList(course_id);
-  StudentList::iterator student_iter = student_list.begin();
   bool first = true;
-  while (student_iter != student_list.end()) {
+  CourseList::iterator course_iter = course_list.begin();
+  while (course_iter != course_list.end()) {
     if (!first) 
       databuf += "\001";
     else
       first = false;
-    databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d",
-                            student_iter->user_id.c_str(),
-                            student_iter->realname.c_str(),
-                            student_iter->student_id.c_str(),
-                            student_iter->available ? "Y" : "N",
-                            student_iter->mclass.getGrade(),
-                            student_iter->mclass.getClass());
-    student_iter++;
+    databuf += stringPrintf("%d\001%s",
+                            course_iter->course_id,
+                            course_iter->description.c_str());
+    course_iter++;
   }
   string len = stringPrintf("%010d", databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
@@ -64,6 +61,6 @@ void StudentListProcessImp::process(int socket_fd, const string& ip, int length)
     LOG(ERROR) << "Cannot return data to:" << ip;
     return;
   }
-  LOG(INFO) << "Process Student list Info completed for" << ip;
+  LOG(INFO) << "Process course list completed for" << ip;
 }
 

@@ -24,8 +24,8 @@ string Job::getPublishTime() const {
   return publish_time_;
 }
 
-string Job::getTeacher() const {
-  return user_id_;
+int Job::getCourseId() const {
+  return course_id_;
 }
 
 int Job::getYear() const {
@@ -62,8 +62,8 @@ void Job::setPublishTime(const string& publish_time) {
   publish_time_ = publish_time;
 }
 
-void Job::setTeacher(const string& user_id) {
-  user_id_ = user_id;
+void Job::setCourseId(int course_id) {
+  course_id_ = course_id;
 }
 
 void Job::setYear(int year){

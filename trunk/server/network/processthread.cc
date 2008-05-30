@@ -215,9 +215,10 @@ void ProcessThread::running(){
         break;
       default: 
         unknown = processTeach(type);
-        if (unknown) 
-        LOG(ERROR) << "Unknown type data.";
-        close(connect_fd);
+        if (unknown) { 
+          LOG(ERROR) << "Unknown type data.";
+          close(connect_fd);
+        }
         break;
     }
     if (unknown) 
@@ -308,6 +309,22 @@ bool ProcessThread::processTeach(int type) {
       return false;
     case 505:  //tl
       m_process_imp = new TeacherListProcessImp();
+      return false;
+    case 375:  //ol
+      m_process_imp = new CourseListProcessImp();
+      return false;
+    case 379:  //op
+      m_process_imp = new CourseProcessImp();
+      return false;
+    case 252:  //js
+      m_process_imp = new JobListForStudentProcessImp();
+      return false;
+    case 482:  //so
+      m_process_imp = new AddStudentToCourseProcessImp();
+      return false;
+    case 118:  //eo
+      m_process_imp = new AddSeriesStudentToCourseProcessImp();
+      return false;
     default:
       return true;
   }

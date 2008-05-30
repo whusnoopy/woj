@@ -5,6 +5,7 @@
 
 #include "object/teacher.h"
 #include "object/student.h"
+#include "object/course.h"
 #include "object/job.h"
 #include "data/teacherinterface.h"
 #include "data/studentinterface.h"
@@ -22,10 +23,12 @@ public:
   int addTeacher(const Teacher&);
   int updateTeacher(const Teacher&);
   int disableTeacher(const string& user_id, bool available);
-  int addControlClass(const string& user_id, const Class& mclass);
-  int deleteControlClass(const string& user_id, const Class& m_class);
+  int addControlClass(const string& user_id, const string& description);
+  int deleteControlClass(const string& user_id, int course_id);
   TeacherList getTeacherList();
   bool isTeacher(const string& user_id);
+  CourseList getCourseList(const string& user_id);
+  Course getCourse(int course_id);
 
   int addStudent(const Student&);
   int updateStudent(const Student&);
@@ -34,6 +37,8 @@ public:
   StudentList getStudentList(int grade);
   StudentList getStudentList(int grade, int class_no);
   bool isStudent(const string& user_id);
+  int addStudentToCourse(const string& user_id, int course_id);
+  int deleteStudentFromCourse(const string& user_id, int course_id);
 
   int addJob(const Job&);
   int addJobToClass(int job_id, const Class& mclass);
@@ -41,7 +46,8 @@ public:
   int addSet(const vector<int>& problem_list, int num);
   int addSetToJob(int job_id, int set_id);
   int disableJob(int job_id, bool available);
-  JobList getJobList(const string& teacher);
+  JobList getJobList(int course_id);
+  JobList getJobList(const string& student);
   Job getJob(int job_id);
   int deleteSetForJob(int job_id, int set_id);
   int updateJob(const Job&);

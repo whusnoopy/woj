@@ -4,6 +4,7 @@
 #include <string>
 
 #include "object/teacher.h"
+#include "object/course.h"
 #include "data/connectionfactory.h"
 using namespace std;
 
@@ -18,10 +19,12 @@ public:
   int addTeacher(const Teacher&);
   int updateTeacher(const Teacher&);
   int disableTeacher(const string& user_id, bool available);
-  int addControlClass(const string& user_id, const Class& mclass);
-  int deleteControlClass(const string& user_id, const Class& mclass);
+  int addControlClass(const string& user_id, const string& description);
+  int deleteControlClass(const string& user_id, int course_id);
   TeacherList getTeacherList();
   bool isTeacher(const string& user_id);
+  CourseList getCourseList(const string& user_id);
+  Course getCourse(int course_id);
 
   static TeacherInterface& getInstance(){
     if(instance == NULL)

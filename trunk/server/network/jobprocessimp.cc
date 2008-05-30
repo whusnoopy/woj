@@ -38,11 +38,11 @@ void JobProcessImp::process(int socket_fd, const string& ip, int length){
   iter++;
   string databuf;
   Job job = TeachInterface::getInstance().getJob(job_id);
-  databuf += stringPrintf("%d\001%s\001%s\001%s\001%d\001%c", 
+  databuf += stringPrintf("%d\001%s\001%s\001%d\001%d\001%c", 
                           job.getJobId(), 
                           job.getDescription().c_str(),
                           job.getPublishTime().c_str(),
-                          job.getTeacher().c_str(),
+                          job.getCourseId(),
                           job.getYear(),
                           job.getTerm());
   vector<int> problem_list = job.getProblemList();

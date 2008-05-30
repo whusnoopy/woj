@@ -37,10 +37,10 @@ void AddJobProcessImp::process(int socket_fd, const string& ip, int length){
   iter++;
   job.setPublishTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find teacher_id from data for:" << ip;
+    LOG(ERROR) << "Cannot find course_id from data for:" << ip;
     return;
   }
-  job.setTeacher(*iter);
+  job.setCourseId(atoi(iter->c_str()));
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find year from data for:" << ip;

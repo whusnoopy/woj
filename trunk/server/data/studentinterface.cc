@@ -47,10 +47,12 @@ int StudentInterface::disableStudent(const string& user_id, bool available) {
   return ret;
 }
 
-StudentList StudentInterface::getStudentList(int grade) {
+StudentList StudentInterface::getStudentList(int course_id) {
   Connection* connection = createConnection();
-  string query = "select * from students where grade = '";
-  query += stringPrintf("%d'", grade);
+  string query = "select * from students as t1 where exist ("
+                 "select * from studentstocourse as t2 where"
+                 "t1.user_id = t2.user_id and t2.course_id = '";
+  query += stringPrintf("%d')", course_id);
   StudentList student_list;
   StudentItem item;
   connection->connect();
@@ -62,7 +64,7 @@ StudentList StudentInterface::getStudentList(int grade) {
     item.available = (result_set.getString("available") == "Y");
     item.mclass.setGrade(result_set.getInt("grade"));
     item.mclass.setClass(result_set.getInt("class"));
-    item.is_done = false;
+    item.score = 0;
     student_list.push_back(item);
   }
   connection->close();
@@ -86,7 +88,7 @@ StudentList StudentInterface::getStudentList(int grade, int class_no) {
     item.available = (result_set.getString("available") == "Y");
     item.mclass.setGrade(result_set.getInt("grade"));
     item.mclass.setClass(result_set.getInt("class"));
-    item.is_done = false;
+    item.score = 0;
     student_list.push_back(item);
   }
   connection->close();
@@ -127,6 +129,30 @@ bool StudentInterface::isStudent(const string& user_id) {
   Result result_set = connection->excuteQuery(query);
   bool ret = result_set.next();
   result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int StudentInterface::addStudentToCourse(const string& user_id, int course_id) {
+  Connection* connection = createConnection();  
+  string query = "insert into studentstocourse(user_id, course_id) values (";
+  query += "'" + changeSymbol(user_id) + "', ";
+  query += stringPrintf("'%d')", course_id);
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+int StudentInterface::deleteStudentFromCourse(const string& user_id, int course_id) {
+  Connection* connection = createConnection();  
+  string query = "delete from studentstocourse where ";
+  query += "user_id = '" + changeSymbol(user_id) + "' and";
+  query += " course_id = '" + stringPrintf("%d'", course_id);
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
   return ret;

@@ -29,7 +29,6 @@ void DeleteControlClassProcessImp::process(int socket_fd, const string& ip, int 
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
-  Class mclass;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find user_id from data for:" << ip;
     return;
@@ -37,24 +36,12 @@ void DeleteControlClassProcessImp::process(int socket_fd, const string& ip, int 
   string user_id = *iter;
   iter++;
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find college from data for:" << ip;
+    LOG(ERROR) << "Cannot find course_id from data for:" << ip;
     return;
   }
-  mclass.setCollege(*iter);
+  int course_id = atoi(iter->c_str());
   iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find grade from data for:" << ip;
-    return;
-  }
-  mclass.setGrade(atoi(iter->c_str()));
-  iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find class from data for:" << ip;
-    return;
-  }
-  mclass.setClass(atoi(iter->c_str()));
-  iter++;
-  int ret = TeachInterface::getInstance().deleteControlClass(user_id, mclass);
+  int ret = TeachInterface::getInstance().deleteControlClass(user_id, course_id);
   if (ret) {
     sendReply(socket_fd, 'N');
     LOG(ERROR) << "add Control Class error";
