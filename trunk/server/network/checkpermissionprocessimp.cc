@@ -82,7 +82,7 @@ void CheckPermissionProcessImp::process(int socket_fd, const string& ip, int len
       return;
       break;
   }
-  if (sendReply(socket_fd, reply) != 1) {
+  if (sendReply(socket_fd, reply)) {
     LOG(ERROR) << "Cannot reply to : " << ip;
     return;
   }

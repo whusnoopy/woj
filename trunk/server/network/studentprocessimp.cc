@@ -41,7 +41,7 @@ void StudentProcessImp::process(int socket_fd, const string& ip, int length){
                           student.getUserId().c_str(),
                           student.getStudentId().c_str(),
                           student.getRealName().c_str(),
-                          student.getClass().getCollege().c_str(),
+                          "  ",
                           student.getClass().getGrade(),
                           student.getClass().getClass(),
                           student.getAvailable() ? "Y" :"N");  

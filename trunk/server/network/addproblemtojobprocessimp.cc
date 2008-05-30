@@ -45,10 +45,12 @@ void AddProblemToJobProcessImp::process(int socket_fd, const string& ip, int len
     return;
   }
   int should_do_number = atoi(iter->c_str());
+  LOG(DEBUG) << "should_do_number:" <<should_do_number;
   iter++;
   vector<int> problem_list;
   while (iter != datalist.end()) {
     problem_list.push_back(atoi(iter->c_str()));
+    iter++;
   }
   int ret;
   if (type == "M") {

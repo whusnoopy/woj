@@ -48,8 +48,10 @@ int JobInterface::addProblemToJob(int job_id, const vector<int>& problem_list) {
   while (problem_iter != problem_list.end()) {
     string query = "insert into problemstojobs(job_id, problem_id) values (";
     query += "'" + stringPrintf("%d", job_id) + "'," +
-             "'" + stringPrintf("%d", *problem_iter) + "')"; 
+             "'" + stringPrintf("%d", *problem_iter) + "')";
+    LOG(DEBUG) << query;
     ret = connection->excuteUpdate(query);
+    problem_iter++;
   }  
   connection->close();
   delete connection;
@@ -60,20 +62,24 @@ int JobInterface::addSet(const vector<int>& problem_list, int num) {
   connection->connect();
   string query = "insert into sets(number) values(";
   query += "'" + stringPrintf("%d", num) + "')";
+  LOG(DEBUG) << query;
   int ret = connection->excuteUpdate(query);
-  query += "select last_insert_id() as set_id";
+  query = "select last_insert_id() as set_id";
   Result result_set = connection->excuteQuery(query);
   int set_id = 0;
   if (result_set.next()) {
     set_id = result_set.getInt("set_id");
   }
   result_set.close();
+  LOG(DEBUG) << "here is ok";
   vector<int>::const_iterator problem_iter = problem_list.begin();
   while (problem_iter != problem_list.end()) {
-    string query = "insert into problemstosets(set_id, problem_id) values (";
+    query = "insert into problemstosets(set_id, problem_id) values (";
     query += "'" + stringPrintf("%d", set_id) + "'," +
-             "'" + stringPrintf("%d", *problem_iter) + "')"; 
+             "'" + stringPrintf("%d", *problem_iter) + "')";
+    LOG(DEBUG) << query;
     ret = connection->excuteUpdate(query);
+    problem_iter++;
   }
   connection->close();
   delete connection;
@@ -85,6 +91,7 @@ int JobInterface::addSetToJob(int job_id, int set_id) {
   string query = "insert into setstojobs(job_id, set_id) values (";
   query += "'" + stringPrintf("%d", job_id) + "'," +
            "'" + stringPrintf("%d", set_id) + "')"; 
+  LOG(DEBUG) << query;
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -107,6 +114,7 @@ JobList JobInterface::getJobList(int course_id) {
   Connection* connection = createConnection();  
   string query = "select * from jobs where course_id = '";
   query += stringPrintf("%d", course_id) + "'";
+  LOG(DEBUG) << query;
   JobItem item;
   JobList job_list;
   connection->connect();
@@ -129,8 +137,9 @@ JobList JobInterface::getJobList(int course_id) {
 JobList JobInterface::getJobList(const string& student) {
   Connection* connection = createConnection();  
   string query = "select * from jobs where course_id in (";
-  query += " select course_id from studentstocourses where user_id = '";
+  query += " select course_id from studentstocourse where user_id = '";
   query += changeSymbol(student) + "')";
+  LOG(DEBUG) << query;
   JobItem item;
   JobList job_list;
   connection->connect();
@@ -154,6 +163,7 @@ Job JobInterface::getJob(int job_id) {
   Connection* connection = createConnection();  
   string query = "select * from jobs where job_id = '";
   query += stringPrintf("%d", job_id) + "'";
+  LOG(DEBUG) << query;
   Job job; 
   job.setJobId(0);
   connection->connect();
@@ -168,8 +178,9 @@ Job JobInterface::getJob(int job_id) {
     job.setAvailable((result_set.getString("available") == "Y"));
   }
   result_set.close();
-  query += "select * from problemstojobs where job_id = '";
+  query = "select * from problemstojobs where job_id = '";
   query += stringPrintf("%d", job_id) + "'";
+  LOG(DEBUG) << query;
   result_set = connection->excuteQuery(query);
   vector<int> must_do_problem_list;
   while (result_set.next()) {
@@ -179,9 +190,11 @@ Job JobInterface::getJob(int job_id) {
   job.setProblemList(must_do_problem_list);
   vector<SetItem> set_list;
   SetItem item;
-  query += "select sets.set_id, number from sets, setstojobs where ";
+  query = "select sets.set_id, number from sets, setstojobs where ";
   query += "sets.set_id = setstojobs.set_id and job_id = '";
   query += stringPrintf("%d", job_id) + "'";
+  LOG(DEBUG) << query;
+  result_set = connection->excuteQuery(query);
   while (result_set.next()) {
     item.set_id = result_set.getInt("set_id");
     item.number = result_set.getInt("number");
@@ -191,8 +204,9 @@ Job JobInterface::getJob(int job_id) {
   vector<SetItem>::iterator set_iter = set_list.begin();
   while (set_iter != set_list.end()) {
     int set_id = set_iter->set_id;
-    query = "select * problemstosets where set_id = '";
+    query = "select * from problemstosets where set_id = '";
     query += stringPrintf("%d'", set_id);
+    LOG(DEBUG) << query;
     vector<int> should_do_problem_list;
     result_set = connection->excuteQuery(query);
     while (result_set.next()) {

@@ -1,0 +1,130 @@
+#include "submitdocprocessimp.h"
+
+#include <vector>
+#include <string>
+
+#include "object/objectinc.h"
+#include "object/bufsize.h"
+#include "util/calulate.h"
+#include "data/datainterface.h"
+#include "judgecontrol/judgecontrol.h"
+using namespace std;
+
+void SubmitDocProcessImp::process(int socket_fd, const string& ip, int length) {
+  LOG(INFO) << "Process the Submit Doc for:" << ip;
+  char* buf;
+  buf = new char[length+1];
+  memset(buf,0,sizeof(buf));
+  if (socket_read(socket_fd, buf, length) != length) {
+    LOG(ERROR) << "Cannot read data from:" << ip;
+    delete[] buf;
+    return;
+  }
+  string data(buf, buf + length);
+  delete[] buf;
+  vector<string> datalist;
+  spriteString(data, 1, datalist);
+  LOG(DEBUG) << data;
+  vector<string>::iterator iter = datalist.begin();
+  Status status;
+  string user_id, password, submit_ip;
+  int problem_id = 0, contest_id = 0, language = 0, code_length = 0;
+  bool share_code = false;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find user_id from data for:" << ip;
+    return;
+  }
+  user_id = *iter;
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find password from data for:" << ip;
+    return;
+  }
+  password = *iter;
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find problem_id from data for:" << ip;
+    return;
+  }
+  LOG(DEBUG) << *iter;
+  problem_id = atoi(iter->c_str());
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find contest_id from data for:" << ip;
+    return;
+  }
+  contest_id = atoi(iter->c_str());
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find language from data for:" << ip;
+    return;
+  }
+  language = atoi(iter->c_str());
+  iter++;  
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find file_name from data for:" << ip;
+    return;
+  }
+  string file_name = *iter;
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find file_length from data for:" << ip;
+    return;
+  }
+  code_length = atoi(iter->c_str());
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find share_code from data for:" << ip;
+    return;
+  }
+  share_code = (*iter == "Y");
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find ip from data for:" << ip;
+    return;
+  }
+  submit_ip = *iter;
+  iter++;
+  if (iter == datalist.end()) {
+    LOG(ERROR) << "Cannot find type from data for:" << ip;
+    return;
+  }
+  string type = *iter;
+  iter++;
+  BufSize source_buf;
+  source_buf.alloc(code_length);
+  if (socket_read(socket_fd, source_buf.getBuf(), code_length) != code_length) {
+    LOG(ERROR) << "Cannot read source from:" << ip;
+    return;
+  }
+  string source(source_buf.getBuf(), source_buf.getBuf() + code_length);
+  LOG(DEBUG) << "source" << source;
+  //check user;
+  User user = DataInterface::getInstance().getUserInfo(user_id);
+  if (user.getPassword() != password) {
+    sendReply(socket_fd, 'N');
+    return;
+  }
+  int code_id = DataInterface::getInstance().addCode(Code(0, share_code, source));
+  status.setUserId(user_id);
+  status.setProblemId(problem_id);
+  status.setContestId(contest_id);
+  status.setLanguage(language);
+  status.setCodeLength(code_length);
+  status.setSubmitIp(submit_ip);
+  status.setSubmitTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
+  status.setResult(0);
+  status.setMemory(-1);
+  status.setTime(-1);
+  status.setCodeId(code_id);
+  status.setErrorId(0);
+  status.setType(type.substr(0,1));
+  int status_id = DataInterface::getInstance().addStatus(status);
+  status.setStatusId(status_id);
+  if (sendReply(socket_fd, 'Y') != 0) {
+    LOG(ERROR) << "Send reply error:" << ip;
+    return;
+  }
+  LOG(INFO) << "Submit Doc process completed." << ip;
+}
+

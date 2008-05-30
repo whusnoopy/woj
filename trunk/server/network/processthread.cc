@@ -325,6 +325,9 @@ bool ProcessThread::processTeach(int type) {
     case 118:  //eo
       m_process_imp = new AddSeriesStudentToCourseProcessImp();
       return false;
+    case 509:  //tp
+      m_process_imp = new TeacherProcessImp();
+      return false;
     default:
       return true;
   }

@@ -85,4 +85,5 @@
 #include "joblistforstudentprocessimp.h"
 #include "addstudenttocourseprocessimp.h"
 #include "addseriesstudenttocourseprocessimp.h"
+#include "teacherprocessimp.h"
 

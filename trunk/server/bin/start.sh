@@ -1,1 +1,1 @@
- ./main --root_dir="/home/flood/worktemp" --logtostderr=false --log_level=5
+ ./main --root_dir="/home/flood/worktemp" --logtostderr=false --log_level=4

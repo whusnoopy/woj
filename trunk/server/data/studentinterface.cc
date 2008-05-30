@@ -49,10 +49,11 @@ int StudentInterface::disableStudent(const string& user_id, bool available) {
 
 StudentList StudentInterface::getStudentList(int course_id) {
   Connection* connection = createConnection();
-  string query = "select * from students as t1 where exist ("
-                 "select * from studentstocourse as t2 where"
-                 "t1.user_id = t2.user_id and t2.course_id = '";
+  string query = "select * from students where user_id in ("
+                 "select user_id from studentstocourse  where"
+                 " course_id = '";
   query += stringPrintf("%d')", course_id);
+  LOG(DEBUG) << query; 
   StudentList student_list;
   StudentItem item;
   connection->connect();
