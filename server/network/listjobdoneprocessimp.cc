@@ -33,11 +33,6 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find grade from data for:" << ip;
-    return;
-  }
-  int grade = atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find job_id from data for:" << ip;
@@ -47,10 +42,10 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
   iter++;
   string databuf;
   Job job = TeachInterface::getInstance().getJob(job_id);
-  StudentList student_list = TeachInterface::getInstance().getStudentList(grade);
+  StudentList student_list = TeachInterface::getInstance().getStudentList(job.getCourseId());
   StudentList::iterator student_iter = student_list.begin();
   while (student_iter != student_list.end()) {
-    student_iter->is_done = checkJobDone(student_iter->user_id, job);
+    student_iter->score = checkJobDone(student_iter->user_id, job);
     student_iter++;
   }
   student_iter = student_list.begin();
@@ -67,7 +62,7 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
                             student_iter->available ? "Y" : "N",
                             student_iter->mclass.getGrade(),
                             student_iter->mclass.getClass(),
-                            student_iter->is_done? "Y" : "N");
+                            student_iter->score);
     student_iter++;
   }
   string len = stringPrintf("%010d", databuf.length());
@@ -82,17 +77,24 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
   LOG(INFO) << "Process list Job done Info completed for" << ip;
 }
 
-bool ListJobDoneProcessImp::checkJobDone(const string& user_id, const Job& job) {
+int ListJobDoneProcessImp::checkJobDone(const string& user_id, const Job& job) {
   ProblemSet ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
   vector<int> problem_list = job.getProblemList();
   vector<int>::iterator must_do_problem = problem_list.begin();
+  int has_done_must_problem = 0; 
   while (must_do_problem != problem_list.end()) {
-    if (ac_set.count(*must_do_problem) == 0) 
-      return false;      
+    if (ac_set.count(*must_do_problem) > 0)
+      has_done_must_problem++;
     must_do_problem++;
+  }
+  int score = 60;
+  if (has_done_must_problem < problem_list.size()) {
+    score = has_done_must_problem * 60 / problem_list.size();
+    return score;
   }
 
   vector<SetItem> set_list = job.getSetList();
+  int should_score = 40 / set_list.size();
   vector<SetItem>::iterator should_do_set = set_list.begin();
   while (should_do_set != set_list.end()) {
     vector<int>::iterator should_do_problem = should_do_set->problem_list.begin();
@@ -103,12 +105,13 @@ bool ListJobDoneProcessImp::checkJobDone(const string& user_id, const Job& job) 
       } else 
       should_do_problem++;
     }
-    if (done_should_problem < should_do_set->number) {
-      return false;
-    }
+    if (done_should_problem < should_do_set->number) 
+      score += should_score * done_should_problem / should_do_set->number; 
+    else 
+      score += should_score;
     should_do_set++;
   }
-  return true;
+  return score;
 }
 
 

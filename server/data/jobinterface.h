@@ -22,7 +22,8 @@ public:
   int addSet(const vector<int>& problem_list, int num);
   int addSetToJob(int job_id, int set_id);
   int disableJob(int job_id, bool available);
-  JobList getJobList(const string& teacher);
+  JobList getJobList(int course_id);
+  JobList getJobList(const string& student);
   Job getJob(int job_id);
   int deleteSetForJob(int job_id, int set_id);
   int updateJob(const Job&);

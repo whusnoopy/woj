@@ -359,7 +359,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
         int re_error_id = DataInterface::getInstance().addError(Error(0, re_info));
         status.setErrorId(re_error_id);
         DataInterface::getInstance().updateStatus(status);
-        return -2;
+        break;
     }
     if (is_break)
       break;

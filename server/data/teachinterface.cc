@@ -14,12 +14,12 @@ int TeachInterface::disableTeacher(const string& user_id, bool available) {
   return TeacherInterface::getInstance().disableTeacher(user_id, available);
 }
 
-int TeachInterface::addControlClass(const string& user_id, const Class& mclass) {
-  return TeacherInterface::getInstance().addControlClass(user_id, mclass);
+int TeachInterface::addControlClass(const string& user_id, const string& description) {
+  return TeacherInterface::getInstance().addControlClass(user_id, description);
 }
 
-int TeachInterface::deleteControlClass(const string& user_id, const Class& mclass) {
-  return TeacherInterface::getInstance().deleteControlClass(user_id, mclass);
+int TeachInterface::deleteControlClass(const string& user_id, int course_id) {
+  return TeacherInterface::getInstance().deleteControlClass(user_id, course_id);
 }
 
 TeacherList TeachInterface::getTeacherList() {
@@ -28,6 +28,14 @@ TeacherList TeachInterface::getTeacherList() {
 
 bool TeachInterface::isTeacher(const string& user_id) {
   return TeacherInterface::getInstance().isTeacher(user_id);
+}
+
+CourseList TeachInterface::getCourseList(const string& user_id) {
+  return TeacherInterface::getInstance().getCourseList(user_id);
+}
+
+Course TeachInterface::getCourse(int course_id) {
+  return TeacherInterface::getInstance().getCourse(course_id);
 }
 
 int TeachInterface::addStudent(const Student& student) {
@@ -58,6 +66,14 @@ bool TeachInterface::isStudent(const string& user_id) {
   return StudentInterface::getInstance().isStudent(user_id);
 }
 
+int TeachInterface::addStudentToCourse(const string& user_id, int course_id) {
+  return StudentInterface::getInstance().addStudentToCourse(user_id, course_id);
+}
+
+int TeachInterface::deleteStudentFromCourse(const string& user_id, int course_id) {
+  return StudentInterface::getInstance().deleteStudentFromCourse(user_id, course_id);
+}
+
 
 int TeachInterface::addJob(const Job& job) {
   return JobInterface::getInstance().addJob(job);
@@ -83,8 +99,12 @@ int TeachInterface::disableJob(int job_id, bool available) {
   return JobInterface::getInstance().disableJob(job_id, available);
 }
 
-JobList TeachInterface::getJobList(const string& teacher) {
-  return JobInterface::getInstance().getJobList(teacher);
+JobList TeachInterface::getJobList(int course_id) {
+  return JobInterface::getInstance().getJobList(course_id);
+}
+
+JobList TeachInterface::getJobList(const string& student) {
+  return JobInterface::getInstance().getJobList(student);
 }
 
 Job TeachInterface::getJob(int job_id) {

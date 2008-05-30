@@ -44,7 +44,7 @@ typedef struct _STUDENT_ITEM_ {
   string student_id;
   bool available;
   Class mclass;
-  bool is_done;
+  int score;
 }StudentItem;
 
 typedef vector<StudentItem> StudentList;

@@ -31,13 +31,13 @@ void JobListProcessImp::process(int socket_fd, const string& ip, int length){
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find teacher from data for:" << ip;
+    LOG(ERROR) << "Cannot find course_id from data for:" << ip;
     return;
   }
-  string teacher = *iter;
+  int course_id = atoi(iter->c_str());
   iter++;
   string databuf;
-  JobList job_list = TeachInterface::getInstance().getJobList(teacher);
+  JobList job_list = TeachInterface::getInstance().getJobList(course_id);
   bool first = true;
   JobList::iterator job_iter = job_list.begin();
   while (job_iter != job_list.end()) {
@@ -45,11 +45,11 @@ void JobListProcessImp::process(int socket_fd, const string& ip, int length){
       databuf += "\001";
     else 
       first = false;
-    databuf += stringPrintf("%d\001%s\001%s\001%s\001%d\001%c", 
+    databuf += stringPrintf("%d\001%s\001%s\001%d\001%d\001%c", 
                             job_iter->job_id, 
                             job_iter->description.c_str(),
                             job_iter->publish_time.c_str(),
-                            job_iter->teacher.c_str(),
+                            job_iter->course_id,
                             job_iter->year,
                             job_iter->term);
   }

@@ -33,27 +33,16 @@ void AddJobToClassProcessImp::process(int socket_fd, const string& ip, int lengt
     LOG(ERROR) << "Cannot find job_id from data for:" << ip;
     return;
   }
-  int job_id = atoi(iter->c_str());
+//  int job_id = atoi(iter->c_str());
   iter++;
   if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find college from data for:" << ip;
+    LOG(ERROR) << "Cannot find course_id from data for:" << ip;
     return;
   }
-  mclass.setCollege(*iter);
+//  int course_id = atoi(iter->c_str());
   iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find grade from data for:" << ip;
-    return;
-  }
-  mclass.setGrade(atoi(iter->c_str()));
-  iter++;
-  if (iter == datalist.end()) {
-    LOG(ERROR) << "Cannot find class_number from data for:" << ip;
-    return;
-  }
-  mclass.setClass(atoi(iter->c_str()));
-  iter++;
-  int ret = TeachInterface::getInstance().addJobToClass(job_id, mclass);
+  int ret = 1;
+  //  int ret = TeachInterface::getInstance().addJobToClass(job_id, course_id);
   if (ret) {
     sendReply(socket_fd, 'N');
     LOG(ERROR) << "Add Job to Class Error";

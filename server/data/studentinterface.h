@@ -22,6 +22,8 @@ public:
   StudentList getStudentList(int grade, int class_no);
   Student getStudent(const string& user_id);
   bool isStudent(const string& user_id);
+  int addStudentToCourse(const string& user_id, int course_id);
+  int deleteStudentFromCourse(const string& user_id, int course_id);
 
   static StudentInterface& getInstance(){
     if(instance == NULL)

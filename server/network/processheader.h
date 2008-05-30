@@ -80,4 +80,9 @@
 #include "checkstudentorteacherprocessimp.h"
 #include "studentlistprocessimp.h"
 #include "teacherlistprocessimp.h"
+#include "courselistprocessimp.h"
+#include "courseprocessimp.h"
+#include "joblistforstudentprocessimp.h"
+#include "addstudenttocourseprocessimp.h"
+#include "addseriesstudenttocourseprocessimp.h"
 
