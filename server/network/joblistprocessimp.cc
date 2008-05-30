@@ -27,6 +27,7 @@ void JobListProcessImp::process(int socket_fd, const string& ip, int length){
   }
   string read_data(buf, buf + length);
   delete[] buf;
+  LOG(DEBUG) << read_data;
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
@@ -36,6 +37,7 @@ void JobListProcessImp::process(int socket_fd, const string& ip, int length){
   }
   int course_id = atoi(iter->c_str());
   iter++;
+  LOG(DEBUG) << "abc" << course_id;
   string databuf;
   JobList job_list = TeachInterface::getInstance().getJobList(course_id);
   bool first = true;
@@ -52,6 +54,7 @@ void JobListProcessImp::process(int socket_fd, const string& ip, int length){
                             job_iter->course_id,
                             job_iter->year,
                             job_iter->term);
+    job_iter++;
   }
   
   string len = stringPrintf("%010d", databuf.length());

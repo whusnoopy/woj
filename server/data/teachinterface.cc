@@ -26,6 +26,10 @@ TeacherList TeachInterface::getTeacherList() {
   return TeacherInterface::getInstance().getTeacherList();
 }
 
+Teacher TeachInterface::getTeacher(const string& user_id) {
+  return TeacherInterface::getInstance().getTeacher(user_id);
+}
+
 bool TeachInterface::isTeacher(const string& user_id) {
   return TeacherInterface::getInstance().isTeacher(user_id);
 }

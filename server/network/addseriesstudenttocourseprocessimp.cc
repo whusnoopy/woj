@@ -28,7 +28,6 @@ void AddSeriesStudentToCourseProcessImp::process(int socket_fd, const string& ip
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
-  iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find course_id from data for:" << ip;
     return;

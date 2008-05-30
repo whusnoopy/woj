@@ -52,6 +52,7 @@ void JobListForStudentProcessImp::process(int socket_fd, const string& ip, int l
                             job_iter->course_id,
                             job_iter->year,
                             job_iter->term);
+    job_iter++;
   }
   
   string len = stringPrintf("%010d", databuf.length());

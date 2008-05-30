@@ -26,6 +26,7 @@ public:
   int addControlClass(const string& user_id, const string& description);
   int deleteControlClass(const string& user_id, int course_id);
   TeacherList getTeacherList();
+  Teacher getTeacher(const string& user_id);
   bool isTeacher(const string& user_id);
   CourseList getCourseList(const string& user_id);
   Course getCourse(int course_id);

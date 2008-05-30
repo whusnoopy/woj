@@ -33,7 +33,6 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
   vector<string> datalist;
   spriteString(read_data, 1, datalist);
   vector<string>::iterator iter = datalist.begin();
-  iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find job_id from data for:" << ip;
     return;
@@ -55,13 +54,12 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
       databuf += "\001";
     else
       first = false;
-    databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d\001%s",
+    databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d",
                             student_iter->user_id.c_str(),
                             student_iter->realname.c_str(),
                             student_iter->student_id.c_str(),
                             student_iter->available ? "Y" : "N",
                             student_iter->mclass.getGrade(),
-                            student_iter->mclass.getClass(),
                             student_iter->score);
     student_iter++;
   }

@@ -41,16 +41,17 @@ int TeacherInterface::disableTeacher(const string& user_id, bool available) {
 
 int TeacherInterface::addControlClass(const string& user_id, const string& description) {
   Connection* connection = createConnection();  
-  string query = "insert into courses(description, user_id) values(";
-  query += "'" + changeSymbol(description) + "',"; 
+  string query = "insert into courses(description, available, user_id) values(";
+  query += "'" + changeSymbol(description) + "', 'Y', "; 
   query += "'" + changeSymbol(user_id) + "')";
-  int course_id = 0;
   connection->connect();
   connection->excuteUpdate(query);
-  query = "select last_insert_id() as course_id";
+  query = "select LAST_INSERT_ID() as course_id";
+  int course_id = 0;
   Result result_set = connection->excuteQuery(query);
-  if (result_set.next()) 
+  if (result_set.next()) {
     course_id = result_set.getInt("course_id");
+  }
   result_set.close();
   connection->close();
   delete connection;
@@ -85,6 +86,24 @@ TeacherList TeacherInterface::getTeacherList() {
   connection->close();
   delete connection;
   return teacher_list;
+}
+
+Teacher TeacherInterface::getTeacher(const string& user_id) {
+  Connection* connection = createConnection(); 
+  Teacher teacher;
+  string query = "select * from teachers where user_id = '";
+  query += changeSymbol(user_id) + "'";
+  connection->connect();
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()) {
+    teacher.setUserId(result_set.getString("user_id"));
+    teacher.setRealName(result_set.getString("realname"));
+    teacher.setAvailable((result_set.getString("available") == "Y"));
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return teacher;
 }
 
 bool TeacherInterface::isTeacher(const string& user_id) {
