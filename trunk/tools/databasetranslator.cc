@@ -1,14 +1,16 @@
 #include <string>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include <fcntl.h>
 
-#include "server/data/result.h"
-#include "server/data/connection.h"
-#include "server/data/databaseinterface.h"
-#include "server/object/objectinc.h"
-#include "base/judge_result.h"
+#include "./data/result.h"
+#include "./data/connection.h"
+#include "./data/databaseinterface.h"
+#include "./object/objectinc.h"
+#include "../base/judge_result.h"
+#include "../base/util.h"
+#include "md5.h"
 
 using namespace std;
 
@@ -22,9 +24,11 @@ Connection* createConnection(const string& host,
   return new MysqlConnection(host, user, password, name);
 }
 
-string uncoding(const string& code) {
-  string str;
-  return str;
+string encoding(const string& code) {
+  char * temp = new char[code.length() +10];
+  memset(temp, 0, code.length() + 10);
+  memcpy(temp, code.c_str(), code.length());
+  return MDString(temp);
 }
 
 int resultchange(int result) {
@@ -34,13 +38,13 @@ int resultchange(int result) {
     case 1:
       return PRESENTATION_ERROR;
     case 2:
-      return TIME_LIMIT_EXCEED;
+      return TIME_LIMIT_EXCEEDED;
     case 3:
-      return MEMORY_LIMIT_EXCEED;
+      return MEMORY_LIMIT_EXCEEDED;
     case 4:
       return WRONG_ANSWER;
     case 5:
-      return OUTPUT_LIMIT_EXCEED;
+      return OUTPUT_LIMIT_EXCEEDED;
     case 6:
       return COMPILE_ERROR;
     case 7:
@@ -64,6 +68,16 @@ int resultchange(int result) {
 }
 
 int languagechange(int language) {
+  switch (language) {
+    case 0:
+      return GCC;
+    case 1:
+      return GPP;
+    case 2:
+      return JAVA;
+    case 3:
+      return PASCAL;
+  }
   return language; 
 }
 
@@ -73,18 +87,22 @@ int copyfile(const string& source_file, const string& destiny_file) {
     return -1;
   int out_fd = open(destiny_file.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0644);
   close(out_fd);
-  ifstream in(source_file, ios:binary);
-  ofstream out(destiny_file, ios::binary);
+  ifstream in(source_file.c_str(), ios::binary);
+  ofstream out(destiny_file.c_str(), ios::binary);
   out << in.rdbuf();
   in.close();
   out.close();
+  return 0;
 }
 
 int getUser() {
   int i = 0;
   while (1) {
-    string squery = "select * from user limit ";
+    string squery = "select user_id, email, solved, submit, defunct, "
+                    "ip, accesstime, volume, language, AES_DECRYPT(pass, 'noah') as password, "
+                    "reg_time, nick,school from user limit ";
     squery += stringPrintf("%d, %d", i*25, 25);
+    cout << squery << endl;
     i++;
     Result result_source = s_connection->excuteQuery(squery);
     if (result_source.getRowNum() == 0) {
@@ -98,38 +116,82 @@ int getUser() {
       user.setShowEmail(true);
       user.setSolved(result_source.getInt("solved"));
       user.setSubmit(result_source.getInt("submit"));
-      user.setAvailable(result_source.getString("defunct"));
+      user.setAvailable(result_source.getString("defunct") == "N");
       user.setLastLoginIp(result_source.getString("ip"));
       user.setLastLoginTime(result_source.getString("accesstime"));
       user.setVolume(result_source.getInt("volume"));
       user.setLanguage(result_source.getInt("language"));
-      user.setPassword(uncoding(result_source.getString("pass")));
+      user.setPassword(encoding(result_source.getString("password")));
       user.setRegTime(result_source.getString("reg_time"));
       user.setNickname(result_source.getString("nick"));
       user.setSchool(result_source.getString("school"));
       user.setShareCode(false);
       user.setIndentifyCode("");
-      ussr.setPermission(0);
-      DatabaseInterface::getInstance().addUser(user);
+      user.setPermission(0);
+
+      string dquery = "insert into users(user_id, email, show_email, submits, solveds, ";
+      dquery += "available, last_login_ip, last_login_time, volume, language, ";
+      dquery += "password, reg_time, nickname, school, permission, share_code, ";
+      dquery += "indentify_code) values('"; 
+      dquery += changeSymbol(user.getId()) + "','" +
+                changeSymbol(user.getEmail()) + "','" +
+                changeSymbol(user.getShowEmail()?"Y":"N") + "','" +
+                stringPrintf("%d",user.getSubmit()) + "','" +
+                stringPrintf("%d",user.getSolved()) + "','" +
+                changeSymbol(user.getAvailable()?"Y":"N") + "','" +
+                changeSymbol(user.getLastLoginIp()) + "','" +
+                changeSymbol(user.getLastLoginTime()) + "','" +
+                stringPrintf("%d",user.getVolume()) + "','" +
+                stringPrintf("%d",user.getLanguage()) + "','" +
+                changeSymbol(user.getPassword()) + "','" +
+                changeSymbol(user.getRegTime()) + "','" +
+                changeSymbol(user.getNickname()) + "','" +
+                changeSymbol(user.getSchool()) + "','";
+      string str="----";
+      if (user.getPermission() & 0x02 )
+        str += "A";
+      else
+        str += "-";
+      if (user.getPermission() & 0x01 )
+        str += "V";
+      else
+        str += "-";
+      dquery += changeSymbol(str) + "','";
+      dquery += changeSymbol(user.getShareCode()?"Y":"N") + "','" +
+               changeSymbol(user.getIndentifyCode()) + 
+               "')";
+      cout << dquery <<endl;
+      d_connection->excuteUpdate(dquery);
     }
     result_source.close();
   }
+  return 0;
 }
 
 int setUserPermission() {
   string squery = "select * from privilege";
   Result result_source = s_connection->excuteQuery(squery);
   while (result_source.next()) {
-    User user = DatabaseInterface::getInstance().getUserInfo(result_source.getString("user_id"));
-    string permission = result_source.getString("rigtstr");
-    if (permission == "admin") {
-      user.setPermission(user.getPermission() | 0x02);
-    } else if (permission == "viewsource") {   
-      user.setPermission(user.getPermission() | 0x01);
+    string user_id = result_source.getString("user_id"); 
+    string dquery = "select * from users where user_id = '" + changeSymbol(user_id) + "'";
+    Result result_des = d_connection->excuteQuery(dquery);
+    string per = "------";
+    if (result_des.next()) {
+      per = result_des.getString("permission");
     }
-    DatabaseInterface::getInstance().updateUserPermission(user); 
+    result_des.close();
+    string permission = result_source.getString("rightstr");
+    if (permission == "admin") {
+      per[4] = 'A';
+    } else if (permission == "viewsource") {   
+      per[5] = 'V';
+    }
+    dquery = "update users set permission = '" + changeSymbol(per) + "' ";
+    dquery += "where user_id = '" + changeSymbol(user_id) + "'";
+    d_connection->excuteUpdate(dquery);
   }
   result_source.close();
+  return 0;
 }
 
 int getProblem() {  
@@ -145,6 +207,7 @@ int getProblem() {
     }
     while (result_source.next()) {
       string dquery = "insert into problems values(";
+      int problem_id = result_source.getInt("problem_id");
       dquery += "'" + stringPrintf("%d", result_source.getInt("problem_id")) + "', ";
       dquery += "'" + changeSymbol(result_source.getString("title")) + "', ";
       dquery += "'" + changeSymbol(result_source.getString("description")) + "', ";
@@ -158,7 +221,7 @@ int getProblem() {
       dquery += "'" + stringPrintf("%d", result_source.getInt("time_limit")) + "', ";
       dquery += "'" + stringPrintf("%d", result_source.getInt("case_time_limit")) + "', ";
       dquery += "'" + stringPrintf("%d", result_source.getInt("memory_limit")) + "', ";
-      dquery += "'" + changeSymbol(result_source.getString("defunct")) + "', ";
+      dquery += "'" + changeSymbol(result_source.getString("defunct") == "N" ? "Y" : "N") + "', ";
       dquery += "'" + stringPrintf("%d", result_source.getInt("accepted")) + "', ";
       dquery += "'" + stringPrintf("%d", result_source.getInt("submit")) + "', ";
       dquery += "'" + stringPrintf("%d", result_source.getInt("solved")) + "', ";
@@ -176,6 +239,7 @@ int getProblem() {
     }
     result_source.close();
   }
+  return 0;
 }
 
 int getContest() {
@@ -199,29 +263,29 @@ int getContest() {
       dquery += "'N', ";
       dquery += "'" + changeSymbol(result_source.getString("description")) + "', ";
       dquery += "'1', ";
-      dquery += "'" + changeSymbol(result_source.getString("defunct")) + "')";
+      dquery += "'" + changeSymbol(result_source.getString("defunct") == "N" ? "Y" : "N") + "')";
       d_connection->excuteUpdate(dquery);
     }
     result_source.close();
   }
+  return 0;
 }
 
 int getProblemFile() {
-   squery = "select problem_id from problem";
+   string squery = "select problem_id from problem";
    Result result_source = s_connection->excuteQuery(squery);
    while (result_source.next()) {
      int problem_id = result_source.getInt("problem_id");
-     string dir = "/home/littleken/knuthocean/WOJ/data/" + stringPrintf("%d/", problem_id);
+     string dir = "/home/flood/origSerBar/data/" + stringPrintf("%d/", problem_id);
      string path = dir + "data.txt";
-     ifstream in(path);
+     ifstream in(path.c_str());
      string line;
      string dquery;
      int i = 0;
      while (getline(in, line)) {
        string nosuffix = line.substr(0, line.find_last_of("."));
        dquery = "insert into files(path, style) values(";
-       //to do filepath;
-       string infilepath = "" + stringPrintf("%d.in", i);
+       string infilepath = "/home/flood/origSerBar/data/" + stringPrintf("%d/%d.in", problem_id, i);
        dquery += "'" + changeSymbol(infilepath) + "', ";
        dquery += " '1')";
        d_connection->excuteUpdate(dquery);
@@ -232,7 +296,7 @@ int getProblemFile() {
          in_id = result_d.getInt("file_id");
        result_d.close();
        if (in_id == 0) {
-         LOG(ERROR) << "in_id error" << filepath;
+         LOG(ERROR) << "in_id error" << infilepath;
          return -1;
        }
        dquery = "insert into filestoproblems values(";
@@ -241,8 +305,7 @@ int getProblemFile() {
        copyfile(dir + line + ".in", infilepath);
 
        dquery = "insert into files(path, style) values(";
-       //to do filepath;
-       string outfilepath = "" + stringPrintf("%d.out", i++);
+       string outfilepath = "/home/flood/origSerBar/data/" + stringPrintf("%d/%d.out", problem_id, i++);
        dquery += "'" + changeSymbol(outfilepath) + "', ";
        dquery += " '2')";
        d_connection->excuteUpdate(dquery);
@@ -253,7 +316,7 @@ int getProblemFile() {
          out_id = result_d.getInt("file_id");
        result_d.close();
        if (out_id == 0) {
-         LOG(ERROR) << "out_id error" << filepath;
+         LOG(ERROR) << "out_id error" << outfilepath;
          return -1;
        }
        dquery = "insert into filestoproblems values(";
@@ -270,8 +333,8 @@ int getProblemFile() {
      string spj = dir + "spj_judge";
      if (access(spj.c_str(), R_OK) == 0) {       
        dquery = "insert into files(path, style) values(";
-       string spjfilepath = "" + "spj.cc";
-       dquery += ;
+       string spjfilepath = "/home/flood/origSerBar/data/" + stringPrintf("%d/spj.cc", problem_id);
+       dquery += "'" + changeSymbol(spjfilepath) + "', ";
        dquery += " '4')";
        d_connection->excuteUpdate(dquery);
        dquery = "select LAST_INSERT_ID() as file_id";
@@ -281,15 +344,16 @@ int getProblemFile() {
          spj_id = result_d.getInt("file_id");
        result_d.close();
        if (spj_id == 0) {
-         LOG(ERROR) << "spj_id error" << filepath;
+         LOG(ERROR) << "spj_id error" << spjfilepath;
          return -1;
        }
        dquery = "insert into filestoproblems values(";
        dquery += stringPrintf("'%d', '%d', '1')", spj_id, problem_id);
        d_connection->excuteUpdate(dquery);
-       copyfile(spj + ".cpp", spjfilepath); 
+       copyfile(spj + ".cc", spjfilepath); 
      }
    }
+   return 0;
 }
 
 int getContestFile() {
@@ -308,8 +372,8 @@ int getContestProblem() {
     while (result_source.next()) {
       string dquery = "insert into problemtocontests values(";
       dquery += stringPrintf("'%d', '%d', '%d')", 
-                result_source.getInt(problem_id), 
-                result_source.getInt(contest_id), i++); 
+                result_source.getInt("problem_id"), 
+                result_source.getInt("contest_id"), i++); 
       d_connection->excuteUpdate(dquery);
     }
     result_source.close();
@@ -333,13 +397,13 @@ int getMails() {
       string dquery = "insert into mails values(";
       dquery += "'" + string("%d", result_source.getInt("mail_id")) + "', ";
       dquery += "'" + string("%d", result_source.getInt("reply")) + "', ";
-      dquery += "'" + changSymbol(result_source.getString("title")) + "', ";
-      dquery += "'" + changSymbol(result_source.getString("content")) + "', ";
-      dquery += "'" + (result_source.getInt("new_mail") == 1 ? "Y" : "N") + "', ";
+      dquery += "'" + changeSymbol(result_source.getString("title")) + "', ";
+      dquery += "'" + changeSymbol(result_source.getString("content")) + "', ";
+      dquery += "'" + changeSymbol(result_source.getInt("new_mail") == 1 ? "Y" : "N") + "', ";
       dquery += "'" + result_source.getString("time") + "', ";
       dquery += "'" + changeSymbol(result_source.getString("to_user")) + "', ";
       dquery += "'" + changeSymbol(result_source.getString("from_user")) + "', ";
-      if (result_source.getInt("defunct") == "Y")
+      if (result_source.getString("defunct") == "N")
         dquery += "'N', 'N')";
       else 
         dquery += "'Y', 'Y')";
@@ -372,7 +436,7 @@ int getDiscuss() {
       dquery += "'" + changeSymbol(result_source.getString("title")) + "', ";
       dquery += "'" + changeSymbol(result_source.getString("content")) + "', ";
       dquery += "'" + changeSymbol(result_source.getString("in_date")) + "', ";
-      dquery += "'" + changeSymbol(result_source.getString("defunct")) + "', ";
+      dquery += "'" + changeSymbol(result_source.getString("defunct") == "N" ? "Y" : "N") + "', ";
       d_connection->excuteUpdate(dquery);
     }
     result_source.close();
@@ -381,6 +445,7 @@ int getDiscuss() {
 }
 
 int getDiscussTopicId() {
+  return 0;
 }
 
 int getSolution() { 
@@ -413,37 +478,37 @@ int getSolution() {
 
       squery = "select source from source_code where solution_id = ";
       squery += stringPrintf("'%d'", solution_id);
-      Result result_s = connection->excuteQuery(squery);
+      Result result_s = s_connection->excuteQuery(squery);
       if (result_s.next()) 
         source = result_s.getString("source");
       result_s.close();
-      dquery = "insert into codes(share, code_contest) values (";
+      string dquery = "insert into codes(share, code_contest) values (";
       dquery += "'N', ";
       dquery += "'" + changeSymbol(source) + "') ";
       d_connection->excuteUpdate(dquery);
       dquery = "select Last_insert_id() as code_id";
-      Result result_d = excuteQuery(dquery);
+      Result result_d = d_connection->excuteQuery(dquery);
       if (result_d.next())
         code_id = result_d.getInt("code_id");
       result_d.close();
 
       squery = "select error from compileinfo where solution_id = ";
       squery += stringPrintf("'%d'", solution_id);
-      Result result_s = connection->excuteQuery(squery);
+      result_s = s_connection->excuteQuery(squery);
       if (result_s.next()) 
         error_info = result_s.getString("error");
       result_s.close();
       
       squery = "select reerror as error from pascalreinfo where solution_id = ";
       squery += stringPrintf("'%d'", solution_id);
-      Result result_s = connection->excuteQuery(squery);
+      result_s = s_connection->excuteQuery(squery);
       if (result_s.next()) 
         error_info = result_s.getString("error");
       result_s.close();
 
       squery = "select reerror as error from javareinfo where solution_id = ";
       squery += stringPrintf("'%d'", solution_id);
-      Result result_s = connection->excuteQuery(squery);
+      result_s = s_connection->excuteQuery(squery);
       if (result_s.next()) 
         error_info = result_s.getString("error");
       result_s.close();
@@ -453,26 +518,26 @@ int getSolution() {
         dquery += "'" + changeSymbol(error_info) + "') ";
         d_connection->excuteUpdate(dquery);
         dquery = "select Last_insert_id() as error_id";
-        Result result_d = excuteQuery(dquery);
+        result_d = d_connection->excuteQuery(dquery);
         if (result_d.next())
           error_id = result_d.getInt("error_id");
         result_d.close();
       }
 
-      string dquery = "insert into discussess values(";
-      dquery += "'" + stringPirntf("%d", solution_id)  + "', ";
+      dquery = "insert into discussess values(";
+      dquery += "'" + stringPrintf("%d", solution_id)  + "', ";
       dquery += "'" + changeSymbol(user_id) + "', ";
-      dquery += "'" + stringPirntf("%d", problem_id)  + "', ";
-      dquery += "'" + stringPirntf("%d", contest_id)  + "', ";
-      dquery += "'" + stringPirntf("%d", time)  + "', ";
-      dquery += "'" + stringPirntf("%d", memory)  + "', ";
+      dquery += "'" + stringPrintf("%d", problem_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", contest_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", time)  + "', ";
+      dquery += "'" + stringPrintf("%d", memory)  + "', ";
       dquery += "'" + changeSymbol(in_date) + "', ";
-      dquery += "'" + stringPirntf("%d", resultchange(result))  + "', ";
-      dquery += "'" + stringPirntf("%d", languagechange(language))  + "', ";
-      dquery += "'" + stringPirntf("%d", code_id)  + "', ";
-      dquery += "'" + stringPirntf("%d", code_length)  + "', ";
+      dquery += "'" + stringPrintf("%d", resultchange(result))  + "', ";
+      dquery += "'" + stringPrintf("%d", languagechange(language))  + "', ";
+      dquery += "'" + stringPrintf("%d", code_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", code_length)  + "', ";
       dquery += "'" + changeSymbol(ip) + "', ";
-      dquery += "'" + stringPirntf("%d", error_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", error_id)  + "', ";
       dquery += "'N')";
       d_connection->excuteUpdate(dquery);
     }
@@ -511,35 +576,35 @@ int getRootSolution() {
 
       squery = "select source from rootsource_code where solution_id = ";
       squery += stringPrintf("'%d'", solution_id);
-      Result result_s = connection->excuteQuery(squery);
+      Result result_s = s_connection->excuteQuery(squery);
       if (result_s.next()) 
         source = result_s.getString("source");
       result_s.close();
-      dquery = "insert into codes(share, code_contest) values (";
+      string dquery = "insert into codes(share, code_contest) values (";
       dquery += "'N', ";
       dquery += "'" + changeSymbol(source) + "') ";
       d_connection->excuteUpdate(dquery);
       dquery = "select Last_insert_id() as code_id";
-      Result result_d = excuteQuery(dquery);
+      Result result_d = d_connection->excuteQuery(dquery);
       if (result_d.next())
         code_id = result_d.getInt("code_id");
       result_d.close();
 
-      string dquery = "insert into discussess(user_id, problem_id, contest_id, time,";
+      dquery = "insert into discussess(user_id, problem_id, contest_id, time,";
       dquery += " memory, submit_time, result, language, code_id, code_length, ip, error_id)  values(";
-      dquery += "'" + stringPirntf("%d", solution_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", solution_id)  + "', ";
       dquery += "'" + changeSymbol(user_id) + "', ";
-      dquery += "'" + stringPirntf("%d", problem_id)  + "', ";
-      dquery += "'" + stringPirntf("%d", contest_id)  + "', ";
-      dquery += "'" + stringPirntf("%d", time)  + "', ";
-      dquery += "'" + stringPirntf("%d", memory)  + "', ";
+      dquery += "'" + stringPrintf("%d", problem_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", contest_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", time)  + "', ";
+      dquery += "'" + stringPrintf("%d", memory)  + "', ";
       dquery += "'" + changeSymbol(in_date) + "', ";
-      dquery += "'" + stringPirntf("%d", resultchange(result))  + "', ";
-      dquery += "'" + stringPirntf("%d", languagechange(language))  + "', ";
-      dquery += "'" + stringPirntf("%d", code_id)  + "', ";
-      dquery += "'" + stringPirntf("%d", code_length)  + "', ";
+      dquery += "'" + stringPrintf("%d", resultchange(result))  + "', ";
+      dquery += "'" + stringPrintf("%d", languagechange(language))  + "', ";
+      dquery += "'" + stringPrintf("%d", code_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", code_length)  + "', ";
       dquery += "'" + changeSymbol(ip) + "', ";
-      dquery += "'" + stringPirntf("%d", error_id)  + "', ";
+      dquery += "'" + stringPrintf("%d", error_id)  + "', ";
       dquery += "'R')";
       d_connection->excuteUpdate(dquery);
     }
@@ -549,10 +614,11 @@ int getRootSolution() {
 }
 
 int main() {
-  s_connection = createConnection();
-  d_connection = createConnection();
+  s_connection = createConnection("localhost", "root", "123456", "noah");
+  d_connection = createConnection("localhost", "root", "123456", "onlinejudgetest");
   s_connection->connect();
   d_connection->connect();
+  setUserPermission();
   s_connection->close();
   d_connection->close();
   return 0;
