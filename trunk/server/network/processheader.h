@@ -86,4 +86,7 @@
 #include "addstudenttocourseprocessimp.h"
 #include "addseriesstudenttocourseprocessimp.h"
 #include "teacherprocessimp.h"
+#include "submitdocprocessimp.h"
+#include "setresultprocessimp.h"
+#include "statuslistforteacherprocessimp.h"
 

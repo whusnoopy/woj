@@ -42,6 +42,15 @@ Course TeachInterface::getCourse(int course_id) {
   return TeacherInterface::getInstance().getCourse(course_id);
 }
 
+int TeachInterface::setStatusResult(int status_id, int result) {
+  return TeacherInterface::getInstance().setStatusResult(status_id, result);
+}
+
+StatusList TeachInterface::getStatusListForTeacher(int job_id, int page_id) {
+  return TeacherInterface::getInstance().getStatusListForTeacher(job_id, page_id);
+}
+
+
 int TeachInterface::addStudent(const Student& student) {
   return StudentInterface::getInstance().addStudent(student);
 }

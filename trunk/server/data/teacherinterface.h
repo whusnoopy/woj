@@ -5,6 +5,7 @@
 
 #include "object/teacher.h"
 #include "object/course.h"
+#include "object/list.h"
 #include "data/connectionfactory.h"
 using namespace std;
 
@@ -26,6 +27,8 @@ public:
   bool isTeacher(const string& user_id);
   CourseList getCourseList(const string& user_id);
   Course getCourse(int course_id);
+  int setStatusResult(int status_id, int result);
+  StatusList getStatusListForTeacher(int job_id, int page_id);
 
   static TeacherInterface& getInstance(){
     if(instance == NULL)

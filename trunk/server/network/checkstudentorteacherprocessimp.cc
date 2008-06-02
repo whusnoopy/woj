@@ -52,7 +52,7 @@ void CheckStudentOrTeacherProcessImp::process(int socket_fd, const string& ip, i
     LOG(ERROR) << "Is not a student or teacher" << ip; 
     return;
   }
-  if (sendReply(socket_fd, 'N')) {
+  if (sendReply(socket_fd, 'Y')) {
     LOG(ERROR) << "Cannot reply to " << ip;
     return;
   }
