@@ -44,6 +44,7 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
   StudentList student_list = TeachInterface::getInstance().getStudentList(job.getCourseId());
   StudentList::iterator student_iter = student_list.begin();
   while (student_iter != student_list.end()) {
+    LOG(DEBUG) << "score";
     student_iter->score = checkJobDone(student_iter->user_id, job);
     student_iter++;
   }
@@ -54,6 +55,7 @@ void ListJobDoneProcessImp::process(int socket_fd, const string& ip, int length)
       databuf += "\001";
     else
       first = false;
+    LOG(DEBUG) << "ok";
     databuf += stringPrintf("%s\001%s\001%s\001%s\001%d\001%d",
                             student_iter->user_id.c_str(),
                             student_iter->realname.c_str(),
@@ -87,11 +89,14 @@ int ListJobDoneProcessImp::checkJobDone(const string& user_id, const Job& job) {
   }
   int score = 60;
   if (has_done_must_problem < problem_list.size()) {
-    score = has_done_must_problem * 60 / problem_list.size();
+      score = has_done_must_problem * 60 / problem_list.size();
     return score;
   }
 
   vector<SetItem> set_list = job.getSetList();
+  if (set_list.size() == 0) {
+    return score + 40;
+  }
   int should_score = 40 / set_list.size();
   vector<SetItem>::iterator should_do_set = set_list.begin();
   while (should_do_set != set_list.end()) {

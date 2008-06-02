@@ -328,6 +328,15 @@ bool ProcessThread::processTeach(int type) {
     case 509:  //tp
       m_process_imp = new TeacherProcessImp();
       return false;
+    case 471:  //sd
+      m_process_imp = new SubmitDocProcessImp();
+      return false;
+    case 485:  //sr
+      m_process_imp = new SetResultProcessImp();
+      return false;
+    case 468:  //sa
+      m_process_imp = new StatusListForTeacherProcessImp();
+      return false;
     default:
       return true;
   }

@@ -7,6 +7,7 @@
 #include "object/student.h"
 #include "object/course.h"
 #include "object/job.h"
+#include "object/list.h"
 #include "data/teacherinterface.h"
 #include "data/studentinterface.h"
 #include "data/jobinterface.h"
@@ -30,6 +31,8 @@ public:
   bool isTeacher(const string& user_id);
   CourseList getCourseList(const string& user_id);
   Course getCourse(int course_id);
+  int setStatusResult(int status_id, int result);
+  StatusList getStatusListForTeacher(int job_id, int page_id);
 
   int addStudent(const Student&);
   int updateStudent(const Student&);

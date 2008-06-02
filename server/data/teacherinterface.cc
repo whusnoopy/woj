@@ -1,5 +1,9 @@
 #include "teacherinterface.h"
 
+#include "object/status.h"
+#include <set>
+using namespace std;
+
 TeacherInterface* TeacherInterface::instance = NULL;
 
 int TeacherInterface::addTeacher(const Teacher& teacher) {
@@ -159,6 +163,73 @@ Course TeacherInterface::getCourse(int course_id) {
   connection->close();
   delete connection;
   return course;
+}
+
+int TeacherInterface::setStatusResult(int status_id, int result) {
+  Connection* connection = createConnection(); 
+  string query = "update statuses set ";
+  query += stringPrintf(" result = '%d' ", result);
+  query += stringPrintf(" where status_id = '%d'", status_id);
+  connection->connect();
+  int ret = connection->excuteUpdate(query);
+  connection->close();
+  delete connection;
+  return ret;
+}
+
+StatusList TeacherInterface::getStatusListForTeacher(int job_id, int page_id) {
+  Connection* connection = createConnection(); 
+  StatusList status_list;
+  Status item;
+  set<int> problem_set;
+  string query;
+  connection->connect();
+  query = "select problem_id from problemstojobs where job_id = " + stringPrintf("'%d'", job_id);
+  LOG(DEBUG) << query;
+  Result result_set = connection->excuteQuery(query);
+  while (result_set.next()){
+    problem_set.insert(result_set.getInt("problem_id"));
+  }
+  result_set.close();
+  query = "select problem_id from problemstosets where set_id in (";
+  query += "select set_id from setstojobs where job_id = " + stringPrintf("'%d')", job_id);
+  LOG(DEBUG) << query;
+  result_set = connection->excuteQuery(query);
+  while (result_set.next()){
+    problem_set.insert(result_set.getInt("problem_id"));
+  }
+  result_set.close();
+  query = "select * from statuses "; 
+  query += stringPrintf(" where problem_id in ('-600'");
+  set<int>::iterator problem_set_iter = problem_set.begin();
+  while (problem_set_iter != problem_set.end()) {
+    query += stringPrintf(", '%d'", *problem_set_iter);
+    problem_set_iter++;
+  }
+  query += ") and type = 'F'";
+  query += stringPrintf(" limit %d, 25", page_id * 25);
+  LOG(DEBUG) << query;
+  result_set= connection->excuteQuery(query);
+  while(result_set.next()){
+  	item.setStatusId(result_set.getInt("status_id"));
+	  item.setUserId(result_set.getString("user_id"));
+	  item.setProblemId(result_set.getInt("problem_id"));
+	  item.setContestId(result_set.getInt("contest_id"));
+	  item.setTime(result_set.getInt("time"));
+	  item.setMemory(result_set.getInt("memory"));
+	  item.setSubmitTime(result_set.getString("submit_time"));
+	  item.setResult(result_set.getInt("result"));
+	  item.setLanguage(result_set.getInt("language"));
+	  item.setCodeId(result_set.getInt("code_id"));
+	  item.setCodeLength(result_set.getInt("code_length"));
+	  item.setSubmitIp(result_set.getString("submit_ip"));
+	  item.setErrorId(result_set.getInt("error_id"));
+  	status_list.push_back(item);
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return status_list;
 }
 
 //int TeacherInterface::addControlClassList(const string& user_id, const ClassList& class_list);
