@@ -241,6 +241,12 @@ void process(int communicate_socket) {
     return;
   }
   LOG(INFO) << "Successful get source file as " << source_filename;
+  // Convert source file to linux format
+  if (convertFileFormat(source_filename) == -1) {
+    LOG(ERROR) << "Cannot convert source file to linux format";
+    return;
+  }
+  LOG(INFO) << "Convert source file to linux format successful";
 
   // Get input/output files
   string problem_dir = FLAGS_root_dir +
@@ -250,6 +256,7 @@ void process(int communicate_socket) {
     sendReply(communicate_socket, DATA_EXSIST);
     LOG(INFO) << "Data exsisted";
   } else {
+    // Sync data
     LOG(INFO) << "Start to sync data";
     sendReply(communicate_socket, READY);
     if (saveData(communicate_socket, problem_id, version) == -1) {
@@ -257,6 +264,14 @@ void process(int communicate_socket) {
       return;
     }
     LOG(INFO) << "Data sync successful";
+
+    // Convert data files to linux format
+    string convert_files = problem_dir + "/*";
+    if (convertFileFormat(convert_files) == -1) {
+      LOG(ERROR) << "Cannot convert data files to linux format";
+      return;
+    }
+    LOG(INFO) << "Convert data files to linux format successful";
   }
   // Check whether special judge
   string special_judge_filename = problem_dir + "/spj.cc";
