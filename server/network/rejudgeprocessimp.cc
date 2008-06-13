@@ -39,6 +39,9 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
     return ;
   }
   status = DataInterface::getInstance().getStatus(status_id);
+  
+  JudgeControl::getInstance().addRejudgeItem(status);
+  
   if (status.getResult() == ACCEPTED) {
     status.setResult(0);
     DataInterface::getInstance().updateStatus(status);
@@ -49,6 +52,7 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
   status.setErrorId(0);
   Problem problem = DataInterface::getInstance().getProblem(status.getProblemId());
   string source = DataInterface::getInstance().getCode(status.getCodeId()).getCodeContent();
+  
   JudgeMission mission;
   mission.status = status;
   mission.source = source;
@@ -62,6 +66,7 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
     mission.spj_source_path = DataInterface::getInstance().getProblemSpjFile(problem);
   mission.data_path = getProblemDataPath(problem.getProblemId()); 
   JudgeControl::getInstance().addMission(mission);
+
   if (sendReply(socket_fd, 'Y') != 0) {
     LOG(ERROR) << "Send reply error:" << ip;
     return;

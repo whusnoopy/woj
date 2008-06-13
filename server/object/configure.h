@@ -22,6 +22,7 @@ public:
   void setLinkPath(const string& path);
   void setNoticePath(const string& path);
   
+  void output() const;
   string getDatabaseHost() const ;
   string getDatabaseUser() const ;
   string getDatabasePassword() const ;

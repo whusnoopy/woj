@@ -23,6 +23,8 @@ public:
   JudgeMission getMission();
   void start();
   void join();
+  void addRejudgeItem(const Status& status);
+  void putReJudgeItem(const Status& status);
 
   static JudgeControl& getInstance() {
     if (instance == NULL) {
@@ -42,7 +44,9 @@ private:
   Semaphore semaphore;
   pthread_mutex_t queue_lock;
   pthread_mutex_t socket_lock;
+  pthread_mutex_t set_lock;
   JudgeQueue judge_queue;
+  RejudgeSet rejudge_set;
   JudgeThread judge_pool_[MAXJUDGE];
   int max_client_;
   int port_;

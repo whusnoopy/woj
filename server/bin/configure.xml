@@ -16,6 +16,9 @@
     <maxclient>11</maxclient>
     <port>3241</port>
     <ip>127.0.0.1</ip>
+    <ip>192.168.5.185</ip>
+    <ip>192.168.5.187</ip>
+    <ip>192.168.5.188</ip>
   </judgecontrol>
   <network>
     <maxclient>50</maxclient>
@@ -24,6 +27,7 @@
     <ip>127.0.0.1</ip>
     <ip>192.168.5.187</ip>
     <ip>192.168.5.185</ip>
+    <ip>192.168.5.186</ip>
   </network>
   <client>
     <maxclient>20</maxclient>

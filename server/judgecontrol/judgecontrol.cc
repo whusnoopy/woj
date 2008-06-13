@@ -8,19 +8,61 @@
 
 #include "object/configure.h"
 #include "object/inc.h"
+#include "base/judge_result.h"
+#include "data/datainterface.h"
 
 using namespace std;
 
 JudgeControl* JudgeControl::instance = NULL;
 
+string translateResult(int result) {
+  switch(result) { 
+    case ACCEPTED:
+      return "Accepted";
+      break;
+    case PRESENTATION_ERROR:
+      return "Presentation Error";
+      break;
+    case TIME_LIMIT_EXCEEDED:
+      return "Time Limit Exceeded";
+      break;
+    case MEMORY_LIMIT_EXCEEDED:
+      return "Memory Limit Exceeded";
+      break;
+    case WRONG_ANSWER:
+      return "Wrong Answer";
+      break;
+    case OUTPUT_LIMIT_EXCEEDED:
+      return "Output Limit Exceeded";
+      break;
+    case COMPILE_ERROR:
+      return "Compile Error";
+      break;
+    case RUNTIME_ERROR_SIGSEGV:
+      return "Runtime Error Sigsegv";
+    case RUNTIME_ERROR_SIGFPE:
+      return "Runtime Error Sigfpe";
+    case RUNTIME_ERROR_SIGBUS:
+      return "Runtime Error Sigbus";
+    case RUNTIME_ERROR_SIGABRT:
+      return "Runtime Error Sigabrt";
+    case RUNTIME_ERROR_JAVA:
+      return "Runtime Error Java";
+      break;
+  }
+  return "System Error";
+}
+
 JudgeControl::JudgeControl() {
   pthread_mutex_init(&queue_lock, NULL); 
   pthread_mutex_init(&socket_lock, NULL);
+  pthread_mutex_init(&set_lock, NULL);
 }
 
 JudgeControl::~JudgeControl() {
   pthread_mutex_destroy(&queue_lock);
   pthread_mutex_destroy(&socket_lock);
+  pthread_mutex_destroy(&set_lock);
 }
 
 void JudgeControl::initJudge() {
@@ -67,6 +109,47 @@ void JudgeControl::start(){
     judge_pool_[i].start();
   }
   LOG(INFO) << "Judge Pool creat complete.";
+}
+
+
+void JudgeControl::addRejudgeItem(const Status& status) {
+  pthread_mutex_lock(&set_lock);
+  rejudge_set[status.getStatusId()] = status;
+  pthread_mutex_unlock(&set_lock);
+}
+
+void JudgeControl::putReJudgeItem(const Status& status) {
+  pthread_mutex_lock(&set_lock);
+  if (rejudge_set.count(status.getStatusId())) {
+    Status old_status = rejudge_set[status.getStatusId()];
+    if (old_status.getResult() != status.getResult()) {
+      Mail mail;
+      mail.setTopicId(-1);
+      mail.setToUser(status.getUserId());
+      mail.setFromUser("System");
+      mail.setTitle("System mails - Rejudge Remind");
+      string content; 
+      content += string("Rejudge Status[") + stringPrintf("%d", status.getStatusId()) + 
+                 "] from [" + translateResult(old_status.getResult()) + "] To [" + 
+                 translateResult(status.getResult()) + "] for User[" + 
+                 status.getUserId() + "]";
+      mail.setContent(content);
+      mail.setRead(false);
+      mail.setTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
+      mail.setReaderDel(false);
+      mail.setWriterDel(false);
+      DataInterface::getInstance().addMail(mail);
+
+      mail.setToUser("snoopy");
+      mail.setFromUser("System");
+      mail.setTitle("System mails - Rejudge Remind");
+      mail.setContent(content);
+      mail.setTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
+      DataInterface::getInstance().addMail(mail);
+    }
+    rejudge_set.erase(status.getStatusId());
+  }
+  pthread_mutex_unlock(&set_lock);
 }
 
 void JudgeControl::join() {

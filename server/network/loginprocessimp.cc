@@ -64,15 +64,20 @@ void LoginProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot reply the login for:" << ip;
     return;
   } 
-  string len = stringPrintf("%010d",indentify_code.length());
-//  if (socket_write(socket_fd, len.c_str(), 10) != 0){
-//    LOG(ERROR) << "Send data failed to:" << ip;
-//    return;
-//  }
- // if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length()) != 0) {
- //   LOG(ERROR) << "Cannot return data to:" << ip;
- //   return;
- // }
+  string new_mail_count = stringPrintf("%010d", DataInterface::getInstance().getNewMailCount(user_id));
+  if (socket_write(socket_fd, new_mail_count.c_str(), 10) != 0){
+    LOG(ERROR) << "Send data failed to:" << ip;
+    return;
+  }
+  //string len = stringPrintf("%010d",indentify_code.length());
+  //if (socket_write(socket_fd, len.c_str(), 10) != 0){
+  //  LOG(ERROR) << "Send data failed to:" << ip;
+  //  return;
+  //}
+  //if (socket_write(socket_fd, indentify_code.c_str(), indentify_code.length()) != 0) {
+  //  LOG(ERROR) << "Cannot return data to:" << ip;
+  //  return;
+  //}
   LOG(INFO) << "Process Login completed for" << ip;
 }
 

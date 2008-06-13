@@ -39,18 +39,17 @@ void MostProblemProcessImp::process(int socket_fd, const string& ip, int length)
     socket_write(socket_fd, len.c_str(), 10);
     return;
   }
-  databuf = stringPrintf("%s\001%s\001%s\001%s\001%s\001%s\001%s"
-                         "\001%s\001%s\001%d\001%d\001%d\001%d"
+
+  databuf = problem.getTitle() + "\001" + 
+            problem.getDescription() + "\001" +
+            problem.getInput() + "\001" + 
+            problem.getOutput() + "\001" +
+            problem.getSampleInput() + "\001" +
+            problem.getSampleOutput() + "\001" +
+            problem.getHint() + "\001" +
+            problem.getSource() + "\001" +
+            stringPrintf("%s\001%d\001%d\001%d\001%d"
                          "\001%d\001%d\001%s", 
-  //del                       problem.getProblemId(), 
-                         problem.getTitle().c_str(),
-                         problem.getDescription().c_str(),
-                         problem.getInput().c_str(),
-                         problem.getOutput().c_str(),
-                         problem.getSampleInput().c_str(),
-                         problem.getSampleOutput().c_str(),
-                         problem.getHint().c_str(),
-                         problem.getSource().c_str(),
                          problem.getAddinTime().c_str(),
                          problem.getTimeLimit(),
                          problem.getCaseTimeLimit(),

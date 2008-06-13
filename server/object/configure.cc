@@ -3,6 +3,10 @@
 #include "inc.h"
 #include <pthread.h>
 
+#include "base/flags.h"
+
+DEFINE_FLAGS(string, configure_path, "absolutely path of configure.xml");
+
 Configure* Configure::instance = NULL;
 pthread_mutex_t Configure::lock;
 
@@ -23,6 +27,15 @@ void Configure::setDatabase(const string& host,
   database_configure.user = user;
   database_configure.password = password;
   database_configure.database = database;// = {host, user, password, database};
+}
+
+void Configure::output() const{
+  set<string> ips = getJudgeControlIpTabs();
+  set<string>::iterator iter = ips.begin();
+  while (iter != ips.end()) {
+    cout << "judge_control_ip:" << *iter;
+    iter++;
+  }
 }
 
 string Configure::getDatabaseHost() const {
@@ -128,6 +141,7 @@ void Configure::addJudgeClienttoConfigture(xmlNodePtr cur, Configure& configure)
     if ((!xmlStrcmp(node->name, (const xmlChar*) "ip"))) {
       szKey = xmlNodeGetContent(node);
       ip = string((char *)szKey);
+      cout << "[" << ip << "]" << endl;
       configure.judgecontrol.ip_tabs.insert(ip);
       xmlFree(szKey);
     }
@@ -223,7 +237,7 @@ void Configure::addNoticetoConfigture(xmlNodePtr cur, Configure& configure){
 }
 
 Configure* Configure::createConfigure(){
-	string configure_file = "./configure.xml";
+	string configure_file = FLAGS_configure_path;
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	Configure* configure = new Configure;

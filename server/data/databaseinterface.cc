@@ -1701,6 +1701,23 @@ MailList DatabaseInterface::getMailList(const MailInfo& mail_info){
   return mail_list;
 }
 
+int DatabaseInterface::getNewMailCount(const string& user_id){
+  Connection* connection = createConnection();
+  MailListItem item;
+  string query = "select count(*) as new_mail from mails ";
+  query += "where unread = 'Y' and reader_del = 'N' and to_user = '" + changeSymbol(user_id) + "'";
+  connection->connect();
+  int ret = 0;
+  Result result_set= connection->excuteQuery(query);
+  if (result_set.next()){
+    ret = result_set.getInt("new_mail");
+  }
+  result_set.close();
+  connection->close();
+  delete connection;
+  return ret;
+}
+
 NewsList DatabaseInterface::getNewsList(const NewsInfo& news_info){
 	NewsList newslist;
   NewsListItem item;
@@ -2203,7 +2220,7 @@ int DatabaseInterface::getInContestId(int contest_id, int problem_id) {
   bool in_contest_id = -1;
   Connection* connection = createConnection();
   connection->connect();
-  string query = "select in_contest_id from problemtocontests";
+  string query = "select in_contest_id from problemtocontests ";
   query += "where contest_id = '" + stringPrintf("%d", contest_id) +"' ";
   query += "and problem_id = '" + stringPrintf("%d", problem_id) + "'";
   Result result_set = connection->excuteQuery(query);
