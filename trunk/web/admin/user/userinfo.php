@@ -12,7 +12,8 @@
 	$user = array();
 	get_user_info($user_id, $user);
 	if(empty($user)){
-		header("Location: error.php?errorMsg='The user doesn't exist!'");
+		echo 'The user doesn\'t exist!<br>';
+		echo '<a href="javascript:history.back()">Back</a>';
 		exit;
 	}
 ?>
@@ -91,7 +92,7 @@
     </tbody></table>
   <br />
   <div>
-    <span class="bt"><a href="../ranklist/ranklist.php">Back To Ranklist</a></span>
+    <span class="bt"><a href="javascript:history.back()">Back</a></span>
   </div>
   <br />
   </div>

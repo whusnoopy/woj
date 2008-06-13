@@ -33,7 +33,7 @@
 	if(isset($_GET['type']))
 		$type = $_GET['type'];
 	else
-		$type = 'N';
+		$type = 'C';
 
 	if ($type == 'V')
 		echo "<div id=tt>Virtual Concest Volume $start</div>";
@@ -90,7 +90,7 @@
 	  $pre = $current - 1;
       echo "<span class=bt><a href=\"contestList.php?start=$pre\">&nbsp;Prev Page&nbsp;</a></span>&nbsp;";
   }
-  if ($rows == 20){
+  if ($rows == 25){
 	  $next = $current + 1;
       echo "<span class=bt><a href=\"contestList.php?start=$next\">&nbsp;Next Page&nbsp;</a></span>";
   }

@@ -150,8 +150,10 @@ span.def{
 <?php
 	if ($start>'0'){
 		$pre=$start-1;
-       echo "<span class=\"bt\"><a href=\"discussList.php?start=$pre&pid=$problem_id&uid=$user_id&title=$title\">Next Page</a></span>";
+       echo "<span class=\"bt\"><a href=\"discussList.php?start=$pre&pid=$problem_id&uid=$user_id&title=$title\">Prev Page</a></span>";
 	}
+	$next = $start + 1;
+	echo "<span class=\"bt\"><a href=\"discussList.php?start=$next&pid=$problem_id&uid=$user_id&title=$title\">&nbsp;Next Page</a></span>";
 ?>
   <br>
 </div>

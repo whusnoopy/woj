@@ -76,7 +76,7 @@
 
 	echo '<span class=bt><a href="sendMail.php">Send mail</a></span>&nbsp;&nbsp;';
 
-    if ($rows == 20){
+    if ($rows == 25){
 		$next = $start+1;
 		echo "<span class=bt><a href=\"mailList.php?start=$next\">Next</a></span>&nbsp;&nbsp;";
 	}
