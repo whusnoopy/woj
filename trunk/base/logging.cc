@@ -11,12 +11,6 @@
 
 #include "base/logging.h"
 
-#define _DEBUG_LOG_
-#ifdef _DEBUG_LOG_
-#include <iostream>
-using namespace std;
-#endif
-
 DECLARE_FLAGS(string, root_dir);
 
 DECLARE_FLAGS(string, process_name);
@@ -107,9 +101,6 @@ class LogFile {
     void closeFile() {
       pthread_mutex_lock(&lock_);
       if (file_) {
-#ifdef _DEBUG_LOG_
-        cout << "this is used!" << endl;
-#endif      
         fclose(file_);
         file_ = NULL;
       }
