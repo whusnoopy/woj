@@ -9,7 +9,7 @@ set -e
 #address=${1%:*}
 #port=${1##*:}
 
-address="127.0.0.1"
+address="192.168.5.187"
 port=3241
 
 if [ "`which gcc`" != "" ]; then
