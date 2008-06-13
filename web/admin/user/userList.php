@@ -32,10 +32,10 @@
 		$start = $_GET['start'];
 	else
 		$start = '0';
-	if (isset($_GET['user_id']))
-		$user_id = $_GET['user_id'];
+	if (isset($_GET['suid']))
+		$suid = $_GET['suid'];
 	else
-	    $user_id = '?';
+	    $suid = '?';
 
 	echo "<div id=tt>User List</div>";
 ?>
@@ -53,7 +53,7 @@
     </tr>
 
 <?php
-	$ul = new user_list_t($start, $user_id);
+	$ul = new user_list_t($start, $suid);
 	$ul->getResult();
 	$rows = $ul->getRow();
 
@@ -68,7 +68,7 @@
 		echo '<td>'.$ul->getLast_login_time($i).'</td>';
 		echo '<td>'.$ul->getLast_login_ip($i).'</td>';
 		echo '<td>'.$ul->getRegister_time($i).'</td>';
-		echo "<td><a href=\"userinfo.php?use_id=$uid\">Details</a></td>";
+		echo "<td><a href=\"userinfo.php?user_id=$uid\">Details</a></td>";
 
 	}
 ?>
@@ -80,17 +80,17 @@
   $current = intval($start);
   if ( $current > 0){
 	  $pre = $current - 1;
-      echo "<span class=bt><a href=\"problemList.php?start=$pre\"> &nbsp;Prev Page&nbsp;</a></span>&nbsp;";
+      echo "<span class=bt><a href=\"userList.php?start=$pre&suid=$suid\"> &nbsp;Prev Page&nbsp;</a></span>&nbsp;";
   }
   if ($rows == 25){
 	  $next = $current + 1;
-      echo "<span class=bt><a href=\"problem.php?start=$next\">&nbsp;Next Page&nbsp;</a></span>";
+      echo "<span class=bt><a href=\"userList.php?start=$next&suid=$suid\">&nbsp;Next Page&nbsp;</a></span>";
   }
 ?>
 
-
+	<br><br>
     <form method="get" action="userList.php?start=0" >
-	<strong>Search By User ID:</strong>&nbsp;<input name="user_id" type=text  size=40 maxlength="20" />&nbsp;
+	<strong>Search By User ID:</strong>&nbsp;<input name="suid" type=text  size=40 maxlength="20" />&nbsp;
     <input type="submit" value="GO" />
     </form>
   </div>

@@ -2,6 +2,7 @@
 
 $IMGDIR = '192.168.5.182/files/'; //image folder
 $ADMINSERVER = '192.168.5.182';
+$DOCUMENT_ROOT = 'E:/WWW/Web/';
 
 $LANGUAGE = array('GCC','G++','JAVA','PASCAL');
 

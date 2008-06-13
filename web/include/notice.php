@@ -1,5 +1,6 @@
 <?php
-	$filename = $_SERVER['DOCUMENT_ROOT'].'/include/note.html';
+	include('../common/config.php');
+	$filename = $DOCUMENT_ROOT.'include/note.html';
 	if(!note_exist($filename))
 		gen_note($filename);
 
@@ -18,7 +19,7 @@ function note_exist($filename)
 
 function get_notice()
 {
-	include_once($_SERVER['DOCUMENT_ROOT'].'/common/tcpclient.php');
+	include_once($DOCUMENT_ROOT.'common/tcpclient.php');
 	$header = "np00000000";
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
