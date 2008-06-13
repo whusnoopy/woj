@@ -1,0 +1,13 @@
+#main{
+	margin-left:5%;
+	margin-right:5%;
+	font-family:Verdana;
+	text-align:center;
+	font-size:16px
+}
+body{
+	background-color: powderblue; 
+}
+td{
+	text-align:center;
+}
