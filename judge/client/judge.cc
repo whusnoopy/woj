@@ -26,6 +26,37 @@ DECLARE_FLAGS(int, gid);
 
 static int compareFiles(const string& standard_output_file_name,
                         const string& users_output_file_name) {
+  /*
+  // Output files compare result to debug log
+  FILE* file1 = fopen(standard_output_file_name.c_str(), "r");
+  FILE* file2 = fopen(users_output_file_name.c_str(), "r");
+  if (file1 == 0) {
+    LOG(ERROR) << "Fail to open file " << standard_output_file_name;
+    return SYSTEM_ERROR;
+  }
+  if (file2 == 0) {
+    LOG(ERROR) << "Fail to open file " << users_output_file_name;
+    return SYSTEM_ERROR;
+  }
+  
+  char buf1[1024];
+  char buf2[1024];
+  memset(buf1, 0, sizeof(buf1));
+  memset(buf2, 0, sizeof(buf2));
+  
+  while (!feof(file1) && !feof(file2)) {
+    fgets(buf1, 1023, file1);
+    LOG(DEBUG) << "# " << buf1;
+
+    fgets(buf2, 1023, file2);
+    LOG(DEBUG) << "* " << buf2;
+
+    if (strcmp(buf1, buf2))
+      break;
+  }
+  // Debug finished
+  */
+
   FILE* standard_output_file = fopen(standard_output_file_name.c_str(), "r");
   FILE* users_output_file = fopen(users_output_file_name.c_str(), "r");
   if (standard_output_file == 0) {
@@ -58,17 +89,12 @@ static int compareFiles(const string& standard_output_file_name,
       return WRONG_ANSWER;
     }
   }
+  LOG(DEBUG) << "After touch a file end, the result is " << result;
 
-  if (isspace(c1)) {
-    while (isspace(c1))
-      c1 = fgetc(standard_output_file);
-    result = PRESENTATION_ERROR;
-  }
-  if (isspace(c2)) {
-    while (isspace(c2))
-      c2 = fgetc(users_output_file);
-    result = PRESENTATION_ERROR;
-  }
+  while (isspace(c1))
+    c1 = fgetc(standard_output_file);
+  while (isspace(c2))
+    c2 = fgetc(users_output_file);
 
   if (c1 > 0 || c2 > 0)
     return WRONG_ANSWER;

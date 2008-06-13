@@ -78,10 +78,8 @@ int getHeader(int communicate_socket,
   sigaddset(&sigmask, SIGTERM);
   sigaddset(&sigmask, SIGPIPE);
   
-  LOG(DEBUG) << "Test socket ready or not";
   pselect(communicate_socket + 1, &rset, NULL, NULL, &timeout, &sigmask);
   if (!FD_ISSET(communicate_socket, &rset)) {
-    LOG(DEBUG) << "No job now, return";
     return -1;
   }
 
@@ -297,6 +295,7 @@ void process(int communicate_socket) {
     string standard_output_filename = problem_dir + stringPrintf("/%d.out", i);
 
     judge_result.updateResult(doRun(communicate_socket,
+                                    working_dir,
                                     binary_filename,
                                     source_suffix,
                                     standard_input_filename,
@@ -429,7 +428,6 @@ int main(int argc, char* argv[]) {
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);
-    LOG(DEBUG) << "Terminated : " << terminated << ", Socket_Broken : " << socket_broken;
     system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
   }
   LOG(DEBUG) << "Terminated";

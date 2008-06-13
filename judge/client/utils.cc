@@ -4,8 +4,9 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <sys/wait.h>
 #include <sys/ptrace.h>
+#include <sys/time.h>
+#include <sys/wait.h>
 
 #include "base/logging.h"
 #include "base/util.h"
@@ -70,13 +71,18 @@ int readMemory(int pid) {
   return vm_size - vm_exe - vm_lib;
 }
 
-/*
-static unsigned int alarm(int m_seconds) {
+static unsigned int msec_alarm(int m_seconds) {
   struct itimerval old_alarm_time, new_alarm_time;
   new_alarm_time.it_interval.tv_usec = 0;
   new_alarm_time.it_interval.tv_sec = 0;
+  new_alarm_time.it_value.tv_usec = m_seconds * 1000;
+  new_alarm_time.it_value.tv_sec = 0;
+
+  if (setitimer(ITIMER_REAL, &new_alarm_time, &old_alarm_time) < 0)
+    return 0;
+  
+  return old_alarm_time.it_value.tv_sec;
 }
-*/
 
 int createProcess(const char* commands[], const RunInfo& run_info) {
   string command_line = commands[1];
@@ -137,9 +143,10 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
                      << run_info.time_limit << "ms";
       raise(SIGKILL);
     }
-    if (ualarm(run_info.time_limit * 2000, 0) == -1) {
+    if (msec_alarm(run_info.time_limit * 2) == -1) {
       LOG(SYS_ERROR) << "Fail to set clock limit to "
                      << run_info.time_limit << "ms";
+      raise(SIGKILL);
     }
     LOG(DEBUG) << "set time limit successful";
   }
