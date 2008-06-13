@@ -119,7 +119,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       map<string, string>::const_iterator iter = mission.in_and_out_path.begin();
       while (iter != mission.in_and_out_path.end()) {
         command += iter->first.substr(iter->first.find_last_of("/") + 1) + " " + 
-                   iter->second.substr(iter->second.find_last_of("/") + 1);
+                   iter->second.substr(iter->second.find_last_of("/") + 1) + " ";
         iter++;
       }
       if (mission.spj)

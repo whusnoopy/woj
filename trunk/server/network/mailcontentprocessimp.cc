@@ -46,11 +46,11 @@ void MailContentProcessImp::process(int socket_fd, const string& ip, int length)
     DataInterface::getInstance().setMailRead(mail);
   }
   string databuf;
-  databuf = stringPrintf("%s\001%s\001%s\001%s\001%s", mail.getToUser().c_str(), 
-                                                       mail.getFromUser().c_str(), 
-                                                       mail.getTitle().c_str(), 
-                                                       mail.getTime().c_str(),
-                                                       mail.getContent().c_str());
+  databuf = stringPrintf("%s\001%s\001%s\001%s", mail.getToUser().c_str(), 
+                                                 mail.getFromUser().c_str(), 
+                                                 mail.getTitle().c_str(), 
+                                                 mail.getTime().c_str());
+  databuf += "\001" + mail.getContent();
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;

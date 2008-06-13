@@ -304,6 +304,7 @@ int DatabaseInterface::getProblemListNum(const ProblemInfo& problem_info) {
     } else {
     	query += "and ";
     }
+    search = true;
     query += "problem_id in (select * from problemtocontests where contest_id = '" 
              + stringPrintf("%d", problem_info.related_contest) + "') ";
   }
@@ -311,12 +312,12 @@ int DatabaseInterface::getProblemListNum(const ProblemInfo& problem_info) {
   connection->connect();
   int ret = 0;
   if (!search) {
-    string query = "select problem_id as num from problems where problem_id";
+    query = "select problem_id as num from problems where problem_id";
     query += " >= all (select problem_id from problems)";
   }
   Result result_set = connection->excuteQuery(query);
   if (result_set.next()) {
-      ret = result_set.getInt("num")/100 + 1;
+      ret = result_set.getInt("num")/100 - 9;
   }
   result_set.close();
   connection->close();
@@ -1265,6 +1266,7 @@ Problem DatabaseInterface::getProblem(int problem_id){
 ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
 	ProblemList problem_list;
 	bool first = true;
+  bool nosearch = true;
   Connection* connection = createConnection();
   ProblemListItem item;
   string query = "select * from problems ";
@@ -1277,6 +1279,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
     }
     query += "problem_id = '" + stringPrintf("%d", problem_info.problem_id) + 
              "' ";
+    nosearch = false;
   }
   if (problem_info.title != string("NULL")){
     if (first){
@@ -1286,6 +1289,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
     	query += "and ";
     }
     query += "title like '%" + changeSymbol(problem_info.title) + "%' ";
+    nosearch = false;
   }
   if (problem_info.source != string("NULL")){
     if (first){
@@ -1295,6 +1299,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
     	query += "and ";
     }
     query += "source like '%" + changeSymbol(problem_info.source) + "%' ";
+    nosearch = false;
   } 
   
   if (problem_info.related_contest){
@@ -1306,9 +1311,21 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
     }
     query += "problem_id in (select * from problemtocontests where contest_id = '" 
              + stringPrintf("%d", problem_info.related_contest) + "') ";
+    nosearch = false;
   }
-  
-  query += " limit " + stringPrintf("%d, 100", problem_info.page_id*100);
+  if (nosearch) {
+    if (first){
+      query += "where ";
+      first = false;
+    } else {
+    	query += "and ";
+    }
+    query += stringPrintf(" problem_id <= %d and problem_id > %d", 
+                          (problem_info.page_id + 1) * 100 + 1000, 
+                          problem_info.page_id * 100 + 1000);
+  }
+  else
+    query += " limit " + stringPrintf("%d, 100", problem_info.page_id*100);
   LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
