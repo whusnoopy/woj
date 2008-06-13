@@ -9,6 +9,7 @@
 using namespace std;
 
 int doRun(int communicate_socket,
+          const string& working_dir,
           const string& program_name,
           const string& source_file_type,
           const string& input_filename,

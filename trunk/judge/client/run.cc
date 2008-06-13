@@ -19,6 +19,7 @@
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/client/client.h"
 #include "judge/client/result.h"
 #include "judge/client/syscall.h"
 #include "judge/client/trace.h"
@@ -174,7 +175,7 @@ int runExe(int communicate_socket,
 }
 
 int runJava(int communicate_socket,
-            const string& class_filename,
+            const string& class_directory,
             const string& input_filename,
             const string& program_output_filename,
             const string& java_error_output_filename,
@@ -184,9 +185,9 @@ int runJava(int communicate_socket,
   LOG(INFO) << "Running";
   sendReply(communicate_socket, RUNNING);
   const char* commands[] = {"/usr/bin/java",
-                            "java",
+                            "/usr/bin/java",
                             "-cp",
-                            class_filename.c_str(),
+                            class_directory.c_str(),
                             "-Djava.security.manager",
                             "Main",
                             NULL};
@@ -196,16 +197,17 @@ int runJava(int communicate_socket,
   run_info.stderr_filename = java_error_output_filename.c_str();
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
-  run_info.time_limit = time_limit * 5;
+  run_info.time_limit = time_limit * JAVA_TIME_LIMIT_MULTIPLE +
+                        JAVA_TIME_LIMIT_REMAINDER;
   run_info.memory_limit = memory_limit;
   run_info.output_limit = output_limit;
   run_info.proc_limit = 1;
   run_info.file_limit = 5;
-  run_info.trace = true;
+  run_info.trace = false;
   TraceCallback callback;
   pid_t pid = createProcess(commands, run_info);
   if (pid == -1) {
-    LOG(ERROR) << "Fail to run java class : " << class_filename;
+    LOG(ERROR) << "Fail to run java Main.class in " << class_directory;
     return SYSTEM_ERROR;
   }
   return monitor(communicate_socket, pid, time_limit, memory_limit, &callback);
@@ -218,6 +220,7 @@ inline int isNativeExe(const string& source_file_type) {
 }
 
 int doRun(int communicate_socket,
+          const string& working_dir,
           const string& program_name,
           const string& source_file_type,
           const string& input_filename,
@@ -235,47 +238,46 @@ int doRun(int communicate_socket,
                     time_limit,
                     memory_limit,
                     output_limit);
-  } else {
-    if (source_file_type == "java") {
-      LOG(INFO) << "Run java program during javac \"" << program_name << "\"";
-      string java_error_output_filename = "/tmp/java_error";
-      result = runJava(communicate_socket,
-                       program_name,
-                       input_filename,
-                       program_output_filename,
-                       java_error_output_filename,
-                       time_limit,
-                       memory_limit,
-                       output_limit);
+  } else if (source_file_type == "java") {
+    LOG(INFO) << "Run java program during javac \"" << program_name << "\"";
+    string java_error_output_filename = "/tmp/java_error";
+    result = runJava(communicate_socket,
+                     working_dir,
+                     input_filename,
+                     program_output_filename,
+                     java_error_output_filename,
+                     time_limit,
+                     memory_limit,
+                     output_limit);
 
-      // Get error message length and the message text at most 16384 Bytes
-      static signed char error_message[16384];
-      int error_file = open(java_error_output_filename.c_str(), O_RDWR, 0777);
-      int message_length = socket_read(error_file,
-                                       error_message,
-                                       sizeof(error_message));
+    // Get error message length and the message text at most 16384 Bytes
+    static signed char error_message[16384];
+    int error_file = open(java_error_output_filename.c_str(), O_RDWR, 0777);
+    int message_length = socket_read(error_file,
+                                     error_message,
+                                     sizeof(error_message));
 
-      // If there is error info output, we see RUNTIME_ERROR_JAVA
-      if (message_length > 0) {
-        result = RUNTIME_ERROR_JAVA;
-        sendReply(communicate_socket, result);
+    // If there is error info output, we see RUNTIME_ERROR_JAVA
+    if (message_length > 0) {
+      result = RUNTIME_ERROR_JAVA;
+      sendReply(communicate_socket, result);
 
-        // Send RE_JAVA message back to server
-        uint16_t length = htons(message_length);
-        socket_write(communicate_socket, &length, sizeof(length));
-        LOG(INFO) << "Send RE_JAVA message length finished. length = " << message_length;
-        for (int i = 0; i < message_length; ++i) {
-          if (error_message[i] <= 0)
-            error_message[i] = '?';
-        }
-        socket_write(communicate_socket, error_message, message_length);
-        LOG(INFO) << "Send RE_JAVA message finished.";
-        return result;
+      // Send RE_JAVA message back to server
+      uint16_t length = htons(message_length);
+      socket_write(communicate_socket, &length, sizeof(length));
+      LOG(INFO) << "Send RE_JAVA message length finished. length = " << message_length;
+      for (int i = 0; i < message_length; ++i) {
+        if (error_message[i] <= 0)
+          error_message[i] = '?';
       }
-    } else {
-      return SYSTEM_ERROR;
+      socket_write(communicate_socket, error_message, message_length);
+      LOG(INFO) << "Send RE_JAVA message finished.";
+      return result;
     }
+  } else {
+    return SYSTEM_ERROR;
   }
+
   if (result) {
     sendReply(communicate_socket, result);
     LOG(INFO) << "Program terminated because the result " << result;

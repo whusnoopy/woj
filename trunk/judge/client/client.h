@@ -1,6 +1,5 @@
-
-#ifndef _BASE_FLOOD_H__
-#define _BASE_FLOOD_H__
+#ifndef _JUDGE_CLIENT_CLIENT_H__
+#define _JUDGE_CLIENT_CLIENT_H__
 
 // Max path length
 const int MAX_PATH_LENGTH = 256;
@@ -22,6 +21,12 @@ const int MAX_OUTPUT_LIMIT = 64 * 1024;
 
 // Max test case number, 60
 const int MAX_TEST_CASE = 60;
+
+// Java time limit blow up multiple times, *5
+const int JAVA_TIME_LIMIT_MULTIPLE = 5;
+
+// Java time limit blow up remainder, 2s
+const int JAVA_TIME_LIMIT_REMAINDER = 2000;
 
 #endif
 
