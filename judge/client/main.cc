@@ -266,11 +266,22 @@ void process(int communicate_socket) {
     LOG(INFO) << "Data sync successful";
 
     // Convert data files to linux format
-    string convert_files = problem_dir + "/*";
-    if (convertFileFormat(convert_files) == -1) {
-      LOG(ERROR) << "Cannot convert data files to linux format";
-      return;
-    }
+    int file_no = 0;
+    string data_filename;
+    do {
+      data_filename = problem_dir + stringPrintf("/%d.out", file_no); 
+      if (convertFileFormat(data_filename) == -1) {
+        LOG(ERROR) << "Cannot convert data files to linux format";
+        return;
+      }
+      data_filename = problem_dir + stringPrintf("/%d.out", file_no); 
+      if (convertFileFormat(data_filename) == -1) {
+        LOG(ERROR) << "Cannot convert data files to linux format";
+        return;
+      }
+      file_no++;
+      data_filename = problem_dir + stringPrintf("/%d.in", file_no); 
+    } while (access(data_filename.c_str(), F_OK) == 0);
     LOG(INFO) << "Convert data files to linux format successful";
   }
   // Check whether special judge

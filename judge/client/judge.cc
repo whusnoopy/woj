@@ -43,13 +43,23 @@ static int compareFiles(const string& standard_output_file_name,
   char buf2[1024];
   memset(buf1, 0, sizeof(buf1));
   memset(buf2, 0, sizeof(buf2));
+  string sbuf1;
+  string sbuf2;
   
   while (!feof(file1) && !feof(file2)) {
     fgets(buf1, 1023, file1);
-    LOG(DEBUG) << "# " << buf1;
+    LOG(DEBUG) << "#" << buf1 << "#";
+    sbuf1 = "";
+    for (int i = 0; buf1[i]; ++i)
+      sbuf1 += stringPrintf("%02X", buf1[i]);
+    LOG(DEBUG) << "#" << sbuf1 << "#";
 
     fgets(buf2, 1023, file2);
-    LOG(DEBUG) << "* " << buf2;
+    LOG(DEBUG) << "*" << buf2 << "*";
+    sbuf2 = "";
+    for (int i = 0; buf2[i]; ++i)
+      sbuf2 += stringPrintf("%02X", buf2[i]);
+    LOG(DEBUG) << "#" << sbuf2 << "#";
 
     if (strcmp(buf1, buf2))
       break;
