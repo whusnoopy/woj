@@ -20,7 +20,7 @@ class format_output
 
 	function change($ch)
 	{
-		if($ch != "<" && $ch != ">" && $ch != "&" &&
+		if($ch != "<" && $ch != ">" && //$ch != "&" &&
 			$ch != "\'" && $ch != "\"" && $ch != "\n" && $ch != " "){
 			return $ch;
 		}
@@ -28,7 +28,7 @@ class format_output
 		switch($ch){
 			case "<": $str = "&#60;";  break;
 			case ">": $str = "&#62;";  break;
-			case "&": $str = "&#38;";  break;
+		//	case "&": $str = "&#38;";  break;
 			case "\'": $str = "&#39;"; break;
 			case "\"": $str = "&#34;"; break;
 			case "\n": $str = "<br>"; break;

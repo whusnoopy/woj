@@ -1,5 +1,8 @@
 <?php
-	include('../common/config.php');
+	if (file_exists('../common/config.php'))
+		include('../common/config.php');
+	else
+	    include('./common/config.php');
 	$filename = $DOCUMENT_ROOT.'include/note.html';
 	if(!note_exist($filename))
 		gen_note($filename);

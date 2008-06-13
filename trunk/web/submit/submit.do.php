@@ -3,6 +3,7 @@
 	include('../common/tcpclient.php');
 	include('../common/get_ip.php');
 	$errorMsg = '';
+	$source_len = 0;
 
 	if(empty($_POST['user_id']) || empty($_POST['pass'])){
 		$errorMsg = 'Invalid user ID or password';
@@ -13,7 +14,7 @@
 	else if(empty($_POST['language'])){
 		$errorMsg = 'please type your language';
 	}
-	else if(strlen($_POST['source']) > 10000){
+	else if(($source_len = strlen($_POST['source'])) > 10000){
 		$errorMsg = 'Source is too short';
 	}
 
@@ -31,7 +32,6 @@
 		$contest_id = $_POST['contest_id'];
 	else
 	    $contest_id = '0';
-	$source_len = strlen($_POST['source']);
 
 /************************************************/
 	//这里将提交结果发送给中心server;

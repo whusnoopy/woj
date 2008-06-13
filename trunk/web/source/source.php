@@ -14,6 +14,11 @@
 //		echo 'solution does not exist';
 //		exit;
 	}
+	if (!checkViewRight($user_id, $code_id)){
+		echo 'Sorry, Permission denied!<br>';
+		echo '<a href="javascript:history.back()">Back</a>';
+		exit;
+	}
 	$language_type = array('GCC','G++','JAVA','PASCAL');
 	$problem["sid"] = $_GET['sid'];
 	$problem["pid"] = $_GET['pid'];
@@ -80,6 +85,27 @@ function getSource($code_id, $user_id)
 		$recv = null;
 	$tc->close();
 	return $recv;
+}
+
+function checkViewRight($user_id, $code_id)
+{
+	$d="\001";
+	$message = 'V'.$d.$user_id.$d.$code_id;
+	$header = sprintf("%s%08d", 'rt', strlen($message));
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	if (!$tc->connect()){// or die("unable to connect to server!");
+		header('HTTP/1.1 404 Not Found');
+	}
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($message) or die("send message failed");
+
+	if ( $tc->recvstr(1) == 'Y'){
+		$tc->close();
+		return true;
+	}
+	$tc->close();
+	return false;
 }
 
 ?>
