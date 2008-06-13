@@ -5,6 +5,7 @@
 		exit;
 	}
 	include('../common/tcpclient.php');
+	include('../common/format_output.php');
 ?>
 <html>
 <head>
@@ -28,6 +29,7 @@
 	$problem_id = $_GET['problem_id'];
 	$problem = array();
 	getProblemDetails($problem_id, $problem);
+	$fo = new format_output();
 ?>
 
 <div id="tt">
@@ -36,25 +38,25 @@
 
 <div id="main">
     <div class="ptt">Description</div>
-    <div class="ptx"><?php echo $problem[1]; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[1]); ?></div>
 
     <div class="ptt">Input</div>
-    <div class="ptx"><?php echo $problem[2]; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[2]); ?></div>
 
     <div class="ptt">Output</div>
-    <div class="ptx"><?php echo $problem[3]; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[3]); ?></div>
 
     <div class="ptt">Sample Input</div>
-    <div class="code"><?php echo $problem[4]; ?></div>
+    <div class="code"><?php echo $fo->formatHtml($problem[4]); ?></div>
 
     <div class="ptt">Sample Output</div>
-    <div class="code"><?php echo $problem[5]; ?></div>
+    <div class="code"><?php echo $fo->formatHtml($problem[5]); ?></div>
 
     <div class="ptt">Hint</div>
-    <div class="ptx"><?php echo $problem[6]; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[6]); ?></div>
 
     <div class="ptt">Source</div>
-    <div class="ptx"><?php echo $problem[7]; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[7]); ?></div>
 
     <div class="ptt">Add in time</div>
     <div class="ptx"><?php echo $problem[8]; ?></div>

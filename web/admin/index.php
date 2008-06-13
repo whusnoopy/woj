@@ -9,7 +9,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Noah Admin</title>
+  <title>Flood Admin</title>
   <link href="../style/noah.css" rel="stylesheet" type="text/css" />
 </head>
 <body>

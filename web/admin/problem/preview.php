@@ -1,3 +1,13 @@
+<?php
+	session_start();
+	if (empty($_SESSION['user_id']) || $_SESSION['access'] != 'root'){
+		header('Location:login.php?errorMsg=please login first!');
+		exit;
+	}
+
+	include('../common/format_output.php');
+	$fo = new format_output();
+?>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -30,27 +40,27 @@
 
   <div id="main">
     <div class="ptt">Description</div>
-    <div class="ptx"><?php echo $_POST['description']; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($_POST['description']); ?></div>
 
     <div class="ptt">Input</div>
-    <div class="ptx"><?php echo $_POST['input']; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($_POST['input']); ?></div>
 
     <div class="ptt">Output</div>
-    <div class="ptx"><?php echo $_POST['output']; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($_POST['output']); ?></div>
 
     <div class="ptt">Sample Input</div>
-    <div class="code"><?php echo $_POST['sample_input']; ?></div>
+    <div class="code"><?php echo $fo->formatHtml($_POST['sample_input']); ?></div>
 
     <div class="ptt">Sample Output</div>
-    <div class="code"><?php echo $_POST['sample_output']; ?></div>
+    <div class="code"><?php echo $fo->formatHtml($_POST['sample_output']); ?></div>
 
     <div class="ptt">Hint</div>
-    <div class="ptx"><?php echo $_POST['hint']; ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($_POST['hint']); ?></div>
 
     <div class="ptt">Source</div>
 
     <div class="ptx">
-		<div><?php echo $_POST['source']; ?></div>
+		<div><?php echo $fo->formatHtml($_POST['source']); ?></div>
     </div>
     <br />
     <div>

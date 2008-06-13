@@ -86,7 +86,7 @@ function spjtest(form)
 	  <td align=right><strong>Description:</strong>&nbsp;&nbsp;</td>
       <td align=left>&nbsp;&nbsp;<div id="text"><textarea name="description" id="description" rows=10 cols=80></textarea></div>
 	  <div id="html" style=display:none></div>
-	  <input type="button"  id="change" value="View" onclick="changemodel();">
+<!--	  <input type="button"  id="change" value="View" onclick="changemodel();">  -->
 	  </td>
       <td></td>
     </tr>

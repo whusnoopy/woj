@@ -23,7 +23,7 @@
 ?>
 
   <div id="main">
-    <form action="submit.do.php" method=post>
+    <form action="submit.do.php" method=post onsubmit="encode(this.password.value)">
 	<input type="hidden" name="contest_id" value="<?php echo $contest_id;?>"/>
     <table><tbody>
       <tr>
@@ -40,7 +40,7 @@
       <tr class=tre>
         <td></td>
         <td align="right"><b>Password:&nbsp;&nbsp;</b></td>
-        <td align="left"><input type=password maxLength=20 size=25 name="pass" value="<?php echo $pass; ?>" /></td>
+        <td align="left"><input type=password id=ps maxLength=20 size=25 name="pass" value="<?php echo $pass; ?>" /></td>
         <td></td>
       </tr>
       <tr class=tro>
@@ -77,6 +77,14 @@
     </tbody></table>
     </form>
   </div>
+ <script src="../common/md5.js"></script>
+ <script language="javascript">
+ function encode(ps)
+ {
+	 document.getElementById('ps').value = MD5(ps);
+	 return true;
+ }
+ </script>
 
 <?php
     include ('../include/tailer.php');
