@@ -31,14 +31,14 @@ void DiscussContentProcessImp::process(int socket_fd, const string& ip, int leng
   Discuss discuss;
   discuss = DataInterface::getInstance().getDiscuss(discuss_id);
   string databuf;
-  databuf += stringPrintf("%d\001%s\001%d\001%d\001%s\001%s\001%s",
+  databuf += stringPrintf("%d\001%s\001%d\001%d\001%s\001%s",
                           discuss.getTopicId(),
                           discuss.getTitle().c_str(),
                           discuss.getProblemId(),
                           discuss.getContestId(),
                           discuss.getUserId().c_str(),
-                          discuss.getDate().c_str(),
-                          discuss.getContent().c_str());
+                          discuss.getDate().c_str());
+  databuf += "\001" + discuss.getContent();
 
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){

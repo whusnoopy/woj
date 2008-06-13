@@ -39,6 +39,7 @@ void ProblemProcessImp::process(int socket_fd, const string& ip, int length){
     socket_write(socket_fd, len.c_str(), 10);
     return;
   }
+  /*
   databuf = stringPrintf("%s\001%s\001%s\001%s\001%s\001%s\001%s\001%s\001%d\001%d\001%d\001%d", 
   //del                       problem.getProblemId(), 
                          problem.getTitle().c_str(),
@@ -53,7 +54,22 @@ void ProblemProcessImp::process(int socket_fd, const string& ip, int length){
                          problem.getMemoryLimit(),
                          problem.getSubmit(),
                          problem.getAccepted());
+                         */
+  databuf = problem.getTitle() + "\001" + 
+            problem.getDescription() + "\001" +
+            problem.getInput() + "\001" + 
+            problem.getOutput() + "\001" +
+            problem.getSampleInput() + "\001" +
+            problem.getSampleOutput() + "\001" +
+            problem.getHint() + "\001" +
+            problem.getSource() + "\001" +
+            stringPrintf("%d", problem.getTimeLimit()) + "\001" +
+            stringPrintf("%d", problem.getMemoryLimit()) + "\001" +
+            stringPrintf("%d", problem.getSubmit()) + "\001" +
+            stringPrintf("%d", problem.getAccepted());
+  LOG(DEBUG) << databuf;
   len = stringPrintf("%010d",databuf.length());
+  LOG(DEBUG) << "len:" << len;
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
     return;
