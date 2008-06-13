@@ -122,7 +122,7 @@ static int runSpecialJudge(const string& special_judge_exe_filename,
   RunInfo run_info;
   run_info.uid = FLAGS_uid;
   run_info.gid = FLAGS_gid;
-  run_info.time_limit = 1;
+  run_info.time_limit = SPECIAL_JUDGE_TIME_LIMIT;
   run_info.memory_limit = 256 * 1024;
   run_info.output_limit = 16;
   run_info.file_limit = 6;

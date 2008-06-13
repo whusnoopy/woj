@@ -8,10 +8,14 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 
+#include "base/flags.h"
 #include "base/logging.h"
 #include "base/util.h"
 
+#include "judge/client/client.h"
 #include "judge/client/utils.h"
+
+DECLARE_FLAGS(string, root_dir);
 
 int setLimit(int resource, unsigned int limit) {
   struct rlimit t;
@@ -271,5 +275,25 @@ int lockFile(int file, int cmd) {
   lock.l_whence = SEEK_SET;
   lock.l_len = 0;
   return fcntl(file, cmd, &lock);
+}
+
+int convertFileFormat(const string& filename) {
+  RunInfo run_info;
+  run_info.time_limit = CONVERT_FILE_TIME_LIMIT;
+  string command = FLAGS_root_dir + "/bin/convert.sh " + filename;
+  pid_t pid = createShellProcess(command.c_str(), run_info);
+  if (pid < 0) {
+    LOG(ERROR) << "Fail to create shell process to compile";
+    return -1;
+  }
+  LOG(DEBUG) << "Create process " << pid << " to convert";
+  int status;
+  waitpid(pid, &status, 0);
+  if (WEXITSTATUS(status)) {
+    LOG(ERROR) << "Unknown error during convert file with exit status = "
+               << status << "(WEXITSTATUS = " << WEXITSTATUS(status) << ")";
+    return -1;
+  }
+  return 0;
 }
 

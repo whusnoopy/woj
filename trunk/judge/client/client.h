@@ -7,6 +7,12 @@ const int MAX_PATH_LENGTH = 256;
 // Time limit for compiling, 30s
 const int COMPILE_TIME_LIMIT = 30 * 1000;
 
+// Time limit for run special judge program, 30s
+const int SPECIAL_JUDGE_TIME_LIMIT = 30 * 1000;
+
+// Time limit for convert file format, 30s
+const int CONVERT_FILE_TIME_LIMIT = 30 * 1000;
+
 // Max time limit for any submit, 60s
 const int MAX_TIME_LIMIT = 60 * 1000;
 

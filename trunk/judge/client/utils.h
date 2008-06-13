@@ -60,5 +60,7 @@ int connectToServer(const string& address, int port);
 
 int lockFile(int file, int cmd);
 
+int convertFileFormat(const string& filename);
+
 #endif
 
