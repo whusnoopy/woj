@@ -15,7 +15,12 @@
 #include "exception/signaltranslator.h"
 #include "exception/pipeexception.h"
 
+#include "base/logging.h"
+#include "base/flags.h"
+
 using namespace std;
+
+DECLARE_FLAGS(string, configure_path);
 
 void init() {
   Configure::init();
@@ -59,6 +64,9 @@ int main(int argc, char* argv[]){
       LOG(INFO) << "ReConfigure.";
     } else if(in == "quit") 
       break;
+    else if (in == "configure") {
+      Configure::getInstance().output();
+    }
     else {
       cout << "Unknown command:" << in;
       cout << "please tape reconfigure, quit";

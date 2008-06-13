@@ -57,6 +57,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     if (reply == SYSTEM_ERROR) {
       status.setResult(static_cast<int>(reply));
       DataInterface::getInstance().updateStatus(status);
+      JudgeControl::getInstance().putReJudgeItem(status);
     }
     else if (reply == UNSUPPORTED_SOURCE_FILE_TYPE) {
       JudgeControl::getInstance().addMission(mission);
@@ -88,6 +89,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     LOG(ERROR) << ip <<" Judge Cannot process the mission";
     status.setResult(SYSTEM_ERROR);
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }
 
@@ -170,6 +172,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       LOG(ERROR) << ip <<" Judge Cannot process the mission";
       status.setResult(SYSTEM_ERROR);
       DataInterface::getInstance().updateStatus(status);
+      JudgeControl::getInstance().putReJudgeItem(status);
       return -2;
     }
     //9.send data;
@@ -187,6 +190,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     LOG(INFO) << "System error when get code reply:" << ip;
     status.setResult(SYSTEM_ERROR) ;
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }else {
   
@@ -203,6 +207,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     LOG(ERROR) << ip <<" Judge Cannot process the mission";
     status.setResult(SYSTEM_ERROR);
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }
 
@@ -231,6 +236,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     LOG(INFO) << "System error when get limit reply:" << ip;
     status.setResult(SYSTEM_ERROR) ;
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }
 
@@ -247,6 +253,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     LOG(ERROR) << "Process sequent error, should compile now:" << ip;
     status.setResult(SYSTEM_ERROR) ;
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }
   status.setResult(COMPILING);
@@ -288,12 +295,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     int ce_error_id = DataInterface::getInstance().addError(Error(0, ce_info));
     status.setErrorId(ce_error_id);
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }
   else if (reply == SYSTEM_ERROR) {
     LOG(ERROR) << "Compile system error now:" << ip;
     status.setResult(SYSTEM_ERROR) ;
     DataInterface::getInstance().updateStatus(status);
+    JudgeControl::getInstance().putReJudgeItem(status);
     return -2;
   }
   for (int i = 0; i < mission.in_and_out_path.size(); i++) {
@@ -310,6 +319,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       LOG(ERROR) << "Process sequent error, should run now:" << ip;
       status.setResult(SYSTEM_ERROR) ;
       DataInterface::getInstance().updateStatus(status);
+      JudgeControl::getInstance().putReJudgeItem(status);
       return -2;
     }
     status.setResult(RUNNING);
@@ -376,6 +386,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       LOG(ERROR) << "Process sequent error, should run now:" << ip;
       status.setResult(SYSTEM_ERROR) ;
       DataInterface::getInstance().updateStatus(status);
+      JudgeControl::getInstance().putReJudgeItem(status);
       return -2;
     }
     status.setResult(JUDGING);
@@ -426,6 +437,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     DataInterface::getInstance().updateProblemStandardLimit(problem);
   }
   DataInterface::getInstance().updateStatus(status);
+  JudgeControl::getInstance().putReJudgeItem(status);
   if (static_cast<int>(ret[0]) == ACCEPTED) {
     DataInterface::getInstance().updateUserSolved(status, 1);
     DataInterface::getInstance().addProblemSolved(status.getProblemId(), 1);

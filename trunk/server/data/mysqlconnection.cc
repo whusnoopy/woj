@@ -41,7 +41,7 @@ Result MysqlConnection::excuteQuery(const string& query){
   int ret = mysql_real_query(&m_mysql,query.c_str(),query.length());
   //cout << ret <<endl;
   if(ret){
-    cout<<"Query failed."<<endl;
+    cout << "Query failed." << query << endl;
     return Result();
   }else{
     m_result = mysql_store_result(&m_mysql);

@@ -161,6 +161,10 @@ MailList DataInterface::getMailList(const MailInfo& mail_info) {
   return DatabaseInterface::getInstance().getMailList(mail_info);
 }
 
+int DataInterface::getNewMailCount(const string& user_id) {
+  return DatabaseInterface::getInstance().getNewMailCount(user_id);
+}
+
 UserList DataInterface::getMostDiligenPlayer() {
   return DatabaseInterface::getInstance().getMostDiligenPlayer();
 }

@@ -42,6 +42,7 @@ public:
   Error getError(int error_id);
   Mail getMail(int mail_id);
   MailList getMailList(const MailInfo& mail_info);
+  int getNewMailCount(const string& user_id);
   UserList getMostDiligenPlayer();
   NewsList getNewsList(const NewsInfo& news_info);
   StatusList getNoSearchStatus();
