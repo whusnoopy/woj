@@ -1,8 +1,6 @@
 <?php
 	session_start();
-?>
 
-<?php
 	if (isset($_SESSION['user_id']))
 		$user_id = $_SESSION['user_id'];
 	else
@@ -61,7 +59,12 @@
 			echo '<td>Been Read</td>';
 		echo "<td><a href=\"../status/userStatus.php?user_id=${from}\">${from}</a></td>";
 		echo "<td><a href=\"../status/userStatus.php?user_id=${to}\">${to}</a></td>";
-		echo '<td><a href="mail.php?mail_id='.$ml->getMail_id($i).'">'.$ml->getTitle($i).'</a></td>';
+		echo '<td><a href="mail.php?mail_id='.$ml->getMail_id($i).'">';
+		if ($to == $user_id && $ml->getRead($i) == 'N')
+			echo '<font color=red>'.$ml->getTitle($i).'</font>';
+		else
+			echo $ml->getTitle($i);
+		echo '</a></td>';
 		echo '<td>'.$ml->getIn_date($i).'</td>';
 	}
 
