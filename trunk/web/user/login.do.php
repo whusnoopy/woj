@@ -30,9 +30,9 @@
 			setcookie('password', '');
 		}
 
-		if(login($user_id, $password)){
+		if( ($mail_number = login($user_id, $password)) != -1){
 			$_SESSION['user_id'] = $user_id;
-			$_SESSION['password'] = $password;
+			$_SESSION['mail_number'] = $mail_number;
 			header("Location: $origURL");
 			exit;
 		}
@@ -66,10 +66,12 @@
 		$tc->sendstr($message) or die("send header failed");
 
 		if($tc->recvstr(1) == 'Y'){
+			$recv = $tc->recvstr(10);
+			sscanf("%d", $recv, $mail_number);
 			$tc->close();
-			return true;
+			return $mail_number;
 		}
 		$tc->close();
-		return false;
+		return -1;
 	}
 ?>

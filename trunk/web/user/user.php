@@ -5,7 +5,6 @@
 	else
 		$user_id = '';
 ?>
-
 <?php
     include('../include/header.php');
 	echo '<title>User</title>';

@@ -1,5 +1,5 @@
 <?php
-     $hasNewMail = check_new_mail(isset($_SESSION['user_id'])?$_SESSION['user_id']:'');
+     $NewMail = isset($_SESSION['mail_number'])?$_SESSION['mail_number']:0;
 ?>
 <html>
 <head>
@@ -21,8 +21,8 @@
     <a href="../user/user.php">User</a>&nbsp;|&nbsp;
     <a href="../mail/mailList.php">
       <?php
-        if ($hasNewMail==true)
-          echo "<font color=\"red\">Mail</font></a>";
+        if ($NewMail>0)
+          echo "<font color=\"red\">Mail[$NewMail]</font></a>";
         else
           echo "Mail</a>";
 	  ?>
@@ -31,14 +31,3 @@
 	</div>
 
 
-<?php
-
-function check_new_mail($user_id)
-{
-	if($user_id)
-	    return true;
-	else
-		return false;
-}
-
-?>

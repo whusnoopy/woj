@@ -45,7 +45,7 @@
  <script language="javascript">
  function encode(ps)
  {
-//	 document.getElementById('ps').value = MD5(ps);
+	 document.getElementById('ps').value = MD5(ps);
 	 return true;
  }
  </script>
