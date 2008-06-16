@@ -352,7 +352,7 @@ int getProblemFile() {
        dquery = "insert into filestoproblems values(";
        dquery += stringPrintf("'%d', '%d', '1')", spj_id, problem_id);
        d_connection->excuteUpdate(dquery);
-       copyfile(spj + ".cc", spjfilepath); 
+       copyfile(spj + ".cpp", spjfilepath); 
      }
    }
    return 0;
@@ -657,7 +657,7 @@ int getRootSolution() {
 
 int main() {
   s_connection = createConnection("localhost", "root", "123456", "noah");
-  d_connection = createConnection("localhost", "root", "123456", "onlinejudgetest");
+  d_connection = createConnection("localhost", "root", "123456", "flood");
   s_connection->connect();
   d_connection->connect();
   getUser();
