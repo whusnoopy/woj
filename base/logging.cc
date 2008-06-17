@@ -46,7 +46,8 @@ class LogFile {
 
     void create() {
       string dir = FLAGS_root_dir + "/log";
-      if (mkdirRecursive(dir.c_str(), 0777) < 0 && errno != EEXIST) {
+     // if (mkdirRecursive(dir.c_str(), 0777) < 0 && errno != EEXIST) {
+      if (mkdir(dir.c_str(), 0777) < 0 && errno != EEXIST) {
         openlog("Flood Judge Client", 0, LOG_USER);
         syslog(LOG_ERR, "Fail to create dir %s", dir.c_str());
         return;
