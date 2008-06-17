@@ -68,13 +68,14 @@ static int compareFiles(const string& standard_output_file_name,
   */
 
   FILE* standard_output_file = fopen(standard_output_file_name.c_str(), "r");
-  FILE* users_output_file = fopen(users_output_file_name.c_str(), "r");
   if (standard_output_file == 0) {
-    LOG(ERROR) << "Fail to open file " << standard_output_file_name;
+    LOG(SYS_ERROR) << "Fail to open file " << standard_output_file_name;
     return SYSTEM_ERROR;
   }
+  FILE* users_output_file = fopen(users_output_file_name.c_str(), "r");
   if (users_output_file == 0) {
-    LOG(ERROR) << "Fail to open file " << users_output_file_name;
+    LOG(SYS_ERROR) << "Fail to open file " << users_output_file_name;
+    fclose(standard_output_file);
     return SYSTEM_ERROR;
   }
 
@@ -96,6 +97,8 @@ static int compareFiles(const string& standard_output_file_name,
       }
       result = PRESENTATION_ERROR;
     } else {
+      fclose(standard_output_file);
+      fclose(users_output_file);
       return WRONG_ANSWER;
     }
   }
@@ -105,6 +108,9 @@ static int compareFiles(const string& standard_output_file_name,
     c1 = fgetc(standard_output_file);
   while (isspace(c2))
     c2 = fgetc(users_output_file);
+
+  fclose(standard_output_file);
+  fclose(users_output_file);
 
   if (c1 > 0 || c2 > 0)
     return WRONG_ANSWER;

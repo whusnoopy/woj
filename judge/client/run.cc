@@ -53,7 +53,7 @@ int monitor(int communicate_socket,
 */
   while (result < 0 && !callback->hasExited()) {
     waitpid(pid, &status, 0);
-    LOG(DEBUG) << "Get status from pid : " << stringPrintf("%04x", status);
+//    LOG(DEBUG) << "Get status from pid : " << stringPrintf("%04x", status);
     if (WIFEXITED(status))
       break;
 
@@ -271,6 +271,7 @@ int doRun(int communicate_socket,
           error_message[i] = '?';
       }
       socket_write(communicate_socket, error_message, message_length);
+      close(error_file);
       LOG(INFO) << "Send RE_JAVA message finished.";
       return result;
     }

@@ -126,6 +126,11 @@ int createProcess(const char* commands[], const RunInfo& run_info) {
     LOG(SYS_ERROR) << "Unable to fork";
     return -1;
   } else if (pid > 0) {
+    for (int i = 0; i < 3; i++) {
+      if (file[i]) {
+        close(file[i]);
+      }
+    }
     return pid;
   }
   for (int i = 0; i < 3; i++) {
