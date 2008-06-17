@@ -54,13 +54,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     return -1;
   }
   if (reply != READY) {
-    LOG(ERROR) << " Judge[" << ip << "]Cannot process the mission";
     if (reply == SYSTEM_ERROR) {
+    LOG(ERROR) << " Judge[" << ip << "] System error when get reply for header";
       status.setResult(static_cast<int>(reply));
       DataInterface::getInstance().updateStatus(status);
       JudgeControl::getInstance().putReJudgeItem(status);
     }
     else if (reply == UNSUPPORTED_SOURCE_FILE_TYPE) {
+    LOG(ERROR) << " Judge[" << ip << "] Cannot process the mission";
       JudgeControl::getInstance().addMission(mission);
     }
     return -2;
