@@ -27,16 +27,17 @@ bool JudgeThread::check(const string& ip) {
 
 int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const string& ip) {
   Status status = mission.status;
+  LOG(INFO) << "Judge[" << ip << "] start judge status[" << status.getStatusId() << "] language = " << status.getLanguage();
   //1.send header
-  LOG(DEBUG) << "send header";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "send header";
   char header[11];
   BufSize buf;
   memset(header, 0, sizeof(header));
   header[0] = mission.status.getLanguage();
-  LOG(DEBUG) << "language :" << mission.status.getLanguage();
+  LOG(DEBUG) << "Judge[" << ip << "] " << "language :" << mission.status.getLanguage();
   *(unsigned int*) (header + 1) = htonl((unsigned int)(mission.status.getProblemId()));
   *(unsigned int*) (header + 5) = htonl((unsigned int)(mission.version));
-  LOG(DEBUG) << stringPrintf("%018X", header);
+  LOG(DEBUG) << "Judge[" << ip << "] " << "Problem :" << mission.status.getProblemId() << ", version:" << mission.version;
   if (socket_write(connect_fd, header, 9) != 0) {
     LOG(SYS_ERROR) << "Cannot send header to :" << ip;
     JudgeControl::getInstance().addMission(mission);
@@ -66,11 +67,11 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
 
   //3.send source length
-  LOG(DEBUG) << "send source length";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "send source length";
   char len[4];
-  LOG(DEBUG) << "code length" << status.getCodeLength();
+  LOG(DEBUG) << "Judge[" << ip << "] " << "code length" << status.getCodeLength();
   *(unsigned int*)(len) = htonl((unsigned int)status.getCodeLength());
-  LOG(DEBUG) << stringPrintf("code length: %d(%04X)", status.getCodeLength(), *(unsigned int*)(len));
+  LOG(DEBUG) << "Judge[" << ip << "] " << stringPrintf("code length: %d(%04X)", status.getCodeLength(), *(unsigned int*)(len));
   if (socket_write(connect_fd, len, 4) != 0) {
     LOG(SYS_ERROR) << "Cannot send source length to :" << ip;
     JudgeControl::getInstance().addMission(mission);
@@ -94,7 +95,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
 
   //5.send code 
-  LOG(DEBUG) << "send code";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "send code";
   if (socket_write(connect_fd, 
                    mission.source.c_str(), 
                    mission.status.getCodeLength()) != 0) {
@@ -113,7 +114,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
   if (reply == READY) {
     //7.send data length;
-    LOG(DEBUG) << "send data length";
+    LOG(DEBUG) << "Judge[" << ip << "] " << "send data length";
     string zip_dir = mission.data_path; 
     string zip_name = zip_dir + stringPrintf("%d.tar.gz", mission.version);
     if (access(zip_name.c_str(), R_OK) < 0) {
@@ -126,7 +127,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       }
       if (mission.spj)
         command += mission.spj_source_path.substr(mission.spj_source_path.find_last_of("/") + 1);
-      LOG(DEBUG) << command;
+      LOG(DEBUG) << "Judge[" << ip << "] " << command;
       char path[MAX_PATH_LENGTH + 1];
       if (getcwd(path, sizeof(path)) == NULL) {
         LOG(SYS_ERROR) << "Cannot get pwd.";                
@@ -151,7 +152,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       }
     }
     ssize_t data_length = DataInterface::getInstance().getFileSize(zip_name);
-    LOG(DEBUG) << stringPrintf("data_length: %d", data_length);
+    LOG(DEBUG) << "Judge[" << ip << "] " << stringPrintf("data_length: %d", data_length);
     char data_len[4];
     *(unsigned int*)(data_len) = htonl(data_length);
     if (socket_write(connect_fd, data_len, 4) != 0) {
@@ -169,14 +170,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       return -1;
     }
     if (reply != READY) {
-      LOG(ERROR) << ip <<" Judge Cannot process the mission";
+      LOG(ERROR) << ip <<" get ready for send data error";
       status.setResult(SYSTEM_ERROR);
       DataInterface::getInstance().updateStatus(status);
       JudgeControl::getInstance().putReJudgeItem(status);
       return -2;
     }
     //9.send data;
-    LOG(DEBUG) << "send data";
+    LOG(DEBUG) << "Judge[" << ip << "] " << "send data";
     FileData file_data = DataInterface::getInstance().getFile(zip_name);
     if (socket_write(connect_fd, file_data.buf, data_length) != 0) {
       LOG(SYS_ERROR) << "Cannot send zip data to :" << ip;
@@ -187,7 +188,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   } else if (reply == DATA_EXSIST) {
     
   }else if (reply == SYSTEM_ERROR) {
-    LOG(INFO) << "System error when get code reply:" << ip;
+    LOG(INFO) << "Judge[" << ip << "] " << "System error when get code reply:" << ip;
     status.setResult(SYSTEM_ERROR) ;
     DataInterface::getInstance().updateStatus(status);
     JudgeControl::getInstance().putReJudgeItem(status);
@@ -204,7 +205,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     return -1;
   }
   if (reply != READY) {
-    LOG(ERROR) << ip <<" Judge Cannot process the mission";
+    LOG(ERROR) << ip <<" System error when get reply for down oper ";
     status.setResult(SYSTEM_ERROR);
     DataInterface::getInstance().updateStatus(status);
     JudgeControl::getInstance().putReJudgeItem(status);
@@ -212,7 +213,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
 
   //11.send limit
-  LOG(DEBUG) << "send limit";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "send limit";
   char limit[13];
   limit[0] = mission.in_and_out_path.size();
   *(unsigned int*)(limit + 1) = htonl((unsigned int)(mission.time_limit));
@@ -241,14 +242,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
 
   //13.compile
-  LOG(DEBUG) << "compile";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "compile";
   if (socket_read(connect_fd, &reply, 1) != 1) {
     LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
     JudgeControl::getInstance().addMission(mission);
     close(connect_fd);
     return -1;
   }
-  LOG(DEBUG) << stringPrintf("%d", (int)reply);
+  LOG(DEBUG) << "Judge[" << ip << "] " << stringPrintf("%d", (int)reply);
   if (reply != COMPILING) {
     LOG(ERROR) << "Process sequent error, should compile now:" << ip;
     status.setResult(SYSTEM_ERROR) ;
@@ -260,19 +261,19 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   DataInterface::getInstance().updateStatus(status);
 
   //14.compile result
-  LOG(DEBUG) << "get Complie reuslt from:" << connect_fd;
+  LOG(DEBUG) << "Judge[" << ip << "] " << "get Complie reuslt from:" << connect_fd;
   if (socket_read(connect_fd, &reply, 1) != 1) {
     LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
     JudgeControl::getInstance().addMission(mission);
     close(connect_fd);
     return -1;
   }
-  LOG(DEBUG) << (int) reply;
+  LOG(DEBUG) << "Judge[" << ip << "] " << (int) reply;
   if (reply == COMPILE_ERROR) {
-    LOG(INFO) << "Misson compile error:" << ip;
+    LOG(INFO) << "Judge[" << ip << "] " << "Misson compile error:" << ip;
     status.setResult(COMPILE_ERROR);
     //15.CE information length 
-    LOG(DEBUG) << "get Ce information length";
+    LOG(DEBUG) << "Judge[" << ip << "] " << "get Ce information length";
     uint16_t ce_length;
     char ce_len[2];
     if (socket_read(connect_fd, (char *)&ce_len, 2) != 2){
@@ -284,7 +285,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     ce_length = ntohs(*(uint16_t*)ce_len);
     buf.alloc(ce_length);
     //16.get CE infromation
-    LOG(DEBUG) << "get CE information";
+    LOG(DEBUG) << "Judge[" << ip << "] " << "get CE information";
     if (socket_read(connect_fd, buf.getBuf(), ce_length) != ce_length) {
       LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
       JudgeControl::getInstance().addMission(mission);
@@ -307,14 +308,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
   for (int i = 0; i < mission.in_and_out_path.size(); i++) {
     //17.running
-    LOG(DEBUG) << "running";
+    LOG(DEBUG) << "Judge[" << ip << "] " << "running";
     if (socket_read(connect_fd, &reply, 1) != 1) {
       LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
       JudgeControl::getInstance().addMission(mission);
       close(connect_fd);
       return -1;
     }
-    LOG(DEBUG) << (int)reply;
+    LOG(DEBUG) << "Judge[" << ip << "] " << (int)reply;
     if (reply != RUNNING) {
       LOG(ERROR) << "Process sequent error, should run now:" << ip;
       status.setResult(SYSTEM_ERROR) ;
@@ -340,13 +341,13 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       case RUNTIME_ERROR_SIGFPE:
       case RUNTIME_ERROR_SIGBUS:
       case RUNTIME_ERROR_SIGABRT:
-        LOG(INFO) << "RE happened." << ip;
+        LOG(INFO) << "Judge[" << ip << "] " << "RE happened." << ip;
         break;
       case RUNTIME_ERROR_JAVA:
-        LOG(INFO) << "RE JAVA/PAS happened." << ip;
+        LOG(INFO) << "Judge[" << ip << "] " << "RE JAVA/PAS happened." << ip;
         status.setResult(static_cast<int>(reply));
         //19.RE information length
-        LOG(DEBUG) << "get Re information length";
+        LOG(DEBUG) << "Judge[" << ip << "] " << "get Re information length";
         uint16_t re_length;
         char re_len[2];
         if (socket_read(connect_fd, (char *)&re_len, 2) != 2){
@@ -358,7 +359,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
         re_length = ntohs(*(uint16_t*)re_len);
         buf.alloc(re_length);
         //20.get RE infromation
-        LOG(DEBUG) << "get Re infromation";
+        LOG(DEBUG) << "Judge[" << ip << "] " << "get Re infromation";
         if (socket_read(connect_fd, buf.getBuf(), re_length) != re_length) {
           LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
           JudgeControl::getInstance().addMission(mission);
@@ -374,14 +375,14 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     if (is_break)
       break;
     //21.JUDGING
-    LOG(DEBUG) << "judging";
+    LOG(DEBUG) << "Judge[" << ip << "] " << "judging";
     if (socket_read(connect_fd, &reply, 1) != 1) {
       LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
       JudgeControl::getInstance().addMission(mission);
       close(connect_fd);
       return -1;
     }
-    LOG(DEBUG) << (int)reply;
+    LOG(DEBUG) << "Judge[" << ip << "] " << (int)reply;
     if (reply != JUDGING) {
       LOG(ERROR) << "Process sequent error, should run now:" << ip;
       status.setResult(SYSTEM_ERROR) ;
@@ -401,7 +402,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     bool done = false;
     switch(static_cast<int>(reply)) {
       case ACCEPTED:
-        LOG(INFO) << "AC:" << ip;
+        LOG(INFO) << "Judge[" << ip << "] " << "AC:" << ip;
         status.setResult(ACCEPTED);
         break;
       case PRESENTATION_ERROR:
@@ -411,7 +412,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       case OUTPUT_LIMIT_EXCEEDED:
       case COMPILE_ERROR:
       case SYSTEM_ERROR:
-        LOG(INFO) << "Not Ac :" << ip;
+        LOG(INFO) << "Judge[" << ip << "] " << "Not Ac :" << ip;
         done = true;
         break;
     }
@@ -419,7 +420,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
       break;
   }
   //23.end
-  LOG(DEBUG) << "end";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "end";
   char ret[9];
   if (socket_read(connect_fd, ret, 9) != 9) {
     LOG(SYS_ERROR) << "Cannot read reply from:" << ip;
@@ -443,7 +444,7 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     DataInterface::getInstance().addProblemSolved(status.getProblemId(), 1);
     DataInterface::getInstance().addProblemUserSolved(status, 1);
   }
-  LOG(DEBUG) << "Judge compelete.";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "Judge compelete.";
   return 0;
 }
 
@@ -475,7 +476,7 @@ void JudgeThread::running() {
         int ret = sendFile(connect_fd, mission, ip);
         if (ret == -1) 
           break;
-        LOG(DEBUG) << "ret:" << ret;
+        LOG(DEBUG) << "Judge[" << ip << "] " << "ret:" << ret;
       }
     } catch (PipeException e) {
       close(connect_fd);

@@ -23,7 +23,7 @@ CREATE TABLE `contests` (
   `version` int(11) default '1',
   `available` char(1) default 'Y',
   PRIMARY KEY  (`contest_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `courses` (
   `course_id` int(11) NOT NULL auto_increment,
@@ -31,7 +31,7 @@ CREATE TABLE `courses` (
   `available` char(1) default 'Y',
   `user_id` varchar(20) NOT NULL,
   PRIMARY KEY  (`course_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `discusses` (
   `message_id` int(11) NOT NULL auto_increment,
@@ -50,13 +50,13 @@ CREATE TABLE `discusses` (
   KEY `contest_id` (`contest_id`),
   KEY `reply_id` (`reply_id`),
   KEY `topic_id` (`topic_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `errors` (
   `error_id` int(11) NOT NULL auto_increment,
   `content` text NOT NULL,
   PRIMARY KEY  (`error_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `files` (
   `file_id` int(11) NOT NULL auto_increment,
@@ -64,7 +64,7 @@ CREATE TABLE `files` (
   `style` tinyint(4) default '0',
   `disable` char(1) default 'N',
   PRIMARY KEY  (`file_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=66 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `filestocontests` (
   `file_id` int(11) NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE `jobs` (
   `available` char(1) default 'Y',
   `course_id` int(11) NOT NULL,
   PRIMARY KEY  (`job_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `mails` (
   `mail_id` int(11) NOT NULL auto_increment,
@@ -114,7 +114,7 @@ CREATE TABLE `mails` (
   KEY `to_user` (`to_user`),
   KEY `from_user` (`from_user`),
   KEY `topic_id` (`topic_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 CREATE TABLE `news` (
   `news_id` int(11) NOT NULL auto_increment,
@@ -122,7 +122,7 @@ CREATE TABLE `news` (
   `title` varchar(200) NOT NULL,
   `content` text,
   PRIMARY KEY  (`news_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `problems` (
   `problem_id` int(11) NOT NULL auto_increment,
@@ -148,7 +148,7 @@ CREATE TABLE `problems` (
   `version` int(11) default '0',
   `spj` char(1) default 'N',
   PRIMARY KEY  (`problem_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1380 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `problemstojobs` (
   `job_id` int(11) NOT NULL,
@@ -176,7 +176,7 @@ CREATE TABLE `sets` (
   `set_id` int(11) NOT NULL auto_increment,
   `number` int(11) default '1',
   PRIMARY KEY  (`set_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `setstojobs` (
   `job_id` int(11) NOT NULL,
@@ -206,7 +206,7 @@ CREATE TABLE `statuses` (
   KEY `contest_id` (`contest_id`),
   KEY `code_id` (`code_id`),
   KEY `error_id` (`error_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=346 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `students` (
   `user_id` varchar(20) NOT NULL,

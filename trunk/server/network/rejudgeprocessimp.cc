@@ -24,6 +24,7 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
   delete[] buf;
   vector<string> datalist;
   spriteString(data, 1, datalist);
+  LOG(DEBUG) << "data:" << data;
   vector<string>::iterator iter = datalist.begin();
   Status status;
   int status_id;
@@ -35,11 +36,16 @@ void RejudgeProcessImp::process(int socket_fd, const string& ip, int length) {
   iter++;
   if (status_id <= 0) {
     sendReply(socket_fd, 'N');
-    LOG(ERROR) << "status_id can not be nagative";
+    LOG(ERROR) << "status_id can not be nagative" << status_id;
     return ;
   }
   status = DataInterface::getInstance().getStatus(status_id);
-  
+  if (status.getStatusId() == 0) {
+    sendReply(socket_fd, 'N');
+    LOG(ERROR) << "Status do not find:" << status_id;
+    return ;
+  }
+
   JudgeControl::getInstance().addRejudgeItem(status);
   
   if (status.getResult() == ACCEPTED) {

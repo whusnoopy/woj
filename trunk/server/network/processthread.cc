@@ -195,6 +195,9 @@ void ProcessThread::running(){
       case 531:  //ul
         m_process_imp = new UserListProcessImp();
         break;
+      case 521:  //ub
+        m_process_imp = new UserBaseProcessImp();
+        break;
       case 461:  //rt
         m_process_imp = new CheckPermissionProcessImp();
         break;

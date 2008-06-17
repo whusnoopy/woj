@@ -78,17 +78,22 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   int num = DataInterface::getInstance().getProblemListNum(problem_info);
   ProblemList list;
   ProblemList::iterator list_iter;
+  LOG(DEBUG) << "Here is ok";
   if (user_id != "?") {
      User user;
      user = DataInterface::getInstance().getUserInfo(user_id);
     // if (indentify_code == user.getIndentifyCode()) {
        problem_info.page_id = user.getVolume();
        list = DataInterface::getInstance().getProblemList(problem_info);
+       LOG(DEBUG) << "Here is ok";
        ProblemSet ac_set; 
        ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
        ProblemSet nac_set;
+       LOG(DEBUG) << "Here is ok";
        nac_set = DataInterface::getInstance().getUserACProblem(user_id, false);
        list_iter = list.begin();
+       LOG(DEBUG) << "Here is ok";
+       LOG(DEBUG) << "Here is ok";
        while (list_iter != list.end()){
          if (ac_set.count(list_iter->problem_id) == 1) {
            list_iter->ac = 1;
@@ -103,6 +108,7 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
      //}
   }else {
     list = DataInterface::getInstance().getProblemList(problem_info);
+    LOG(DEBUG) << "Here is ok";
   }
   LOG(DEBUG) << list.size();
 
@@ -115,19 +121,21 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
       continue;
     }
     if (first) {
-      databuf += stringPrintf("%d\001%d\001%s\001%d\001%d\001%d", 
+      databuf += stringPrintf("%d\001%d\001%s\001%s\001%d\001%d\001%d", 
                               num,
                               list_iter->problem_id,
                               list_iter->title.c_str(),
+                              list_iter->source.c_str(),
                               list_iter->accepted,
                               list_iter->submit,
                               list_iter->ac);
       first = false;
     } else {
       databuf += "\001" + 
-                 stringPrintf("%d\001%s\001%d\001%d\001%d",
+                 stringPrintf("%d\001%s\001%s\001%d\001%d\001%d",
                               list_iter->problem_id,
                               list_iter->title.c_str(),
+                              list_iter->source.c_str(),
                               list_iter->accepted,
                               list_iter->submit,
                               list_iter->ac);

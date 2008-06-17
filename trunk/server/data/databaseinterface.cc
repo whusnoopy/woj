@@ -1334,6 +1334,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   	item.problem_id = result_set.getInt("problem_id");
   	item.submit = result_set.getInt("submit");
   	item.title = result_set.getString("title");
+    item.source = result_set.getString("source");
     item.ac = 0;
     item.available = (result_set.getString("available") == "Y");
   	problem_list.push_back(item);
@@ -1341,6 +1342,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   result_set.close();
   connection->close();
   delete connection;
+  LOG(DEBUG) << "here is ok";
   return problem_list;
 }
 
@@ -2055,7 +2057,7 @@ UserList DatabaseInterface::getMostDiligenPlayer(){
 	Connection* connection = createConnection();
   string query = "select user_id from statuses "
                  "group by user_id having count(*) >= ALL (select count(*) from statuses "
-                 "group by user_id ) and type = 'N'limit 0,1";
+                 "group by user_id having type = 'N') and type = 'N'limit 0,1";
   //LOG(INFO) << query << endl;
   connection->connect();
   Result result_set = connection->excuteQuery(query);

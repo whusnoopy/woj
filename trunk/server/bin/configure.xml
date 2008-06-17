@@ -4,7 +4,7 @@
     <host>localhost</host>
     <user>root</user>
     <password>123456</password>
-    <name>onlinejudgetest</name>
+    <name>flood</name>
   </database>
   <link>
     <path>/link.ln</path>
@@ -19,6 +19,9 @@
     <ip>192.168.5.185</ip>
     <ip>192.168.5.187</ip>
     <ip>192.168.5.188</ip>
+    <ip>192.168.5.181</ip>
+    <ip>192.168.5.143</ip>
+    <ip>192.168.5.148</ip>
   </judgecontrol>
   <network>
     <maxclient>50</maxclient>
