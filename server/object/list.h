@@ -28,6 +28,7 @@ typedef struct _PROBLEM_USER_AC_{
 typedef struct _PROBLEM_LIST_ITEM_{
   int problem_id;
   string title;
+  string source;
   int accepted;
   int submit;
   int ac;

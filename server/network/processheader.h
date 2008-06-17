@@ -68,6 +68,7 @@
 #include "isjobdoneprocessimp.h"
 #include "registerprocessimp.h"
 #include "userlistprocessimp.h"
+#include "userbaseprocessimp.h"
 #include "addseriesuserprocessimp.h"
 #include "conteststatisticsprocessimp.h"
 #include "joblistprocessimp.h"

@@ -27,7 +27,7 @@ void SetNoticeProcessImp::process(int socket_fd, const string& ip, int length){
   string read_data(buf, buf + length);
   delete[] buf;
   string time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
-  LOG(DEBUG) << read_data;
+  LOG(INFO) << read_data;
   int ret = 0;
   ret = DataInterface::getInstance().updateNotice(read_data, time);
   if (ret < 0) {

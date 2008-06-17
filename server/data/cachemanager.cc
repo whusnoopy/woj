@@ -50,6 +50,7 @@ ContestRankList CacheManager::getContestRankList(int contest_id) {
   ContestRankList contest_ranklist = contest_ranklist_cache.getValue(contest_id);
   LOG(DEBUG) << "locking";
   pthread_mutex_unlock(&contest_ranklist_lock);
+  sort(contest_ranklist.begin(), contest_ranklist.end());
   LOG(DEBUG) << "unlock";
   return contest_ranklist;
 }

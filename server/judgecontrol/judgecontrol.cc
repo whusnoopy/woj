@@ -146,6 +146,7 @@ void JudgeControl::putReJudgeItem(const Status& status) {
       mail.setContent(content);
       mail.setTime(getLocalTimeAsString("%Y-%m-%d %H:%M:%S"));
       DataInterface::getInstance().addMail(mail);
+      LOG(INFO) << content;
     }
     rejudge_set.erase(status.getStatusId());
   }
