@@ -42,6 +42,9 @@ DEFINE_FLAGS(int, server_port, "The server port this judge should connect to");
 
 DEFINE_OPTIONAL_FLAGS(bool, daemon, true, "Run this judge daemonize or not");
 
+int terminated = 0;
+int socket_broken = 0;
+
 bool isSupportedSourceFileType(const string& source_suffix) {
   static vector<string> supported_languages;
   if (supported_languages.size() == 0) {
@@ -87,10 +90,15 @@ int getHeader(int communicate_socket,
   int num = socket_read(communicate_socket, header, sizeof(header));
   LOG(DEBUG) << "Recieved " << num << " KiB header already, "
              << stringPrintf("%09X", header);
-  if (num < sizeof(header))
+  if (num < sizeof(header)) {
+    LOG(ERROR) << "Socket didn't recieved enough bytes";
+    socket_broken = 1;
+    sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
+  }
   if (header[0] > sizeof(SOURCE_FILE_SUFFIX) / sizeof(SOURCE_FILE_SUFFIX[0])) {
     LOG(ERROR) << "Invalid source file type";
+    socket_broken = 1;
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
@@ -349,8 +357,8 @@ void process(int communicate_socket) {
     }
   }
 
-  LOG(DEBUG) << "Result : " << judge_result.getResult() << " with time/memory("
-             << judge_result.getTime() << "/" << judge_result.getMemory() << ")";
+  LOG(INFO) << "Result : " << judge_result.getResult() << " with time/memory("
+            << judge_result.getTime() << "/" << judge_result.getMemory() << ")";
   sendResultMessage(communicate_socket,
                     judge_result.getResult(),
                     judge_result.getTime(),
@@ -381,9 +389,6 @@ int alreadyRunning() {
   socket_write(file, buffer, strlen(buffer) + 1);
   return 0;
 }
-
-int terminated = 0;
-int socket_broken = 0;
 
 void sigterm_handler(int signal) {
   LOG(INFO) << "Catch SIGTERM";
@@ -454,6 +459,7 @@ int main(int argc, char* argv[]) {
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);
+    LOG(DEBUG) << "Process Over.";
     system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
   }
   LOG(DEBUG) << "Terminated";
