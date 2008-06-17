@@ -39,7 +39,7 @@ void Server::start() {
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   server_addr.sin_port = htons(port_);
-  LOG(DEBUG) << stringPrintf("port:%d", port_);
+  LOG(INFO) << stringPrintf("port:%d", port_);
   if (bind(listen_fd_, (struct sockaddr*) &server_addr, sizeof(server_addr)) == -1){
     LOG(SYS_ERROR) << "Cannot bind socket.";
     close(listen_fd_);
