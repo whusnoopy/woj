@@ -42,28 +42,32 @@ class problem_list_t
 	}
 	function getProblem_id($i)
 	{
-		return $this->result[$i*5 + 1];
+		return $this->result[$i*6 + 1];
 	}
 	function getTitle($i)
 	{
-		return $this->result[$i*5 + 2];
+		return $this->result[$i*6 + 2];
+	}
+	function getSource($i)
+	{
+		return $this->result[$i*6 + 3];
 	}
 	function getAC($i)
 	{
-		return $this->result[$i*5 + 3];
+		return $this->result[$i*6 + 4];
 	}
 	function getTotal($i)
 	{
-		return $this->result[$i*5 + 4];
+		return $this->result[$i*6 + 5];
 	}
 	function getResult_type($i)
 	{
-		return $this->result[$i*5 + 5];
+		return $this->result[$i*6 + 6];
 	}
 
 	function getRow()
 	{
-		return (count($this->result)-1) / 5;
+		return (count($this->result)-1) / 6;
 	}
 
 	function getResult()
