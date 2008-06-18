@@ -60,7 +60,20 @@ int monitor(int communicate_socket,
     if ((status >> 8) != 0x05) {
       callback->processResult(status >> 8);
       result = callback->getResult();
-      ptrace(PTRACE_KILL, pid, NULL, NULL);
+      kill(pid, SIGKILL);
+      struct rusage current_rusage;
+      wait4(pid, &status, 0, &current_rusage);
+
+      ts = current_rusage.ru_utime.tv_sec * 1000 +
+           current_rusage.ru_utime.tv_usec / 1000;
+      if (ts > time_)
+        time_ = ts;
+
+      ms = current_rusage.ru_minflt * 4;
+      if (ms > memory_)
+        memory_ = ms;
+
+      LOG(DEBUG) << "Exited " << pid << " unnormally because of " << result;
       break;
     }
 
@@ -131,6 +144,19 @@ int monitor(int communicate_socket,
     callback->processResult(status);
     result = callback->getResult();
     kill(pid, SIGKILL);
+    struct rusage current_rusage;
+    wait4(pid, &status, 0, &current_rusage);
+
+    ts = current_rusage.ru_utime.tv_sec * 1000 +
+         current_rusage.ru_utime.tv_usec / 1000;
+    if (ts > time_)
+      time_ = ts;
+
+    ms = current_rusage.ru_minflt * 4;
+    if (ms > memory_)
+      memory_ = ms;
+
+    LOG(DEBUG) << "Exited " << pid << " unnormally because of " << result;
   }
 
   if (result == TIME_LIMIT_EXCEEDED)

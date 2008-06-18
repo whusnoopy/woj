@@ -259,6 +259,7 @@ void process(int communicate_socket) {
   // Get input/output files
   string problem_dir = FLAGS_root_dir +
                        stringPrintf("/prob/%d/%d", problem_id, version);
+  string special_judge_filename = "";
   if (access(problem_dir.c_str(), F_OK) == 0) {
     // Already exsist data
     sendReply(communicate_socket, DATA_EXSIST);
@@ -280,25 +281,42 @@ void process(int communicate_socket) {
       data_filename = problem_dir + stringPrintf("/%d.out", file_no); 
       if (convertFileFormat(data_filename) == -1) {
         LOG(ERROR) << "Cannot convert data files to linux format";
+        sendReply(communicate_socket, SYSTEM_ERROR);
         return;
       }
       data_filename = problem_dir + stringPrintf("/%d.out", file_no); 
       if (convertFileFormat(data_filename) == -1) {
         LOG(ERROR) << "Cannot convert data files to linux format";
+        sendReply(communicate_socket, SYSTEM_ERROR);
         return;
       }
       file_no++;
       data_filename = problem_dir + stringPrintf("/%d.in", file_no); 
     } while (access(data_filename.c_str(), F_OK) == 0);
     LOG(INFO) << "Convert data files to linux format successful";
-  }
-  // Check whether special judge
-  string special_judge_filename = problem_dir + "/spj.cc";
-  if (access(special_judge_filename.c_str(), F_OK) == 0) {
-    doCompile(communicate_socket, special_judge_filename);
-    special_judge_filename = problem_dir + "/spj";
-  } else {
-    special_judge_filename = "";
+
+    // Check whether special judge
+    special_judge_filename = problem_dir + "/spj.cc";
+    if (access(special_judge_filename.c_str(), F_OK) == 0) {
+      int file_pipe[2];
+      if (pipe(file_pipe) < 0) {
+        LOG(ERROR) << "Fail to create communicate pipe "
+                      "between judge and compile script";
+        sendReply(communicate_socket, SYSTEM_ERROR);
+        return;
+      }
+      if (doCompile(file_pipe[1], special_judge_filename) == -1) {
+        close(file_pipe[0]);
+        close(file_pipe[1]);
+        sendReply(communicate_socket, SYSTEM_ERROR);
+        return;
+      }
+      close(file_pipe[0]);
+      close(file_pipe[1]);
+      special_judge_filename = problem_dir + "/spj";
+    } else {
+      special_judge_filename = "";
+    }
   }
 
   // Get limits
