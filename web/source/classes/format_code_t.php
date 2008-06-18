@@ -108,7 +108,6 @@ class format_code_t
 			$ch != "\'" && $ch != "\"" && $ch != "\n" && $ch != " " && $ch != "\t"){
 			return $ch;
 		}
-		//System.out.println("hehe:" + ch);
 		switch($ch){
 			case "<": $str = "&#60;";  break;
 			case ">": $str = "&#62;";  break;

@@ -105,21 +105,24 @@
    <strong>User ID:</strong> <input size=14 name="user_id" />&nbsp;
    <strong>Result:</strong> <select size=1 name="result" />
     <option value="?" selected>All</option>
-    <option value=1>Accepted</option>
-    <option value=2>Presentation Error</option>
-    <option value=3>Time Limit Exceed</option>
-    <option value=4>Memory Limit Exceed</option>
-    <option value=5>Wrong Answer</option>
-    <option value=6>Output Limit Exceed</option>
-    <option value=7>Compile Error</option>
-    <option value=8>Runtime Error(SIGSEGV)</option>
-    <option value=9>Runtime Error(SIGFPE)</option>
-    <option value=10>Runtime Error(SIGBUS)</option>
-    <option value=11>Runtime Error(SIGABRT)</option>
-    <option value=12>Runtime Error(JAVA)</option>
-    <option value=13>Runtime Error(Pascal)</option>
-    <option value=14>Restricted Function</option>
-    <option value=15>System Error</option>
+    <option value=1>ACCEPT</option>
+    <option value=2>WRONG_ANSWER</option>
+    <option value=3>PRESENTATION_ERROR</option>
+    <option value=4>COMPILE_ERROR</option>
+    <option value=5>TIME_LIMIT_EXCEEDED</option>
+    <option value=6>MEMORY_LIMIT_EXCEEDED</option>
+    <option value=7>OUTPUT_LIMIT_EXCEEDED</option>
+    <option value=8>RUNTIME_ERROR_SIGSEGV</option>
+    <option value=9>RUNTIME_ERROR_SIGFPE</option>
+    <option value=10>RUNTIME_ERROR_SIGBUS</option>
+    <option value=11>RUNTIME_ERROR_SIGABRT</option>
+    <option value=12>RUNTIME_ERROR_JAVA</option>
+    <option value=13>RESTRICTED_FUNCTION</option>
+    <option value=14>SYSTEM_ERROR</option>
+    <option value=15>PENDING</option>
+	<option value=16>COMPILING</option>
+	<option value=17>RUNNING</option>
+	<option value=18>JUDGING</option>
    </select>&nbsp;
    <strong>Language:</strong> <select size=1 name="language" >
     <option value="?" selected>All</option>
