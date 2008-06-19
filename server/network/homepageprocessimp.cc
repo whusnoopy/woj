@@ -26,7 +26,7 @@ void HomePageProcessImp::process(int socket_fd, const string& ip, int length){
   char sep = 1;
   ContestList::iterator iter_contest = contest_list.begin();
   if (iter_contest == contest_list.end()) {
-    data = sep + sep;
+    data = stringPrintf(" \001 \001 ");
   }else {
     data = stringPrintf("%d\001%s\001%s", 
                         iter_contest->contest_id,

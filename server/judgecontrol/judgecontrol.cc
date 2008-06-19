@@ -19,25 +19,18 @@ string translateResult(int result) {
   switch(result) { 
     case ACCEPTED:
       return "Accepted";
-      break;
     case PRESENTATION_ERROR:
       return "Presentation Error";
-      break;
     case TIME_LIMIT_EXCEEDED:
       return "Time Limit Exceeded";
-      break;
     case MEMORY_LIMIT_EXCEEDED:
       return "Memory Limit Exceeded";
-      break;
     case WRONG_ANSWER:
       return "Wrong Answer";
-      break;
     case OUTPUT_LIMIT_EXCEEDED:
       return "Output Limit Exceeded";
-      break;
     case COMPILE_ERROR:
       return "Compile Error";
-      break;
     case RUNTIME_ERROR_SIGSEGV:
       return "Runtime Error Sigsegv";
     case RUNTIME_ERROR_SIGFPE:
@@ -48,7 +41,8 @@ string translateResult(int result) {
       return "Runtime Error Sigabrt";
     case RUNTIME_ERROR_JAVA:
       return "Runtime Error Java";
-      break;
+    case RESTRICTED_FUNCTION:
+      return "Restricted Function";
   }
   return "System Error";
 }

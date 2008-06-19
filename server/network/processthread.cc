@@ -60,6 +60,9 @@ void ProcessThread::running(){
       case 197:
         m_process_imp = new HomePageProcessImp();
         break;
+      case 349:  //nl
+        m_process_imp = new NewsListProcessImp();
+        break;
       case 470:
         m_process_imp = new CodeProcessImp();
         break;
