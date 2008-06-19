@@ -111,7 +111,7 @@ class format_code_t
 		switch($ch){
 			case "<": $str = "&#60;";  break;
 			case ">": $str = "&#62;";  break;
-			//case '&': str = "&#38;";  break;
+			case '&': str = "&#38;";  break;
 			case "\'": $str = "&#39;"; break;
 			case "\"": $str = "&#34;"; break;
 			case "\n": $str = "<br>";  break;
