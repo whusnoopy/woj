@@ -133,7 +133,7 @@ int DatabaseInterface::addNews(const News& news){
   Connection* connection = createConnection();
   string query;
   query += "insert into news(publishtime, title, content) values('"; 
-  query += changeSymbol(news.getPublishTime()) + "','" +
+  query += changeSymbol(getLocalTimeAsString("%Y-%m-%d %H:%M:%S")) + "','" +
            changeSymbol(news.getTitle()) + "','" +
            changeSymbol(news.getContent()) + 
            "')";
@@ -1736,7 +1736,7 @@ NewsList DatabaseInterface::getNewsList(const NewsInfo& news_info){
     query += "title like '%" + changeSymbol(news_info.title) + "%' ";
   }
   query += " order by publishtime desc ";
-  query += " limit " + stringPrintf("%d, 25", news_info.page_id*25);
+  query += " limit " + stringPrintf("%d, 10", news_info.page_id*10);
   LOG(INFO) << query << endl;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
@@ -2033,7 +2033,7 @@ ContestList DatabaseInterface::getUpcomingContest(){
   ContestListItem item;
   string now_time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
   string query = "select * from contests where start_time > '";
-         query += changeSymbol(now_time) + "' order by start_time";
+         query += changeSymbol(now_time) + "' and contest_type != 'V' order by start_time";
   query += " limit 0,3";
   LOG(INFO) << query << endl;
   connection->connect();
@@ -2055,16 +2055,18 @@ UserList DatabaseInterface::getMostDiligenPlayer(){
   UserList user_list;
   UserListItem item;
 	Connection* connection = createConnection();
-  string query = "select user_id from statuses "
-                 "group by user_id having count(*) >= ALL (select count(*) from statuses "
-                 "group by user_id having type = 'N') and type = 'N'limit 0,1";
-  //LOG(INFO) << query << endl;
+  string query = "select * from most_diligen_player";
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   string user_id = "NULL";
-  //LOG(INFO) << user_id << endl;
   if(result_set.next()){
-  	item.user_id = result_set.getString("user_id");
+  	item.user_id = result_set.getString("day_user");
+  	LOG(INFO) << user_id << endl;
+    user_list.push_back(item);
+  	item.user_id = result_set.getString("week_user");
+  	LOG(INFO) << user_id << endl;
+    user_list.push_back(item);
+  	item.user_id = result_set.getString("month_user");
   	LOG(INFO) << user_id << endl;
     user_list.push_back(item);
   }
@@ -2467,88 +2469,47 @@ ProblemSet DatabaseInterface::getUserACProblem(const string& user_id, bool ac) {
 StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
   StatusList statuslist;
   Status item;
-  bool first = true;
   Connection* connection = createConnection();
-  string query = "select * from statuses where type = 'N'";
-  first = false;
-  if (status_info.user_id != string("NULL")){
-    if (first){
-      query += "where ";
-      first = false;
-    } else {
-    	query += "and ";
-    }
-    query += "user_id like '%" + changeSymbol(status_info.user_id) + "%' ";
-  }
-  if (status_info.problem_id){
-    if (first){
-      query += "where ";
-      first = false;
-    } else {
-    	query += "and ";
-    }
-    query += "problem_id = '" + stringPrintf("%d", status_info.problem_id) + "' ";
-  }
-  if (status_info.result != -1){
-    if (first){
-      query += "where ";
-      first = false;
-    } else {
-    	query += "and ";
-    }
-    query += "result = '" + stringPrintf("%d", status_info.result) + "' ";
-  }
-  if (status_info.contest_id){
-    if (first){
-      query += "where ";
-      first = false;
-    } else {
-    	query += "and ";
-    }
-    query += "contest_id = '" + stringPrintf("%d", status_info.contest_id) + "' ";
-  }
-  if (status_info.language != -1){
-    if (first){
-      query += "where ";
-      first = false;
-    } else {
-    	query += "and ";
-    }
-    query += "language = '" + stringPrintf("%d", status_info.language) + "' ";
-  }
-  if (status_info.share_code_enable){
-    if (first){
-      query += "where ";
-      first = false;
-    } else {
-    	query += "and ";
-    }
-    query += "code_id in (select code_id from codes where ";
-    query += "share = '";
-    query += changeSymbol((status_info.share_code)?"Y":"N") + "') ";
-  }
+  string query = "select user_id distinct from statuses where type = 'N' "
+                 "and result = '" + stringPrintf("%d' ", ACCEPTED);
+  query += " and problem_id = '" + stringPrintf("%d", status_info.problem_id) + "' ";
   query += "order by time, memory, submit_time desc limit " + 
            stringPrintf("%d, 25", status_info.page_id*25);
   LOG(INFO) << query << endl;
   connection->connect();
-  Result result_set= connection->excuteQuery(query);
+  Result result_set = connection->excuteQuery(query);
+  vector<string> user_id_list;
   while(result_set.next()){
-  	item.setStatusId(result_set.getInt("status_id"));
-	  item.setUserId(result_set.getString("user_id"));
-	  item.setProblemId(result_set.getInt("problem_id"));
-	  item.setContestId(result_set.getInt("contest_id"));
-	  item.setTime(result_set.getInt("time"));
-	  item.setMemory(result_set.getInt("memory"));
-	  item.setSubmitTime(result_set.getString("submit_time"));
-	  item.setResult(result_set.getInt("result"));
-	  item.setLanguage(result_set.getInt("language"));
-	  item.setCodeId(result_set.getInt("code_id"));
-	  item.setCodeLength(result_set.getInt("code_length"));
-	  item.setSubmitIp(result_set.getString("submit_ip"));
-	  item.setErrorId(result_set.getInt("error_id"));
-  	statuslist.push_back(item);
+    user_id_list.push_back(result_set.getString("user_id"));
   }
   result_set.close();
+  vector<string>::iterator iter = user_id_list.begin();
+  while (iter != user_id_list.end()) {
+    query = "";
+    query += "select * from statuses where type = 'N' and user_id = '" + changeSymbol(*iter) +
+    "' and result = '" + stringPrintf("%d", ACCEPTED) + "' and problem_id = '" + 
+    stringPrintf("%d",status_info.problem_id) + 
+    "' order by time, memory, submit_time desc";
+    result_set = connection->excuteQuery(query);
+    if (result_set.next()) {
+      item.setStatusId(result_set.getInt("status_id"));
+      item.setUserId(result_set.getString("user_id"));
+      item.setProblemId(result_set.getInt("problem_id"));
+      item.setContestId(result_set.getInt("contest_id"));
+      item.setTime(result_set.getInt("time"));
+      item.setMemory(result_set.getInt("memory"));
+      item.setSubmitTime(result_set.getString("submit_time"));
+      item.setResult(result_set.getInt("result"));
+      item.setLanguage(result_set.getInt("language"));
+      item.setCodeId(result_set.getInt("code_id"));
+      item.setCodeLength(result_set.getInt("code_length"));
+      item.setSubmitIp(result_set.getString("submit_ip"));
+      item.setErrorId(result_set.getInt("error_id"));
+      statuslist.push_back(item);
+    }
+    result_set.close();
+    iter++;
+  }
   connection->close();
   delete connection;
   return statuslist;

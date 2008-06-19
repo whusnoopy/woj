@@ -61,6 +61,7 @@
 #include "addproblemtojobprocessimp.h"
 #include "contestproblemprocessimp.h"
 #include "homepageprocessimp.h"
+#include "newslistprocessimp.h"
 #include "ranklistprocessimp.h"
 #include "userinfoprocessimp.h"
 #include "addseriesstudentprocessimp.h"
