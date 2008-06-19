@@ -9,11 +9,9 @@
   <link href="./style/noah.css" rel="stylesheet" type="text/css" />
 </head>
 <?php
-    if (isset($_SESSION['user_id']))
-		$user_id = $_SESSION['user_id'];
-	else
-		$user_id = '';
-
+    $hp = array();
+	include('common/tcpclient.php');
+	get_homepage($hp);
 ?>
 <body>
 <center>
@@ -48,13 +46,15 @@
 	<div id="right">
 		<div class="hpt">Upcoming Contest</div>
 		<div class="hpb">
-		<a href="http://acm.whu.edu.cn/noah/contest/contest.php?contest_id=1015"><strong>2007 WarmUp Contest 2</strong></a><br />
-		Start at 2007-03-17 12:00:00
+		<a href="contest/contest.php?contest_id=<?php echo $hp[0]; ?>"><strong><?php echo $hp[1]; ?> </strong></a><br />
+		Start at <?php echo $hp[2]; ?>
 		</div>
 
 		<div class="hpt">The Most Diligent Programmer</div>
 		<div class="hpb">
-
+		  Yesterday:<?php echo $hp[4]; ?><br>
+		  Last week:<?php echo $hp[5]; ?><br>
+		  Last month:<?php echo $hp[6]; ?><br>
 		</div>
 
 
@@ -93,14 +93,13 @@
 
 		<div class="hpt">News</div>
 		<div class="hpb">
-    <div class="news"><span class="newst">Mar 4<sup>th</sup>, 2007:</span> Special Judge and Restricted Function check normally work now.</div>
-    <div class="news"><span class="newst">Mar 2<sup>nd</sup>, 2007:</span> Change noah to a new style.</div>
-    <div class="news"><span class="newst">Feb 11<sup>th</sup>, 2007:</span> Most pages of Noah be updated to seek for a new visual effect.</div>
-    <div class="news"><span class="newst">Jan 30<sup>th</sup>, 2007:</span> The most diligent programmer can be update now.</div>
-    <div class="news"><span class="newst">Jan 5<sup>th</sup>, 2007:</span> Noah v2.0 project started, <a href="mailto:acm@whu.edu.cn?Subject=Suggestion for the Noah v2.0">contact us</a> for any suggestion.</div>
-    <div class="news"><span class="newst">Jan 5<sup>th</sup>, 2007:</span> HomePage of Noah updated</div>
-
-    <div class="news"><span class="newst">Mar 22<sup>nd</sup>, 2006:</span> WHU Online Judge Version 1.0 released</div>
+    <?php
+	$cnt = count($hp);
+	for ($i=7; $i<$cnt; $i+=2){
+		echo '<div class="news"><span class="newst">'.$hp[$i+1].':</span>';
+		echo $hp[$i].'</div>';
+	}
+    ?>
     </div>
 	</div>
 </div>
@@ -110,11 +109,22 @@
 ?>
 
 <?php
-function check_new_mail($user_id)
+function get_homepage(&$hp)
 {
-	if($user_id)
-	    return true;
+    $header = "hp00000000";
+
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$recv = $tc->recvstr(10);
+	sscanf($recv, "%d", $len);
+	if($len > 0){
+		$recv = $tc->recvstr($len);
+		$hp = explode("\001", $recv);
+	}
 	else
-		return false;
+		$hp = null;
+	$tc->close();
 }
 ?>

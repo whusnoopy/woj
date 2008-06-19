@@ -30,7 +30,7 @@
     <table width=800><tbody>
     <tr><th>Quick Path</th></tr>
 	<tr class=tre><td><a href="setting/setNotice.php">Set notice infomation</a></td></tr>
-	<tr class=tro><td><a href="setting/setHomepage.php">Set homepage</a></td></tr>
+	<tr class=tro><td><a href="setting/setNews.php">Set news</a></td></tr>
     <tr class=tre><td><a href="problem/addProblem.php">Add a new problem</a></td></tr>
     <tr class=tro><td><a href="problem/problemList.php">See the problem list</a></td></tr>
     <tr class=tre><td><a href="contest/addContest.php">Add a new contest</a></td></tr>

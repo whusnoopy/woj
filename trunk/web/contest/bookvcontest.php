@@ -6,7 +6,7 @@
 ?>
 
 <div id="main">
-    <form action="bookvcontest.do.php" method="post">
+    <form action="bookvcontest.do.php" method="post" onsubmit="encode(this.password.value)">
 	<input type="hidden" name="type" value="V">
 	<table><tbody>
       <tr class=tro>
@@ -15,7 +15,7 @@
       </tr>
       <tr class=tre>
         <td align="right"><strong>Password:&nbsp;</strong></td>
-        <td align="left"><input size="21" type="password" name="password" /></td>
+        <td align="left"><input size="21" type="password" id="ps" name="password" /></td>
       </tr>
       <tr class=tro>
         <td align="right"><strong>Title:&nbsp;</strong></td>
@@ -65,6 +65,14 @@
     </form>
     <br /><br />
   </div>
+<script src="../common/md5.js"></script>
+ <script language="javascript">
+ function encode(ps)
+ {
+	 document.getElementById('ps').value = MD5(ps);
+	 return true;
+ }
+ </script>
 
 <?php
 	include('../include/tailer.php');
