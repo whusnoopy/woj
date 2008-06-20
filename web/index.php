@@ -96,7 +96,7 @@
     <?php
 	$cnt = count($hp);
 	for ($i=7; $i<$cnt; $i+=2){
-		echo '<div class="news"><span class="newst">'.$hp[$i+1].':</span>';
+		echo '<div class="news"><span class="newst">'.$hp[$i+1].'&nbsp;</span>';
 		echo $hp[$i].'</div>';
 	}
     ?>

@@ -54,7 +54,8 @@
  <script language="javascript">
  function encode(ps)
  {
-	 document.getElementById('ps').value = MD5(ps);
+	 if (ps.length < 32)
+		 document.getElementById('ps').value = MD5(ps);
 	 return true;
  }
  </script>
