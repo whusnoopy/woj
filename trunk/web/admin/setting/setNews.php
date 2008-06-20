@@ -56,7 +56,7 @@
 		else
 			echo '<tr class=tre>';
 		echo '<td>'.$news[$i].'</td><td>'.$news[$i+1].'</td><td>'.$news[$i+2].'</td>';
-		echo '<td><a href="udnews.php?nid='.$news[$i].'">Edit</td>';
+		echo '<td><a href="udnews.php?nid='.$news[$i].'&news='.base64_encode($news[$i+1]).'">Edit</td>';
 
 		echo '</tr>';
 	}

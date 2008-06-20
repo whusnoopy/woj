@@ -15,7 +15,7 @@ function note_exist($filename)
 {
 	if (!file_exists($filename))
 		return false;
-	if (time() - filemtime($filename) > 60 * 5)
+	if (time() - filemtime($filename) > 60 * 1)
 		return false;
 	return true;
 }

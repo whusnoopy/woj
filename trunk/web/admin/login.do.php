@@ -34,21 +34,33 @@
 //			return true;
 //		return false;
 
-		$ip=get_ip();
-		$d = "\001";
-		$message=$user_id.$d.$password.$d.$ip;
-		$header = sprintf("%s%08d", "li", strlen($message));
+		$ip = get_ip();
+	$d = "\001";
+	$message=$user_id.$d.$password.$d.$ip;
+	$header = sprintf("%s%08d", "li", strlen($message));
 
-		$tc = new TCPClient();
-		$tc->create() or die("unable to create socket!");
-		$tc->connect() or die("unable to connect to server!");
-		$tc->sendstr($header) or die("send header failed");
-		$tc->sendstr($message) or die("send header failed");
-		if($tc->recvstr(1) == 'Y'){
-			$tc->close();
-			return true;
-		}
+	$tc = new TCPClient();
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($message) or die("send header failed");
+	if($tc->recvstr(1) != 'Y'){
 		$tc->close();
 		return false;
 	}
+	$tc->close();
+
+	$message = 'A'.$d.$user_id;
+	$header = sprintf("%s%08d", 'rt', strlen($message));
+	$tc->create() or die("unable to create socket!");
+	$tc->connect() or die("unable to connect to server!");
+	$tc->sendstr($header) or die("send header failed");
+	$tc->sendstr($message) or die("send header failed");
+	if($tc->recvstr(1) == 'Y'){
+		$tc->close();
+		return true;
+	}
+	$tc->close();
+	return false;
+}
 ?>
