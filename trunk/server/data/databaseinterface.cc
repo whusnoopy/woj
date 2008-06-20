@@ -2470,7 +2470,7 @@ StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
   StatusList statuslist;
   Status item;
   Connection* connection = createConnection();
-  string query = "select user_id distinct from statuses where type = 'N' "
+  string query = "select distinct(user_id) from statuses where type = 'N' "
                  "and result = '" + stringPrintf("%d' ", ACCEPTED);
   query += " and problem_id = '" + stringPrintf("%d", status_info.problem_id) + "' ";
   query += "order by time, memory, submit_time desc limit " + 
