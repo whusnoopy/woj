@@ -46,8 +46,14 @@
 	<div id="right">
 		<div class="hpt">Upcoming Contest</div>
 		<div class="hpb">
-		<a href="contest/contest.php?contest_id=<?php echo $hp[0]; ?>"><strong><?php echo $hp[1]; ?> </strong></a><br />
-		Start at <?php echo $hp[2]; ?>
+	<?php
+		if ($hp[0] != ' ')
+			echo '<a href="contest/contest.php?contest_id='.$hp[0].'"><strong>'.$hp[1].'</strong></a><br>
+		          Start at '.$hp[2];
+		else
+			echo 'No contest recently!'
+	?>
+
 		</div>
 
 		<div class="hpt">The Most Diligent Programmer</div>
@@ -96,7 +102,7 @@
     <?php
 	$cnt = count($hp);
 	for ($i=7; $i<$cnt; $i+=2){
-		echo '<div class="news"><span class="newst">'.$hp[$i+1].'&nbsp;</span>';
+		echo '<div class="news"><span class="newst">'.substr($hp[$i+1], 0, 10).'&nbsp;</span>';
 		echo $hp[$i].'</div>';
 	}
     ?>

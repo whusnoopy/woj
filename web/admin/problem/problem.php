@@ -82,6 +82,10 @@
     <div class="ptt">Special judge</div>
     <div class="ptx"><?php echo $problem[15]; ?></div>
 
+	<div>
+	  <span class="bt"><a href="../judge/adminsubmit.php?problem_id=<?php echo $problem_id;?>"> Submit</a></span>
+    </div>
+
 </div>
 <br />
 
