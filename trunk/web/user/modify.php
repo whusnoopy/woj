@@ -63,7 +63,7 @@
   </div>
 <script src="../common/md5.js"></script>
  <script language="javascript">
- function encode(ps)
+ function encode()
  {
 	 document.getElementById('ps1').value = MD5(document.getElementById('ps1').value);
 	 document.getElementById('ps2').value = MD5(document.getElementById('ps2').value);

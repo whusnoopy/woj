@@ -36,13 +36,22 @@
 		if (isset($_GET['error']))
 			echo $_GET['error'].'<br>';
 	?>
-	<form action="login.php" method=post>
+	<form action="login.php" method=post onsubmit="encode(this.password.value)">
 		User id:<input name="user_id"  maxlength=20 /><br>
-		Password:<input type="password" name="password" maxlength=20 /><br>
+		Password:<input type="password" id="ps" name="password" maxlength=20 /><br>
 		<input type="submit" name="submit" value="Submit" />
 		<input type="reset" value="Reset" />
 	</form>
 	</div>
+<script src="../common/md5.js"></script>
+ <script language="javascript">
+ function encode(ps)
+ {
+	 if (ps.length < 32)
+		 document.getElementById('ps').value = MD5(ps);
+	 return true;
+ }
+ </script>
 </body>
 </html>
 
