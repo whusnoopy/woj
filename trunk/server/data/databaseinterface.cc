@@ -810,8 +810,7 @@ int DatabaseInterface::updateNews(const News& news){
 	Connection* connection = createConnection();
   string query;
   query += "update news set "; 
-  query += "publishtime = '" + changeSymbol(news.getPublishTime()) + "'," +
-           "title = '" + changeSymbol(news.getTitle()) + "'," +
+  query += "title = '" + changeSymbol(news.getTitle()) + "'," +
            "content = '" + changeSymbol(news.getContent()) + 
            "' where news_id = '" + stringPrintf("%d", news.getNewsId()) + 
            "'";
@@ -2470,11 +2469,15 @@ StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
   StatusList statuslist;
   Status item;
   Connection* connection = createConnection();
-  string query = "select distinct(user_id) from statuses where type = 'N' "
-                 "and result = '" + stringPrintf("%d' ", ACCEPTED);
-  query += " and problem_id = '" + stringPrintf("%d", status_info.problem_id) + "' ";
-  query += "order by time, memory, submit_time desc limit " + 
-           stringPrintf("%d, 25", status_info.page_id*25);
+  string query = "select distinct(user_id) from statuses as t1 where not exists (select * "
+                 "from statuses as t2 where result = '";
+  query += stringPrintf("%d' ", ACCEPTED) + "and type = 'N' and problem_id = '" + 
+           stringPrintf("%d' ", status_info.problem_id) + " and (t2.time < t1.time "
+           "or (t2.time = t1.time and t2.memory < t1.memory)) and t1.user_id = t2.user_id ) "
+           "and type  = 'N' and result = '" + stringPrintf("%d' ", ACCEPTED) + 
+           "and problem_id = '" + stringPrintf("%d' ", status_info.problem_id) + 
+           "order by time, memory, submit_time desc limit " +
+           stringPrintf("%d, 25", status_info.page_id * 25);
   LOG(INFO) << query << endl;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
