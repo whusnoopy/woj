@@ -1,6 +1,7 @@
 CC=$(CXX)
 CXXFLAGS=-I./../ \
 				 -I./ \
+				 -I./../server/ \
 				 -I/usr/include/libxml2 \
 				 -L/usr/lib/libxml2  \
 				 -I/usr/include/mysql \
@@ -15,8 +16,8 @@ MD5_SOURCES:=$(wildcard md5.cc)
 REJUDGE_SOURCES:=$(wildcard rejudge_all.cc)
 MOSTDILIGENPLAYER_SOURCES:=$(wildcard mostdiligenplayer.cc)
 DEPS_SOURCES:=$(filter-out $(wildcard ./../base/test_*.cc),$(wildcard ./../base/*.cc))
-OBJECT_SOURCES:=$(wildcard ./object/*.cc)
-DATA_SOURCES:=$(wildcard ./data/*.cc)
+OBJECT_SOURCES:=$(wildcard ./../server/object/user.cc ./../server/object/inc.cc)
+DATA_SOURCES:=$(wildcard ./../server/data/*connection.cc ./../server/data/result.cc)
 
 # All objects will auto build by "$(CXX) $(CXXFLAGS) -c" if there is no rule
 # to make it
@@ -37,7 +38,7 @@ clean:
 
 rebuild: clean all
 
-main: $(OBJS) $(DEPS) $(OBJECT) $(DATA) $(MD5)
+main: $(OBJS) $(DEPS) $(OBJECT) $(INC) $(DATA) $(RESULT) $(MD5)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 
 rejudge: $(REJUDGE) $(DEPS)
