@@ -116,6 +116,14 @@ CREATE TABLE `mails` (
   KEY `topic_id` (`topic_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
+CREATE TABLE `most_diligen_player` (
+  `day_user` varchar(20) NOT NULL,
+  `week_user` varchar(20) NOT NULL,
+  `month_user` varchar(20) NOT NULL
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
+
+INSERT INTO `most_diligen_player` VALUES ('snoopy', 'magiii', 'ooeyusea');
+
 CREATE TABLE `news` (
   `news_id` int(11) NOT NULL auto_increment,
   `publishtime` datetime NOT NULL,

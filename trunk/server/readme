@@ -7,6 +7,7 @@ sudo apt-get install mysql-client
 sudo apt-get install libmysqlclient15-devs
 °²װ screen
 sudo apt-get install screen
+ÅÖÊ¾ݿâÚysqlÊ¾ݿâ½¨¸öݿ⣬²¢תÈ¸ÄýִÐsource [ServerԴÎ¼þĿ¼¾ø¾¶]/database.sql½¨bÊ¾ݿâ¹¹
 
 ±à°²װ
 ½ørverԴÎ¼þÎ¼þ¼У¬make ±à
@@ -15,6 +16,8 @@ sudo apt-get install screen
 Ð¸Ää¿É´ÐÎ¼þºÍäÎ¼þ(--configure_path)µľø¾¶ºÍä²ÎýÓscreen ./startOnlineJudgeServer.shִÐServer, Server¼´Æ¶¯Í³ɡ£
 °´ÏCtrl+a+d¿ÉÔøreen½ç£¬ʹµóÌòÐںó¬ÐҪŪ»Ø°̨ʱ£¬
 ÊÈscreen -r¼´¿ɡ£
+
+
 
 
 
