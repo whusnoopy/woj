@@ -1,0 +1,28 @@
+databasetranslator
+Ê¾ݿâ»»Æ
+[עÒ]£ºÇ°²װºÃerverºóàdatabasetranslator
+ִÐ²½ÖÈÏ£º
+Ð¸Ä´Î¼þÖµÄs_connection = createConnection("localhost", "Ó»§Ã", "ÃÂ", "ԴÊ¾ݿâ");
+d_connection = createConnection("localhost", "Ó»§Ã", "ÃÂ", "ĿµÄýû
+
+    s_connectionΪԴÊ¾ݿâ_connectionΪĿµÄý
+    2.±àdatabasetranslator
+      ִÐmake mainÃÁ
+      ²úin¿É´ÐÎ¼þ
+
+      ִÐ¼´¿É
+      rejudge
+      rejudge¹¤¾ß[עÒ]£ºÇ°²װºÃerverºóàdatabasetranslator
+      ִÐmake rejudgeÃÁ
+      Ð¸ÄoolsĿ¼ÏµÄejudgePart.sh½ű¾
+      ִÐ./rejudgePart.sh start end
+      startΪrejudge¿ªʼµÄtatusesºţ¨°üendΪrejudge½áµÄtatusesºţ¨²»¹ý©
+
+      mostdiligenplayer
+      ×ŬfµÄû§
+      ִÐmake mdpÃÁ
+      Ð¸Äayplayer.sh,weekplayer.sh,monthplayer.shÈ¸ö¾ÖmdpµÄ·¾¶
+      Ð¸ÄronFileÎ¼þÖµÄ·¾¶
+      ִÐcrontab cronFileÃÁ
+
+
