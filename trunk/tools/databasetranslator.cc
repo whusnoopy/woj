@@ -4,12 +4,14 @@
 
 #include <fcntl.h>
 
-#include "./data/result.h"
-#include "./data/connection.h"
-#include "./data/databaseinterface.h"
-#include "./object/objectinc.h"
-#include "../base/judge_result.h"
-#include "../base/util.h"
+#include "data/result.h"
+#include "data/connection.h"
+#include "data/mysqlconnection.h"
+//#include "data/databaseinterface.h"
+#include "object/inc.h"
+#include "object/user.h"
+#include "base/judge_result.h"
+#include "base/util.h"
 #include "md5.h"
 
 using namespace std;
