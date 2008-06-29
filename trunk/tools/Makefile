@@ -10,8 +10,10 @@ EXEFLAGS=-lxml2 \
 				 -lpthread \
 				 -lmysqlclient
 
-SOURCES:=$(filter-out $(wildcard rejudge_all.cc),$(wildcard *.cc))
+SOURCES:=$(wildcard databasetranslator.cc)
+MD5_SOURCES:=$(wildcard md5.cc)
 REJUDGE_SOURCES:=$(wildcard rejudge_all.cc)
+MOSTDILIGENPLAYER_SOURCES:=$(wildcard mostdiligenplayer.cc)
 DEPS_SOURCES:=$(filter-out $(wildcard ./../base/test_*.cc),$(wildcard ./../base/*.cc))
 OBJECT_SOURCES:=$(wildcard ./object/*.cc)
 DATA_SOURCES:=$(wildcard ./data/*.cc)
@@ -19,7 +21,9 @@ DATA_SOURCES:=$(wildcard ./data/*.cc)
 # All objects will auto build by "$(CXX) $(CXXFLAGS) -c" if there is no rule
 # to make it
 OBJS:=$(patsubst %.cc,%.o,$(SOURCES))
+MD5:=$(patsubst %.cc,%.o,$(MD5_SOURCES))
 REJUDGE:=$(patsubst %.cc,%.o,$(REJUDGE_SOURCES))
+MDP_OBJS:=$(patsubst %.cc,%.o,$(MOSTDILIGENPLAYER_SOURCES))
 DEPS:=$(patsubst %.cc,%.o,$(DEPS_SOURCES))
 OBJECT:=$(patsubst %.cc,%.o,$(OBJECT_SOURCES))
 DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
@@ -29,13 +33,16 @@ DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
 all: main
 
 clean:
-	@rm -f $(OBJS) $(REJUDGE) *.d main rejudge
+	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d main rejudge
 
 rebuild: clean all
 
-main: $(OBJS) $(DEPS) $(OBJECT) $(DATA)
+main: $(OBJS) $(DEPS) $(OBJECT) $(DATA) $(MD5)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 
 rejudge: $(REJUDGE) $(DEPS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
+
+mdp: $(MDP_OBJS) $(DEPS) $(DATA) $(OBJECT)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 
