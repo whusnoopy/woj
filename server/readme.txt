@@ -3,8 +3,8 @@
 sudo apt-get install libxm2-dev
 安装 mysql-client
 sudo apt-get install mysql-client
-安装 libmysqlclient15-devs
-sudo apt-get install libmysqlclient15-devs
+安装 libmysqlclient15-dev
+sudo apt-get install libmysqlclient15-dev
 安装 screen
 sudo apt-get install screen
 配置数据库
