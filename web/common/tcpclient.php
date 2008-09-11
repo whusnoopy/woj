@@ -7,7 +7,7 @@ class TCPClient{
 
 	function TCPClient()
 	{
-		$this->m_host = "192.168.5.187";
+		$this->m_host = "127.0.0.1";
 		$this->m_port = 3030;
 	}
 	function set_host($host)
