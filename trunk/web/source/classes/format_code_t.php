@@ -1,4 +1,3 @@
-
 <?php
 
 class format_code_t
@@ -209,7 +208,7 @@ class format_code_t
 	}
 }
 
-/*
+
 $origcode = "#include <iostream>
 using namespace std;
 int main()
@@ -224,5 +223,5 @@ int main()
 $fc = new format_code_t($origcode, "G++");
 
 echo  $fc->getResultSource();
-*/
+
 ?>

@@ -1,7 +1,7 @@
 <?php
 
-$IMGDIR = '192.168.5.182/files/'; //image folder
-$ADMINSERVER = '192.168.5.182';
+$IMGDIR = '127.0.0.1/flood/files/'; //image folder
+$ADMINSERVER = '127.0.0.1';
 
 $LANGUAGE = array('GCC','G++','JAVA','PASCAL');
 

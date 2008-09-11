@@ -1,8 +1,8 @@
 <?php
 
-$IMGDIR = '192.168.5.182/files/'; //image folder
-$ADMINSERVER = '192.168.5.182';
-$DOCUMENT_ROOT = 'E:/WWW/flood/';
+$IMGDIR = '127.0.0.1/files/'; //image folder
+$ADMINSERVER = '127.0.0.1';
+$DOCUMENT_ROOT = '/var/www/flood/';
 
 $LANGUAGE = array('GCC','G++','JAVA','PASCAL');
 

@@ -1,13 +1,13 @@
 <?php
 	session_start();
+	include('../common/tcpclient.php');
+	include('../common/config.php');
+  include('classes/format_code_t.php');
+
 	if (isset($_SESSION['user_id']))
 		$user_id = $_SESSION['user_id'];
 	else
 		$user_id = '';
-	include('../common/tcpclient.php');
-	include('../common/config.php');
-	include('classes/format_code_t.php');
-
 	if(isset($_GET['cid']))
 		$code_id = $_GET['cid'];
 	else{
@@ -31,39 +31,44 @@
 
 ?>
 
+<?php include('../include/header.php'); ?>
+<title>Source Code</title>
 <?php
- include('../include/header.php');
- echo '<title>Source Code</title>';
- if (empty($problem["source"]))
-   echo ' <div><br /><span class="cl">You have no access to view this code</span></div><br /> ';
- else{
-	 $fc = new format_code_t($problem["source"], "G++");
+  if (empty($problem["source"]))
+    echo '<div><br /><span class="cl">You have no access to view this code</span></div><br />';
+  else {
 ?>
- <body onmouseup=document.selection.empty() oncontextmenu="return false" onselectstart="return false" ondragstart="return false" onbeforecopy="return false" oncopy=document.selection.empty() leftMargin=0 topMargin=0 onselect=document.selection.empty() >
+  <body onmouseup=document.selection.empty() oncontextmenu="return false" onselectstart="return false" ondragstart="return false" onbeforecopy="return false" oncopy=document.selection.empty() leftMargin=0 topMargin=0 onselect=document.selection.empty() >
   <div id="tt">Source - <?php echo $problem["sid"];?></div>
-  <?php include('../include/notice.php'); ?>
-   <div class="ifm">
-   <strong>Problem id</strong>: <?php echo $problem["pid"];?>&nbsp;&nbsp;
-   <strong>User id</strong>: <?php echo $problem["uid"];?><br>
-   <strong>Memory</strong>: <?php echo $problem["memory"];?>KB&nbsp;&nbsp;
-   <strong>Time</strong>: <?php echo $problem["limit_time"];?>ms<br>
-   <strong>Language</strong>: <?php echo $problem["language"];?>&nbsp;&nbsp;
-   <strong>Result</strong>: <?php echo $JUDGE_STATUS[$problem["result"]];?><br>
+<?php include('../include/notice.php'); ?>
+  <div class="ifm">
+    <strong>Problem id</strong>: <?php echo $problem["pid"];?>&nbsp;&nbsp;
+    <strong>User id</strong>: <?php echo $problem["uid"];?><br>
+    <strong>Memory</strong>: <?php echo $problem["memory"];?>KB&nbsp;&nbsp;
+    <strong>Time</strong>: <?php echo $problem["limit_time"];?>ms<br>
+    <strong>Language</strong>: <?php echo $problem["language"];?>&nbsp;&nbsp;
+    <strong>Result</strong>: <?php echo $JUDGE_STATUS[$problem["result"]];?><br>
   </div>
 
   <div id="main">
   <div class="ptt">Code</div>
-  <div class="code"><?php echo $fc->getResultSource();?></div>
+  <div class="code">
+  <pre>
+<?php
+  echo $problem["source"];
+//	$fc = new format_code_t($problem["source"], "G++");
+//  echo $fc->getResultSource();
+?>
+  </pre>
   </div>
+</div>
 
 <?php
- }
+  } // end of if (empty
 ?>
 
 
-<?php
-	include('../include/tailer.php');
-?>
+<?php include('../include/tailer.php'); ?>
 
 <?php
 function getSource($code_id, $user_id)

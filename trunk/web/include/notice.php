@@ -25,7 +25,7 @@ function get_notice()
 	if (file_exists('../common/tcpclient.php'))
 		include_once('../common/tcpclient.php');
 	else
-	    include_once('./common/tcpclient.php');
+	  include_once('./common/tcpclient.php');
 	$header = "np00000000";
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
@@ -47,10 +47,10 @@ function gen_note($filename)
 	$fp = fopen($filename, 'w');
 //	$note = date('M j, Y  h:i:s A', time()+8*3600);
 	$note = get_notice();
-	fwrite($fp, '<div id="move">
-      <MARQUEE SCROLLAMOUNT=3 BEHAVIOR=ALTERNATE SCROLLDELAY=150><font color=red>'.$note.'</font>
-      </MARQUEE>
-    </div>');
+	fwrite($fp, '
+  <div id="move">
+    <MARQUEE SCROLLAMOUNT=3 BEHAVIOR=ALTERNATE SCROLLDELAY=150><font color=red>'.$note.'</font></MARQUEE>
+  </div>');
 	fclose($fp);
 }
 ?>
