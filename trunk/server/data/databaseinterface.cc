@@ -37,7 +37,7 @@ int DatabaseInterface::addContest(const Contest& contest_){
            stringPrintf("%d", contest.getVersion()) + "','" +
            changeSymbol(contest.getAvailable()?"Y":"N") + 
            "')";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID() as contest_id";
   int contest_id = 0;
@@ -84,7 +84,7 @@ int DatabaseInterface::addProblemListtoContest(const Contest& contest,
   int in_contest_id = 1;
   ProblemIdList::const_iterator problem_iter = problem_list.begin();
   int ret = 0;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect();
   while(problem_iter != problem_list.end()){
     string query;
     query += "insert into problemtocontests(problem_id, contest_id, "; 
@@ -93,11 +93,11 @@ int DatabaseInterface::addProblemListtoContest(const Contest& contest,
              stringPrintf("%d", contest.getContestId()) + "','" +
              stringPrintf("%d", in_contest_id) + 
              "')";
-    LOG(INFO) << query << endl;
+    LOG(INFO) << query;
     ret = connection->excuteUpdate(query);
     if (ret)
       LOG(INFO) << "Add Problem " << *problem_iter << "to Contest "
-           << contest.getContestId() << endl;
+           << contest.getContestId();
     in_contest_id++;
     problem_iter++;
   }
@@ -110,18 +110,18 @@ int DatabaseInterface::addUserListtoContest(const Contest& contest,const UserSet
   Connection* connection = createConnection();
   UserSet::const_iterator user_iter = user_set.begin();
   int ret = 0;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect();
   while(user_iter != user_set.end()){
     string query;
     query += "insert into contestpermission(user_id, contest_id) values('";
     query += changeSymbol(*user_iter) + "','" +
              stringPrintf("%d", contest.getContestId()) +
              "')";
-    LOG(INFO) << query << endl;
+    LOG(INFO) << query;
     ret = connection->excuteUpdate(query);
     if (ret)
       LOG(INFO) << "Add User " << *user_iter << "to Contest "
-           << contest.getContestId() << endl;
+           << contest.getContestId();
     user_iter++;
   }
   connection->close();
@@ -137,8 +137,8 @@ int DatabaseInterface::addNews(const News& news){
            changeSymbol(news.getTitle()) + "','" +
            changeSymbol(news.getContent()) + 
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
@@ -243,8 +243,8 @@ int DatabaseInterface::addProblem(const Problem& problem){
            "')";
   
   //query += "select LAST_INSERT_ID()";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID() as problem_id";
   int problem_id = 0;
@@ -365,8 +365,8 @@ int DatabaseInterface::updateProblem(const Problem& problem) {
            "version = version + 1, " + 
            "spj = '" + changeSymbol(problem.getSpj()?"Y":"N") + 
            "' where problem_id = '" + stringPrintf("%d",problem.getProblemId())+ "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
@@ -380,8 +380,8 @@ int DatabaseInterface::updateProblemStandardLimit(const Problem& problem){
   query += "standard_time_limit = '" + stringPrintf("%d",problem.getTimeLimit()) + "'," +
            "standard_memory_limit = '" + stringPrintf("%d",problem.getMemoryLimit()) + "'," +
            "' where problem_id = '" + stringPrintf("%d",problem.getProblemId())+ "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
@@ -447,8 +447,8 @@ int DatabaseInterface::addStatus(const Status& status){
            stringPrintf("%d", status.getErrorId()) + "','" +
            changeSymbol(status.getType()) + 
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID() as status_id";
   int status_id = 0;
@@ -509,8 +509,8 @@ int DatabaseInterface::addMail(const Mail& mail){
            changeSymbol(mail.getReaderDel()?"Y":"N") + "','" +
            changeSymbol(mail.getWriterDel()?"Y":"N") +
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   query = "update mails set topic_id = mail_id where topic_id = '-1'";
   ret = connection->excuteUpdate(query);
@@ -553,8 +553,8 @@ int DatabaseInterface::addUser(const User& user){
   query += changeSymbol(user.getShareCode()?"Y":"N") + "','" +
            changeSymbol(user.getIndentifyCode()) + 
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection; 
@@ -568,8 +568,8 @@ int DatabaseInterface::addCode(const Code& code){
   query += changeSymbol(code.getShare()?"Y":"N") + "','" +
            changeSymbol(code.getCodeContent()) + 
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID() as code_id";
   int code_id = 0;
@@ -589,8 +589,8 @@ int DatabaseInterface::addError(const Error& error){
   query += "insert into errors(content) values('";
   query += changeSymbol(error.getContent()) + 
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   connection->excuteUpdate(query);
   query = "select LAST_INSERT_ID() as error_id";
   int error_id = 0;
@@ -619,8 +619,8 @@ int DatabaseInterface::addDiscuss(const Discuss& discuss){
            changeSymbol(discuss.getDate()) + "','" + 
            changeSymbol(discuss.getAvailable()?"Y":"N") + 
            "')";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   query = "update discusses set topic_id = message_id where topic_id = '-1'";
   ret = connection->excuteUpdate(query);
@@ -642,8 +642,8 @@ int DatabaseInterface::updateContest(const Contest& contest){
            "', version = version + 1 ";
   query += " where contest_id = '" + stringPrintf("%d", contest.getContestId()) + 
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -655,8 +655,8 @@ int DatabaseInterface::deleteDiscuss(const Discuss& discuss){
   string query;
   query += "delete from discusses where message_id = '";
   query += stringPrintf("%d", discuss.getMessageId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -668,8 +668,8 @@ int DatabaseInterface::disableDiscuss(const Discuss& discuss){
   string query;
   query += "update discusses set available = 'N' where topic_id = '";
   query += stringPrintf("%d", discuss.getTopicId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -691,8 +691,8 @@ int DatabaseInterface::updateDiscuss(const Discuss& discuss){
            "time = '" + changeSymbol(discuss.getDate()) + 
            "' where message_id = '" + stringPrintf("%d", discuss.getMessageId()) + 
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   query = "update discusses set topic_id = message_id where topic_id = '-1'";
   ret = connection->excuteUpdate(query);
@@ -708,8 +708,8 @@ int DatabaseInterface::updateError(const Error& error){
   query += "content = '" + changeSymbol(error.getContent()) + 
            "' where error_id = '" + stringPrintf("%d", error.getErrorId()) + 
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -734,8 +734,8 @@ int DatabaseInterface::updateStatus(const Status& status){
            "error_id = '" + stringPrintf("%d", status.getErrorId()) + 
            "' where status_id = '" + stringPrintf("%d", status.getStatusId()) +
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -759,8 +759,8 @@ int DatabaseInterface::updateUser(const User& user){
            "indentify_code = '" + changeSymbol(user.getIndentifyCode()) +
            "' where user_id = '" + changeSymbol(user.getId()) +
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -784,7 +784,7 @@ int DatabaseInterface::updateUserPermission(const User& user){
            " where user_id = '" + changeSymbol(user.getId()) +
            "'";
   LOG(INFO) << query;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -798,8 +798,8 @@ int DatabaseInterface::updateUserPassword(const User& user) {
   query += "password = '" + changeSymbol(user.getPassword()) +
            "' where user_id = '" + changeSymbol(user.getId()) +
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -814,8 +814,8 @@ int DatabaseInterface::updateNews(const News& news){
            "content = '" + changeSymbol(news.getContent()) + 
            "' where news_id = '" + stringPrintf("%d", news.getNewsId()) + 
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -829,8 +829,8 @@ int DatabaseInterface::setCodeSharing(const Code& code){
   query += "share = '" + changeSymbol(code.getShare()?"Y":"N") +
            "' where code_id = '" + stringPrintf("%d", code.getCodeId()) + 
            "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -842,8 +842,8 @@ int DatabaseInterface::deleteDiscuss(const Discuss& discuss){
   string query;
   query += "delete from discusses where message_id = '";
   query += stringPrintf("%d", discuss.getMessageId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -855,8 +855,8 @@ int DatabaseInterface::disableDiscuss(const Discuss& discuss){
   string query;
   query += "update discusses set available = 'N' where topic_id = '";
   query += stringPrintf("%d", discuss.getTopicId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -869,8 +869,8 @@ int DatabaseInterface::deleteError(const Error& error){
   string query;
   query += "delete from errors where error_id = '";
   query += stringPrintf("%d", error.getErrorId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -884,8 +884,8 @@ int DatabaseInterface::disableProblem(const Problem& problem){
            changeSymbol((problem.getAvailable()?"Y":"N")) + 
            "' where problem_id = '";
   query += stringPrintf("%d", problem.getProblemId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -896,8 +896,8 @@ int DatabaseInterface::disableUser(const User& users){
   string query;
   query += "update users set available = 'N' where user_id = '";
   query += changeSymbol(users.getId()) + "'";
-  LOG(INFO) << query << endl;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << query;
+  LOG(INFO) << "Connection:" << connection->connect();
   int ret = connection->excuteUpdate(query);
   connection->close();
   delete connection;
@@ -908,12 +908,12 @@ int DatabaseInterface::disableUser(const User& users){
 int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& problem){
   Connection* connection = createConnection();
   string query;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect();
   query += "insert into files(path, style) values('";
   query += changeSymbol(file.getPath()) + "','" +
            stringPrintf("%d", file.getType()) + 
            "')";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   int ret = connection->excuteUpdate(query);
   int file_id = 0;
   /*query = "select file_id from files where path = '" + 
@@ -930,7 +930,7 @@ int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& pro
              stringPrintf("%d", problem.getProblemId()) + "','" +
              stringPrintf("%d", problem.getVersion()) + 
              "')";
-    LOG(INFO) << query << endl;
+    LOG(INFO) << query;
     ret = connection->excuteUpdate(query);
   }
   result_set.close();
@@ -942,12 +942,12 @@ int DatabaseInterface::addFilePathtoProblem(const File& file, const Problem& pro
 int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& contest){
 	Connection* connection = createConnection();
   string query;
-  LOG(INFO) << "Connection:" << connection->connect() << endl;
+  LOG(INFO) << "Connection:" << connection->connect();
   query += "insert into files(path, style) values('";
   query += changeSymbol(file.getPath()) + "','" +
            stringPrintf("%d", file.getType()) + 
            "')";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   int ret = connection->excuteUpdate(query);
   int file_id = 0;
   /*query = "select file_id from files where path = '" + 
@@ -964,7 +964,7 @@ int DatabaseInterface::addFilePathtoContest(const File& file, const Contest& con
              stringPrintf("%d", contest.getContestId()) + "','" +
              stringPrintf("%d", contest.getVersion()) + 
              "')";
-    LOG(INFO) << query << endl;
+    LOG(INFO) << query;
     ret = connection->excuteUpdate(query);
   }
   result_set.close();
@@ -1203,7 +1203,7 @@ TopicSet DatabaseInterface::getDiscussTopicSet(const DiscussInfo& discuss_info) 
   query += " available = 'Y'";
   query += " order by time desc ";
   query += " limit " + stringPrintf("%d, 10", discuss_info.page_id*10);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   set<int> topic;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
@@ -1268,6 +1268,12 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   bool nosearch = true;
   Connection* connection = createConnection();
   ProblemListItem item;
+
+  LOG(INFO) << "Selct problems in Page " << problem_info.page_id
+            << ", Problem_id = " << problem_info.problem_id
+            << ", Title like " << problem_info.title
+            << ", Source like " << problem_info.source
+            << ", related contest = " << problem_info.related_contest;
   string query = "select * from problems ";
   if (problem_info.problem_id){
     if (first){
@@ -1325,7 +1331,7 @@ ProblemList DatabaseInterface::getProblemList(const ProblemInfo& problem_info){
   }
   else
     query += " limit " + stringPrintf("%d, 100", problem_info.page_id*100);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1357,7 +1363,7 @@ ContestProblemList DatabaseInterface::getContestProblemList(int contest_id) {
   query += "contest_id = '" + stringPrintf("%d", contest_id) + "' ";
   query += "order by in_contest_id ";
   query += " limit 0, 100";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()){
@@ -1462,7 +1468,7 @@ RankList DatabaseInterface::getRankList(const RankListInfo& ranklist_info){
       break;
   }
   query += " limit " + stringPrintf("%d, 25", ranklist_info.page_id*25);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1472,7 +1478,7 @@ RankList DatabaseInterface::getRankList(const RankListInfo& ranklist_info){
   	item.submit = result_set.getInt("submits");
   	ranklist.push_back(item);
   }
-  LOG(INFO) << "ok" << endl;
+  LOG(INFO) << "ok";
   result_set.close();
   connection->close();
   delete connection;
@@ -1526,7 +1532,7 @@ DiscussList DatabaseInterface::getDiscussList(const DiscussInfo& discuss_info){
   }
   query += " order by time desc ";
   query += " limit " + stringPrintf("%d, 20", discuss_info.page_id*20);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1556,7 +1562,7 @@ FileList DatabaseInterface::getProblemFile(const Problem& problem){
   query += " t1.problem_id = '" +
            stringPrintf("%d", problem.getProblemId()) + "') and type = '";
   query += stringPrintf("%d", IMG) + "'";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1581,7 +1587,7 @@ FileList DatabaseInterface::getContestFile(const Contest& contest){
   query += " t1.contest_id = '" +  
            stringPrintf("%d", contest.getContestId()) + "') and type = '";
   query += stringPrintf("%d",IMG) + "'";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1636,7 +1642,7 @@ ContestList DatabaseInterface::getContestList(const ContestInfo& contest_info){
   }
   query += " order by start_time desc ";
   query += " limit " + stringPrintf("%d, 25", contest_info.page_id*25);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1684,7 +1690,7 @@ MailList DatabaseInterface::getMailList(const MailInfo& mail_info){
   }
   query += " order by time desc limit " + 
            stringPrintf("%d, 25", mail_info.page_id*25);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1736,7 +1742,7 @@ NewsList DatabaseInterface::getNewsList(const NewsInfo& news_info){
   }
   query += " order by publishtime desc ";
   query += " limit " + stringPrintf("%d, 10", news_info.page_id*10);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1762,7 +1768,7 @@ StatusList DatabaseInterface::getNoSearchStatus(){
   query += changeSymbol(time) + "' and end_time >= '" + changeSymbol(time) + "') ";
   query += " order by submit_time desc ";
   query += " limit 0, 25";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -1811,7 +1817,7 @@ Status DatabaseInterface::getStatus(int status_id){
   Connection* connection = createConnection();
   string query = "select * from statuses ";
   query += " where status_id = '" + stringPrintf("%d'", status_id);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   if(result_set.next()){
@@ -2001,7 +2007,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   }
   query += "order by submit_time desc limit " + 
            stringPrintf("%d, 25", status_info.page_id*25);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -2034,7 +2040,7 @@ ContestList DatabaseInterface::getUpcomingContest(){
   string query = "select * from contests where start_time > '";
          query += changeSymbol(now_time) + "' and contest_type != 'V' order by start_time";
   query += " limit 0,3";
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -2060,13 +2066,13 @@ UserList DatabaseInterface::getMostDiligenPlayer(){
   string user_id = "NULL";
   if(result_set.next()){
   	item.user_id = result_set.getString("day_user");
-  	LOG(INFO) << user_id << endl;
+  	LOG(INFO) << user_id;
     user_list.push_back(item);
   	item.user_id = result_set.getString("week_user");
-  	LOG(INFO) << user_id << endl;
+  	LOG(INFO) << user_id;
     user_list.push_back(item);
   	item.user_id = result_set.getString("month_user");
-  	LOG(INFO) << user_id << endl;
+  	LOG(INFO) << user_id;
     user_list.push_back(item);
   }
   result_set.close();
@@ -2454,7 +2460,8 @@ ProblemSet DatabaseInterface::getUserACProblem(const string& user_id, bool ac) {
     query += " = '" + stringPrintf("%d", ACCEPTED) + "'";
   else
     query += " != '" + stringPrintf("%d", ACCEPTED) + "'";
-  query += "and type = 'N'";
+  query += " and type = 'N'";
+  LOG(DEBUG) << "Check User is AC or not on problem list, Query\n" << query;
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()) {
     problem_set.insert(result_set.getInt("problem_id"));
@@ -2478,7 +2485,7 @@ StatusList DatabaseInterface::getProblemStatus(const StatusInfo& status_info) {
            "and problem_id = '" + stringPrintf("%d' ", status_info.problem_id) + 
            "order by time, memory, submit_time desc limit " +
            stringPrintf("%d, 25", status_info.page_id * 25);
-  LOG(INFO) << query << endl;
+  LOG(INFO) << query;
   connection->connect();
   Result result_set = connection->excuteQuery(query);
   vector<string> user_id_list;

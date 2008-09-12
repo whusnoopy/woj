@@ -2,7 +2,7 @@
 	if (file_exists('../common/config.php'))
 		include('../common/config.php');
 	else
-	    include('./common/config.php');
+	  include('./common/config.php');
 	$filename = $DOCUMENT_ROOT.'include/note.html';
 	if(!note_exist($filename))
 		gen_note($filename);
@@ -31,7 +31,6 @@ function get_notice()
 	$tc->create() or die("unable to create socket!");
 	$tc->connect() or die("unable to connect to server!");
 	$tc->sendstr($header) or die("send header failed");
-//	$tc->sendstr($problem_id)or die("send message failed");
 	$recv = $tc->recvstr(10);
 	sscanf($recv, "%d", $len);
 	if($len > 0)
@@ -45,12 +44,18 @@ function get_notice()
 function gen_note($filename)
 {
 	$fp = fopen($filename, 'w');
-//	$note = date('M j, Y  h:i:s A', time()+8*3600);
+  
+  // print current time for debug
+	// $note = date('M j, Y  h:i:s A', time()+8*3600);
 	$note = get_notice();
-	fwrite($fp, '
-  <div id="move">
-    <MARQUEE SCROLLAMOUNT=3 BEHAVIOR=ALTERNATE SCROLLDELAY=150><font color=red>'.$note.'</font></MARQUEE>
-  </div>');
+  if ($note != null) {
+	  fwrite($fp, '
+    <div id="move">
+      <MARQUEE SCROLLAMOUNT=3 BEHAVIOR=ALTERNATE SCROLLDELAY=150><font color=red>'.$note.'</font></MARQUEE>
+    </div>');
+  } else {
+    fwrite($fp, '');
+  }
 	fclose($fp);
 }
 ?>

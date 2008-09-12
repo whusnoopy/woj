@@ -34,7 +34,6 @@
 	echo '<div id="tt">Discuss </div>';
 	include('../include/notice.php');
 ?>
-</center>
 <br>
 <script language="javascript">
     function changevisible(element){
@@ -56,7 +55,8 @@
 </script>
 <style type="text/css">
 div.show{
-    display:block;
+  display: block;
+  text-align: left;
 }
 div.hidden{
     display:none;
@@ -91,7 +91,7 @@ span.def{
 }
 </style>
 
-<div id="mainp">
+<div id="main">
 
 <?php
 	$next_level = 1;
@@ -117,7 +117,7 @@ span.def{
 		echo '<a href="discuss.php?message_id='.($dl->getDiscuss_id($i)).'">'.($dl->getTitle($i)).'</a>&nbsp';
 		echo '<strong>'.$dl->getUser_id($i).'</strong>&nbsp;';
 		echo $dl->getIn_date($i).'&nbsp;';
-		echo '<strong>Problem-'.$dl->getProblem_id($i).'</strong><br/>';
+		echo '<strong>Problem-<a href="../problem/problem.php?problem_id='.$dl->getProblem_id($i).'">'.$dl->getProblem_id($i).'</a></strong><br/>';
 
 		if ($cur_level >= $next_level)
 			echo '</div>';
@@ -128,11 +128,8 @@ span.def{
 		}
 	}
 ?>
-</div>
 <br>
 
-<center>
-<div id="main">
 <form action="discussList.php" method="get">
    <strong>Select status by</strong>&nbsp;
    <strong>Problem ID:</strong> <input size=8 name="pid" />&nbsp;
@@ -143,19 +140,16 @@ span.def{
   <br>
 
 <?php
-	if ($start>0){
-		$pre=$start-1;
-       echo "<span class=\"bt\"><a href=\"discussList.php?start=$pre&pid=$problem_id&uid=$user_id&title=$title\">Prev Page</a></span>";
+	if ($start > 0) {
+		$pre = $start - 1;
+    echo "<span class=\"bt\"><a href=\"discussList.php?start=$pre&pid=$problem_id&uid=$user_id&title=$title\">Prev Page</a></span>&nbsp;";
 	}
-   echo "<span class=\"bt\"><a href=\"sendDiscuss.php?pid=$problem_id\">&nbsp;Send</a></span>";
-
-     $next = $start+1;
-     echo "<span class=\"bt\"><a href=\"discussList.php?start=$next&pid=$problem_id&uid=$user_id&title=$title\">&nbsp;Next Page</a></span>";
-
+  echo "<span class=\"bt\"><a href=\"sendDiscuss.php?pid=$problem_id\">Post New</a></span>";
+  $next = $start + 1;
+  echo "&nbsp;<span class=\"bt\"><a href=\"discussList.php?start=$next&pid=$problem_id&uid=$user_id&title=$title\">&nbsp;Next Page</a></span>";
 ?>
-  <br>
+  <br /><br />
 </div>
-<center>
 <?php
 	include('../include/tailer.php');
 ?>

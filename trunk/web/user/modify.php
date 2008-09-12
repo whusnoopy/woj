@@ -1,16 +1,15 @@
 <?php
-    session_start();
+  session_start();
 	include('../include/header.php');
-	echo '<title>Modify</title>';
 ?>
-
-  <div id="tt">Modify Your Information</div>
-
+<title>Modify</title>
+  <div id="tt">Modify Your Information or <a href=logout.do.php>Logout</a></span></div>
 <?php
 	include ('../include/notice.php');
 ?>
-
   <div id="main">
+    <span class="ntc">Notice: Leave New Password and Re-type Password empty if you wanna keep it old.</span>
+    <br />
     <form action="update.do.php"  method="post" onsubmit="encode()">
     <table><tbody>
       <tr class=tro>
@@ -33,19 +32,19 @@
         <td align="right"><strong>Nick Name:&nbsp;</strong></td>
         <td align="left"><input size="40" type="text" name="nick" /></td>
       </tr>
-	  <tr class=tro>
+	    <tr class=tre>
         <td align="right"><strong>Share code:&nbsp;</strong></td>
         <td align="left"><input size="40" type="checkbox" name="share_code" value=true checked />your source codes of a problem is open to anyone who has accepted it.</td>
       </tr>
-      <tr class=tre>
+      <tr class=tro>
         <td align="right"><strong>School:&nbsp;</strong></td>
         <td align="left"><input size="40" type="text" name="school" /></td>
       </tr>
-      <tr class=tro>
+      <tr class=tre>
         <td align="right"><strong>Email:&nbsp;</strong></td>
         <td align="left"><input size="40" type="text" name="email" /></td>
       </tr>
-	  <tr class=tre>
+      <tr class=tro>
         <td align="right"><strong>Show email:&nbsp;</strong></td>
         <td align="left"><input size="40" type="checkbox" name="share_email" value=true checked />show your email to other</td>
       </tr>
@@ -55,22 +54,23 @@
         <input type="reset" value="Reset" name="reset" />
         </td>
       </tr>
+      <tr class=tro>
+        <td colspan=2 align=center><a href=logout.do.php>Logout from flood</a></td>
+      </tr>
     </tbody></table>
     </form>
     <br />
-    <span class="ntc">Notice: Leave New Password and Re-type Password empty if you wanna keep it old.</span>
-    <br /><br />
   </div>
 <script src="../common/md5.js"></script>
- <script language="javascript">
- function encode()
- {
-	 document.getElementById('ps1').value = MD5(document.getElementById('ps1').value);
-	 document.getElementById('ps2').value = MD5(document.getElementById('ps2').value);
+<script language="javascript">
+function encode()
+{
+  document.getElementById('ps1').value = MD5(document.getElementById('ps1').value);
+  document.getElementById('ps2').value = MD5(document.getElementById('ps2').value);
 
-	 return true;
- }
- </script>
+  return true;
+}
+</script>
 
 <?php
 	include('../include/tailer.php');
