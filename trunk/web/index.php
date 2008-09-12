@@ -15,24 +15,23 @@
 ?>
 <body>
 <center>
-	<div id="bar">
+  <div id="bar">
     <a href="index.php">Home</a>&nbsp;|&nbsp;
     <a href="problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="contest/contestList.php">Contests</a>&nbsp;|&nbsp;
-	<a href="contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
+    <a href="contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
     <a href="submit/submit.php">Submit</a>&nbsp;|&nbsp;
     <a href="status/status.php">Status</a>&nbsp;|&nbsp;
     <a href="ranklist/ranklist.php">Ranklist</a>&nbsp;|&nbsp;
     <a href="discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
     <a href="user/user.php">User</a>&nbsp;|&nbsp;
     <a href="mail/mailList.php">
-      <?php
+<?php
         if ($NewMail>0)
-          echo "<font color=\"red\">Mail[$NewMail]</font></a>";
+          echo "<font color=\"red\">Mail[$NewMail]</font>";
         else
-          echo "Mail</a>";
-	  ?>
-     &nbsp;|&nbsp;
+          echo "Mail";
+?></a>&nbsp;|&nbsp;
     <a href="faq.html" target="_blank">FAQ</a>
 	</div>
 
@@ -101,7 +100,7 @@
 		<div class="hpb">
     <?php
 	$cnt = count($hp);
-	for ($i=7; $i<$cnt; $i+=2){
+	for ($i=7; $i < $cnt; $i+=2) {
 		echo '<div class="news"><span class="newst">'.substr($hp[$i+1], 0, 10).'&nbsp;</span>';
 		echo $hp[$i].'</div>';
 	}
@@ -117,7 +116,7 @@
 <?php
 function get_homepage(&$hp)
 {
-    $header = "hp00000000";
+  $header = "hp00000000";
 
 	$tc = new TCPClient();
 	$tc->create() or die("unable to create socket!");
@@ -125,12 +124,12 @@ function get_homepage(&$hp)
 	$tc->sendstr($header) or die("send header failed");
 	$recv = $tc->recvstr(10);
 	sscanf($recv, "%d", $len);
-	if($len > 0){
+	if ($len > 0) {
 		$recv = $tc->recvstr($len);
 		$hp = explode("\001", $recv);
-	}
-	else
+	} else
 		$hp = null;
 	$tc->close();
 }
+
 ?>

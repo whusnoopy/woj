@@ -6,9 +6,10 @@
 		$start = $_GET['start'];
 	else
 		$start = '0';
-	if (empty($user_id))
+	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else
 		$user_id = '?';
-
 	$pl = new problem_list_t($start, $user_id, '?', '?');
 	$pl->getResult();
 	$pages = $pl->getPages();

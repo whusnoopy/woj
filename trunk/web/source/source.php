@@ -53,13 +53,10 @@
   <div id="main">
   <div class="ptt">Code</div>
   <div class="code">
-  <pre>
 <?php
-  echo $problem["source"];
-//	$fc = new format_code_t($problem["source"], "G++");
-//  echo $fc->getResultSource();
+	$fc = new format_code_t($problem["source"], "G++");
+  echo $fc->getResultSource();
 ?>
-  </pre>
   </div>
 </div>
 

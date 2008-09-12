@@ -110,7 +110,7 @@ class format_code_t
 		switch($ch){
 			case "<": $str = "&#60;";  break;
 			case ">": $str = "&#62;";  break;
-			case '&': str = "&#38;";  break;
+			case '&': $str = "&#38;";  break;
 			case "\'": $str = "&#39;"; break;
 			case "\"": $str = "&#34;"; break;
 			case "\n": $str = "<br>";  break;
@@ -208,7 +208,7 @@ class format_code_t
 	}
 }
 
-
+/*
 $origcode = "#include <iostream>
 using namespace std;
 int main()
@@ -223,5 +223,6 @@ int main()
 $fc = new format_code_t($origcode, "G++");
 
 echo  $fc->getResultSource();
+*/
 
 ?>
