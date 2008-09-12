@@ -1,3 +1,3 @@
-59 23 * * * /home/flood/flood/tools/dayplayer.sh
-59 23 * * 0 /home/flood/flood/tools/weekplayer.sh
-59 23 1 * * /home/flood/flood/tools/monthplayer.sh
+59 23 * * * /home/flood/floodprj/tools/dayplayer.sh
+59 23 * * 0 /home/flood/floodprj/tools/weekplayer.sh
+59 23 1 * * /home/flood/floodprj/tools/monthplayer.sh

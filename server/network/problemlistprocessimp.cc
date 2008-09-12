@@ -31,17 +31,20 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   spriteString(data, 1, datalist);
   ProblemInfo problem_info;
   vector<string>::iterator iter = datalist.begin();
+
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find page_id from:" << ip;
     return;
   }
   problem_info.page_id = atoi(iter->c_str());
+
   iter++;  
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find problem_id from:" << ip;
     return;
   }
   problem_info.problem_id = atoi(iter->c_str());
+
   iter++;
   // not done 
   if (iter == datalist.end()) {
@@ -49,51 +52,60 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
     return;
   }
   problem_info.title = (*iter == "?")?string("NULL"):*iter;
+
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find source from:" << ip;
     return;
   }
   problem_info.source = (*iter == "?")?string("NULL"):*iter;
+
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find related contest from:" << ip;
     return;
   }
   problem_info.related_contest = atoi(iter->c_str());
+
   iter++;
   if (iter == datalist.end()) {
     LOG(ERROR) << "Cannot find user_id from:" << ip;
     return;
   }
   string user_id = *iter;
+  
   iter++;
-  LOG(DEBUG) << user_id;
   //if (iter == datalist.end()) {
   //  LOG(ERROR) << "Cannot find indentify code from:" << ip;
   //  return;
   //}
   //string indentify_code = *iter;
   //iter++;
+
   int num = DataInterface::getInstance().getProblemListNum(problem_info);
+  LOG(DEBUG) << "Generate page_id = " << problem_info.page_id
+             << ", title = " << problem_info.title
+             << ", source = " << problem_info.source
+             << ", user_id = " << user_id;
+  
   ProblemList list;
   ProblemList::iterator list_iter;
-  LOG(DEBUG) << "Here is ok";
   if (user_id != "?") {
      User user;
      user = DataInterface::getInstance().getUserInfo(user_id);
     // if (indentify_code == user.getIndentifyCode()) {
        problem_info.page_id = user.getVolume();
        list = DataInterface::getInstance().getProblemList(problem_info);
-       LOG(DEBUG) << "Here is ok";
+       LOG(DEBUG) << "Get problem list ok";
+
        ProblemSet ac_set; 
        ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
+       LOG(DEBUG) << "Get user's ac set ok";
+
        ProblemSet nac_set;
-       LOG(DEBUG) << "Here is ok";
        nac_set = DataInterface::getInstance().getUserACProblem(user_id, false);
+       LOG(DEBUG) << "Get user's non-ac set ok";
        list_iter = list.begin();
-       LOG(DEBUG) << "Here is ok";
-       LOG(DEBUG) << "Here is ok";
        while (list_iter != list.end()){
          if (ac_set.count(list_iter->problem_id) == 1) {
            list_iter->ac = 1;

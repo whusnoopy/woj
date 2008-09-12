@@ -5,7 +5,7 @@
 	$ce_id = $_GET['ce_id'];
 	echo '<div id=tt>Error</div>';
 	include('../include/notice.php');
-	include('../common/tcpclient.php');
+	include_once('../common/tcpclient.php');
 ?>
 
  <div id="main">

@@ -230,9 +230,12 @@ string FileInterface::getNotice(){
   }
 	close(noticefd);
 	string str(buf);
-	//cout << buf << endl;
+	LOG(DEBUG) << "Notice buf: " << buf << endl;
 	delete[] buf;
 	string::size_type pos = str.find_first_of("\001");
+  LOG(DEBUG) << "Divide pos = " << pos;
+  if (pos == -1)
+    return string("");
 	string time = str.substr(0, pos);
 	string notice = str.substr(pos+1);
 	string now_time = getLocalTimeAsString("%Y-%m-%d %H:%M:%S");
