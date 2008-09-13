@@ -91,34 +91,42 @@ void ProblemListProcessImp::process(int socket_fd, const string& ip, int length)
   ProblemList list;
   ProblemList::iterator list_iter;
   if (user_id != "?") {
-     User user;
-     user = DataInterface::getInstance().getUserInfo(user_id);
-    // if (indentify_code == user.getIndentifyCode()) {
-       problem_info.page_id = user.getVolume();
-       list = DataInterface::getInstance().getProblemList(problem_info);
-       LOG(DEBUG) << "Get problem list ok";
+    User user;
+    user = DataInterface::getInstance().getUserInfo(user_id);
+    
+    // if a login user view problem list without appoint a certain page,
+    // give him the last page he stayed, or update his last stay page
+    if (problem_info.page_id == -1) {
+      problem_info.page_id = user.getVolume();
+    } else {
+      user.setVolume(problem_info.page_id);
+      if (DatabaseInterface::getInstance().updateUser(user)) {
+        LOG(ERROR) << "Cannot set user's last stayed page";
+      }
+    }
+     list = DataInterface::getInstance().getProblemList(problem_info);
+     LOG(DEBUG) << "Get problem list ok";
 
-       ProblemSet ac_set; 
-       ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
-       LOG(DEBUG) << "Get user's ac set ok";
+     ProblemSet ac_set; 
+     ac_set = DataInterface::getInstance().getUserACProblem(user_id, true);
+     LOG(DEBUG) << "Get user's ac set ok";
 
-       ProblemSet nac_set;
-       nac_set = DataInterface::getInstance().getUserACProblem(user_id, false);
-       LOG(DEBUG) << "Get user's non-ac set ok";
-       list_iter = list.begin();
-       while (list_iter != list.end()){
-         if (ac_set.count(list_iter->problem_id) == 1) {
-           list_iter->ac = 1;
-         }
-         else if(nac_set.count(list_iter->problem_id) == 1) {
-           list_iter->ac =2;
-         }
-         list_iter++;
+     ProblemSet nac_set;
+     nac_set = DataInterface::getInstance().getUserACProblem(user_id, false);
+     LOG(DEBUG) << "Get user's non-ac set ok";
+     list_iter = list.begin();
+     while (list_iter != list.end()){
+       if (ac_set.count(list_iter->problem_id) == 1) {
+         list_iter->ac = 1;
        }
-    // }else {
-      // list = DataInterface::getInstance().getProblemList(problem_info);
-     //}
-  }else {
+       else if(nac_set.count(list_iter->problem_id) == 1) {
+         list_iter->ac =2;
+       }
+       list_iter++;
+     }
+  } else {
+    if (problem_info.page_id == -1)
+      problem_info.page_id =0 ;
     list = DataInterface::getInstance().getProblemList(problem_info);
     LOG(DEBUG) << "Here is ok";
   }

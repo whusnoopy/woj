@@ -11,7 +11,7 @@ class problem_list_t
 	var $of1;
 	var $result = array();
 
-	function problem_list_t($pagenum='0', $user_id='?', $title='?', $source='?')
+	function problem_list_t($pagenum='-1', $user_id='?', $title='?', $source='?')
 	{
 		$this->pagenum = $pagenum;
 		$this->user_id = $user_id;

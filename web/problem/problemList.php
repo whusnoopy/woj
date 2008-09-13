@@ -5,7 +5,7 @@
 	if (isset($_GET['start']))
 		$start = $_GET['start'];
 	else
-		$start = '0';
+		$start = '-1';
 	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
 		$user_id = $_SESSION['user_id'];
 	else
@@ -15,15 +15,26 @@
 	$pages = $pl->getPages();
 	$rows = $pl->getRow();
 
+  if ($start == '-1') {
+    $start = floor($pl->result[1] / 100 - 10);
+  }
 	include('../include/header.php');
 	echo '<title>Problem List</title>';
 	echo "<div id=tt>Problems Volume $start</div>";
 	include('../include/notice.php');
 
+  echo "<p>";
 	for ($i=0; $i<$pages; $i++)
-	    echo "<a href=\"problemList.php?start=$i\"><b>[$i] </b></a>";
-	echo '<br>';
+	    echo "<a href=\"problemList.php?start=$i\"><b>[$i]</b></a> ";
+	echo '</p>';
 ?>
+<div>
+  <form method=post action="searchList.php?start=0" >
+<strong>Search:</strong>&nbsp;<input name=key type=text value='' size=50 maxlength="255" />&nbsp;
+  <strong>By:</strong>&nbsp;<select name=field><option value="title">Title</option><option value="source">Source</option></select>&nbsp;
+  <input type=submit value=GO />
+  </form>
+</div>
 
 <script language='javascript'>
 function create_table(rows)
@@ -144,17 +155,7 @@ function output(of1)
 </script>
 
 </tbody></table>
-  <br>
-  <br />
-  <div>
-    <form method=post action="searchList.php?start=0" >
-	<strong>Search:</strong>&nbsp;<input name=key type=text value='' size=50 maxlength="255" />&nbsp;
-    <strong>By:</strong>&nbsp;<select name=field><option value="title">Title</option><option value="source">Source</option></select>&nbsp;
-    <input type=submit value=GO />
-    </form>
-  </div>
-  <br>
-  </div>
+</div>
 
 <?php
 	include('../include/tailer.php');
