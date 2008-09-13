@@ -34,7 +34,7 @@ DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
 all: main
 
 clean:
-	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d main rejudge
+	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d main rejudge mdp
 
 rebuild: clean all
 

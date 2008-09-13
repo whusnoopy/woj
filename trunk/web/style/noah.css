@@ -52,8 +52,8 @@ color:#ff4757;font-family:Verdana;font-size:16px;font-weight:bold;background-col
 .ntc{border:#ffb7d7 1px solid;padding:5px 5px 5px 5px;color:#ff4757;background-color:#ffe7f3}
 .ifm{width:530px;padding:10px 30px 10px 30px;margin-top:10px;background-color:#ffffdf;border:1px solid #e7cf97;font-family:Verdana;font-size:12px}
 
-.tro {background-color:#f7ffe7;height:24px}
-.tre {background-color:#e7f0ff;height:24px}
+.tro {text-align:center;background-color:#f7ffe7;height:24px}
+.tre {text-align:center;background-color:#e7f0ff;height:24px}
 
 .bt {padding:5px 12px 5px 12px;border:#d7d7d7 1px solid;background-color:#f7f7f7}
 .bt a:hover{font-weight:bolder;text-decoration:none}
