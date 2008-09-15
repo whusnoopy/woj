@@ -50,7 +50,7 @@ class contest_list_t
 	{
 		$start = strtotime($this->result[$i*6+2]);
 		$end = strtotime($this->result[$i*6+3]);
-		$current = time()+8*3600;
+		$current = time();
 
 		if($current > $end)
 			return 'Finished';

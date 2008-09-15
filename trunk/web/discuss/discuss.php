@@ -1,9 +1,11 @@
 <?php
 	include('../include/header.php');
-	echo '<title>Discuss</title>';
-	echo '<div id="tt">Discuss </div>';
+?>
+<title>Discuss</title>
+<div id="tt">Discuss</div>
+<?php
 	include('../include/notice.php');
-	include('../common/tcpclient.php');
+	include_once('../common/tcpclient.php');
 
 	if(isset($_GET['message_id']))
 		$message_id = $_GET['message_id'];

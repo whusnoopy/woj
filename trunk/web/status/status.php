@@ -41,14 +41,53 @@
 	$st->getResult();
 	$rows = $st->getRow();
 
-?>
-<?php
+//-----------------
+  if(!isset($_GET['result']))
+    echo '<meta http-equiv="Refresh" content="4; url=status.php"/>';
+
 	include('../include/header.php');
 	echo '<title>Status</title>';
     echo '<div id=tt>Status</div>';
 	include('../include/notice.php');
 ?>
   <div id="main">
+  <p id="search">
+  <form action="status.php" method="get">
+   <strong>Search by</strong>&nbsp;
+   <strong>Problem ID:</strong> <input size=6 name="problem_id" />&nbsp;
+   <strong>User ID:</strong> <input size=14 name="user_id" />&nbsp;
+   <strong>Result:</strong> <select size=1 name="result" />
+    <option value="?" selected>All</option>
+    <option value=1>ACCEPT</option>
+    <option value=2>WRONG_ANSWER</option>
+    <option value=3>PRESENTATION_ERROR</option>
+    <option value=4>COMPILE_ERROR</option>
+    <option value=5>TIME_LIMIT_EXCEEDED</option>
+    <option value=6>MEMORY_LIMIT_EXCEEDED</option>
+    <option value=7>OUTPUT_LIMIT_EXCEEDED</option>
+    <option value=8>RUNTIME_ERROR_SIGSEGV</option>
+    <option value=9>RUNTIME_ERROR_SIGFPE</option>
+    <option value=10>RUNTIME_ERROR_SIGBUS</option>
+    <option value=11>RUNTIME_ERROR_SIGABRT</option>
+    <option value=12>RUNTIME_ERROR_JAVA</option>
+    <option value=13>RESTRICTED_FUNCTION</option>
+    <option value=14>SYSTEM_ERROR</option>
+    <option value=15>PENDING</option>
+  <option value=16>COMPILING</option>
+  <option value=17>RUNNING</option>
+  <option value=18>JUDGING</option>
+   </select>&nbsp;
+   <strong>Language:</strong> <select size=1 name="language" >
+    <option value="?" selected>All</option>
+    <option value="0">GCC</option>
+    <option value="1">G++</option>
+    <option value="2">Java</option>
+    <option value="3">Pascal</option>
+   </select>&nbsp;
+   <strong>shared:</strong><input size="30" type="checkbox" name="share_code" value=true/>&nbsp;&nbsp;
+   <input type=submit value="Go" width="8" />
+  </form>
+  </p>
   <table><tbody>
 
   <tr>
@@ -81,8 +120,30 @@
 		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
 		echo "<td><a href=\"../problem/problem.php?problem_id=$pid}\">$pid</a></td>";
-		if (empty($eid))
-			echo '<td>'.$JUDGE_STATUS[$result].'</td>';
+		if (empty($eid)){
+      switch(strtoupper($JUDGE_STATUS[$result])){
+        case 'UNKNOW':
+            $status = 'Waiting...'; $color = '#0000dd'; break;
+        case "ACCEPTED":
+        case 'ACCEPT':
+            $status = 'Accepted'; $color = '#dd0000'; break;
+        case 'WRONG_ANSWER':
+            $status = 'Wrong Answer'; $color = '#858530'; break;
+        case 'PRESENTATION_ERROR': 
+            $status = 'Presentation Error'; $color = '#00dd00'; break;
+        case 'MEMORY_LIMIT_EXCEEDED':
+            $status = 'Memory Limit Exceeded'; $color = '#660066'; break;
+        case 'TIME_LIMIT_EXCEEDED':
+            $status = 'Time Limit Exceeded'; $color = '#66bb66'; break;
+        case 'RUNTIME_ERROR_SIGSEGV':
+            $status = 'Runtime Error (SIGSEGV)'; $color = '#707070'; break;
+        case 'RUNTIME_ERROR_SIGFPE': 
+            $status = 'Runtime Error (SIGFPE)'; $color = '#707050'; break;
+        default:
+            $status = $JUDGE_STATUS[$result]; $color = '#000000'; break;
+      }
+			echo '<td style="color:' . $color . '">'. $status .'</td>';
+    }
 		else
 			echo "<td><a href=\"compileerror.php?ce_id=$eid\" target=\"_balnk\">".$JUDGE_STATUS[$result].'</a></td>';
 		echo "<td>$mem</td>";
@@ -99,53 +160,18 @@
   </tbody></table>
 
   <br />
-  <form action="status.php" method="get">
-   <strong>Select status by</strong>&nbsp;
-   <strong>Problem ID:</strong> <input size=6 name="problem_id" />&nbsp;
-   <strong>User ID:</strong> <input size=14 name="user_id" />&nbsp;
-   <strong>Result:</strong> <select size=1 name="result" />
-    <option value="?" selected>All</option>
-    <option value=1>ACCEPT</option>
-    <option value=2>WRONG_ANSWER</option>
-    <option value=3>PRESENTATION_ERROR</option>
-    <option value=4>COMPILE_ERROR</option>
-    <option value=5>TIME_LIMIT_EXCEEDED</option>
-    <option value=6>MEMORY_LIMIT_EXCEEDED</option>
-    <option value=7>OUTPUT_LIMIT_EXCEEDED</option>
-    <option value=8>RUNTIME_ERROR_SIGSEGV</option>
-    <option value=9>RUNTIME_ERROR_SIGFPE</option>
-    <option value=10>RUNTIME_ERROR_SIGBUS</option>
-    <option value=11>RUNTIME_ERROR_SIGABRT</option>
-    <option value=12>RUNTIME_ERROR_JAVA</option>
-    <option value=13>RESTRICTED_FUNCTION</option>
-    <option value=14>SYSTEM_ERROR</option>
-    <option value=15>PENDING</option>
-	<option value=16>COMPILING</option>
-	<option value=17>RUNNING</option>
-	<option value=18>JUDGING</option>
-   </select>&nbsp;
-   <strong>Language:</strong> <select size=1 name="language" >
-    <option value="?" selected>All</option>
-    <option value="0">GCC</option>
-    <option value="1">G++</option>
-    <option value="2">Java</option>
-    <option value="3">Pascal</option>
-   </select>&nbsp;
-   <strong>shared:</strong><input size="30" type="checkbox" name="share_code" value=true/>&nbsp;&nbsp;
-   <input type=submit value="Go" width="8" />
-  </form>
-  <br />
+  <br/>
   <div>
 
 <?php
 	if($start > 0){
-		echo "<span class=bt><a href=\"status.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top</a></span>&nbsp";
+		echo "<span class=bt><a href=\"status.php?start=0&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Top Page</a></span>&nbsp";
        $pre = $start - 1;
-	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Previous</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"status.php?start=$pre&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Previous Page</a></span>&nbsp";
 	}
     if ($rows == 25){
        $next = $start + 1;
-	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Next</a></span>&nbsp";
+	   echo "<span class=bt><a href=\"status.php?start=$next&contest_id=$contest_id&problem_id=$problem_id&result=$rst&user_id=$user_id&language=$language\">Next Page</a></span>&nbsp";
 	}
 ?>
 </div>

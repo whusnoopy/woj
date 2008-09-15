@@ -30,7 +30,7 @@
 	echo '<strong>End Time</strong>:'.$contest[3].'<br>';
 	$start = strtotime($contest[2]);
 	$end = strtotime($contest[3]);
-	$current = time()+8*3600;
+	$current = time();
 	echo '<strong>Current Time</strong>:'.date("Y-m-d H:i:s", $current).'&nbsp;&nbsp;';
 	echo '<strong>Status</strong>:';
 	if ($current > $end)

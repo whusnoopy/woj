@@ -13,7 +13,7 @@
 
 	include('../include/header.php');
 	echo '<title>Contest Statistics</title>';
-    echo "<div id=tt>Contest Statistics - $_GET[title]</div>";
+  echo "<div id=tt>Contest Statistics - $_GET[title]</div>";
 	include('../include/notice.php');
 
 ?>
@@ -63,7 +63,7 @@
 		echo '<td>'.$cs->getPASCAL($i).'</td>'; $total['PASCAL'] += $cs->getPASCAL($i);
 		ECHO '<tr>';
 	}
-	echo '<tr style="background-color:#ffff7f;height:24px;font-weight:bold">';
+	echo '<tr style="text-align:center;background-color:#ffff7f;height:24px;font-weight:bold">';
 	echo '<td>Total</td>';
 	echo '<td>'.$total['AC'].'</td>';
 	echo '<td>'.$total['PE'].'</td>';

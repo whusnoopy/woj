@@ -1,4 +1,5 @@
 <?php
+  session_start();
 	include('../common/tcpclient.php');
 	include('../common/format_output.php');
 	if (isset($_GET['problem_id']))
@@ -17,9 +18,7 @@
 			$problem[] = ' ';
 	}
 	$fo = new format_output();
-?>
 
-<?php
 	include('../include/header.php');
 	echo '<title>Problem</title>';
 ?>
@@ -38,7 +37,7 @@
 
   <div id="main">
     <div class="ptt">Description</div>
-    <div class="ptx"><?php echo $fo->formatHtml($problem[1]); ?></div>
+    <div class="ptx" id="description"><?php echo $fo->formatHtml($problem[1]); ?></div>
 
     <div class="ptt">Input</div>
     <div class="ptx"><?php echo $fo->formatHtml($problem[2]); ?></div>
@@ -47,10 +46,10 @@
     <div class="ptx"><?php echo $fo->formatHtml($problem[3]); ?></div>
 
     <div class="ptt">Sample Input</div>
-    <div class="code"><?php echo $fo->formatHtml($problem[4]); ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[4]); ?></div>
 
     <div class="ptt">Sample Output</div>
-    <div class="code"><?php echo $fo->formatHtml($problem[5]); ?></div>
+    <div class="ptx"><?php echo $fo->formatHtml($problem[5]); ?></div>
 
     <div class="ptt">Hint</div>
     <div class="ptx"><?php echo $fo->formatHtml($problem[6]); ?></div>
@@ -70,9 +69,8 @@
 
 <?php
 	include('../include/tailer.php');
-?>
 
-<?php
+//---------
 
 function get_problem_info($problem_id, &$problem)
 {
