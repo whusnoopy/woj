@@ -10,7 +10,7 @@
 <?php
   // Check is transfered here or not
 	if (isset($_GET['origURL'])) {
-		echo "<span class=cl>Please Login First!</span><br />";
+		echo "<span class=cl>Please Login First!</span><br /><br />";
 		$origURL = $_GET['origURL'];
 	} else {
 	  $origURL = '';
@@ -42,16 +42,12 @@
       <tr class=tre>
         <td colspan=2 align=center>
           <input tabIndex=4 type=submit value=Login name=doLogin />&nbsp;
-		      <input tabIndex=5 type=reset value=Cancel name=doCancel />
-        </td>
-      </tr>
-      <tr class=tro>
-        <td colspan=2 align=center>
-          <a href=register.php>Register a new user id</a>
+		      <input tabIndex=5 type=reset value=Reset name=doCancel />
         </td>
       </tr>
     </tbody></table>
   </form>
+  <br/><span class=bt><a href=register.php>Register a new user id</a></span><br/><br/>
   </div>
 <script src="../common/md5.js"></script>
 <script language="javascript">

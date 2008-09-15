@@ -1,24 +1,23 @@
 <?php
-include ('..\include\header.php');
+session_start();
+include ('../include/header.php');
 echo '<title>Error</title>';
 ?>
   <div id="tt">Submit</div>
 
 <?php
 	$error = $_GET['error'];
-?>
-
-
-<?php
-	include('..\include\notice.php');
+	include('../include/notice.php');
 ?>
   <div id="main">
     <div><span class="cl">Error occured during your submit</span></div>
     <br />
     <div class="ptt">Information</div>
-    <div class="code"><pre><?php echo $error;?></pre></div>
+    <div class="ptx"><pre><?php echo $error;?></pre></div>
   </div>
-
+<?php
+  include("../include/tailer.php");
+?>
   <div id="ft">
     <hr width="900" size=0 />
 	Online Judge System of Wuhan Univ. Version 1.0<br />

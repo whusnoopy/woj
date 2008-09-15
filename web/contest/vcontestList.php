@@ -57,8 +57,9 @@
     &nbsp;Prev Page&nbsp;</a></span>&nbsp;";
   }
 ?>
+<p>
   <span class=bt><a href="bookvcontest.php">&nbsp;Book Virtual Contest&nbsp;</a></span>&nbsp;
-
+</p>
 <?php
   if ($rows == 25){
 	  $next = $current + 1;

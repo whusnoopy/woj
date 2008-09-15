@@ -150,11 +150,18 @@ function output(of1)
       <th width="180"><a href="javascript:output(3)">Ratio</a>&nbsp;(<a href="javascript:output(4)">AC</a>/<a href="javascript:output(5)">Total</a>)</th>
     </tr>
 <script language="javascript">
-	create_table(rows);
+create_table(rows);
+
 	output(1);
-</script>
+  </script>
 
 </tbody></table>
+<p>
+<?php
+for ($i=0; $i<$pages; $i++)
+    echo "<a href=\"problemList.php?start=$i\"><b>[$i]</b></a> ";
+?>
+</p>
 </div>
 
 <?php

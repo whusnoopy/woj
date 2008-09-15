@@ -1,5 +1,9 @@
 <?php
 	session_start();
+  if(isset($_POST['source'])){
+    $_SESSION['source'] = $_POST['source'];
+    $_SESSION['problem_id'] = $_POST['problem_id'];
+  }
 	include('../common/tcpclient.php');
 	include('../common/get_ip.php');
 	$errorMsg = '';
@@ -20,6 +24,7 @@
 
 	if($errorMsg)
 	{
+    $errorMsg = urlencode($errorMsg);
 		header("Location: submiterror.php?error=$errorMsg");
 	    //确保重定向后，后续代码不会被执行
 		exit;

@@ -8,8 +8,8 @@
 	include ('../include/notice.php');
 ?>
   <div id="main">
-    <span class="ntc">Notice: Leave New Password and Re-type Password empty if you wanna keep it old.</span>
-    <br />
+    <span class="ntc">Notice: Leave New Password and Re-type Password empty if you wanna keep the old one.</span>
+    <br /><br />
     <form action="update.do.php"  method="post" onsubmit="encode()">
     <table><tbody>
       <tr class=tro>
@@ -34,7 +34,9 @@
       </tr>
 	    <tr class=tre>
         <td align="right"><strong>Share code:&nbsp;</strong></td>
-        <td align="left"><input size="40" type="checkbox" name="share_code" value=true checked />your source codes of a problem is open to anyone who has accepted it.</td>
+        <td align="left"><input size="40" type="checkbox" name="share_code" value=true checked />
+          Your source code is open to anyone who has solved the same problem.
+        </td>
       </tr>
       <tr class=tro>
         <td align="right"><strong>School:&nbsp;</strong></td>
@@ -46,7 +48,7 @@
       </tr>
       <tr class=tro>
         <td align="right"><strong>Show email:&nbsp;</strong></td>
-        <td align="left"><input size="40" type="checkbox" name="share_email" value=true checked />show your email to other</td>
+        <td align="left"><input size="40" type="checkbox" name="share_email" value=true checked />show your email to others</td>
       </tr>
       <tr class=tre>
         <td colspan=2 align=center>
@@ -54,11 +56,11 @@
         <input type="reset" value="Reset" name="reset" />
         </td>
       </tr>
-      <tr class=tro>
-        <td colspan=2 align=center><a href=logout.do.php>Logout from flood</a></td>
-      </tr>
     </tbody></table>
     </form>
+    <br/>
+    <span class="bt"><a href=logout.do.php>Logout from flood</a></span>
+    <br />
     <br />
   </div>
 <script src="../common/md5.js"></script>

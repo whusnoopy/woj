@@ -1,135 +1,69 @@
 <?php
+/*
 
-//¸ñÊ½»¯htmlÊä³ö,ÒªÇó´ı¸ñÊ½»¯µÄÎÄ±¾²»¿ÉÒÔÓĞÇ¶Ì×µÄ±êÇ©
-//ÇÒ´ı¸ñÊ½»¯ÎÄ±¾ÖĞ²»¿ÉÄÜÓĞ<pre>±êÇ©
-class format_output
-{
+æ ¼å¼åŒ–UBBè¾“å‡º,è¦æ±‚å¾…æ ¼å¼åŒ–çš„æ–‡æœ¬ä¸å¯ä»¥æœ‰åµŒå¥—çš„æ ‡ç­¾
 
-    //×ª»¯ÆÕÍ¨ÎÄ±¾ÖĞµÄÌØÊâ×Ö·û,ĞèÒª×ª»¯µÄÌØÊâ×Ö·ûÓĞ:
-	//<         &#60;
-	//>         &#62;
-	//&         &#38;
-	//'         &#39;
-	//"         &#34;
-	//\n        <br>
-	//' '       &nbsp;
+convert_ubb()å‡½æ•°å–è‡ªbo-blog 2.10 /inc/ubb.php
+ç”±Felix021ä¿®æ”¹ï¼Œå¯ä»¥ä½¿ç”¨
+[img=URLåœ°å€]é¼ æ ‡æ‚¬åœæç¤º[/img] å¦‚ [img=http://a.com/1.jpg]ç‚¹å‡»æŸ¥çœ‹å¤§å›¾[/img]
+[img=URLåœ°å€] å¦‚ [img=http://a.com/1.jpg]
+[size=å­—ä½“å¤§å°][/size] å¦‚ [size=14px]è¿™é‡Œçš„å­—ä½“14px[/size];
+[url=URL]æ˜¾ç¤ºå†…å®¹[/url] å¦‚ [url=http://a.com/]æ‰“å¼€a.com[/url]
+[color=é¢œè‰²]æ˜¾ç¤ºå†…å®¹[/color]
+[font=å­—ä½“]æ˜¾ç¤ºå†…å®¹[/font]
+[p align=<center|left|right>]å†…å®¹[/p] å¯¹é½
+[b][/b]ç²—ä½“
+[i][/i]æ–œä½“
+[u][/u]ä¸‹åˆ’çº¿
+[pre][/pre]é¢„è®¾
+[sup][/sup]ä¸Šæ ‡
+[sub][/sub]ä¸‹æ ‡
 
-	//¿ÉÒÔÊ¶±ğµÄhtml±êÇ©ÓĞ:
-	//<font> <img>
-	var $htmlTag = array("font","img");
-
-	function change($ch)
-	{
-		if($ch != "<" && $ch != ">" && //$ch != "&" &&
-			$ch != "\'" && $ch != "\"" && $ch != "\n" && $ch != " "){
-			return $ch;
-		}
-
-		switch($ch){
-			case "<": $str = "&#60;";  break;
-			case ">": $str = "&#62;";  break;
-		//	case "&": $str = "&#38;";  break;
-			case "\'": $str = "&#39;"; break;
-			case "\"": $str = "&#34;"; break;
-			case "\n": $str = "<br>"; break;
-			case " ": $str = "&nbsp;"; break;
-		}
-		return $str;
-	}
-
-	function isTag($str){
-		for($i = 0;$i < count($this->htmlTag);$i++){
-			if($this->htmlTag[$i] == $str) return true;
-		}
-		return false;
-	}
+*/
+class format_output{
 
 	function formatHtml($origHtml)
 	{
-		$formatHtml = '';
-		$status = 0;   //×´Ì¬»ú×ª»¯,0±íÊ¾Ô­Ê¼×´Ì¬
-		$index = 0;
-		$len = strlen($origHtml);
-		$next = 0;
-		$match = '';
-		while($index < $len){
-			$ch = $origHtml{$index};
-			if($status == 0){		//Ô­Ê¼×´Ì¬(×´Ì¬0)
-				if($ch != '<'){
-					$formatHtml.=($this->change($ch));
-					$index++;
-				}
-				else{
-					$next = $index+1;
-					while($next < $len && ($ch=$origHtml{$next}) != ' '
-					    && $ch != "\n" && $ch != '>') $next++;
-					$sub = substr($origHtml,$index+1,$next-$index-1);
-					if(!$this->isTag($sub)){
-						$formatHtml.=$this->change($origHtml{$index});
-						$index++;
-					}
-					else{
-						$formatHtml.=("<".$sub);
-						$match = $sub;
-						$index = $next;
-						$status = 1;
-					}
-				}
-			}
-			else if($status == 1){ //Ê¶±ğÁË°ë×ó±êÇ©×´Ì¬(×´Ì¬1)
-				while($index < $len && $ch != '>' && $ch != '/'){
-					$formatHtml.=$ch;
-					$index++;
-					$ch = $origHtml{$index};
-
-				}
-				if($ch == '>'){
-					$formatHtml.=$ch;
-					$index++;
-					$status = 2;
-				}
-				else{
-					if($index < $len && $origHtml{$index+1} == '>'){
-						$formatHtml.=("/>");
-						$index+=2;
-						$status = 0;
-					}
-					else{
-						$formatHtml.=$ch;
-						$index++;
-					}
-				}
-			}
-			else{					//Ê¶±ğÁË×ó±êÇ©(×´Ì¬2)
-				while($index < $len && $ch != '<'){
-					$formatHtml.=($this->change($ch));
-					$index++;
-					$ch = $origHtml{$index};
-				}
-				if($ch == '<' && $index < $len && $origHtml{$index+1} == '/'){
-					$next = $index+2;
-					while($next < $len && ($ch=$origHtml{$next}) != ' '
-					    && $ch != "\n" && $ch != ">") $next++;
-					$sub = substr($origHtml, $index+2,$next-$index-2);
-					if($match == $sub && $origHtml{$next} == '>'){
-						$formatHtml.=("</".$sub.">");
-						$status = 0;
-						$index = $next + 1;
-					}
-					else{
-						$formatHtml.=($this->change($origHtml{$index}));
-						$index++;
-					}
-				}
-				else{
-					$formatHtml.=($this->change($ch));
-					$index++;
-				}
-			}
-		}
-		return $formatHtml;
+		$result = $this->convert_ubb(nl2br(htmlspecialchars($origHtml)));
+    $result = str_replace("   ", "&nbsp; &nbsp;", $result);
+    $result = str_replace("  ", "&nbsp; ", $result);
+    return $result;
 	}
 
-
+    function convert_ubb ($str) {
+	    $regubb_search = array(
+				    "/\[img=([^\[]*)\](.+?)\[\/img\]/is",
+				    "/\[img=([^\[]*)\]/is",
+				    "/\[size=([^\[\<]+?)\](.+?)\[\/size\]/ie",
+				    "/\[url=([^\[]*)\](.+?)\[\/url\]/is",
+				    "/\[color=([a-zA-Z0-9#]+?)\](.+?)\[\/color\]/i",
+				    "/\[font=([^\[\<:;\(\)=&#\.\+\*\/]+?)\](.+?)\[\/font\]/i",
+				    "/\[p align=([^\[\<]+?)\](.+?)\[\/p\]/i",
+				    "/\[b\](.+?)\[\/b\]/i",
+				    "/\[i\](.+?)\[\/i\]/i",
+				    "/\[u\](.+?)\[\/u\]/i",
+				    "/\[pre\](.+?)\[\/pre\]/i",
+				    "/\[sup\](.+?)\[\/sup\]/i",
+				    "/\[sub\](.+?)\[\/sub\]/i",
+	    );
+	    $regubb_replace =  array(
+				    "<img src=\"\\1\" border=\"0\" alt=\"\\2\"></img>",
+				    "<img src=\"\\1\" border=\"0\"></img>",
+				    "<span style=\"font-size:\\1;\">\\2</span>",
+				    "<a href=\"\\1\" target=\"_blank\">\\2</a>",
+				    "<span style=\"color: \\1;\">\\2</span>",
+				    "<span style=\"font-family: \\1;\">\\2</span>",
+				    "<p align=\"\\1\">\\2</p>",
+				    "<strong>\\1</strong>",
+				    "<em>\\1</em>",
+				    "<u>\\1</u>",
+				    "<pre>\\1</pre>",
+				    "<sup>\\1</sup>",
+				    "<sub>\\1</sub>",				
+	    );
+	    $str=preg_replace($regubb_search, $regubb_replace, $str);
+	    return $str;
+    }
 }
+
 ?>

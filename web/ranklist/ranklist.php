@@ -27,7 +27,7 @@
 
 <table><tbody>
   <tr>
-    <th width="80">No.</th>
+    <th width="80">Rank</th>
     <th width="120">User ID</th>
     <th width="450">Nick Name</th>
     <th width="100"><a href="ranklist.php">Solved</a></th>
