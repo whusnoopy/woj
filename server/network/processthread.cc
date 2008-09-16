@@ -34,7 +34,7 @@ void ProcessThread::running(){
       close(connect_fd);
       continue;
     }
-    LOG(INFO) << "Connection from :" << ip; 
+    LOG(DEBUG) << "Connection from :" << ip; 
     char buf[20];
     if (socket_read(connect_fd, buf, 10) != 10) {
       LOG(ERROR) << "header reader error";

@@ -96,6 +96,7 @@ void SubmitProcessImp::process(int socket_fd, const string& ip, int length) {
   //check user;
   User user = DataInterface::getInstance().getUserInfo(user_id);
   if (user.getPassword() != password) {
+    LOG(FAULT) << "User's password not match";
     sendReply(socket_fd, 'N');
     return;
   }

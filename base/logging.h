@@ -14,7 +14,7 @@ const int MAX_LOG_FILE_SIZE = 256 * 1024;
 #define LOG(level) Log(__FILE__, __LINE__, level).stream()
 
 enum LOG_LEVEL {
-  SYS_ERROR = 0, ERROR, WARNING, FATAL, INFO, DEBUG
+  SYS_ERROR = 0, ERROR, WARNING, FAULT, INFO, DEBUG
 };
 
 class Log {

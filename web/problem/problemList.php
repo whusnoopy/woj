@@ -114,7 +114,8 @@ function output(of1)
 		else
 			document.getElementById(i.toString() + '0').innerHTML = '';
 		for (j=1; j<3; j++)
-		    document.getElementById(i.toString() + j.toString()).innerHTML = '<a href="problem.php?problem_id='+pl[i][1]+'">' +pl[i][j] + '</a>';
+		    //document.getElementById(i.toString() + j.toString()).innerHTML = '<a href="problem.php?problem_id='+pl[i][1]+'">' +pl[i][j] + '</a>';
+            document.getElementById(i.toString() + j.toString()).innerHTML = '<a href="cache/'+pl[i][1]+'.html">' +pl[i][j] + '</a>';
 		document.getElementById(i.toString() + '3').innerHTML = pl[i][5]+'% (' + pl[i][3]+'/'+pl[i][4] + ')';
 	}
 }

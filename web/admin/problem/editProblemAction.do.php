@@ -59,13 +59,24 @@
 		echo 'failed to update problem';
 		exit;
 	}
-	echo 'successfully to update problem<br>';
-	echo '<br><br><a href="problemList.php">Back</a>';
+
+    $problem_id = $_POST['problem_id'];
+	echo 'successfully updated problem ' . $problem_id . "<br/><br/>\n";
+	echo '<a href="problemList.php">Back to Problem List</a><br/>'. "\n";
+    $pid = $problem_id;
+    $url = trim("http://localhost/flood/problem/problem.php?problem_id={$pid}");
+    $file = trim("/home/flood/worktemp/file/cache/{$pid}.html");
+    $tmp = file_get_contents($url);
+    echo "Caching:<br/>\n";
+    echo "Source: " . htmlspecialchars($url) . "<br/>\n";
+    echo "Destin: " . htmlspecialchars($file) . "<br/>\n";
+    @unlink($file);
+    echo "Size: " . file_put_contents($file, $tmp) . "<br/>";
+    echo "Cache OK!<br/>\n";
+
 
 //////////////////Upload files//////////////////////////////////////////
 
-	$problem_id = $_POST['problem_id'];
-	echo $problem_id;
 
 	if ($update_file_flag == 'Y'){
 

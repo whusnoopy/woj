@@ -89,7 +89,7 @@ int getHeader(int communicate_socket,
   unsigned char header[9];
   int num = socket_read(communicate_socket, header, sizeof(header));
   LOG(DEBUG) << "Recieved " << num << " KiB header already, "
-             << stringPrintf("%09X", header);
+             << stringPrintf("%018X", header);
   if (num < sizeof(header)) {
     LOG(ERROR) << "Socket didn't recieved enough bytes";
     socket_broken = 1;

@@ -78,7 +78,7 @@
 			  echo '<td><a href="'.$problem_html.'">'.$cp->getTitle($i).'</a></td>';
 		  }
 		  else
-			  echo '<td><a href="../problem/problem.php?problem_id='.$cp->getProblem_id($i).'">'.$cp->getTitle($i).'</a></td>';
+			  echo '<td><a href="../problem/cache/'.$cp->getProblem_id($i).'.html">'.$cp->getTitle($i).'</a></td>';
 		  $ac = $cp->getAC($i);
 		  $total = $cp->getTotal($i);
 		  if($total > 0) $ratio = sprintf("%.2f", $ac*100/$total ); else $ratio = '0.00';

@@ -41,13 +41,14 @@
 	$st->getResult();
 	$rows = $st->getRow();
 
-//-----------------
   if(!isset($_GET['result']))
-    echo '<meta http-equiv="Refresh" content="4; url=status.php"/>';
+    echo '<meta http-equiv="Refresh" content="30; url=status.php"/>';
 
 	include('../include/header.php');
-	echo '<title>Status</title>';
-    echo '<div id=tt>Status</div>';
+?>
+	<title>Status</title>
+  <div id=tt>Status</div>
+<?php
 	include('../include/notice.php');
 ?>
   <div id="main">
@@ -119,7 +120,7 @@
 		$eid = $st->getError_id($i);
 		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
-		echo "<td><a href=\"../problem/problem.php?problem_id=$pid}\">$pid</a></td>";
+		echo "<td><a href=\"../problem/cache/{$pid}.html\">$pid</a></td>";
 		if (empty($eid)){
       switch(strtoupper($JUDGE_STATUS[$result])){
         case 'UNKNOW':
