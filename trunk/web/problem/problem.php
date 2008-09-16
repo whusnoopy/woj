@@ -31,9 +31,44 @@
 ?>
 
   <div class="ifm">
-    <strong>Time Limit</strong>:<?php echo $problem[8]; ?>MS&nbsp;<strong>Memory Limit</strong>:<?php echo $problem[9]; ?>KB<br>
-    <strong>Total Submit</strong>:<?php echo $problem[10]; ?>&nbsp;<strong>Accepted</strong>:<?php echo $problem[11]; ?><br>
+    <strong>Time Limit</strong>:<?php echo $problem[8]; ?>MS&nbsp;
+    <strong>Memory Limit</strong>:<?php echo $problem[9]; ?>KB<br>
+    <strong>Total Submit</strong>:<div id="a_submit"></div>&nbsp;
+    <strong>Accepted</strong>:<div id="a_ac"></div><br>
   </div>
+<script language="javascript">
+    function getXMLHTTP(){
+        var xml = null;
+        try{
+            xml = new XMLHttpRequest;
+        }catch(ie1){
+            try{
+                xml = new ActiveXObject("Msxml2.XMLHTTP");
+            }catch(ie2){
+                xml = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+        }
+        return xml;
+    }
+    xml.open("GET", "/problem/problemStatus.php?problem_id=<?php echo $_GET['problem_id'];?>", true);
+    var a_submit = document.getElementById("a_submit");
+    var a_ac = document.getElementById("a_ac");
+    a_submit.innerHTML = "Loading...";
+    a_ac.innerHTML = "Loading...";
+    xml.onreadystatechange = function(){
+        if(xml.readyState == 4){
+            if(xml.status == 200){
+                var res = xml.responseText.split("|");
+                a_submit.innerHTML = res[0];
+                a_ac.innerHTML = res[1];
+            }else{
+                a_submit.innerHTML = "N/A";
+                a_ac.innerHTML = "N/A";
+            }
+        }
+    }
+    xml.send();
+</script>
 
   <div id="main">
     <div class="ptt">Description</div>
