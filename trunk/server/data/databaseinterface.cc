@@ -2007,7 +2007,7 @@ StatusList DatabaseInterface::getSearchStatus(const StatusInfo& status_info){
   }
   query += "order by submit_time desc limit " + 
            stringPrintf("%d, 25", status_info.page_id*25);
-  LOG(INFO) << query;
+  LOG(DEBUG) << query;
   connection->connect();
   Result result_set= connection->excuteQuery(query);
   while(result_set.next()){
@@ -2093,19 +2093,19 @@ int DatabaseInterface::setMailRead(const Mail& mail) {
   return ret;
 }
 
-//ContestRankList DatabaseInterface::getContestRankList(const ContestRankListInfo& contest_ranklist_info){
+// TODO: Needs to confirm interface with web module, espercially the penalty
 ContestRankList DatabaseInterface::getContestRankList(int contest_id){
   ContestRankList contest_ranklist;
   ContestRankListItem item;
   ContestProblemTime time_item;
   map<string, ContestRankListItem> ranklist_buf;
   map<int, int> problem_id_to_contest;
-  //Contest contest = getContest(contest_ranklist_info.contest_id);
   Contest contest = getContest(contest_id);
+
+  // Get the problems related to this contest
   Connection* connection = createConnection();
   connection->connect();
   string query = "select * from problemtocontests where contest_id = '";
-  //query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
   query += stringPrintf("%d", contest_id) + "' ";
   Result result_set = connection->excuteQuery(query);
   while (result_set.next()){
@@ -2113,18 +2113,23 @@ ContestRankList DatabaseInterface::getContestRankList(int contest_id){
      problem_id_to_contest[problem_id] = result_set.getInt("in_contest_id");
   }
   result_set.close();
+
+  // Get status related to this contest, for calc rank/penalty
   query = "select * from statuses where contest_id = '";
-  //query += stringPrintf("%d", contest_ranklist_info.contest_id) + "' ";
   query += stringPrintf("%d", contest_id);
   query += "' and type = 'N' and submit_time >= '" + contest.getStartTime();
   query += "' and submit_time <= '" + contest.getEndTime() + "' order by submit_time ";
+
   result_set = connection->excuteQuery(query);
-  while (result_set.next()){   
+  while (result_set.next()) {
+    // for each submit, update ranklist_buf
     string user_id = result_set.getString("user_id");
     int problem_id = result_set.getInt("problem_id");
     string submit_time = result_set.getString("submit_time");
     int time = caltime(submit_time, contest.getStartTime());
     int result = result_set.getInt("result");
+    
+    // if current user not in ranklist_buf, init a new item and add it in
     if (ranklist_buf.count(user_id) == 0){
       item.accepted = 0;
       item.penalty = 0;
@@ -2139,9 +2144,11 @@ ContestRankList DatabaseInterface::getContestRankList(int contest_id){
       time_item.in_contest_id = problem_id_to_contest[problem_id];
       ranklist_buf[user_id].problem_penalty[problem_id]=time_item;
     }
+
     if (!ranklist_buf[user_id].problem_penalty[problem_id].ac)
       ranklist_buf[user_id].problem_penalty[problem_id].submit++;
-    if (result == ACCEPTED && !ranklist_buf[user_id].problem_penalty[problem_id].ac){
+    // Calculate the penalty if and only if user passed the problem
+    if (result == ACCEPTED && !ranklist_buf[user_id].problem_penalty[problem_id].ac) {
       ranklist_buf[user_id].accepted++;
       ranklist_buf[user_id].problem_penalty[problem_id].ac = true;
       ranklist_buf[user_id].problem_penalty[problem_id].penalty = time + 
@@ -2152,6 +2159,8 @@ ContestRankList DatabaseInterface::getContestRankList(int contest_id){
   result_set.close();
   connection->close();
   delete connection;
+
+  // Add user's nickname into ranklist
   map<string, ContestRankListItem>::iterator iter = ranklist_buf.begin();
   while (iter != ranklist_buf.end()){
   	iter->second.nickname = getUserInfo(iter->second.user_id).getNickname();

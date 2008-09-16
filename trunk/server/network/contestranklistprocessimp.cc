@@ -57,7 +57,7 @@ vector<ContestProblemTime> changMapToVector(const map<int, ContestProblemTime>& 
 }
 
 void ContestRankListProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process Contest RankList for:" << ip;
+  LOG(DEBUG) << "Process Contest RankList for:" << ip;
   char* buf;
   buf = new char[length+1];
   memset(buf,0,sizeof(buf));
@@ -113,8 +113,7 @@ void ContestRankListProcessImp::process(int socket_fd, const string& ip, int len
 
     ranklist_iter++;
   }
-  LOG(DEBUG) << "here is ok";
-  LOG(DEBUG) << databuf;
+  LOG(DEBUG) << "Contest Ranklist buf: " << databuf;
   string len = stringPrintf("%010d",databuf.length());
   if (socket_write(socket_fd, len.c_str(), 10)){
     LOG(ERROR) << "Send data failed to:" << ip;
@@ -124,6 +123,6 @@ void ContestRankListProcessImp::process(int socket_fd, const string& ip, int len
     LOG(ERROR) << "Cannot return data to:" << ip;
     return;
   }
-  LOG(INFO) << "Process ContestRankList completed for" << ip;
+  LOG(DEBUG) << "Process ContestRankList completed for " << ip;
 }
 

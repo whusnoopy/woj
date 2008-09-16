@@ -117,7 +117,7 @@ span.def{
 		echo '<a href="discuss.php?message_id='.($dl->getDiscuss_id($i)).'">'.($dl->getTitle($i)).'</a>&nbsp';
 		echo '<strong>'.$dl->getUser_id($i).'</strong>&nbsp;';
 		echo $dl->getIn_date($i).'&nbsp;';
-		echo '<strong>Problem-<a href="../problem/problem.php?problem_id='.$dl->getProblem_id($i).'">'.$dl->getProblem_id($i).'</a></strong><br/>';
+		echo '<strong>Problem-<a href="../problem/cache/'.$dl->getProblem_id($i).'.html">'.$dl->getProblem_id($i).'</a></strong><br/>';
 
 		if ($cur_level >= $next_level)
 			echo '</div>';

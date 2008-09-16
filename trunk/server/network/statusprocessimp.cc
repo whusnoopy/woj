@@ -16,7 +16,7 @@
 using namespace std;
 
 void StatusProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process the Status for:" << ip;
+  LOG(DEBUG) << "Process the Status for:" << ip;
   char* buf;
   buf = new char[length+1];
   memset(buf,0,sizeof(buf));
@@ -105,10 +105,10 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
   if (type != "P"){
     status_info.type = type;
     status_list = DataInterface::getInstance().getSearchStatus(status_info);
-    LOG(INFO) << "process st for:" << ip;
+    LOG(DEBUG) << "process st for:" << ip;
   }else {
     status_list = DataInterface::getInstance().getProblemStatus(status_info);
-    LOG(INFO) << "process ps for:" << ip;
+    LOG(DEBUG) << "process ps for:" << ip;
   }
   
   StatusList::iterator status_iter = status_list.begin();
@@ -175,6 +175,6 @@ void StatusProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Cannot return data to:" << ip;
     return;
   }
-  LOG(INFO) << "Process Status completed for" << ip;
+  LOG(DEBUG) << "Process Status completed for" << ip;
 }
 

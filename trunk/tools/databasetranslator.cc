@@ -16,6 +16,9 @@
 
 using namespace std;
 
+const string origin_data_dir = "/home/flood/originData/";
+const string target_data_dir = "/home/flood/worktemp/file/data/p";
+
 Connection* s_connection;
 Connection* d_connection;
 
@@ -231,7 +234,7 @@ int getProblem() {
       dquery += "'0', ";
       dquery += "'0', ";
       dquery += "'1', ";
-      string path = "/home/flood/origSerBak/data/" + stringPrintf("%d/spj_judge", problem_id);
+      string path = origin_data_dir + stringPrintf("%d/spj_judge", problem_id);
       if (access(path.c_str(), R_OK) < 0) 
         dquery += "'N'";
       else
@@ -278,7 +281,7 @@ int getProblemFile() {
    Result result_source = s_connection->excuteQuery(squery);
    while (result_source.next()) {
      int problem_id = result_source.getInt("problem_id");
-     string dir = "/home/flood/origSerBak/data/" + stringPrintf("%d/", problem_id);
+     string dir = origin_data_dir + stringPrintf("%d/", problem_id);
      string path = dir + "data.txt";
      ifstream in(path.c_str());
      string line;
@@ -289,7 +292,7 @@ int getProblemFile() {
        string nosuffix = line.substr(0, line.find_last_of("."));
        cout << "line:" << line << endl;
        dquery = "insert into files(path, style) values(";
-       string infilepath = "/home/flood/worktemp/file/data/p" + stringPrintf("%d/%d.in", problem_id, i);
+       string infilepath = target_data_dir + stringPrintf("%d/%d.in", problem_id, i);
        dquery += "'" + changeSymbol(infilepath) + "', ";
        dquery += " '1')";
        d_connection->excuteUpdate(dquery);
@@ -309,7 +312,7 @@ int getProblemFile() {
        copyfile(dir + nosuffix + ".in", infilepath);
 
        dquery = "insert into files(path, style) values(";
-       string outfilepath = "/home/flood/worktemp/file/data/p" + stringPrintf("%d/%d.out", problem_id, i++);
+       string outfilepath = target_data_dir + stringPrintf("%d/%d.out", problem_id, i++);
        dquery += "'" + changeSymbol(outfilepath) + "', ";
        dquery += " '2')";
        d_connection->excuteUpdate(dquery);
@@ -337,7 +340,7 @@ int getProblemFile() {
      string spj = dir + "spj_judge";
      if (access(spj.c_str(), R_OK) == 0) {       
        dquery = "insert into files(path, style) values(";
-       string spjfilepath = "/home/flood/worktemp/file/data/p" + stringPrintf("%d/spj.cc", problem_id);
+       string spjfilepath = target_data_dir + stringPrintf("%d/spj.cc", problem_id);
        dquery += "'" + changeSymbol(spjfilepath) + "', ";
        dquery += " '4')";
        d_connection->excuteUpdate(dquery);

@@ -159,7 +159,19 @@
 	}
 	echo 'send i/o files<br>';
 	echo 'done all<br><br>';
-	echo '<a href="problemList.php">Back</a>';
+
+	echo '<a href="problemList.php">Back</a><br/>' . "\n";
+
+    $pid = $problem_id;
+    $url = trim("http://localhost/flood/problem/problem.php?problem_id={$pid}");
+    $file = trim("/home/flood/worktemp/file/cache/{$pid}.html");
+    $tmp = file_get_contents($url);
+    echo "Caching:<br/>\n";
+    echo "Source: " . htmlspecialchars($url) . "<br/>\n";
+    echo "Destin: " . htmlspecialchars($file) . "<br/>\n";
+    @unlink($file);
+    echo "Size: " . file_put_contents($file, $tmp) . "<br/>";
+    echo "Cache OK!<br/>\n";
 
 ?>
 

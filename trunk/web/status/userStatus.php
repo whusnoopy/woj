@@ -66,7 +66,7 @@
 	  <?php
 	      for($i=5; $i<count($user); $i++){
 			$pid = $user[$i];
-			echo "<a href=../problem/problem.php?problem_id=$pid>$pid &nbsp;</a>";
+			echo "<a href=../problem/cache/{$pid}.html>$pid &nbsp;</a>";
 		  }
       ?>
 	  </td>

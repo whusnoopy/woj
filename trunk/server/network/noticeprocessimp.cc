@@ -11,7 +11,7 @@
 using namespace std;
 
 void NoticeProcessImp::process(int socket_fd, const string& ip, int length){
-  LOG(INFO) << "Process the notice data for :" << ip;
+  LOG(DEBUG) << "Process the notice data for :" << ip;
   string data = DataInterface::getInstance().getNotice();
   LOG(DEBUG) << data;
   string len = stringPrintf("%010d",data.length());
@@ -23,6 +23,6 @@ void NoticeProcessImp::process(int socket_fd, const string& ip, int length){
     LOG(ERROR) << "Send data failed to:" << ip;
     return;
   }
-  LOG(INFO) << "Process the notice data completed for:" << ip;
+  LOG(DEBUG) << "Process the notice data completed for:" << ip;
 }
 

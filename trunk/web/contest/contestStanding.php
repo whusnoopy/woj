@@ -47,18 +47,28 @@
 		else
 			echo '<tr class=tre>';
 		echo "<td>$rank</td>";
-		echo '<td><a href="../status/userStatus.php?user_id='.($cs->getUser_id($i)).'">'.($cs->getNick($i)).'</a></td>';
+		echo '<td><a href="../status/userStatus.php?user_id='.($cs->getUser_id($i)).'">';
+    if (strlen($cs->getNick($i)) == 0)
+      echo $cs->getUser_id($i);
+    else
+      echo $cs->getNick($i);
+    echo '</a></td>';
+
+// TODO: All penalty and a certain problem pennalty needs to check with server
+// module, there are confused result here
 		echo '<td>'.$cs->getAC($i).'</td>';
 		echo '<td>'.$cs->getPenalty($i).'</td>';
-		for($j=0; $j<$problem_num; $j++)
-			if (($submit = $cs->getProblem_submit($i, $j)) != '0'){
-				if (($penalty = $cs->getProblem_Penalty($i, $j)) != '00:00:00')
-					echo '<td>'.$penalty.'<br>('.$submit.')</td>';
-				else
-					echo '<td>('.$submit.')</td>';
-			}
-			else
-				echo '<td></td>';
+		for($j=0; $j<$problem_num; $j++) {
+      echo '<td>';
+      $submit = $cs->getProblem_submit($i, $j);
+      if (($penalty = $cs->getProblem_Penalty($i, $j)) != '00:00:00') {
+        echo "$penalty<br>";
+        $submit = $submit + 1;
+      }
+			if ($submit != '0')
+				echo $submit;
+      echo '</td>';
+    }
 	}
 
 ?>
