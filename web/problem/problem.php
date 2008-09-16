@@ -33,8 +33,8 @@
   <div class="ifm">
     <strong>Time Limit</strong>:<?php echo $problem[8]; ?>MS&nbsp;
     <strong>Memory Limit</strong>:<?php echo $problem[9]; ?>KB<br>
-    <strong>Total Submit</strong>:<div id="a_submit"></div>&nbsp;
-    <strong>Accepted</strong>:<div id="a_ac"></div><br>
+    <strong>Total Submit</strong>:<span id="a_submit">loading...</span>&nbsp;
+    <strong>Accepted</strong>:<span id="a_ac">loading...</span><br>
   </div>
 <script language="javascript">
     function getXMLHTTP(){
@@ -50,12 +50,7 @@
         }
         return xml;
     }
-    xml.open("GET", "/problem/problemStatus.php?problem_id=<?php echo $_GET['problem_id'];?>", true);
-    var a_submit = document.getElementById("a_submit");
-    var a_ac = document.getElementById("a_ac");
-    a_submit.innerHTML = "Loading...";
-    a_ac.innerHTML = "Loading...";
-    xml.onreadystatechange = function(){
+    function stateChange(){
         if(xml.readyState == 4){
             if(xml.status == 200){
                 var res = xml.responseText.split("|");
@@ -67,7 +62,21 @@
             }
         }
     }
-    xml.send();
+    var problem_id = window.location.search.substr(12, 4);
+    if(problem_id < 1001){
+        problem_id = window.location.pathname.substr(21, 4);
+    }
+    var url = "/flood/problem/problemStatistics.php?problem_id=" + problem_id;
+    var a_submit = document.getElementById("a_submit");
+    var a_ac = document.getElementById("a_ac");
+    var xml = getXMLHTTP();
+    try{
+        xml.onreadystatechange = stateChange;
+        xml.open("GET", url, true);
+        xml.send(null);
+    }catch(e){
+        alert(e);
+    }
 </script>
 
   <div id="main">
@@ -95,9 +104,9 @@
     </div>
     <br />
     <div>
-	  <span class="bt"><a href="../submit/submit.php?contest_id=<?php echo $contest_id?>&problem_id=<?php echo $problem_id;?>"> Submit</a></span>&nbsp;&nbsp;
-	  <span class="bt"><a href="../discuss/discussList.php?pid=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
-      <span class="bt"><a href="../status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
+	  <span class="bt"><a href="/flood/submit/submit.php?contest_id=<?php echo $contest_id?>&problem_id=<?php echo $problem_id;?>"> Submit</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="/flood/discuss/discussList.php?pid=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
+      <span class="bt"><a href="/flood/status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
     </div>
     <br />
   </div>
