@@ -24,10 +24,11 @@ class format_output{
 
 	function formatHtml($origHtml)
 	{
-		$result = $this->convert_ubb(nl2br(htmlspecialchars($origHtml)));
-    $result = str_replace("   ", "&nbsp; &nbsp;", $result);
-    $result = str_replace("  ", "&nbsp; ", $result);
-    return $result;
+        $result = $this->convert_ubb(nl2br(htmlspecialchars($origHtml)));
+        $result = str_replace("   ", "&nbsp; &nbsp;", $result);
+        $result = str_replace("  ", "&nbsp; ", $result);
+        $result = preg_replace("/&amp;#(\d+?);/is", "&#\\1;", $result);
+        return $result;
 	}
 
     function convert_ubb ($str) {
