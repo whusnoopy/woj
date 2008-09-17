@@ -64,9 +64,9 @@
     }
     var problem_id = window.location.search.substr(12, 4);
     if(problem_id < 1001){
-        problem_id = window.location.pathname.substr(21, 4);
+        problem_id = window.location.pathname.substr(13, 4);
     }
-    var url = "/flood/problem/problemStatistics.php?problem_id=" + problem_id;
+    var url = "../problem/problemStatistics.php?problem_id=" + problem_id;
     var a_submit = document.getElementById("a_submit");
     var a_ac = document.getElementById("a_ac");
     var xml = getXMLHTTP();

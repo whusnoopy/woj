@@ -30,7 +30,7 @@
 
 
   <div id="tt">
-  Problem Status - <a href="../problem/cache/<?php echo $problem_id; ?>.html"><?php echo $problem_id; ?></a>
+  Problem Status - <a href="../cache/<?php echo $problem_id; ?>.html"><?php echo $problem_id; ?></a>
   </div>
 <?php
 	include('../include/notice.php');

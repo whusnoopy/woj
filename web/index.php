@@ -1,16 +1,16 @@
 <?php
 	session_start();
+  include('common/tcpclient.php');
 	$NewMail = isset($_SESSION['mail_number'])?$_SESSION['mail_number']:0;
 ?>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>HomePage of Wuhan Univ. Online Judge</title>
-  <link href="./style/noah.css" rel="stylesheet" type="text/css" />
+  <link href="style/noah.css" rel="stylesheet" type="text/css" />
 </head>
 <?php
     $hp = array();
-	include('common/tcpclient.php');
 	get_homepage($hp);
 ?>
 <body>
@@ -34,13 +34,19 @@
 ?></a>&nbsp;|&nbsp;
     <a href="faq.html" target="_blank">FAQ</a>
 	</div>
+  <?php
+    $notice = trim(get_notice());
+    if($notice != ""){
+      echo <<<eot
+<div id="ntc" class="ntc">{$notice}</div>
+eot;
+    }
+  ?>
 
   <div id="tt">
     Welcome to Flood
   </div>
-<?php
-	include('include/notice.php');
-?>
+
   <div id="main" align="left">
 	<div id="right">
 		<div class="hpt">Upcoming Contest</div>
@@ -130,6 +136,24 @@ function get_homepage(&$hp)
 	} else
 		$hp = null;
 	$tc->close();
+}
+function get_notice()
+{
+  $header = "np00000000";
+
+  $tc = new TCPClient();
+  $tc->create() or die("unable to create socket!");
+  $tc->connect() or die("unable to connect to server!");
+  $tc->sendstr($header) or die("send header failed");
+//	$tc->sendstr($problem_id)or die("send message failed");
+  $recv = $tc->recvstr(10);
+  sscanf($recv, "%d", $len);
+  if($len > 0)
+    $recv = $tc->recvstr($len);
+  else
+    $recv = null;
+  $tc->close();
+  return $recv;
 }
 
 ?>

@@ -163,8 +163,8 @@
 	echo '<a href="problemList.php">Back</a><br/>' . "\n";
 
     $pid = $problem_id;
-    $url = trim("http://localhost/flood/problem/problem.php?problem_id={$pid}");
-    $file = trim("/home/flood/worktemp/file/cache/{$pid}.html");
+    $url = trim("../../problem/problem.php?problem_id={$pid}");
+    $file = trim("../../cache/{$pid}.html");
     $tmp = file_get_contents($url);
     echo "Caching:<br/>\n";
     echo "Source: " . htmlspecialchars($url) . "<br/>\n";

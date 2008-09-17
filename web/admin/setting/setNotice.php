@@ -1,5 +1,6 @@
 <?php
 	session_start();
+  ob_start();
 	if (empty($_SESSION['user_id']) || $_SESSION['access'] != 'root'){
 		header('Location:login.php?errorMsg=please login first!');
 		exit;
@@ -31,11 +32,18 @@
   <div id="main">
   <form action="setNotice.php" method="post">
    <b>Last Notice:</b><br>
-   <div id="last_notice"><?php echo get_notice(); ?></div>
+   <div id="last_notice">
+       <?php echo nl2br(htmlspecialchars(get_notice())); ?>
+       <hr style="width:600px"/>
+       <b>Effect</b><br/>
+       <?php echo get_notice(); ?>
+   </div>
    <br><br><br>
-   <b>Set New Notice:</b><br>
-   <input name="notice" size=120 maxlength=200/><br><br>
-   <input type="submit", value="Submit" name="submit"/>&nbsp;&nbsp;<input type="reset" value="Reset">&nbsp;&nbsp;<input type="submit" value="Refresh">
+   <b>Set New Notice(html tags allowed):</b><br>
+   <input name="notice" size="120"/><br><br>
+   <input type="submit" value="Submit" name="submit"/>&nbsp;&nbsp;
+   <input type="reset" value="Reset">&nbsp;&nbsp;
+   <input type="submit" value="Delete Notice" name="submit"/>
   </div>
 
   <br />
@@ -54,7 +62,11 @@
 
 <?php
 	if (isset($_POST['submit'])){
-		set_notice($_POST['notice']);
+    if($_POST['submit'] == "Delete Notice")
+      set_notice(" ");
+    else
+		  set_notice($_POST['notice']);
+    header("location: " . $_SERVER['PHP_SELF']);
 	}
 ?>
 

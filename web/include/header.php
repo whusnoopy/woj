@@ -1,24 +1,24 @@
 <?php
-     $NewMail = isset($_SESSION['mail_number'])?$_SESSION['mail_number']:0;
+    $NewMail = isset($_SESSION['mail_number'])?$_SESSION['mail_number']:0;
 ?>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link href="/flood/style/noah.css" rel="stylesheet" type="text/css" />
+  <link href="../style/noah.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <center>
   <div id="bar">
-    <a href="/flood/index.php">Home</a>&nbsp;|&nbsp;
-    <a href="/flood/problem/problemList.php">Problems</a>&nbsp;|&nbsp;
-    <a href="/flood/contest/contestList.php">Contests</a>&nbsp;|&nbsp;
-    <a href="/flood/contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
-    <a href="/flood/submit/submit.php">Submit</a>&nbsp;|&nbsp;
-    <a href="/flood/status/status.php">Status</a>&nbsp;|&nbsp;
-    <a href="/flood/ranklist/ranklist.php">Ranklist</a>&nbsp;|&nbsp;
-    <a href="/flood/discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
-    <a href="/flood/user/user.php">User</a>&nbsp;|&nbsp;
-    <a href="/flood/mail/mailList.php">
+    <a href="../index.php">Home</a>&nbsp;|&nbsp;
+    <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
+    <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
+    <a href="../contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
+    <a href="../submit/submit.php">Submit</a>&nbsp;|&nbsp;
+    <a href="../status/status.php">Status</a>&nbsp;|&nbsp;
+    <a href="../ranklist/ranklist.php">Ranklist</a>&nbsp;|&nbsp;
+    <a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="../user/user.php">User</a>&nbsp;|&nbsp;
+    <a href="../mail/mailList.php">
 <?php
         if ($NewMail > 0)
           echo "<font color=\"red\">Mail[$NewMail]</font>";
@@ -26,5 +26,10 @@
           echo "Mail";
 ?>
     </a>&nbsp;|&nbsp;
-    <a href="/flood/faq.html" target="_blank">FAQ</a>
+    <a href="../faq.html" target="_blank">FAQ</a>
   </div>
+  <div id="ntc" class="ntc" style="display:none;"> </div>
+  <script language="javascript" src="../common/getNotice.js"></script>
+  <script language="javascript">
+    getNotice("ntc");
+  </script>
