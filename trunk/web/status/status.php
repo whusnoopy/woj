@@ -120,7 +120,7 @@
 		$eid = $st->getError_id($i);
 		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
-		echo "<td><a href=\"../problem/cache/{$pid}.html\">$pid</a></td>";
+		echo "<td><a href=\"../cache/{$pid}.html\">$pid</a></td>";
 		if (empty($eid)){
       switch(strtoupper($JUDGE_STATUS[$result])){
         case 'UNKNOW':
