@@ -6,6 +6,12 @@
 		exit;
 	}
 	include('../common/tcpclient.php');
+  if (isset($_POST['submit'])){
+    if($_POST['submit'] == "Delete Notice")
+      set_notice(" ");
+    else
+      set_notice($_POST['notice']);
+  }
 ?>
 <html>
 <head>
@@ -60,15 +66,6 @@
 </body>
 </html>
 
-<?php
-	if (isset($_POST['submit'])){
-    if($_POST['submit'] == "Delete Notice")
-      set_notice(" ");
-    else
-		  set_notice($_POST['notice']);
-    header("location: " . $_SERVER['PHP_SELF']);
-	}
-?>
 
 <?php
 function get_notice()
