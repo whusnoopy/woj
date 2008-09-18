@@ -7,28 +7,28 @@ $DOCUMENT_ROOT = '/var/www/flood/';
 $LANGUAGE = array('GCC','G++','JAVA','PASCAL');
 
 $JUDGE_STATUS = array(
-  'UNKNOW',
-  'ACCEPT',           // 1. Correct answer
-  'WRONG_ANSWER',           // 2. Wrong answer
-  'PRESENTATION_ERROR',     // 3. Presentation error
-  'COMPILE_ERROR',          // 4. Compile error
-  'TIME_LIMIT_EXCEEDED',    // 5. Time limit exceed
-  'MEMORY_LIMIT_EXCEEDED',  // 6. Memory limit exceed
-  'OUTPUT_LIMIT_EXCEEDED',  // 7. Output limit exceed
-  'RUNTIME_ERROR_SIGSEGV',  // 8. Runtime-error when buffer overflow, stack
+  'Waiting...',
+  'Accepted',           // 1. Correct answer
+  'Wront Answer',           // 2. Wrong answer
+  'Presentation Error',     // 3. Presentation error
+  'Compile Error',          // 4. Compile error
+  'Time Limit Exceeded',    // 5. Time limit exceed
+  'Memory Limit Exceeded',  // 6. Memory limit exceed
+  'Output Limit Exceeded',  // 7. Output limit exceed
+  'Runtime Error SIGSEGV',  // 8. Runtime-error when buffer overflow, stack
                           //    overflow or illegal file access
-  'RUNTIME_ERROR_SIGFPE',   // 9. Runtime-error when divided by 0
-  'RUNTIME_ERROR_SIGBUS',   // 10. Runtime-error when hardware error occurred
-  'RUNTIME_ERROR_SIGABRT',  // 11. Runtime-error when programme aborted before it
+  'Runtime Error SIGFPE',   // 9. Runtime-error when divided by 0
+  'Runtime Error SIGBUS',   // 10. Runtime-error when hardware error occurred
+  'Runtime Error SIGABRT',  // 11. Runtime-error when programme aborted before it
                           //     should be finished
-  'RUNTIME_ERROR_JAVA',     // 12. Runtime-error of JAVA when there is outputable
+  'Runtime Error JAVA',     // 12. Runtime-error of JAVA when there is outputable
                           //     info
-  'RESTRICTED_FUNCTION',    // 13. Restricted functions, like system call
-  'SYSTEM_ERROR',           // 14. Unknown system errors
-  'PENDING',                // 15. Pending for Judge
-  'COMPILING',              // 16. Judge is compiling the source file
-  'RUNNING',                // 17. Judge is running the submit executable file
-  'JUDGING',                // 18. Judge is compare the submit result and the
+  'Restricted Function',    // 13. Restricted functions, like system call
+  'System Error',           // 14. Unknown system errors
+  'Pending',                // 15. Pending for Judge
+  'Compiling',              // 16. Judge is compiling the source file
+  'Running',                // 17. Judge is running the submit executable file
+  'Judging',                // 18. Judge is compare the submit result and the
   )                       //     standard output
 
 ?>
