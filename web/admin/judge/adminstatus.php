@@ -62,6 +62,7 @@
     <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
     <a href="judge.php">Judge</a>&nbsp;|&nbsp;
+    <a href="adminstatus.php">Admin Status</a>&nbsp;|&nbsp;
     <a href="../user/userList.php">User</a>&nbsp;|&nbsp;
 	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
     <a href="../logout.do.php">Logout</a>
@@ -103,7 +104,7 @@
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
 		echo "<td><a href=\"../problem/problem.php?problem_id=$pid}\">$pid</a></td>";
 		if (empty($eid))
-			echo '<td>'.$JUDGE_STATUS[$result].'</td>';
+			echo '<td style="color:'.$STATUS_COLOR[$result].'">'.$JUDGE_STATUS[$result].'</td>';
 		else
 			echo "<td><a href=\"compileerror.php?ce_id=$eid\" target=\"_balnk\">".$JUDGE_STATUS[$result].'</a></td>';
 		echo "<td>$mem</td>";

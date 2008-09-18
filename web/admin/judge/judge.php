@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	if (empty($_SESSION['user_id']) || $_SESSION['access'] != 'root'){
-		header('Location:../login.php?errorMsg=please login first!');
+		header('Location:../login.php?errorMsg=please+login+first!');
 		exit;
 	}
 ?>
@@ -62,6 +62,7 @@
     <a href="../problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
     <a href="judge.php">Judge</a>&nbsp;|&nbsp;
+    <a href="adminstatus.php">Admin Status</a>&nbsp;|&nbsp;
     <a href="../user/userList.php">User</a>&nbsp;|&nbsp;
 	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
     <a href="../logout.do.php">Logout</a>
@@ -110,7 +111,7 @@
 		echo "<td>$sid</td>";
 		echo "<td>$uid</td>";
 		echo "<td>$pid</td>";
-		echo '<td>'.$JUDGE_STATUS[$result].'</td>';
+		echo '<td style="color:'.$STATUS_COLOR[$result].'">'.$JUDGE_STATUS[$result].'</td>';
 		echo "<td>$mem</td>";
 		echo "<td>$tm</td>";
 		echo '<td>'.$LANGUAGE[$lan].'</td>';
