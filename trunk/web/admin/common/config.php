@@ -31,7 +31,7 @@ $STATUS_COLOR = array(
 $JUDGE_STATUS = array(
   'Waiting...',
   'Accepted',           // 1. Correct answer
-  'Wront Answer',           // 2. Wrong answer
+  'Wrong Answer',           // 2. Wrong answer
   'Presentation Error',     // 3. Presentation error
   'Compile Error',          // 4. Compile error
   'Time Limit Exceeded',    // 5. Time limit exceed
