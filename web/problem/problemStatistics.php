@@ -9,5 +9,5 @@ if($problem_id < 1001)die("N/A|N/A");
 $query = "SELECT `accepted`, `submit` FROM problems WHERE problem_id={$problem_id}";
 $result = $conn->query($query);
 $ans = $result->fetch_row();
-die($ans[0]."|".$ans[1]);
+die($ans[1]."|".$ans[0]);
 ?>
