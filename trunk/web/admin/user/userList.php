@@ -18,8 +18,9 @@
     <a href="../problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="../contest/contestList.php">Contests</a>&nbsp;|&nbsp;
     <a href="../judge/judge.php">Judge</a>&nbsp;|&nbsp;
+    <a href="../judge/adminstatus.php">Admin Status</a>&nbsp;|&nbsp;
     <a href="userList.php">User</a>&nbsp;|&nbsp;
-	<a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
+    <a href="../discuss/discussList.php">Discuss</a>&nbsp;|&nbsp;
     <a href="../logout.do.php">Logout</a>
   </div>
 
