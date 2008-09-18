@@ -122,28 +122,7 @@
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
 		echo "<td><a href=\"../cache/{$pid}.html\">$pid</a></td>";
 		if (empty($eid)){
-      switch(strtoupper($JUDGE_STATUS[$result])){
-        case 'UNKNOW':
-            $status = 'Waiting...'; $color = '#0000dd'; break;
-        case "ACCEPTED":
-        case 'ACCEPT':
-            $status = 'Accepted'; $color = '#dd0000'; break;
-        case 'WRONG_ANSWER':
-            $status = 'Wrong Answer'; $color = '#858530'; break;
-        case 'PRESENTATION_ERROR': 
-            $status = 'Presentation Error'; $color = '#00dd00'; break;
-        case 'MEMORY_LIMIT_EXCEEDED':
-            $status = 'Memory Limit Exceeded'; $color = '#660066'; break;
-        case 'TIME_LIMIT_EXCEEDED':
-            $status = 'Time Limit Exceeded'; $color = '#66bb66'; break;
-        case 'RUNTIME_ERROR_SIGSEGV':
-            $status = 'Runtime Error (SIGSEGV)'; $color = '#707070'; break;
-        case 'RUNTIME_ERROR_SIGFPE': 
-            $status = 'Runtime Error (SIGFPE)'; $color = '#707050'; break;
-        default:
-            $status = $JUDGE_STATUS[$result]; $color = '#000000'; break;
-      }
-			echo '<td style="color:' . $color . '">'. $status .'</td>';
+			echo '<td style="color:'.$STATUS_COLOR[$result].'">'.$JUDGE_STATUS[$result].'</td>';
     }
 		else
 			echo "<td><a href=\"compileerror.php?ce_id=$eid\" target=\"_balnk\">".$JUDGE_STATUS[$result].'</a></td>';
