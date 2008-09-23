@@ -31,7 +31,8 @@
 	$start = strtotime($contest[2]);
 	$end = strtotime($contest[3]);
 	$current = time();
-	echo '<strong>Current Time</strong>:'.date("Y-m-d H:i:s", $current).'&nbsp;&nbsp;';
+	echo '<strong>Current Time</strong>:<span id="ctime">';
+  echo date("Y-m-d H:i:s", $current).'</span>&nbsp;&nbsp;';
 	echo '<strong>Status</strong>:';
 	if ($current > $end)
 		echo '<font color=green>Finished</font>';
@@ -40,6 +41,23 @@
 	else
 		echo '<font color="green">Started at:&nbsp;'.$contest[2].'</font>';
 ?>
+<script language="javascript">
+var timestamp = <?php echo time(); ?> * 1000;
+function update_time(){
+  var y,m,d,g,i,s;
+  timestamp+=1000;
+  var t = new Date(timestamp);
+  y=t.getFullYear();
+  m=t.getMonth()+1; if(m < 10) m = "0"+m;
+  d=t.getDate(); if(d < 10) d = "0"+d;
+  g=t.getHours(); if(g < 10) g = "0"+g;
+  i=t.getMinutes(); if(i < 10) i = "0"+i;
+  s=t.getSeconds(); if(s < 10) s = "0"+s;
+  var str = y+"-"+m+"-"+d+" "+g+":"+i+":"+s;
+  document.getElementById("ctime").innerHTML = str;
+}
+setInterval("update_time()", 1000);
+</script>
   </div>
 
 
