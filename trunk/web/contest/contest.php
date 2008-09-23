@@ -42,10 +42,14 @@
 		echo '<font color="green">Started at:&nbsp;'.$contest[2].'</font>';
 ?>
 <script language="javascript">
+var cstatus = <?php echo $current<$start? 0 : 1; ?>;
+var starttime = <?php echo $start; ?> * 1000;
 var timestamp = <?php echo time(); ?> * 1000;
 function update_time(){
   var y,m,d,g,i,s;
   timestamp+=1000;
+  if(timestamp > starttime && cstatus == 0) 
+    window.location = window.location;
   var t = new Date(timestamp);
   y=t.getFullYear();
   m=t.getMonth()+1; if(m < 10) m = "0"+m;
