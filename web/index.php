@@ -11,7 +11,7 @@
 </head>
 <?php
     $hp = array();
-	get_homepage($hp);
+    get_homepage($hp);
 ?>
 <body>
 <center>
