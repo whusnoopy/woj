@@ -163,7 +163,8 @@
 	echo '<a href="problemList.php">Back</a><br/>' . "\n";
 
     $pid = $problem_id;
-    $url = trim("../../problem/problem.php?problem_id={$pid}");
+    $prefix = dirname(dirname(dirname($_SERVER['HTTP_REFERER'])));
+    $url = trim("{$prefix}/problem/problem.php?problem_id={$pid}");
     $file = trim("../../cache/{$pid}.html");
     $tmp = file_get_contents($url);
     echo "Caching:<br/>\n";
