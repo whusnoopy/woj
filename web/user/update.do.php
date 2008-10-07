@@ -1,37 +1,41 @@
 <?php
-
-    echo "we are dealing with you request now, please wait...";
+  ob_start();
 	include ('../common/tcpclient.php');
 
 	if (isset($_POST['submit'])){
-		$user_id = $_POST['user_id'];
-		$oldPass = $_POST['oldPass'];
-		$newPass = $_POST['newPass'];
-		$rptNewPass = $_POST['rptNewPass'];
-		$nick = $_POST['nick'];
-		$share_code = $_POST['share_code'];
+    var_dump($_POST);exit;
+    extract($_POST);
+    if(empty($nick))$nick = $user_id;
 		if($share_code) $share_code = 'Y'; else $share_code = 'N';
-		$school = $_POST['school'];
-		$email = $_POST['email'];
-		$share_email = $_POST['share_email'];
+    if(empty($school))$school = " ";
+    if(empty($email))$email = " ";
 		if($share_email) $share_email = 'Y'; else $share_email = 'N';
 		$language = '0';
-	}
+	}else{
+    header("Location: modify.php");
+    exit;
+  }
 
-	if($newPass != $rptNewPass){
-		header("Location: modifyerr.php?errorMsg=The New Password doesn't match");
-		exit;
-	}
-	if(empty($newPass))
+	if(empty($newPass)){
 		$newPass = $oldPass;
+  }else{
+    if($newPass != $rptNewPass){
+      header("Location: modifyerr.php?errorMsg="
+          . urlencode("The new password doesn't match the repeated one..."));
+      exit;
+    }
+  }
 
 	if(update_user_info($user_id, $oldPass, $newPass, $email,
 							$share_email, $nick, $school, $share_code, $language)){
-		header("Location: modifysuc.php?user_id=$user_id&nick=$nick&school=$school&email=$email");
+		header("Location: modifysuc.php?"
+        . "user_id=" . urlencode($user_id)
+        . "&nick=" . urlencode($nick)
+        . "&school=" . urlencode($school)
+        . "&email=" .urlencode($email));
 		exit;
-	}
-	else{
-		header("Location: modifyerr.php?errorMsg=system is busy");
+	} else{
+		header("Location: modifyerr.php?errorMsg=system+is+busy");
 		exit;
 	}
 

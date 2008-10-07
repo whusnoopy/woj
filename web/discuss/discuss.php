@@ -23,7 +23,7 @@
   <tbody>
   <tr class=tro>
     <th align=right width=100>Title:</th>
-    <th align=left width=700><?php echo $message[1]; ?></th></tr>
+    <th align=left width=700><?php echo htmlspecialchars($message[1]); ?></th></tr>
   <tr class=tre>
     <td align=right><strong>Problem:</strong></td>
     <td align=left><?php echo $message[2]; ?></td></tr>
@@ -31,12 +31,14 @@
     <td align=right><strong>From:</strong></td>
     <td align=left><?php echo $message[4]; ?></td></tr>
   <tr class=tre>
-    <td align=right><strong>Send Time:</strong></td>
+    <td align=right><strong>POST Time:</strong></td>
     <td align=left><?php echo $message[5]; ?></td></tr>
   <tr class=tro valign=top>
     <td align=right><strong>Content:</strong></td>
     <td align=left>
-      <div class=code><?php echo $message[6]; ?></div>
+      <div class=code><?php 
+        echo str_replace("  ", "&nbsp; ", nl2br(htmlspecialchars($message[6]))); 
+?></div>
 	</td>
   </tr>
    </tbody>

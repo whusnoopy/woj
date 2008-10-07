@@ -1,15 +1,17 @@
 <?php
 	include('../common/tcpclient.php');
-
 	if (isset($_POST['submit'])){
 		$user_id = $_POST['user_id'];
 		$password = $_POST['password'];
 		$repeatpassword = $_POST['repeatpassword'];
 		$nick = $_POST['nick'];
+    if(empty($nick))$nick = $user_id;
 		$share_code = $_POST['share_code'];
 		if($share_code) $share_code = 'Y'; else $share_code = 'N';
 		$school = $_POST['school'];
+    if(empty($school))$school = " ";
 		$email = $_POST['email'];
+    if(empty($email))$email = " ";
 		$share_email = $_POST['share_email'];
 		if($share_email) $share_email = 'Y'; else $share_email = 'N';
 		$language = '0';

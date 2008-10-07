@@ -24,29 +24,38 @@
 <script src="../common/md5.js"></script>
 <script language="javascript">
   function validateFormData(){
+    try{
     var userId = document.getElementById("userId");
     var pass = document.getElementById("ps");
     var problemId = document.getElementById("problemId");
     var source = document.getElementById("source");
     if(userId.value.length == 0 || pass.value.length == 0){
       alert("Invalid userId or password");
+      userId.focus();
       return false;
     }else if(problemId.value.length == 0){
       alert("Invalid problem id");
+      problemId.focus();
       return false;
     }else if(source.value.length == 0){
-      alert("Please paster your source before submit");
+      alert("Please paste your source before submit");
+      source.focus();
       return false;
     }else if(source.value.length > 20000){
       alert("Source is too long");
+      source.focus();
       return false;
     }
-    pass.value = MD5(pass.value);
-    return true;
+    if(pass.value.length < 32)
+        pass.value = MD5(pass.value);
+    var form1 = document.getElementById("form1");
+    try{ form1.submit();}
+    catch(e){form1.submit.click();}
+    }catch(e1){alert(e1);}
   }
 </script>
   <div id="main">
-    <form id="form1" action="submit.do.php" method=post onsubmit="validateFormData()">
+    <form id="form1" action="submit.do.php" method="post">
 	<input type="hidden" name="contest_id" value="<?php echo $contest_id;?>"/>
     <table><tbody>
       <tr>
@@ -103,7 +112,10 @@
         <td></td>
       </tr>
       <tr class=tre>
-        <td colSpan=4 align=center><input type="submit" value="Submit" name="submit" />&nbsp;<input type="reset" value="Reset" /></td>
+        <td colSpan=4 align=center>
+        <input type="button" value="Submit" onclick="validateFormData()"/>
+        &nbsp;<input type="reset" value="Reset" />
+        <input type="submit" value="Submit" name="submit" style="display:none"/></td>
       </tr>
     </tbody></table>
     </form>

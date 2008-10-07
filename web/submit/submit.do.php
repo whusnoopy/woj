@@ -10,16 +10,16 @@
 	$source_len = 0;
 
 	if(empty($_POST['user_id']) || empty($_POST['pass'])){
-		$errorMsg = 'Invalid user ID or password';
+		$errorMsg = 'Invalid user ID or password!';
 	}
 	else if(empty($_POST['problem_id'])){
-		$errorMsg = 'please type your problem_id';
+		$errorMsg = 'please type your problem_id!';
 	}
 	else if(empty($_POST['language'])){
-		$errorMsg = 'please type your language';
+		$errorMsg = 'please type your language!';
 	}
 	else if(($source_len = strlen($_POST['source'])) > 10000){
-		$errorMsg = 'Source is too short';
+		$errorMsg = 'Source is too long!';
 	}
 
 	if($errorMsg)
