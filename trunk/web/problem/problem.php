@@ -20,6 +20,9 @@
 	$fo = new format_output();
 
 	include('../include/header.php');
+  $problem[0] = str_replace('\r', '', $problem[0]);
+  $problem[0] = str_replace('\n', '', $problem[0]);
+  $problem[0] = trim($problem[0]);
 	echo '<title>Problem ' . $problem_id .' - '.$problem[0].'</title>';
 ?>
 
