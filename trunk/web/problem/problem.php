@@ -20,11 +20,23 @@
 	$fo = new format_output();
 
 	include('../include/header.php');
-	echo '<title>Problem</title>';
+	echo '<title>Problem ' . $problem_id .' - '.$problem[0].'</title>';
 ?>
-  <div id="tt">
-    <?php echo "Problem ".$problem_id.' - '.$problem[0];?>
-  </div>
+
+  <div id="tt"> <?php echo "Problem ".$problem_id.' - '.$problem[0];?> </div>
+
+<script language="javascript" type="text/javascript">
+var problem_id = <?php echo $problem_id ?>;
+var problem_title = "<?php echo addslashes($problem[0]); ?>";
+
+var query = window.location.search;
+index1 = query.indexOf('seq=');
+if(index1 >= 0){
+  seq = query.substr(index1+4, 1);
+  var tt = document.getElementById('tt');
+  tt.innerHTML = 'Problem ' + seq + ' - ' + problem_title;
+}
+</script>
 
 <?php
 	include('../include/notice.php');
@@ -69,7 +81,6 @@
     }
 alert(problem_id);
 */
-    var problem_id = <?php echo $_GET['problem_id']; ?>;
     var url = "../problem/problemStatistics.php?problem_id=" + problem_id;
     var a_submit = document.getElementById("a_submit");
     var a_ac = document.getElementById("a_ac");
