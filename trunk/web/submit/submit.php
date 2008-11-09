@@ -41,7 +41,7 @@
       alert("Please paste your source before submit");
       source.focus();
       return false;
-    }else if(source.value.length > 20000){
+    }else if(source.value.length > 100000){
       alert("Source is too long");
       source.focus();
       return false;
@@ -108,7 +108,7 @@
         <td></td>
         <td align="right"><b>Source:&nbsp;</b></td>
         <td align="left">
-          <textarea style="width:700px; height:500px; wrap: soft" id="source" name="source"><?php echo htmlspecialchars($_SESSION['source']); ?></textarea></td>
+          <textarea style="width:700px; height:500px; wrap: soft" id="source" name="source"></textarea></td>
         <td></td>
       </tr>
       <tr class=tre>
