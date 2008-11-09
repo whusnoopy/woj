@@ -93,6 +93,7 @@ setInterval("update_time()", 1000);
 			  echo '<tr class=tre>';
 		  echo '<td></td>';
 		  echo '<td>'.$ch{$i}.'</td>';
+      /* cache action commented by felix021
 		  if ($current >= $start && $current <= $end){
 			  $problem_html = 'problems/c'.$contest_id.'_'.$ch{$i}.'.html';
 			  if (!exist($problem_html))
@@ -100,7 +101,8 @@ setInterval("update_time()", 1000);
 			  echo '<td><a href="'.$problem_html.'">'.$cp->getTitle($i).'</a></td>';
 		  }
 		  else
-			  echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html">'.$cp->getTitle($i).'</a></td>';
+      */
+      echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html">'.$cp->getTitle($i).'</a></td>';
 		  $ac = $cp->getAC($i);
 		  $total = $cp->getTotal($i);
 		  if($total > 0) $ratio = sprintf("%.2f", $ac*100/$total ); else $ratio = '0.00';
