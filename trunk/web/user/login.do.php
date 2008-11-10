@@ -33,6 +33,7 @@
 		if( ($mail_number = login($user_id, $password)) != -1){
 			$_SESSION['user_id'] = $user_id;
 			$_SESSION['mail_number'] = $mail_number;
+      $_SESSION['pass'] = $_POST['pass'];
 			header("Location: $origURL");
 			exit;
 		}

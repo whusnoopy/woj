@@ -24,6 +24,8 @@
     <td align="left"><?php echo $_GET['email']; ?></td>
   </tr>
     </tbody></table>
+    <div> <strong>RegTime(take it down in case of foggetting your password):&nbsp;</strong> <?php 
+    date_default_timezone_set("PRC"); echo date("Y-m-d G:i:s"); ?> </div>
     <br />
     <span class="bt"><a href="login.php">Login Now</a></span>
     <br /><br />

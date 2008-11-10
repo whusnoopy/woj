@@ -3,7 +3,6 @@
 	include ('../common/tcpclient.php');
 
 	if (isset($_POST['submit'])){
-    var_dump($_POST);exit;
     extract($_POST);
     if(empty($nick))$nick = $user_id;
 		if($share_code) $share_code = 'Y'; else $share_code = 'N';
