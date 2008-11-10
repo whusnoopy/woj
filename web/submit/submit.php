@@ -27,6 +27,7 @@
     try{
     var userId = document.getElementById("userId");
     var pass = document.getElementById("ps");
+    var password = document.getElementById("ps1");
     var problemId = document.getElementById("problemId");
     var source = document.getElementById("source");
     if(userId.value.length == 0 || pass.value.length == 0){
@@ -46,8 +47,7 @@
       source.focus();
       return false;
     }
-    if(pass.value.length < 32)
-        pass.value = MD5(pass.value);
+    password.value = MD5(pass.value);
     var form1 = document.getElementById("form1");
     try{ form1.submit();}
     catch(e){form1.submit.click();}
@@ -72,7 +72,10 @@
       <tr class=tre>
         <td></td>
         <td align="right"><b>Password:&nbsp;</b></td>
-        <td align="left"><input type=password id=ps maxLength=150 size=25 name="pass" value="<?php echo $pass; ?>" /></td>
+        <td align="left">
+        <input type=password id=ps maxLength=150 size=25 name="pass1" value="<?php echo $_SESSION['pass']; ?>" />
+        <input type=hidden id=ps1 maxLength=150 size=25 name="pass" value="" />
+        </td>
         <td></td>
       </tr>
       <tr class=tro>

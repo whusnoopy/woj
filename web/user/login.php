@@ -32,7 +32,10 @@
       </tr>
       <tr class=tre>
         <td align=right><strong>Password:&nbsp;&nbsp;</strong></td>
-        <td align=left><input name=password id=ps type=password tabIndex=2 value="<?php echo $_COOKIE['password']; ?>" size=20 maxLength=150 /></td>
+        <td align=left>
+        <input name=pass id=ps type=password tabIndex=2 value="" size=20 maxLength=150 />
+        <input name=password id=ps1 type=hidden tabIndex=2 value="" size=20 maxLength=150 />
+        </td>
       </tr>
       <tr class=tro>
         <td colspan=2 align=center>
@@ -52,8 +55,8 @@
 <script src="../common/md5.js"></script>
 <script language="javascript">
 function encode(ps) {
-  if (ps.length < 32)
-    document.getElementById('ps').value = MD5(ps);
+  var ps = document.getElementById('ps');
+  document.getElementById('ps1').value = MD5(ps.value);
   return true;
 }  
 </script>
