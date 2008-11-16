@@ -16,7 +16,10 @@
 	}
 	else if(empty($_POST['language'])){
 		$errorMsg = 'please type your language!';
-	}
+    }
+    else if($_POST['language'] == 2){//java
+        $errorMsg = 'Java Compiler doesn\'t work well now, sorry';
+    }
 	else if(($source_len = strlen($_POST['source'])) > 100000){
 		$errorMsg = 'Source is too long!';
 	}

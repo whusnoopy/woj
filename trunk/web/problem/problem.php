@@ -20,25 +20,39 @@
 	$fo = new format_output();
 
 	include('../include/header.php');
-  $problem[0] = str_replace('\r', '', $problem[0]);
-  $problem[0] = str_replace('\n', '', $problem[0]);
-  $problem[0] = trim($problem[0]);
+    $problem[0] = str_replace('\r', '', $problem[0]);
+    $problem[0] = str_replace('\n', '', $problem[0]);
+    $problem[0] = trim($problem[0]);
 	echo '<title>Problem ' . $problem_id .' - '.$problem[0].'</title>';
 ?>
 
-  <div id="tt"> <?php echo "Problem ".$problem_id.' - '.$problem[0];?> </div>
+  <div id="tt"> <?php echo 'Problem <span id="pid">'.$problem_id.'</span> - '.$problem[0];?> </div>
 
 <script language="javascript" type="text/javascript">
-var problem_id = <?php echo $problem_id ?>;
-var problem_title = "<?php echo addslashes($problem[0]); ?>";
 
-var query = window.location.search;
-index1 = query.indexOf('seq=');
-if(index1 >= 0){
-  seq = query.substr(index1+4, 1);
-  var tt = document.getElementById('tt');
-  tt.innerHTML = 'Problem ' + seq + ' - ' + problem_title;
-}
+    function $_GET(str){
+        var reg = new RegExp("[&?]"+str+"=([^\&]*)(&|$)", "gi" );
+        var ck = reg.exec(window.location.search);
+        try{if (ck[1]==null || typeof(ck[1])=="undefine") return null;
+        }catch(e){ return null; }
+        return ck[1];
+    }
+
+    var problem_id = <?php echo $problem_id ?>;
+    var query = window.location.search;
+    index1 = query.indexOf('seq=');
+    if(index1 >= 0){
+      seq = query.substr(index1+4, 1);
+      var tt = document.getElementById('pid');
+      tt.innerHTML = seq;
+    }
+    function updateSubmitUrl(){
+        var contest_id = $_GET("contest_id");
+        if (contest_id == null){ contest_id = 0; }
+        var submitUrl = document.getElementById("submit_url");
+        submitUrl.href = "../submit/submit.php?contest_id="+contest_id
+                       + "&problem_id=" + problem_id;
+    }
 </script>
 
 <?php
@@ -122,13 +136,15 @@ alert(problem_id);
     </div>
     <br />
     <div>
-	  <span class="bt"><a href="/flood/submit/submit.php?contest_id=<?php echo $contest_id?>&problem_id=<?php echo $problem_id;?>"> Submit</a></span>&nbsp;&nbsp;
-	  <span class="bt"><a href="/flood/discuss/discussList.php?pid=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
-      <span class="bt"><a href="/flood/status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
+	  <span class="bt"><a id="submit_url" href="../submit/submit.php?contest_id=<?php echo $contest_id?>&problem_id=<?php echo $problem_id;?>"> Submit</a></span>&nbsp;&nbsp;
+	  <span class="bt"><a href="../discuss/discussList.php?pid=<?php echo $problem_id;?>">Discuss</a></span>&nbsp;&nbsp;
+      <span class="bt"><a href="../status/problemstatus.php?problem_id=<?php echo $problem_id;?>">Status</a></span>
     </div>
     <br />
   </div>
-
+<script language="javascript">
+    updateSubmitUrl();
+</script>
 <?php
 	include('../include/tailer.php');
 
