@@ -102,7 +102,7 @@ setInterval("update_time()", 1000);
 		  }
 		  else
       */
-      echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html?seq='.$ch{$i}.'">'.$cp->getTitle($i).'</a></td>';
+      echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html?seq='.$ch{$i}.'&contest_id='.$contest_id.'">'.$cp->getTitle($i).'</a></td>';
 		  $ac = $cp->getAC($i);
 		  $total = $cp->getTotal($i);
 		  if($total > 0) $ratio = sprintf("%.2f", $ac*100/$total ); else $ratio = '0.00';

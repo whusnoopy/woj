@@ -96,8 +96,12 @@
         <td align="right"><b>Language:&nbsp;</b></td>
         <td align="left">
           <select size=1 name="language">
-          <option value=0>GCC</option><option value=1 selected>G++</option><option value=2>Java</option><option value=3>Pascal</option>
+          <option value=0>GCC</option>
+          <option value=1 selected>G++</option>
+          <!-- <option value=2>Java</option> -->
+          <option value=3>Pascal</option>
           </select>
+          (Java Compiler doen't work well, sorry.)
         </td>
         <td></td>
       </tr>
