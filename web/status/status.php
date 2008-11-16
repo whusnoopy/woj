@@ -42,7 +42,10 @@
 	$rows = $st->getRow();
 
   if(!isset($_GET['result']))
-    echo '<meta http-equiv="Refresh" content="30; url=status.php"/>';
+      if(isset($_GET['contest_id']))
+        echo '<meta http-equiv="Refresh" content="30; url=status.php?contest_id='.$_GET['contest_id'].'"/>';
+      else 
+        echo '<meta http-equiv="Refresh" content="30; url=status.php"/>';
 
 	include('../include/header.php');
 ?>
@@ -120,7 +123,11 @@
 		$eid = $st->getError_id($i);
 		echo "<td>$sid</td>";
 		echo "<td><a href=\"userStatus.php?user_id=$uid\">$uid</a></td>";
-		echo "<td><a href=\"../cache/{$pid}.html\">$pid</a></td>";
+        if(isset($_GET['contest_id'])){
+            echo "<td><a href=\"../cache/{$pid}.html?&contest_id={$_GET['contest_id']}\">$pid</a></td>";
+        }else{
+            echo "<td><a href=\"../cache/{$pid}.html\">$pid</a></td>";
+        }
 		if (empty($eid)){
 			echo '<td style="color:'.$STATUS_COLOR[$result].'">'.$JUDGE_STATUS[$result].'</td>';
     }

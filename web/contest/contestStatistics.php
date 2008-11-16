@@ -48,7 +48,7 @@
 		else
 			echo '<tr class=tre>';
 		$pid = $cs->getProblem_id($i);
-		echo "<td><a href=\"../problem/problem.php?problem_id=$pid\">".$character{$i}."</a></td>";
+		echo "<td><a target=\"_blank\" href=\"../cache/$pid.html?seq={$character[$i]}&contest_id={$_GET['contest_id']}\">".$character{$i}."</a></td>";
 		echo '<td>'.$cs->getAC($i).'</td>'; $total['AC'] += $cs->getAC($i);
 		echo '<td>'.$cs->getPE($i).'</td>'; $total['PE'] += $cs->getPE($i);
 		echo '<td>'.$cs->getCE($i).'</td>'; $total['CE'] += $cs->getCE($i);
