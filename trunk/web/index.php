@@ -19,7 +19,7 @@
     <a href="index.php">Home</a>&nbsp;|&nbsp;
     <a href="problem/problemList.php">Problems</a>&nbsp;|&nbsp;
     <a href="contest/contestList.php">Contests</a>&nbsp;|&nbsp;
-    <!-- <a href="contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp; -->
+    <a href="contest/vcontestList.php">Virtual Contests</a>&nbsp;|&nbsp;
     <a href="submit/submit.php">Submit</a>&nbsp;|&nbsp;
     <a href="status/status.php">Status</a>&nbsp;|&nbsp;
     <a href="ranklist/ranklist.php">Ranklist</a>&nbsp;|&nbsp;
