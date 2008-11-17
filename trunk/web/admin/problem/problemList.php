@@ -24,19 +24,33 @@
     <a href="../logout.do.php">Logout</a>
   </div>
 
-
 <?php
 	include_once('../../common/tcpclient.php');
 	include('classes/admin_problem_list_t.php');
+	include('classes/problem_list_t.php');
 
 	if (isset($_GET['start']))
 		$start = $_GET['start'];
 	else
-		$start = '0';
-	if (empty($user_id))
+		$start = '-1';
+	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
+		$user_id = $_SESSION['user_id'];
+	else
 		$user_id = '?';
+	$pl = new problem_list_t($start, $user_id, '?', '?');
+	$pl->getResult();
+	$pages = $pl->getPages();
+	$rows = $pl->getRow();
 
+  if ($start == '-1') {
+    $start = floor($pl->result[1] / 100 - 10);
+  }
 	echo "<div id=tt>Problems Volume $start</div>";
+
+  echo "<p>";
+	for ($i=0; $i<$pages; $i++)
+	    echo "<a href=\"problemList.php?start=$i\"><b>[$i]</b></a> ";
+	echo '</p>';
 ?>
 
   <div id="main">
