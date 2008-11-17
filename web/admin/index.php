@@ -40,7 +40,8 @@
     <tr class=tro><td><a href="judge/adminsubmit.php">Submit in Admin's Home</a></td></tr>
     <tr class=tre><td><a href="judge/adminstatus.php">See the status in Admin's Home</a></td></tr>
     <tr class=tro><td><a href="user/addusers.php">Add Series Users</a></td></tr>
-    <tr class=tre><td><a href="logout.do.php">Logout</a></td></tr>
+    <tr class=tre><td><a href="private/private.php">private permission</a></td></tr>
+    <tr class=tro><td><a href="logout.do.php">Logout</a></td></tr>
     </tbody></table>
   </div>
 
