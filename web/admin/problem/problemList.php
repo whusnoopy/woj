@@ -32,7 +32,7 @@
 	if (isset($_GET['start']))
 		$start = $_GET['start'];
 	else
-		$start = '-1';
+		$start = '0';
 	if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id']))
 		$user_id = $_SESSION['user_id'];
 	else
