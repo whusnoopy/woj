@@ -214,7 +214,11 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
   }
 
   //11.send limit
-  LOG(DEBUG) << "Judge[" << ip << "] " << "send limit";
+  LOG(DEBUG) << "Judge[" << ip << "] " << "send limit: ";
+  LOG(DEBUG) << "Case[" << mission.in_and_out_path.size() << "], "
+             << "Time_limit[" << mission.time_limit << "], "
+             << "Case_time_limit[" << mission.case_time_limit << "], "
+             << "Memory_limit[" << mission.memory_limit << "]";
   char limit[13];
   limit[0] = mission.in_and_out_path.size();
   *(unsigned int*)(limit + 1) = htonl((unsigned int)(mission.time_limit));

@@ -184,25 +184,25 @@ int getProblemLimit(int communicate_socket,
 
   test_case = header[0];
   if (test_case == 0 || test_case > MAX_TEST_CASE) {
-    LOG(ERROR) << "Invalid test case number";
+    LOG(ERROR) << "Invalid test case number: " << test_case;
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
   time_limit = ntohl(*(long*)(header + 1));
   if (time_limit == 0 || time_limit > MAX_TIME_LIMIT) {
-    LOG(ERROR) << "Invalid time limit";
+    LOG(ERROR) << "Invalid time limit: " << time_limit;
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
   case_time_limit = ntohl(*(long*)(header + 5));
   if (case_time_limit == 0 || case_time_limit > MAX_CASE_TIME_LIMIT) {
-    LOG(ERROR) << "Invalid case time limit";
+    LOG(ERROR) << "Invalid case time limit: " << case_time_limit;
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
   memory_limit = ntohl(*(long*)(header + 9));
   if (memory_limit == 0 || memory_limit > MAX_MEMORY_LIMIT) {
-    LOG(ERROR) << "Invalid memory limit";
+    LOG(ERROR) << "Invalid memory limit: " << memory_limit;
     sendReply(communicate_socket, SYSTEM_ERROR);
     return -1;
   }
@@ -473,11 +473,10 @@ int main(int argc, char* argv[]) {
     system(stringPrintf("rm -rf %s", working_root.c_str()).c_str());
     return -1;
   }
-  LOG(DEBUG) << "Connect to server during socket " << communicate_socket;
+  LOG(INFO) << "Connect to server during socket " << communicate_socket;
 
   while (!terminated && !socket_broken) {
     process(communicate_socket);
-    LOG(DEBUG) << "Process Over.";
     system(stringPrintf("rm -f %s/*", working_root.c_str()).c_str());
   }
   LOG(DEBUG) << "Terminated";
