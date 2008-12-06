@@ -6,8 +6,11 @@ clean :
 	@make -C base clean
 	@make -C judge clean
 	@make -C server clean
+	@rm -rf bin
 
 install : all
+	@rm -rf bin
+	@mkdir bin
 	@make -C judge install
 	@make -C server install
 	@echo "Install Online Judge to /home/flood/worktemp/bin/"

@@ -1,6 +1,8 @@
 <?php
+    session_start();
 	include('../common/tcpclient.php');
 	include('classes/contest_problem_list_t.php');
+    $user_id = $_SESSION['user_id'];
 	if (empty($user_id))
 		$user_id = '?';
 	if (isset($_GET['contest_id']) && !empty($_GET['contest_id']))
@@ -76,13 +78,28 @@ setInterval("update_time()", 1000);
   </tr>
 
 <?php
+    function isValidContest(){
+        global $contest_id, $user_id;
+        if($contest_id != 1079) return true;
+        $conn = new mysqli('localhost', 'root', '123456', 'flood');
+        if(!$conn) die('error connecting mysql!');
+        $user_id = $conn->real_escape_string($user_id);
+        $query = 'SELECT * FROM `contestpermission`'
+                ."  WHERE `contest_id`=$contest_id"
+                ."  AND `user_id`='$user_id'";
+        $conn->query($query);
+        if($conn->affected_rows > 0) return true;
+        else return false;
+    }
+
+
 	if ($current >= $start){
 	  $cp = new contest_problem_list_t($contest_id, $user_id);
 	  $cp->getResult();
 	  $rows = $cp->getRow();
-	  if (empty($rows)){
-		  echo 'It is a private contest<br>';
-		  echo '<a href="javascript:history.back()">Back</a>';
+	  if (!isValidContest() || empty($rows)){
+		  echo '<span style="text-align:center;" id="tt">It is a private contest, ';
+		  echo '<a href="javascript:history.back()">Back</a></span>';
 		  exit;
 	  }
 	  $ch = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -102,7 +119,11 @@ setInterval("update_time()", 1000);
 		  }
 		  else
       */
-      echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html?seq='.$ch{$i}.'&contest_id='.$contest_id.'">'.$cp->getTitle($i).'</a></td>';
+      if($current < $end)
+          echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html?seq='.$ch{$i}.'&contest_id='.$contest_id.'">'.$cp->getTitle($i).'</a></td>';
+      else
+          echo '<td><a href="../cache/'.$cp->getProblem_id($i).'.html?seq='.$ch{$i}.'">'.$cp->getTitle($i).'</a></td>';
+
 		  $ac = $cp->getAC($i);
 		  $total = $cp->getTotal($i);
 		  if($total > 0) $ratio = sprintf("%.2f", $ac*100/$total ); else $ratio = '0.00';
@@ -312,3 +333,4 @@ function get_problem_info($problem_id, &$problem)
 	return;
 }
 ?>
+
