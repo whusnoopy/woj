@@ -32,10 +32,10 @@ EXCEPTION:=$(patsubst %.cc,%.o,$(EXCEPTION_SOURCES))
 
 .PHONY: all clean rebuild 
 
-all: main
+all: oj_server
 
 clean:
-	@rm -f $(OBJS) *.d ./bin/main
+	@rm -f $(OBJS) *.d oj_server
 	@make -C network clean
 	@make -C data clean
 	@make -C object clean
@@ -45,6 +45,14 @@ clean:
 
 rebuild: clean all
 
-main: $(OBJS) $(DEPS) $(UTIL) $(OBJECT) $(DATA) $(JUDGECONTROL) $(NETWORK) $(EXCEPTION)
-	$(CXX) $(CXXFLAGS) -o ./bin/$@ $^ $(EXEFLAGS)
+install: all
+	@echo "Install oj_server to ../bin"
+	@cp oj_server ../bin
+	@echo "Install run oj_server.sh to ../bin"
+	@cp startOnlineJudgeServer.sh ../bin
+	@echo "Install configure.xml example to ../bin"
+	@cp eg_configure.xml ../bin
+	
+oj_server: $(OBJS) $(DEPS) $(UTIL) $(OBJECT) $(DATA) $(JUDGECONTROL) $(NETWORK) $(EXCEPTION)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 

@@ -8,6 +8,10 @@ clean :
 	@make -C server clean
 
 install : all
+	@make -C judge install
+	@make -C server install
+	@echo "Install Online Judge to /home/flood/worktemp/bin/"
+	@cp -r bin /home/flood/worktemp/
 
 .base :
 	make -C base
