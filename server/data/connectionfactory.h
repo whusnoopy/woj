@@ -3,9 +3,10 @@
 
 #include <string>
 
-#include "object/objectinc.h"
-#include "data/result.h"
-#include "data/mysqlconnection.h"
+#include "server/object/objectinc.h"
+#include "server/data/result.h"
+#include "server/data/mysqlconnection.h"
+
 using namespace std;
 
 class ConnectionFactory {
@@ -17,9 +18,10 @@ public:
   }
 
   Connection* createConnection(const string& host,
-                              const string& user,
-                              const string& password,
-                              const string& database);
+                               const string& user,
+                               const string& password,
+                               const string& database);
+
   Connection* createConnection();
 
 };

@@ -1,4 +1,4 @@
-#include "connection.h"
+#include "server/data/connection.h"
 
 int Connection::connect(){
   return 0;

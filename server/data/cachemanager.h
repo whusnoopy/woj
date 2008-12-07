@@ -6,8 +6,8 @@
 
 #include <pthread.h>
 
-#include "data/cache.h"
-#include "object/objectinc.h"
+#include "server/data/cache.h"
+#include "server/object/objectinc.h"
 using namespace std;
 
 class CacheManager{

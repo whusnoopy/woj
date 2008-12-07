@@ -1,11 +1,12 @@
 default : all
 
-all : .base .judge .server
+all : .base .judge .server .tools
 
 clean :
 	@make -C base clean
 	@make -C judge clean
 	@make -C server clean
+	@make -C tools clean
 	@rm -rf bin
 
 install : all
@@ -25,3 +26,5 @@ install : all
 .server :
 	make -C server
 
+.tools :
+	make -C tools

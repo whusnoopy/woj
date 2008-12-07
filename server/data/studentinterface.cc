@@ -1,4 +1,11 @@
-#include "studentinterface.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
+#include "base/logging.h"
+#include "base/util.h"
+
+#include "server/data/studentinterface.h"
 
 StudentInterface* StudentInterface::instance = NULL;
 

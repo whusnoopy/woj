@@ -1,7 +1,16 @@
-#include "teacherinterface.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
 
-#include "object/status.h"
 #include <set>
+
+#include "base/logging.h"
+#include "base/util.h"
+
+#include "server/object/status.h"
+
+#include "server/data/teacherinterface.h"
+
 using namespace std;
 
 TeacherInterface* TeacherInterface::instance = NULL;

@@ -5,10 +5,11 @@
 #include <string>
 #include <map>
 
-#include "mysql.h"
+#include <mysql.h>
+
 using namespace std;
 
-class Result{
+class Result {
 public:
   Result(){}
   Result(MYSQL_RES* result);

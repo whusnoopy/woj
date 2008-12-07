@@ -1,4 +1,6 @@
-#include "fileinterface.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -7,7 +9,10 @@
 #include "base/util.h"
 #include "base/flags.h"
 #include "base/logging.h"
-#include "object/inc.h"
+
+#include "server/object/inc.h"
+
+#include "server/data/fileinterface.h"
 
 using namespace std;
 

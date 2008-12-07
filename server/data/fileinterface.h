@@ -8,9 +8,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <libxml/parser.h>
 
-#include "object/objectinc.h"
+#include "server/object/objectinc.h"
+
 using namespace std;
 
 class FileInterface{

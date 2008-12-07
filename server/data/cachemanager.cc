@@ -1,10 +1,17 @@
-#include "cachemanager.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
 
 #include <algorithm>
 
-#include "data/databaseinterface.h"
-#include "data/fileinterface.h"
 #include "base/logging.h"
+#include "base/judge_result.h"
+
+#include "server/data/databaseinterface.h"
+#include "server/data/fileinterface.h"
+
+#include "server/data/cachemanager.h"
+
 using namespace std;
 
 CacheManager* CacheManager::instance = NULL;

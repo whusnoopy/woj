@@ -1,3 +1,7 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
 #ifndef _FLOOD_SERVER_DATA_CACHE_H__
 #define _FLOOD_SERVER_DATA_CACHE_H__
 
@@ -9,11 +13,15 @@
 #include <pthread.h>
 #include <errno.h>
 
-#include "cacheentry.h"
-#include "cachekey.h"
-#include "comparequeue.h"
-#include "object/inc.h"
-#include "util/thread.h"
+#include "base/logging.h"
+#include "base/util.h"
+
+#include "server/data/cacheentry.h"
+#include "server/data/cachekey.h"
+#include "server/data/comparequeue.h"
+#include "server/object/inc.h"
+#include "server/util/thread.h"
+
 using namespace std;
 
 template <typename Key, typename Value>

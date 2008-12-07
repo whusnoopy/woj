@@ -1,13 +1,19 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
 #ifndef _FLOOD_TEAM_MYSQL_CONNECTION_
 #define _FLOOD_TEAM_MYSQL_CONNECTION_
 
 #include <iostream>
 #include <string>
-using namespace std;
 
 #include <mysql.h>
-#include "connection.h"
-#include "result.h"
+
+#include "server/data/connection.h"
+#include "server/data/result.h"
+
+using namespace std;
 
 class MysqlConnection : public Connection{
 public:

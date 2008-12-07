@@ -1,4 +1,8 @@
-#include "mysqlconnection.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
+#include "server/data/mysqlconnection.h"
 
 MysqlConnection::MysqlConnection(const string& host,
                                  const string& user,
@@ -9,12 +13,11 @@ MysqlConnection::MysqlConnection(const string& host,
   m_password(password),
   m_database(database)
 {
-  
 }
 
 int MysqlConnection::connect(){
   mysql_init(&m_mysql);
-  if(mysql_real_connect(&m_mysql,
+  if (mysql_real_connect(&m_mysql,
                          m_host.c_str(),
                          m_user.c_str(),
                          m_password.c_str(),

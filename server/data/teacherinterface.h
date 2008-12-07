@@ -3,10 +3,11 @@
 
 #include <string>
 
-#include "object/teacher.h"
-#include "object/course.h"
-#include "object/list.h"
-#include "data/connectionfactory.h"
+#include "server/object/teacher.h"
+#include "server/object/course.h"
+#include "server/object/list.h"
+#include "server/data/connectionfactory.h"
+
 using namespace std;
 
 class TeacherInterface: public ConnectionFactory{
