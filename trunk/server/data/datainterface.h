@@ -3,10 +3,11 @@
 
 #include <string>
 
-#include "object/objectinc.h"
-#include "databaseinterface.h"
-#include "fileinterface.h"
-#include "cachemanager.h"
+#include "server/object/objectinc.h"
+#include "server/data/databaseinterface.h"
+#include "server/data/fileinterface.h"
+#include "server/data/cachemanager.h"
+
 using namespace std;
 
 class DataInterface{

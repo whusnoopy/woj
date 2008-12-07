@@ -1,6 +1,7 @@
-#include "connectionfactory.h"
-
 #include <string>
+
+#include "server/data/connectionfactory.h"
+
 using namespace std;
 
 Connection* ConnectionFactory::createConnection(const string& host,

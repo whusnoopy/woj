@@ -1,8 +1,5 @@
 CC=$(CXX)
-CXXFLAGS=-I../ \
-				 -I/usr/include/libxml2 \
-				 -L/usr/lib/libxml2 -I../ \
-				 -I/usr/include/mysql -L/usr/lib/mysql \
+CXXFLAGS=-I/usr/include/mysql -L/usr/lib/mysql \
 				 -I../../ \
 				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD
 

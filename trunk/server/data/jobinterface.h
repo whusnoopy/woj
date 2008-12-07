@@ -1,11 +1,17 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
 #ifndef _FLOOD_SERVER_DATA_JOBINTERFACE_H__
 #define _FLOOD_SERVER_DATA_JOBINTERFACE_H__
 
 #include <string>
 
-#include "object/job.h"
-#include "object/list.h"
-#include "data/connectionfactory.h"
+#include "server/object/job.h"
+#include "server/object/list.h"
+
+#include "server/data/connectionfactory.h"
+
 using namespace std;
 
 class JobInterface: public ConnectionFactory{

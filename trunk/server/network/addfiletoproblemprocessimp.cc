@@ -1,7 +1,8 @@
-#include "addfiletoproblemprocessimp.h"
-
 #include <vector>
 #include <string>
+
+#include "base/flags.h"
+#include "base/logging.h"
 
 #include "object/inc.h"
 #include "data/datainterface.h"
@@ -13,6 +14,8 @@
 #include "object/info.h"
 #include "object/user.h"
 #include "util/filetype.h"
+#include "addfiletoproblemprocessimp.h"
+
 using namespace std;
 
 DECLARE_FLAGS(string, root_dir);

@@ -1,11 +1,16 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
 #ifndef _FLOOD_SERVER_DATA_DATABASEINTERFACE_H__
 #define _FLOOD_SERVER_DATA_DATABASEINTERFACE_H__
 
 #include <string>
 
-#include "object/objectinc.h"
-#include "data/result.h"
-#include "data/mysqlconnection.h"
+#include "server/object/objectinc.h"
+#include "server/data/result.h"
+#include "server/data/mysqlconnection.h"
+
 using namespace std;
 
 class DatabaseInterface{

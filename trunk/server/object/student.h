@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "object/class.h"
+#include "server/object/class.h"
+
 using namespace std;
 
 class Student{

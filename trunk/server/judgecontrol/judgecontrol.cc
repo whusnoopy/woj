@@ -148,10 +148,14 @@ void JudgeControl::putReJudgeItem(const Status& status) {
 }
 
 void JudgeControl::join() {
+  LOG(INFO) << "Start to join judge pools";
   for (int i = 0; i < max_client_; i++) {
+    judge_pool_[i].quit();
     judge_pool_[i].join();
+    LOG(INFO) << "Judge pool " << i << " joined";
   }
   close(listen_fd_);
+  LOG(INFO) << "Finish join judge pools";
 }
 
 JudgeMission JudgeControl::getMission() {

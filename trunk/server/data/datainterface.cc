@@ -1,4 +1,8 @@
-#include "datainterface.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
+#include "server/data/datainterface.h"
 
 DataInterface* DataInterface::instance = NULL;
 

@@ -1,5 +1,13 @@
-#include "inc.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+
 #include <iostream>
+
+#include "base/flags.h"
+#include "base/logging.h"
+#include "base/util.h"
+
+#include "object/inc.h"
+
 using namespace std;
 
 DECLARE_FLAGS(string, root_dir);
@@ -39,6 +47,6 @@ string getProblemDataPath(int problem_id) {
 }
 
 string getContestDataPath(int contest_id) {
-  return FLAGS_root_dir + stringPrintf("/file/data/p%d/", contest_id);
+  return FLAGS_root_dir + stringPrintf("/file/data/c%d/", contest_id);
 }
 

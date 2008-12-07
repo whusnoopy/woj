@@ -1,10 +1,8 @@
 CC=$(CXX)
 CXXFLAGS=-I./../ \
 				 -I./ \
-				 -I/usr/include/libxml2 \
-				 -L/usr/lib/libxml2  \
-				 -I/usr/include/mysql \
-				 -L/usr/lib/mysql \
+				 -I/usr/include/libxml2 -L/usr/lib/libxml2  \
+				 -I/usr/include/mysql -L/usr/lib/mysql \
 				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD -D_THIS_IS_SERVER_LOG_
 EXEFLAGS=-lxml2 \
 				 -lpthread \
@@ -49,7 +47,7 @@ install: all
 	@echo "Install oj_server to ../bin"
 	@cp oj_server ../bin
 	@echo "Install run oj_server.sh to ../bin"
-	@cp startOnlineJudgeServer.sh ../bin
+	@cp start_online_judge_server.sh ../bin
 	@echo "Install configure.xml example to ../bin"
 	@cp eg_configure.xml ../bin
 	

@@ -1,4 +1,8 @@
-#include "teachinterface.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
+#include "server/data/teachinterface.h"
 
 TeachInterface* TeachInterface::instance = NULL;
 

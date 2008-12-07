@@ -1,12 +1,15 @@
-#include "setresultprocessimp.h"
-
 #include <vector>
 #include <string>
+
+#include "base/logging.h"
+#include "base/util.h"
 
 #include "object/objectinc.h"
 #include "object/bufsize.h"
 #include "util/calulate.h"
 #include "data/teachinterface.h"
+#include "setresultprocessimp.h"
+
 using namespace std;
 
 void SetResultProcessImp::process(int socket_fd, const string& ip, int length) {

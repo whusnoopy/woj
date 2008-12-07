@@ -1,6 +1,11 @@
-#include "result.h"
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
 
-#include "object/inc.h"
+#include "server/object/inc.h"
+
+#include "server/data/result.h"
+
 using namespace std;
 
 Result::Result(MYSQL_RES* result){

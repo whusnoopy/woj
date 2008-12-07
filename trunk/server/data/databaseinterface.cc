@@ -1,9 +1,18 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author : ooeyusea@gmail.com (Qian, LIU)
+// Modified : yewen@mail.whu.edu.cn (Wen, YE)
+
 #include <iostream>
 #include <set>
 #include <algorithm>
 
-#include "data/databaseinterface.h"
-#include "util/filetype.h"
+#include "base/logging.h"
+#include "base/judge_result.h"
+#include "base/util.h"
+
+#include "server/util/filetype.h"
+
+#include "server/data/databaseinterface.h"
 
 using namespace std;
 

@@ -3,8 +3,9 @@
 
 #include <string>
 
-#include "object/student.h"
-#include "data/connectionfactory.h"
+#include "server/object/student.h"
+#include "server/data/connectionfactory.h"
+
 using namespace std;
 
 class StudentInterface: public ConnectionFactory{

@@ -3,14 +3,16 @@
 
 #include <string>
 
-#include "object/teacher.h"
-#include "object/student.h"
-#include "object/course.h"
-#include "object/job.h"
-#include "object/list.h"
-#include "data/teacherinterface.h"
-#include "data/studentinterface.h"
-#include "data/jobinterface.h"
+#include "server/object/teacher.h"
+#include "server/object/student.h"
+#include "server/object/course.h"
+#include "server/object/job.h"
+#include "server/object/list.h"
+
+#include "server/data/teacherinterface.h"
+#include "server/data/studentinterface.h"
+#include "server/data/jobinterface.h"
+
 using namespace std;
 
 class TeachInterface {

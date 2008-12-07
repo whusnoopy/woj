@@ -1,3 +1,5 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+
 #ifndef _FLOOL_SERVER_DATA_CONFIGURE_H__
 #define _FLOOL_SERVER_DATA_CONFIGURE_H__
 
@@ -6,8 +8,8 @@
 #include <set>
 #include <iostream>
 
-#include <libxml/parser.h>
 #include <pthread.h>
+
 using namespace std;
 
 class Configure{
@@ -19,6 +21,14 @@ public:
                    const string& user, 
                    const string& password, 
                    const string& database);
+  void setJudgeControl(const set<string>& ip_table,
+                       const int& port,
+                       const int& max_client);
+  void setNetwork(const set<string>& ip_table,
+                  const int& port,
+                  const int& max_client);
+  void setClientServer(const int& port,
+                       const int& max_client);
   void setLinkPath(const string& path);
   void setNoticePath(const string& path);
   
@@ -44,10 +54,10 @@ public:
   
   static Configure& getInstance(){
     pthread_mutex_lock(&lock);
-    pthread_mutex_unlock(&lock);
   	if (instance == NULL) {
   	  instance = createConfigure();
   	}
+    pthread_mutex_unlock(&lock);
   	return *instance;
   }
   static void destroy(){
@@ -76,8 +86,6 @@ private:
     string password;
     string database;
   } database_configure;
-  string linkpath;
-  string noticepath;
   struct _JUDGECONTROL_CONFIGURE_{
     int max_client;
     int port;
@@ -92,15 +100,14 @@ private:
     int max_client;
     int port;
   } client_server;
+  string linkpath;
+  string noticepath;
+
   static Configure * instance;
   static pthread_mutex_t lock;
-  static void addDatabasetoConfigture(xmlNodePtr cur, Configure& configure);
-  static void addJudgeClienttoConfigture(xmlNodePtr cur, Configure& configure);
-  static void addLinktoConfigture(xmlNodePtr cur, Configure& configure);
-  static void addNoticetoConfigture(xmlNodePtr cur, Configure& configure);
-  static void addNetWorktoConfigture(xmlNodePtr cur, Configure& configure);
-  static void addClientServertoConfigture(xmlNodePtr cur, Configure& configure);
+  
   static Configure* createConfigure();
 };
 
-#endif /*CONFIGURE_H_*/
+#endif // end of _FLOOD_SERVER_OBJECT_CONFIGURE_H__
+
