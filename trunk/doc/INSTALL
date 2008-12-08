@@ -1,0 +1,67 @@
+// whusnoopy@gmail.com, v0.4, 08/12/2008
+
+0. 阅读之前
+  本文假定使用 Ubuntu 8.04 Server 版安装, 且安装时已安装 LAMP 组件
+  本文假定用户系统使用用户名为 flood, 其主目录为 /home/flood, 获取的工程目录为
+/home/flood/floodprj, 工作目录为 /home/flood/worktemp, 编译后可执行文件安装目录
+为 /home/flood/worktemp/bin, 使用数据库为 flood, 请最终用户根据自己需要来选择替
+换其中目录名
+  本文中类 ~$ 提示表示 shell, 后面的为用户应该输入的命令, " 字符后的为注释, 不
+用输入
+
+1. 获取源代码
+  默认安装完成后通过 apt 安装 subversion 并从 googlecode 获取最新的源代码
+    ~$ sudo apt-get install subversion
+    ~$ svn checkout http://woj.googlecode.com/svn/trunk/ floodprj
+
+2. 编译安装
+  编译前需要安装以下依赖的软件包(部分可能已经安装, 或者在安装其他包的过程中因为
+依赖关系已经安装)
+    gcc, g++, make, libmysqlclient15-dev, libxml2-dev
+    ~$ sudo apt-get install gcc g++ make libmysqlclient15-dev libxml2-dev
+  建立接收目录, 进入获取的源代码根目录下, 编译并安装
+    ~$ mkdir worktemp " 建立工作目录
+    ~$ cd floodprj " 进入目录
+    ~/floodprj$ make " 自动编译整个工程
+    ~/floodprj$ make install " 将工程的所有可执行文件安装到 ~/worktemp/bin/
+
+3. 启动前配置
+3.1 数据库及文件系统
+  在 mysql 中新建一个数据库, 并进入
+    create flood;
+    use flood;
+  执行 create_database.sql 自动建立数据库
+    source /home/flood/floodprj/doc/create_database.sql;
+3.2 Web 端
+3.3 Server 端
+  建立 configure.xml 并配置以适应目的环境, 可以参考 eg_configure.xml
+    ~/worktemp/bin/$ cp eg_configure.xml configure.xml
+    ~/worktemp/bin/$ vim configure.xml
+  配置 start_online_judge_server.sh 以适应目的环境
+    ~/worktemp/bin/$ vim start_online_judge_server.sh
+  安装 screen 使得 server 可以在用户注销后依然在后台运行, 并能在下次登录时呼出
+    ~/worktemp/bin/$ sudo apt-get install screen
+3.4 Judge 端
+
+4. 启动并使用
+4.1 Web 端
+  apache 为系统默认启动项, Web 端可以自动加载
+4.2 Server 端
+  直接使用脚本启动
+    ~/worktemp/bin$ ./start_online_judge_server.sh
+  提示启动成功后, 退出 screen 即可让 server 在后台运行, 退出方法见附录 A
+  目前的停止方法是进入 screen 直接 Ctrl^c 终止
+4.3 Judge 端
+  Judge 端需要有 Server 端启动后方可启动, 直接使用脚本启动
+    ~/worktemp/bin$ ./start_judge_client.sh
+  如果通信 socket 断掉或者系统异常将会导致 Judge 端自动停止, 或者使用脚本来停止
+Judge 端的运行
+    ~/worktemp/bin$ ./stop_judge_client.sh
+
+A. 使用 screen
+  运行 screen cmd 来打开一个新的 screen 运行 cmd
+  在 screen 里输入 Ctrl^a, d 来退出 screen, 其中 Ctrl^a 同时按, 然后单独按 d
+  运行 screen -r 来进入原有的 screen, 如果有多个 screen 运行在后台, 此命令将显
+示所有在运行的 screen, 输入 screen -r [pid] 来进入指定的 screen
+  如果 screen 里运行的程序结束, 则此 screen 自动结束
+
