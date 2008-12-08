@@ -164,6 +164,7 @@ int monitor(int communicate_socket,
   if (result == MEMORY_LIMIT_EXCEEDED)
     memory_ = memory_limit + 36;
 
+  JudgeResult::getInstance()->updateResult(result);
   JudgeResult::getInstance()->updateTime(time_);
   JudgeResult::getInstance()->updateMemory(memory_);
 
@@ -286,6 +287,7 @@ int doRun(int communicate_socket,
     // If there is error info output, we see RUNTIME_ERROR_JAVA
     if (message_length > 0) {
       result = RUNTIME_ERROR_JAVA;
+      JudgeResult::getInstance()->updateResult(result);
       sendReply(communicate_socket, result);
 
       // Send RE_JAVA message back to server
@@ -302,6 +304,7 @@ int doRun(int communicate_socket,
       return result;
     }
   } else {
+    JudgeResult::getInstance()->updateResult(SYSTEM_ERROR);
     return SYSTEM_ERROR;
   }
 

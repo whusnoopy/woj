@@ -1,7 +1,15 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author: yewen@mail.whu.edu.cn (Wen, YE)
 
 #include "judge/client/result.h"
 
-JudgeResult* JudgeResult::instance_;
+JudgeResult* JudgeResult::instance_ = 0;
+
+void JudgeResult::init() {
+  result_ = ACCEPTED;
+  time_ = 0;
+  memory_ = 0;
+}
 
 void JudgeResult::updateResult(int result) {
   result_ = result;

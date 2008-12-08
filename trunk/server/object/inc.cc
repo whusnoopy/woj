@@ -6,7 +6,7 @@
 #include "base/logging.h"
 #include "base/util.h"
 
-#include "object/inc.h"
+#include "server/object/inc.h"
 
 using namespace std;
 

@@ -341,46 +341,48 @@ void process(int communicate_socket) {
 
   // Run and Judge process
   sendReply(communicate_socket, READY);
-  JudgeResult judge_result;
+  JudgeResult::getInstance()->init();
+  int result = 0;
   for (int i = 0; i < test_case; ++i) {
     string standard_input_filename = problem_dir + stringPrintf("/%d.in", i);
     string standard_output_filename = problem_dir + stringPrintf("/%d.out", i);
 
-    judge_result.updateResult(doRun(communicate_socket,
-                                    working_dir,
-                                    binary_filename,
-                                    source_suffix,
-                                    standard_input_filename,
-                                    program_output_filename,
-                                    case_time_limit,
-                                    memory_limit,
-                                    MAX_OUTPUT_LIMIT));
-    if (judge_result.getResult() != 0) {
+    result = doRun(communicate_socket,
+                   working_dir,
+                   binary_filename,
+                   source_suffix,
+                   standard_input_filename,
+                   program_output_filename,
+                   case_time_limit,
+                   memory_limit,
+                   MAX_OUTPUT_LIMIT);
+    if (result != 0) {
       break;
     }
-    if (judge_result.getTime() > time_limit) {
-      judge_result.onTimeLimitExceeded(time_limit);
+    if (JudgeResult::getInstance()->getTime() > time_limit) {
+      JudgeResult::getInstance()->onTimeLimitExceeded(time_limit);
       sendReply(communicate_socket, TIME_LIMIT_EXCEEDED);
       break;
     }
     sendReply(communicate_socket, READY);
 
-    judge_result.updateResult(doJudge(communicate_socket,
-                                      standard_input_filename,
-                                      standard_output_filename,
-                                      program_output_filename,
-                                      special_judge_filename));
-    if (judge_result.getResult() != ACCEPTED) {
+    result = doJudge(communicate_socket,
+                     standard_input_filename,
+                     standard_output_filename,
+                     program_output_filename,
+                     special_judge_filename);
+    if (result != ACCEPTED) {
       break;
     }
   }
 
-  LOG(INFO) << "Result : " << judge_result.getResult() << " with time/memory("
-            << judge_result.getTime() << "/" << judge_result.getMemory() << ")";
+  LOG(INFO) << "Result : " << JudgeResult::getInstance()->getResult()
+            << " with time/memory(" << JudgeResult::getInstance()->getTime()
+            << "/" << JudgeResult::getInstance()->getMemory() << ")";
   sendResultMessage(communicate_socket,
-                    judge_result.getResult(),
-                    judge_result.getTime(),
-                    judge_result.getMemory());
+                    JudgeResult::getInstance()->getResult(),
+                    JudgeResult::getInstance()->getTime(),
+                    JudgeResult::getInstance()->getMemory());
   return;
 }
 

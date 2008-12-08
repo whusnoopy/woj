@@ -1,23 +1,24 @@
 #include <string>
 #include <iostream>
 
-#include "data/result.h"
-#include "data/connection.h"
-#include "data/mysqlconnection.h"
-#include "object/objectinc.h"
+#include "base/flags.h"
 #include "base/judge_result.h"
 #include "base/logging.h"
-#include "base/flags.h"
 #include "base/util.h"
+
+#include "server/data/result.h"
+#include "server/data/connection.h"
+#include "server/data/mysqlconnection.h"
+#include "server/object/objectinc.h"
 
 using namespace std;
 
 DEFINE_FLAGS(int, type, "is day, week or month? [1/7/30]");
 
 Connection* createConnection(const string& host, 
-                            const string& user, 
-                            const string& password,
-                            const string& name) {
+                             const string& user, 
+                             const string& password,
+                             const string& name) {
   return new MysqlConnection(host, user, password, name);
 }
 
@@ -65,8 +66,8 @@ void update() {
   delete connection;
 }
 
-int main(int argc, char ** argv) { 
-  if (parseFlags(argc,argv)) {
+int main(int argc, char* argv[]) { 
+  if (parseFlags(argc, argv)) {
     LOG(SYS_ERROR) << "Cannot parse flags!";
     return -1;
   }
@@ -75,5 +76,4 @@ int main(int argc, char ** argv) {
   update();
   return 0;
 }
-
 

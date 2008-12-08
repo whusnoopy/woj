@@ -1,3 +1,6 @@
+// Copyright 2008 Flood Team of Wuhan Univ.
+// Author: yewen@mail.whu.edu.cn (Wen, YE)
+
 #ifndef _JUDGE_CLIENT_RESULT_H__
 #define _JUDGE_CLIENT_RESULT_H__
 
@@ -5,16 +8,19 @@
 
 class JudgeResult {
   public :
-    JudgeResult() :
-      result_(ACCEPTED),
-      time_(0),
-      memory_(0) {
-      JudgeResult::instance_ = this;
+    static JudgeResult* getInstance() {
+      if (instance_ == 0)
+        instance_ = new JudgeResult();
+      return instance_;
     }
 
     virtual ~JudgeResult() {
-      JudgeResult::instance_ = 0;
+      if (instance_)
+        delete instance_;
+      instance_ = 0;
     }
+    
+    void init();
 
     void updateResult(int result);
     void updateTime(int time);
@@ -33,11 +39,9 @@ class JudgeResult {
       return memory_;
     }
 
-    static JudgeResult* getInstance() {
-      return JudgeResult::instance_;
-    }
-
   protected :
+    JudgeResult() {}
+
     int result_;
     int time_;
     int memory_;

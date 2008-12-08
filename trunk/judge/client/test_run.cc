@@ -15,6 +15,7 @@
 #include "base/util.h"
 #include "base/judge_result.h"
 
+#include "judge/client/result.h"
 #include "judge/client/run.h"
 #include "judge/client/trace.h"
 #include "judge/client/utils.h"
@@ -61,6 +62,7 @@ int main(int argc, char* argv[]) {
   const string program_output_filename = test_dir + "pro_out.txt";
 
   if (doRun(communicate_socket,
+            test_dir,
             ac_file,
             "cc",
             input_filename,
