@@ -1,67 +1,67 @@
-// whusnoopy@gmail.com, v0.4, 08/12/2008
+ï»¿// whusnoopy@gmail.com, v0.4, 08/12/2008
 
-0. ÔÄ¶ÁÖ®Ç°
-  ±¾ÎÄ¼Ù¶¨Ê¹ÓÃ Ubuntu 8.04 Server °æ°²×°, ÇÒ°²×°Ê±ÒÑ°²×° LAMP ×é¼ş
-  ±¾ÎÄ¼Ù¶¨ÓÃ»§ÏµÍ³Ê¹ÓÃÓÃ»§ÃûÎª flood, ÆäÖ÷Ä¿Â¼Îª /home/flood, »ñÈ¡µÄ¹¤³ÌÄ¿Â¼Îª
-/home/flood/floodprj, ¹¤×÷Ä¿Â¼Îª /home/flood/worktemp, ±àÒëºó¿ÉÖ´ĞĞÎÄ¼ş°²×°Ä¿Â¼
-Îª /home/flood/worktemp/bin, Ê¹ÓÃÊı¾İ¿âÎª flood, Çë×îÖÕÓÃ»§¸ù¾İ×Ô¼ºĞèÒªÀ´Ñ¡ÔñÌæ
-»»ÆäÖĞÄ¿Â¼Ãû
-  ±¾ÎÄÖĞÀà ~$ ÌáÊ¾±íÊ¾ shell, ºóÃæµÄÎªÓÃ»§Ó¦¸ÃÊäÈëµÄÃüÁî, " ×Ö·ûºóµÄÎª×¢ÊÍ, ²»
-ÓÃÊäÈë
+0. é˜…è¯»ä¹‹å‰
+  æœ¬æ–‡å‡å®šä½¿ç”¨ Ubuntu 8.04 Server ç‰ˆå®‰è£…, ä¸”å®‰è£…æ—¶å·²å®‰è£… LAMP ç»„ä»¶
+  æœ¬æ–‡å‡å®šç”¨æˆ·ç³»ç»Ÿä½¿ç”¨ç”¨æˆ·åä¸º flood, å…¶ä¸»ç›®å½•ä¸º /home/flood, è·å–çš„å·¥ç¨‹ç›®å½•ä¸º
+/home/flood/floodprj, å·¥ä½œç›®å½•ä¸º /home/flood/worktemp, ç¼–è¯‘åå¯æ‰§è¡Œæ–‡ä»¶å®‰è£…ç›®å½•
+ä¸º /home/flood/worktemp/bin, ä½¿ç”¨æ•°æ®åº“ä¸º flood, è¯·æœ€ç»ˆç”¨æˆ·æ ¹æ®è‡ªå·±éœ€è¦æ¥é€‰æ‹©æ›¿
+æ¢å…¶ä¸­ç›®å½•å
+  æœ¬æ–‡ä¸­ç±» ~$ æç¤ºè¡¨ç¤º shell, åé¢çš„ä¸ºç”¨æˆ·åº”è¯¥è¾“å…¥çš„å‘½ä»¤, " å­—ç¬¦åçš„ä¸ºæ³¨é‡Š, ä¸
+ç”¨è¾“å…¥
 
-1. »ñÈ¡Ô´´úÂë
-  Ä¬ÈÏ°²×°Íê³ÉºóÍ¨¹ı apt °²×° subversion ²¢´Ó googlecode »ñÈ¡×îĞÂµÄÔ´´úÂë
+1. è·å–æºä»£ç 
+  é»˜è®¤å®‰è£…å®Œæˆåé€šè¿‡ apt å®‰è£… subversion å¹¶ä» googlecode è·å–æœ€æ–°çš„æºä»£ç 
     ~$ sudo apt-get install subversion
     ~$ svn checkout http://woj.googlecode.com/svn/trunk/ floodprj
 
-2. ±àÒë°²×°
-  ±àÒëÇ°ĞèÒª°²×°ÒÔÏÂÒÀÀµµÄÈí¼ş°ü(²¿·Ö¿ÉÄÜÒÑ¾­°²×°, »òÕßÔÚ°²×°ÆäËû°üµÄ¹ı³ÌÖĞÒòÎª
-ÒÀÀµ¹ØÏµÒÑ¾­°²×°)
+2. ç¼–è¯‘å®‰è£…
+  ç¼–è¯‘å‰éœ€è¦å®‰è£…ä»¥ä¸‹ä¾èµ–çš„è½¯ä»¶åŒ…(éƒ¨åˆ†å¯èƒ½å·²ç»å®‰è£…, æˆ–è€…åœ¨å®‰è£…å…¶ä»–åŒ…çš„è¿‡ç¨‹ä¸­å› ä¸º
+ä¾èµ–å…³ç³»å·²ç»å®‰è£…)
     gcc, g++, make, libmysqlclient15-dev, libxml2-dev
     ~$ sudo apt-get install gcc g++ make libmysqlclient15-dev libxml2-dev
-  ½¨Á¢½ÓÊÕÄ¿Â¼, ½øÈë»ñÈ¡µÄÔ´´úÂë¸ùÄ¿Â¼ÏÂ, ±àÒë²¢°²×°
-    ~$ mkdir worktemp " ½¨Á¢¹¤×÷Ä¿Â¼
-    ~$ cd floodprj " ½øÈëÄ¿Â¼
-    ~/floodprj$ make " ×Ô¶¯±àÒëÕû¸ö¹¤³Ì
-    ~/floodprj$ make install " ½«¹¤³ÌµÄËùÓĞ¿ÉÖ´ĞĞÎÄ¼ş°²×°µ½ ~/worktemp/bin/
+  å»ºç«‹æ¥æ”¶ç›®å½•, è¿›å…¥è·å–çš„æºä»£ç æ ¹ç›®å½•ä¸‹, ç¼–è¯‘å¹¶å®‰è£…
+    ~$ mkdir worktemp " å»ºç«‹å·¥ä½œç›®å½•
+    ~$ cd floodprj " è¿›å…¥ç›®å½•
+    ~/floodprj$ make " è‡ªåŠ¨ç¼–è¯‘æ•´ä¸ªå·¥ç¨‹
+    ~/floodprj$ make install " å°†å·¥ç¨‹çš„æ‰€æœ‰å¯æ‰§è¡Œæ–‡ä»¶å®‰è£…åˆ° ~/worktemp/bin/
 
-3. Æô¶¯Ç°ÅäÖÃ
-3.1 Êı¾İ¿â¼°ÎÄ¼şÏµÍ³
-  ÔÚ mysql ÖĞĞÂ½¨Ò»¸öÊı¾İ¿â, ²¢½øÈë
+3. å¯åŠ¨å‰é…ç½®
+3.1 æ•°æ®åº“åŠæ–‡ä»¶ç³»ç»Ÿ
+  åœ¨ mysql ä¸­æ–°å»ºä¸€ä¸ªæ•°æ®åº“, å¹¶è¿›å…¥
     create flood;
     use flood;
-  Ö´ĞĞ create_database.sql ×Ô¶¯½¨Á¢Êı¾İ¿â
+  æ‰§è¡Œ create_database.sql è‡ªåŠ¨å»ºç«‹æ•°æ®åº“
     source /home/flood/floodprj/doc/create_database.sql;
-3.2 Web ¶Ë
-3.3 Server ¶Ë
-  ½¨Á¢ configure.xml ²¢ÅäÖÃÒÔÊÊÓ¦Ä¿µÄ»·¾³, ¿ÉÒÔ²Î¿¼ eg_configure.xml
+3.2 Web ç«¯
+3.3 Server ç«¯
+  å»ºç«‹ configure.xml å¹¶é…ç½®ä»¥é€‚åº”ç›®çš„ç¯å¢ƒ, å¯ä»¥å‚è€ƒ eg_configure.xml
     ~/worktemp/bin/$ cp eg_configure.xml configure.xml
     ~/worktemp/bin/$ vim configure.xml
-  ÅäÖÃ start_online_judge_server.sh ÒÔÊÊÓ¦Ä¿µÄ»·¾³
+  é…ç½® start_online_judge_server.sh ä»¥é€‚åº”ç›®çš„ç¯å¢ƒ
     ~/worktemp/bin/$ vim start_online_judge_server.sh
-  °²×° screen Ê¹µÃ server ¿ÉÒÔÔÚÓÃ»§×¢ÏúºóÒÀÈ»ÔÚºóÌ¨ÔËĞĞ, ²¢ÄÜÔÚÏÂ´ÎµÇÂ¼Ê±ºô³ö
+  å®‰è£… screen ä½¿å¾— server å¯ä»¥åœ¨ç”¨æˆ·æ³¨é”€åä¾ç„¶åœ¨åå°è¿è¡Œ, å¹¶èƒ½åœ¨ä¸‹æ¬¡ç™»å½•æ—¶å‘¼å‡º
     ~/worktemp/bin/$ sudo apt-get install screen
-3.4 Judge ¶Ë
+3.4 Judge ç«¯
 
-4. Æô¶¯²¢Ê¹ÓÃ
-4.1 Web ¶Ë
-  apache ÎªÏµÍ³Ä¬ÈÏÆô¶¯Ïî, Web ¶Ë¿ÉÒÔ×Ô¶¯¼ÓÔØ
-4.2 Server ¶Ë
-  Ö±½ÓÊ¹ÓÃ½Å±¾Æô¶¯
+4. å¯åŠ¨å¹¶ä½¿ç”¨
+4.1 Web ç«¯
+  apache ä¸ºç³»ç»Ÿé»˜è®¤å¯åŠ¨é¡¹, Web ç«¯å¯ä»¥è‡ªåŠ¨åŠ è½½
+4.2 Server ç«¯
+  ç›´æ¥ä½¿ç”¨è„šæœ¬å¯åŠ¨
     ~/worktemp/bin$ ./start_online_judge_server.sh
-  ÌáÊ¾Æô¶¯³É¹¦ºó, ÍË³ö screen ¼´¿ÉÈÃ server ÔÚºóÌ¨ÔËĞĞ, ÍË³ö·½·¨¼û¸½Â¼ A
-  Ä¿Ç°µÄÍ£Ö¹·½·¨ÊÇ½øÈë screen Ö±½Ó Ctrl^c ÖÕÖ¹
-4.3 Judge ¶Ë
-  Judge ¶ËĞèÒªÓĞ Server ¶ËÆô¶¯ºó·½¿ÉÆô¶¯, Ö±½ÓÊ¹ÓÃ½Å±¾Æô¶¯
+  æç¤ºå¯åŠ¨æˆåŠŸå, é€€å‡º screen å³å¯è®© server åœ¨åå°è¿è¡Œ, é€€å‡ºæ–¹æ³•è§é™„å½• A
+  ç›®å‰çš„åœæ­¢æ–¹æ³•æ˜¯è¿›å…¥ screen ç›´æ¥ Ctrl^c ç»ˆæ­¢
+4.3 Judge ç«¯
+  Judge ç«¯éœ€è¦æœ‰ Server ç«¯å¯åŠ¨åæ–¹å¯å¯åŠ¨, ç›´æ¥ä½¿ç”¨è„šæœ¬å¯åŠ¨
     ~/worktemp/bin$ ./start_judge_client.sh
-  Èç¹ûÍ¨ĞÅ socket ¶Ïµô»òÕßÏµÍ³Òì³£½«»áµ¼ÖÂ Judge ¶Ë×Ô¶¯Í£Ö¹, »òÕßÊ¹ÓÃ½Å±¾À´Í£Ö¹
-Judge ¶ËµÄÔËĞĞ
+  å¦‚æœé€šä¿¡ socket æ–­æ‰æˆ–è€…ç³»ç»Ÿå¼‚å¸¸å°†ä¼šå¯¼è‡´ Judge ç«¯è‡ªåŠ¨åœæ­¢, æˆ–è€…ä½¿ç”¨è„šæœ¬æ¥åœæ­¢
+Judge ç«¯çš„è¿è¡Œ
     ~/worktemp/bin$ ./stop_judge_client.sh
 
-A. Ê¹ÓÃ screen
-  ÔËĞĞ screen cmd À´´ò¿ªÒ»¸öĞÂµÄ screen ÔËĞĞ cmd
-  ÔÚ screen ÀïÊäÈë Ctrl^a, d À´ÍË³ö screen, ÆäÖĞ Ctrl^a Í¬Ê±°´, È»ºóµ¥¶À°´ d
-  ÔËĞĞ screen -r À´½øÈëÔ­ÓĞµÄ screen, Èç¹ûÓĞ¶à¸ö screen ÔËĞĞÔÚºóÌ¨, ´ËÃüÁî½«ÏÔ
-Ê¾ËùÓĞÔÚÔËĞĞµÄ screen, ÊäÈë screen -r [pid] À´½øÈëÖ¸¶¨µÄ screen
-  Èç¹û screen ÀïÔËĞĞµÄ³ÌĞò½áÊø, Ôò´Ë screen ×Ô¶¯½áÊø
+A. ä½¿ç”¨ screen
+  è¿è¡Œ screen cmd æ¥æ‰“å¼€ä¸€ä¸ªæ–°çš„ screen è¿è¡Œ cmd
+  åœ¨ screen é‡Œè¾“å…¥ Ctrl^a, d æ¥é€€å‡º screen, å…¶ä¸­ Ctrl^a åŒæ—¶æŒ‰, ç„¶åå•ç‹¬æŒ‰ d
+  è¿è¡Œ screen -r æ¥è¿›å…¥åŸæœ‰çš„ screen, å¦‚æœæœ‰å¤šä¸ª screen è¿è¡Œåœ¨åå°, æ­¤å‘½ä»¤å°†æ˜¾
+ç¤ºæ‰€æœ‰åœ¨è¿è¡Œçš„ screen, è¾“å…¥ screen -r [pid] æ¥è¿›å…¥æŒ‡å®šçš„ screen
+  å¦‚æœ screen é‡Œè¿è¡Œçš„ç¨‹åºç»“æŸ, åˆ™æ­¤ screen è‡ªåŠ¨ç»“æŸ
 
