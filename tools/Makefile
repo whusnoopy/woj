@@ -1,14 +1,8 @@
 CC=$(CXX)
-CXXFLAGS=-I./../ \
-				 -I./ \
-				 -I./../server/ \
-				 -I/usr/include/libxml2 \
-				 -L/usr/lib/libxml2  \
-				 -I/usr/include/mysql \
-				 -L/usr/lib/mysql \
-				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD -D_THIS_IS_SERVER_LOG_
-EXEFLAGS=-lxml2 \
-				 -lpthread \
+CXXFLAGS=-I../ \
+				 -I/usr/include/mysql -L/usr/lib/mysql \
+				 -Wall -Werror -Wno-sign-compare -ansi -O3 -MD 
+EXEFLAGS=-lpthread \
 				 -lmysqlclient
 
 SOURCES:=$(wildcard databasetranslator.cc)
@@ -31,14 +25,14 @@ DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
 
 .PHONY: all clean rebuild 
 
-all: main
+all: datatrans rejudge mdp
 
 clean:
-	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d main rejudge mdp
+	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d datatrans rejudge mdp
 
 rebuild: clean all
 
-main: $(OBJS) $(DEPS) $(OBJECT) $(INC) $(DATA) $(RESULT) $(MD5)
+datatrans: $(OBJS) $(DEPS) $(OBJECT) $(INC) $(DATA) $(RESULT) $(MD5)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 
 rejudge: $(REJUDGE) $(DEPS)

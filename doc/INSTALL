@@ -1,6 +1,11 @@
-﻿// whusnoopy@gmail.com, v0.4, 08/12/2008
+﻿// whusnoopy@gmail.com
+// v0.6, 08/12/2008
 
-0. 阅读之前
+                    Online Judge System 安装手册
+                                                            for v.Flood
+ 
+0. 开始之前
+
   本文假定使用 Ubuntu 8.04 Server 版安装, 且安装时已安装 LAMP 组件
   本文假定用户系统使用用户名为 flood, 其主目录为 /home/flood, 获取的工程目录为
 /home/flood/floodprj, 工作目录为 /home/flood/worktemp, 编译后可执行文件安装目录
@@ -10,29 +15,62 @@
 用输入
 
 1. 获取源代码
+
   默认安装完成后通过 apt 安装 subversion 并从 googlecode 获取最新的源代码
     ~$ sudo apt-get install subversion
     ~$ svn checkout http://woj.googlecode.com/svn/trunk/ floodprj
 
 2. 编译安装
+
   编译前需要安装以下依赖的软件包(部分可能已经安装, 或者在安装其他包的过程中因为
 依赖关系已经安装)
     gcc, g++, make, libmysqlclient15-dev, libxml2-dev
     ~$ sudo apt-get install gcc g++ make libmysqlclient15-dev libxml2-dev
-  建立接收目录, 进入获取的源代码根目录下, 编译并安装
+  建立安装后的工作目录, 进入获取的源代码根目录下, 编译并安装
     ~$ mkdir worktemp " 建立工作目录
     ~$ cd floodprj " 进入目录
     ~/floodprj$ make " 自动编译整个工程
     ~/floodprj$ make install " 将工程的所有可执行文件安装到 ~/worktemp/bin/
 
 3. 启动前配置
+
 3.1 数据库及文件系统
   在 mysql 中新建一个数据库, 并进入
     create flood;
     use flood;
   执行 create_database.sql 自动建立数据库
     source /home/flood/floodprj/doc/create_database.sql;
+  建立必须的文件支持系统
+    ~$ cd worktemp
+    ~/worktemp$ mkdir file
+  在文件系统中建立 Web 所需要的非系统文件夹并修改权限(即运行 apache 的用户可写)
+    ~/worktemp$ cd file
+    ~/worktemp/file$ mkdir cache
+    ~/worktemp/file$ mkdir files
+    ~/worktemp/file$ mkdir images
+    ~/worktemp/file$ sudo chown -R www-data:www-data cache files images
+  在文件系统中建立 Server 所需要的非系统文件夹
+    ~/worktemp/file$ mkdir data
+
 3.2 Web 端
+  安装 gd 扩展
+    ~$ sudo apt-get install php5-gd
+  配置 php.ini, 修改以下配置值(配置文件在 Windows 的 $(INSTALL_DIR)/php.ini,
+Ubuntu 默认是在 /etc/php5/apache2/php.ini)
+    output_buffering = 4096
+    error_reporting = E_ALL
+    display_errors = Off
+    magic_quotes_gpc = Off
+    upload_max_filesize = 8M
+    extension = gd.so
+  如果是 Windows, 则将最后的 extension 改为
+    extension = php_sockets.dll
+    extension = php_gd2.dll
+  配置 Web 端 config.php
+    ~$ vim floodprj/web/commom/config.php
+    ~$ vim floodprj/web/admin/common/config.php
+  需要注意的是, admin 模块只能在运行 Server 的机器上启用
+
 3.3 Server 端
   建立 configure.xml 并配置以适应目的环境, 可以参考 eg_configure.xml
     ~/worktemp/bin/$ cp eg_configure.xml configure.xml
@@ -41,16 +79,27 @@
     ~/worktemp/bin/$ vim start_online_judge_server.sh
   安装 screen 使得 server 可以在用户注销后依然在后台运行, 并能在下次登录时呼出
     ~/worktemp/bin/$ sudo apt-get install screen
+
 3.4 Judge 端
+  安装 Pascal 及 Java 编译器
+    ~$ sudo apt-get install fp-compiler sun-java6-jdk
+  配置 start_judge_client.sh 以适应目的环境
+    ~/worktemp/bin/$ vim start_judge_client.sh
 
 4. 启动并使用
+
 4.1 Web 端
   apache 为系统默认启动项, Web 端可以自动加载
+  如果需要手动启动/重启/停止, 则用
+    ~$ sudo apache2ctl -k start|restart|stop
+  来执行
+
 4.2 Server 端
   直接使用脚本启动
     ~/worktemp/bin$ ./start_online_judge_server.sh
   提示启动成功后, 退出 screen 即可让 server 在后台运行, 退出方法见附录 A
   目前的停止方法是进入 screen 直接 Ctrl^c 终止
+
 4.3 Judge 端
   Judge 端需要有 Server 端启动后方可启动, 直接使用脚本启动
     ~/worktemp/bin$ ./start_judge_client.sh
