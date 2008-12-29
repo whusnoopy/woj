@@ -156,7 +156,7 @@ CREATE TABLE `problems` (
   `version` int(11) default '0',
   `spj` char(1) default 'N',
   PRIMARY KEY  (`problem_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1380 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `problemstojobs` (
   `job_id` int(11) NOT NULL,
