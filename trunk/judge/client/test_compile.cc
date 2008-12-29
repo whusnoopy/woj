@@ -67,6 +67,13 @@ int main(int argc, char* argv[]) {
   }
   LOG(INFO) << "PASS Compile '" << ce_file << "' Test";
 
+  const string java_file = FLAGS_root_dir + "/testdata/Main.java";
+  if (doCompile(communicate_socket, java_file)) {
+    LOG(ERROR) << "FAILED Compile '" << java_file << "' Test";
+    return -1;
+  }
+  LOG(INFO) << "PASS Compile '" << java_file << "' Test";
+
   close(communicate_socket);
 
   LOG(INFO) << "PASSED ALL TESTS";

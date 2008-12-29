@@ -449,7 +449,9 @@ int JudgeThread::sendFile(int connect_fd, const JudgeMission& mission, const str
     DataInterface::getInstance().addProblemSolved(status.getProblemId(), 1);
     DataInterface::getInstance().addProblemUserSolved(status, 1);
   }
-  LOG(DEBUG) << "Judge[" << ip << "] " << "Judge compelete.";
+  LOG(INFO) << "Judge[" << ip << "] " << "Judge compelete with result "
+            << status.getResult() << " and "
+            << status.getTime() << "ms/" << status.getMemory() << "KiB";
   return 0;
 }
 

@@ -371,6 +371,7 @@ void process(int communicate_socket) {
                      standard_output_filename,
                      program_output_filename,
                      special_judge_filename);
+    JudgeResult::getInstance()->updateResult(result);
     if (result != ACCEPTED) {
       break;
     }
