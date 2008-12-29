@@ -46,8 +46,8 @@ rebuild: clean all
 install: all
 	@echo "Install oj_server to ../bin"
 	@cp oj_server ../bin
-	@echo "Install run oj_server.sh to ../bin"
-	@cp start_online_judge_server.sh ../bin
+	@echo "Install run oj_server scripts to ../bin"
+	@cp start_*online_judge_server.sh ../bin
 	@echo "Install configure.xml example to ../bin"
 	@cp eg_configure.xml ../bin
 	

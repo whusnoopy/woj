@@ -22,6 +22,16 @@ using namespace std;
 const string origin_data_dir = "/home/flood/originData/";
 const string target_data_dir = "/home/flood/worktemp/file/data/p";
 
+const string origin_db_address = "localhost";
+const string origin_db_user = "root";
+const string origin_db_password = "123456";
+const string origin_db_name = "noah";
+
+const string target_db_address = "localhost";
+const string target_db_user = "root";
+const string target_db_password = "123456";
+const string target_db_name = "noah";
+
 Connection* s_connection;
 Connection* d_connection;
 
@@ -664,8 +674,14 @@ int getRootSolution() {
 }
 
 int main() {
-  s_connection = createConnection("localhost", "root", "123456", "noah");
-  d_connection = createConnection("localhost", "root", "123456", "flood");
+  s_connection = createConnection(origin_db_address,
+                                  origin_db_user,
+                                  origin_db_password,
+                                  origin_db_name);
+  d_connection = createConnection(target_db_address,
+                                  target_db_user,
+                                  target_db_password,
+                                  target_db_name);
   s_connection->connect();
   d_connection->connect();
   getUser();

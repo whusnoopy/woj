@@ -1,5 +1,5 @@
 ﻿// whusnoopy@gmail.com
-// v0.6, 08/12/2008
+// v1.0, 08/12/2008
 
                     Online Judge System 安装手册
                                                             for v.Flood
@@ -86,6 +86,12 @@ Ubuntu 默认是在 /etc/php5/apache2/php.ini)
   配置 start_judge_client.sh 以适应目的环境
     ~/worktemp/bin/$ vim start_judge_client.sh
 
+3.5 打开最努力用户统计功能
+  请参考 README.tools 中的第五节
+
+3.6 从 noah/oak 导入数据
+  请参考 README.tools
+
 4. 启动并使用
 
 4.1 Web 端
@@ -106,6 +112,9 @@ Ubuntu 默认是在 /etc/php5/apache2/php.ini)
   如果通信 socket 断掉或者系统异常将会导致 Judge 端自动停止, 或者使用脚本来停止
 Judge 端的运行
     ~/worktemp/bin$ ./stop_judge_client.sh
+
+4.4 管理员和用户
+  请参考 README.sysop 来执行管理员操作, 参考 README.user 来执行用户操作
 
 A. 使用 screen
   运行 screen cmd 来打开一个新的 screen 运行 cmd

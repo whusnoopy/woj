@@ -1,0 +1,69 @@
+// whusoopy@gmail.com
+// v1.0, 29/12/2008
+
+                    Online Judge System 工具包使用手册
+                                                            for v.Flood
+
+0. 使用之前
+  使用本工具前, 请先阅读 INSTALL 并完成其中相应的步骤, 特别注意要完成相应工具
+的安装和 server 模块的编译
+
+1. 编译工具包
+  在 tools 目录下直接编译既得所需可执行文件
+    ~/floodprj/tools/$ make
+
+  生成的可执行文件的作用目录:
+
+    datatranslator 用于 2. 数据转换器
+
+    rejudge
+    rejudgePart.sh 用于 3. 批量重判工具
+
+    mdp
+    dayplayer.sh
+    weekplayer.sh
+    monthplayer.sh 用于 4. 最努力用户统计工具
+
+2. 数据转换器
+  本数据转换器用于转换 noah, oak 等系统的数据以及数据库到 flood 中, 编译前请保
+证已完成 INSTALL 文档中的相应步骤, 特别是工具的安装和 server 模块的编译, 并修
+改 databasetranslator.cc 中的配置部分:
+    // 原始数据目录和目标数据目录
+    const string origin_data_dir = "/home/flood/originData/";
+    const string target_data_dir = "/home/flood/worktemp/file/data/p";
+    // 原始数据库地址, 用户名, 密码, 数据库名
+    const string origin_db_address = "localhost";
+    const string origin_db_user = "root";
+    const string origin_db_password = "123456";
+    const string origin_db_name = "noah";
+    // 目标数据库地址, 用户名, 密码, 数据库名
+    const string target_db_address = "localhost";
+    const string target_db_user = "root";
+    const string target_db_password = "123456";
+    const string target_db_name = "noah";
+  完成后使用以下命令完成编译
+    ~/floodprj/tools/$ make datatranslator
+  直接执行即可完成数据转换
+    ~/floodprj/tools/$ ./datatranslator
+
+3. 批量重判工具
+  本工具不需要修改源代码即可直接生成
+    ~/floodprj/tools/$ make rejudge
+  修改 rejudgePart.sh 脚本中的运行参数, 使其符合目标环境, 使用本脚本即可实现批
+量重新判题功能
+    ~/floodprj/tools/$ ./rejudgePart.sh start end
+  其中后两个参数 start 和 end 表示起始和结束提交号, 区间开闭关系为 [start, end)
+
+4. 最努力用户统计工具
+  编译前先修改 mostdiligenplayer.cc 中的数据库配置部分
+    const string db_address = "localhost";
+    const string db_user = "root";
+    const string db_password = "123456";
+    const string db_name = "flood";
+  完成后使用以下命令完成编译
+    ~/floodprj/tools/$ make mdp
+  修改 dayplayer.sh, weekplayer.sh, monthplayer.sh 三个脚本中 mdp 的路径, 并修
+改 crontab.sample 使其符合目标环境
+  使用以下命令将统计脚本添加到自动运行列表中
+    ~/floodprj/tools/$ crontab crontab.sample
+
