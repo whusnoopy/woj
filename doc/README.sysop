@@ -1,0 +1,9 @@
+// whusoopy@gmail.com
+// v0.0, 29/12/2008
+
+                    Online Judge System 管理员使用手册
+                                                            for v.Flood
+
+0. 使用之前
+  我们假定管理员拥有服务器的管理权限, 并了解基本的 Linux 常识和操作, 以及 mysql
+的一些知识. 并且在使用之前, 已按照 INSTALL 文档里完成了本系统的安装和配置

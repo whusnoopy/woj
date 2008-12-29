@@ -25,14 +25,14 @@ DATA:=$(patsubst %.cc,%.o,$(DATA_SOURCES))
 
 .PHONY: all clean rebuild 
 
-all: datatrans rejudge mdp
+all: datatranslator rejudge mdp
 
 clean:
-	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d datatrans rejudge mdp
+	@rm -f $(OBJS) $(REJUDGE) $(MD5) $(MDP_OBJS) *.d datatranslator rejudge mdp
 
 rebuild: clean all
 
-datatrans: $(OBJS) $(DEPS) $(OBJECT) $(INC) $(DATA) $(RESULT) $(MD5)
+datatranslator: $(OBJS) $(DEPS) $(OBJECT) $(INC) $(DATA) $(RESULT) $(MD5)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(EXEFLAGS)
 
 rejudge: $(REJUDGE) $(DEPS)
