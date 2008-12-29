@@ -56,10 +56,10 @@ int main(int argc, char* argv[]) {
   installSignalHandler(SIGPIPE, SIG_IGN);
 
   const string test_dir = "/tmp/testdata/";
-
-  const string ac_file = test_dir + "ac";
   const string input_filename = test_dir + "spj_in.txt";
   const string program_output_filename = test_dir + "pro_out.txt";
+
+  const string ac_file = test_dir + "ac";
 
   if (doRun(communicate_socket,
             test_dir,
@@ -75,6 +75,23 @@ int main(int argc, char* argv[]) {
   }
   sendReply(communicate_socket, 0);
   LOG(INFO) << "PASS Run '" << ac_file << "' Test";
+
+  const string java_file = test_dir + "Main.class";
+
+  if (doRun(communicate_socket,
+            test_dir,
+            java_file,
+            "cc",
+            input_filename,
+            program_output_filename,
+            1,
+            65535,
+            65535)) {
+    LOG(ERROR) << "FAILED Run '" << java_file << "' Test";
+    return -1;
+  }
+  sendReply(communicate_socket, 0);
+  LOG(INFO) << "PASS Run '" << java_file << "' Test";
 
   close(communicate_socket);
 
