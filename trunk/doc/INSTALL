@@ -36,10 +36,10 @@
 
 3.1 数据库及文件系统
   在 mysql 中新建一个数据库, 并进入
-    create flood;
+    create database flood;
     use flood;
   执行 create_database.sql 自动建立数据库
-    source /home/flood/floodprj/doc/create_database.sql;
+    source /home/flood/floodprj/doc/database.sql;
   建立必须的文件支持系统
     ~$ cd worktemp
     ~/worktemp$ mkdir file
